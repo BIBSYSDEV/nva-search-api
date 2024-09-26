@@ -8,7 +8,7 @@ com-auth0-jwt = { strictly = '4.4.0' }
 guava = { strictly = '33.3.0-jre' }
 hamcrest = { strictly = '3.0' }
 jackson = { strictly = '2.17.2' }
-javers = { strictly = '6.5.1' }
+javers = { strictly = '7.1.0' }
 jupiter = { strictly = '5.11.0' }
 junit = { strictly = '1.10.2' }
 log4j = { strictly = '2.24.0' }

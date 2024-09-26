@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * QueryFilter is a class that represents a query filter to the search service.
+ *
  * @author Stig Norland
  */
 public class QueryFilter {

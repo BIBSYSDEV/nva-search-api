@@ -1,6 +1,8 @@
 package no.unit.nva.search.common.jwt;
 
 /**
+ * Abstract class for providing a cached value.
+ *
  * @author Sondre Vestad
  */
 public abstract class CachedValueProvider<T> {

@@ -20,6 +20,8 @@ import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 /**
+ * Class for building OpenSearch queries that search for text.
+ *
  * @author Stig Norland
  */
 public class TextQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBuilder<K> {

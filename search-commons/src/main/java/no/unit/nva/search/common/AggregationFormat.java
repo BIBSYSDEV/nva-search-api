@@ -28,6 +28,8 @@ import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 /**
+ * Formats the aggregation response from OpenSearch.
+ *
  * @author Stig Norland
  */
 public final class AggregationFormat {

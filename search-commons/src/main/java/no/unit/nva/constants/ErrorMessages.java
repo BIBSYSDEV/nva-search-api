@@ -13,6 +13,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
+ * Error messages used in the search service.
+ *
  * @author Stig Norland
  */
 public final class ErrorMessages {

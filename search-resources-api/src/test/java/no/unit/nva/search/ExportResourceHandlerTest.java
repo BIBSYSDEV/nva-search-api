@@ -35,8 +35,8 @@ import java.util.List;
 import java.util.Map;
 
 class ExportResourceHandlerTest {
-    private final String SAMPLE_PATH = "search";
-    private final String SAMPLE_DOMAIN_NAME = "localhost";
+    private static final String SAMPLE_PATH = "search";
+    private static final String SAMPLE_DOMAIN_NAME = "localhost";
     private ResourceClient mockedResourceClient;
     private ScrollClient mockedScrollClient;
     private ExportResourceHandler handler;

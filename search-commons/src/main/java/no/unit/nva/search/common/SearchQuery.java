@@ -64,6 +64,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * SearchQuery is a class that represents a query to the search service.
+ *
  * @author Stig Norland
  */
 @SuppressWarnings("PMD.GodClass")

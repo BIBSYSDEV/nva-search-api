@@ -6,6 +6,8 @@ import java.time.Clock;
 import java.util.Date;
 
 /**
+ * Class for providing a cached JWT.
+ *
  * @author Sondre Vestad
  */
 public class CachedJwtProvider extends CachedValueProvider<DecodedJWT> {

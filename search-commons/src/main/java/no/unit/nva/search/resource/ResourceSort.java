@@ -22,6 +22,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * Enum for sorting resources.
+ *
  * @author Stig Norland
  */
 public enum ResourceSort implements SortKey {

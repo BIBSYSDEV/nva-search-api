@@ -27,6 +27,8 @@ import java.util.Base64;
 import java.util.Objects;
 
 /**
+ * Class for authenticating with Cognito.
+ *
  * @author Sondre Vestad
  */
 public class CognitoAuthenticator {
