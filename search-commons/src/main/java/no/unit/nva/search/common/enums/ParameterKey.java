@@ -25,6 +25,8 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
+ * Interface for defining the keys used in the search service.
+ *
  * @author Stig Norland
  */
 public interface ParameterKey<K extends Enum<K> & ParameterKey<K>> {

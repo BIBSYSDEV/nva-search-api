@@ -15,7 +15,9 @@ dependencies {
     implementation libs.bundles.logging
     implementation libs.guava
     implementation libs.opensearch.java
-    implementation libs.bundles.jena
+    implementation(libs.bundles.jena) {
+        exclude group: 'org.apache.commons', module: 'commons-compress'
+    }
 
     implementation libs.aws.sdk2.s3 //TODO: Temporary until refactor to commons
     implementation libs.aws.sdk2.urlconnection //TODO: Temporary until refactor to commons

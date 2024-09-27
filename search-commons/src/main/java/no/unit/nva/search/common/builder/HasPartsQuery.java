@@ -14,6 +14,12 @@ import org.opensearch.join.query.HasChildQueryBuilder;
 import java.util.Map;
 import java.util.stream.Stream;
 
+/**
+ * Class for building OpenSearch queries that search for parts of a document.
+ *
+ * @param <K> the type of the parameter key.
+ * @author Stig Norland
+ */
 public class HasPartsQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBuilder<K> {
 
     @Override

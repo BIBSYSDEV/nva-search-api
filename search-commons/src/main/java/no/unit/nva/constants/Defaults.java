@@ -13,6 +13,8 @@ import java.net.URI;
 import java.util.List;
 
 /**
+ * Default values for the search service.
+ *
  * @author Stig Norland
  */
 public final class Defaults {

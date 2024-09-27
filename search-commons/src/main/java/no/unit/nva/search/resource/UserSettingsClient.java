@@ -34,6 +34,8 @@ import java.util.function.BinaryOperator;
 import java.util.stream.Stream;
 
 /**
+ * Client for searching user settings.
+ *
  * @author Stig Norland
  */
 public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceSearchQuery> {

@@ -37,6 +37,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BinaryOperator;
 
 /**
+ * Abstract class for OpenSearch clients.
+ *
  * @author Stig Norland
  */
 public abstract class OpenSearchClient<R, Q extends Query<?>> {

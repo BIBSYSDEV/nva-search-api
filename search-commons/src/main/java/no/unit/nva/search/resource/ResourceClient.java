@@ -22,6 +22,8 @@ import java.util.concurrent.Executors;
 import java.util.function.BinaryOperator;
 
 /**
+ * Client for searching resources.
+ *
  * @author Stig Norland
  */
 public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceSearchQuery> {

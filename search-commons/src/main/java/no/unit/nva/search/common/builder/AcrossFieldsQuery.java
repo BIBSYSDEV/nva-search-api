@@ -16,6 +16,8 @@ import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 /**
+ * Class for building OpenSearch queries that search across multiple fields.
+ *
  * @author Stig Norland
  */
 public class AcrossFieldsQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBuilder<K> {

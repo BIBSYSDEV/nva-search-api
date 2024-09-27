@@ -75,6 +75,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * ResourceSearchQuery is a query for searching resources.
+ *
  * @author Stig Norland
  * @author Kir Truhacev
  * @author Sondre Vestad

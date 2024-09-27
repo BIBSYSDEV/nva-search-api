@@ -67,12 +67,12 @@ class SearchResourceAuthHandlerTest {
             throws IOException, URISyntaxException {
         prepareRestHighLevelClientOkResponse();
 
-        var organization =
+        var customer =
                 new URI(
                         "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934");
 
         handler.handleRequest(
-                getInputStreamWithAccessRight(organization, AccessRight.MANAGE_RESOURCES_STANDARD),
+                getInputStreamWithAccessRight(customer, AccessRight.MANAGE_RESOURCES_STANDARD),
                 outputStream,
                 contextMock);
 
@@ -118,14 +118,15 @@ class SearchResourceAuthHandlerTest {
         when(mockedSearchClient.doSearch(any())).thenReturn(body);
     }
 
-    private InputStream getInputStreamWithAccessRight(URI organization, AccessRight accessRight)
+    private InputStream getInputStreamWithAccessRight(URI customer, AccessRight accessRight)
             throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
                 .withHeaders(Map.of(ACCEPT, "application/json"))
                 .withRequestContext(getRequestContext())
                 .withUserName(randomString())
-                .withCurrentCustomer(organization)
-                .withAccessRights(organization, accessRight)
+                .withCurrentCustomer(customer)
+                .withTopLevelCristinOrgId(randomUri())
+                .withAccessRights(customer, accessRight)
                 .build();
     }
 

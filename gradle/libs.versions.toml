@@ -1,5 +1,4 @@
 [versions]
-awsApacheInterceptor = { strictly = 'f39dfaf107' }
 awsIon = { strictly = '1.11.9' }
 awsLambdaEvents = { strictly = '3.13.0' }
 awsLambdaJavaCore = { strictly = '1.2.3' }
@@ -8,7 +7,7 @@ com-auth0-jwt = { strictly = '4.4.0' }
 guava = { strictly = '33.3.0-jre' }
 hamcrest = { strictly = '3.0' }
 jackson = { strictly = '2.17.2' }
-javers = { strictly = '6.5.1' }
+javers = { strictly = '7.1.0' }
 jupiter = { strictly = '5.11.0' }
 junit = { strictly = '1.10.2' }
 log4j = { strictly = '2.24.0' }
@@ -16,7 +15,7 @@ mockito = { strictly = '5.13.0' }
 nvaCommons = { prefer = '1.40.20' }
 open-csv = { strictly = '5.9' }
 opensearch = { strictly = '2.12.0' }
-opensearch-testcontainer  = { strictly = '2.0.0' }
+opensearch-testcontainer = { strictly = '2.0.0' }
 slf4j = { strictly = '2.0.16' }
 testContainers = { strictly = '1.19.7' }
 typesafe = { strictly = '1.4.1' }
@@ -50,7 +49,6 @@ aws-xray-recorder-sdk-core = { group = 'com.amazonaws', name = 'aws-xray-recorde
 aws-xray-recorder-sdk-aws-sdk = { group = 'com.amazonaws', name = 'aws-xray-recorder-sdk-aws-sdk', version.ref = 'xraySdk' }
 aws-xray-recorder-sdk-aws-sdk-instrumentor = { group = 'com.amazonaws', name = 'aws-xray-recorder-sdk-aws-sdk-instrumentor', version.ref = 'xraySdk' }
 
-aws-apache-interceptor = { group = 'com.github.awslabs', name = 'aws-request-signing-apache-interceptor', version.ref = 'awsApacheInterceptor' }
 
 jackson-core = { group = 'com.fasterxml.jackson.core', name = 'jackson-core', version.ref = 'jackson' }
 jackson-databind = { group = 'com.fasterxml.jackson.core', name = 'jackson-databind', version.ref = 'jackson' }
@@ -78,10 +76,12 @@ aws-ion = { group = 'com.amazon.ion', name = 'ion-java', version.ref = 'awsIon' 
 typesafe = { group = 'com.typesafe', name = 'config', version.ref = 'typesafe' }
 problem = { group = 'org.zalando', name = 'problem', version.ref = 'zalandoProblem' }
 
-com-auth0-jwt = { group = 'com.auth0', name =  'java-jwt', version.ref = 'com-auth0-jwt' }
+com-auth0-jwt = { group = 'com.auth0', name = 'java-jwt', version.ref = 'com-auth0-jwt' }
 
-testcontainer-opensearch = {group = 'org.opensearch', name = 'opensearch-testcontainers', version.ref = 'opensearch-testcontainer'}
+testcontainer-opensearch = { group = 'org.opensearch', name = 'opensearch-testcontainers', version.ref = 'opensearch-testcontainer' }
+
 testcontainers-core = { group = 'org.testcontainers', name = 'testcontainers', version.ref = 'testContainers' }
+
 testcontainers-junit = { group = 'org.testcontainers', name = 'junit-jupiter', version.ref = 'testContainers' }
 hamcrest = { group = 'org.hamcrest', name = 'hamcrest', version.ref = 'hamcrest' }
 mockitocore = { group = 'org.mockito', name = 'mockito-core', version.ref = 'mockito' }
@@ -92,7 +92,7 @@ junit-jupiter-api = { group = 'org.junit.jupiter', name = 'junit-jupiter-api', v
 junit-jupiter-params = { group = 'org.junit.jupiter', name = 'junit-jupiter-params', version.ref = 'jupiter' }
 javers = { group = 'org.javers', name = 'javers-core', version.ref = 'javers' }
 
-csv = {group = 'com.opencsv', name = 'opencsv', version.ref = 'open-csv'}
+csv = { group = 'com.opencsv', name = 'opencsv', version.ref = 'open-csv' }
 
 jena-core = { group = 'org.apache.jena', name = 'jena-core', version.ref = 'jena' }
 jena-arq = { group = 'org.apache.jena', name = 'jena-arq', version.ref = 'jena' }
@@ -104,6 +104,6 @@ testcontainers = ['testcontainers-core', 'testcontainers-junit', 'testcontainer-
 logging = ['slf4j', 'log4j-core', 'log4j-api']
 testing = ['junit-jupiter-engine', 'junit-jupiter-launcher', 'junit-jupiter-api', 'junit-jupiter-params', 'hamcrest', 'mockitocore', 'javers',
     'log4j-test', 'nva-testutils', 'nva-logutils']
-opensearch = ['opensearch', 'opensearch-core', 'opensearch-rest-client', 'opensearch-x-content' ]
+opensearch = ['opensearch', 'opensearch-core', 'opensearch-rest-client', 'opensearch-x-content']
 aws-xray = ['aws-xray-recorder-sdk-core', 'aws-xray-recorder-sdk-aws-sdk', 'aws-xray-recorder-sdk-aws-sdk-instrumentor']
 jena = ['jena-core', 'jena-arq']

@@ -16,6 +16,8 @@ import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 /**
+ * Class for building OpenSearch queries that search for keywords.
+ *
  * @author Stig Norland
  */
 public class KeywordQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBuilder<K> {
