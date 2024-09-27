@@ -32,12 +32,10 @@ import java.util.stream.Stream;
 public abstract class AbstractBuilder<K extends Enum<K> & ParameterKey<K>> {
 
     @JacocoGenerated
-    protected abstract Stream<Entry<K, QueryBuilder>> buildMatchAnyValueQuery(
-            K key, String... values);
+    abstract Stream<Entry<K, QueryBuilder>> buildMatchAnyValueQuery(K key, String... values);
 
     @JacocoGenerated
-    protected abstract Stream<Entry<K, QueryBuilder>> buildMatchAllValuesQuery(
-            K key, String... values);
+    abstract Stream<Entry<K, QueryBuilder>> buildMatchAllValuesQuery(K key, String... values);
 
     public Stream<Map.Entry<K, QueryBuilder>> buildQuery(K key, String value) {
         final var values = splitAndFixMissingRangeValue(key, value);

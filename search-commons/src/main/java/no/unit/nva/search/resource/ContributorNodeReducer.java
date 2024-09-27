@@ -2,7 +2,6 @@ package no.unit.nva.search.resource;
 
 import static no.unit.nva.constants.Words.AFFILIATIONS;
 import static no.unit.nva.constants.Words.COUNTRY_CODE;
-import static no.unit.nva.constants.Words.DOT;
 import static no.unit.nva.constants.Words.ENTITY_DESCRIPTION_CONTRIBUTORS_PATH;
 import static no.unit.nva.constants.Words.IDENTITY;
 import static no.unit.nva.constants.Words.NO;
@@ -50,7 +49,7 @@ public final class ContributorNodeReducer implements JsonNodeMutator {
     }
 
     private boolean canRemoveWhenNotVerified(JsonNode element) {
-        return !VERIFIED.equals(element.path(IDENTITY + DOT + VERIFICATION_STATUS).asText());
+        return !VERIFIED.equals(element.path(IDENTITY).path(VERIFICATION_STATUS).asText());
     }
 
     private boolean canRemoveWhenHasNoNorwegianBasedContributor(JsonNode element) {

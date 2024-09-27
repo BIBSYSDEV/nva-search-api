@@ -70,9 +70,12 @@ class SearchResourceAuthHandlerTest {
         var customer =
                 new URI(
                         "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934");
+        var curatorOrganization =
+                new URI("https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0");
 
         handler.handleRequest(
-                getInputStreamWithAccessRight(customer, AccessRight.MANAGE_RESOURCES_STANDARD),
+                getInputStreamWithAccessRight(
+                        customer, curatorOrganization, AccessRight.MANAGE_RESOURCES_STANDARD),
                 outputStream,
                 contextMock);
 
@@ -88,7 +91,9 @@ class SearchResourceAuthHandlerTest {
     void shouldReturnOkWhenUserIsEditor() throws IOException {
         prepareRestHighLevelClientOkResponse();
 
-        var input = getInputStreamWithAccessRight(randomUri(), AccessRight.MANAGE_OWN_AFFILIATION);
+        var input =
+                getInputStreamWithAccessRight(
+                        randomUri(), randomUri(), AccessRight.MANAGE_OWN_AFFILIATION);
         handler.handleRequest(input, outputStream, contextMock);
 
         var gatewayResponse = FakeGatewayResponse.of(outputStream);
@@ -101,7 +106,7 @@ class SearchResourceAuthHandlerTest {
     void shouldReturnUnauthorizedWhenUserIsMissingAccessRight() throws IOException {
         prepareRestHighLevelClientOkResponse();
 
-        var input = getInputStreamWithAccessRight(randomUri(), AccessRight.SUPPORT);
+        var input = getInputStreamWithAccessRight(randomUri(), randomUri(), AccessRight.SUPPORT);
         handler.handleRequest(input, outputStream, contextMock);
 
         var gatewayResponse = FakeGatewayResponse.of(outputStream);
@@ -118,15 +123,16 @@ class SearchResourceAuthHandlerTest {
         when(mockedSearchClient.doSearch(any())).thenReturn(body);
     }
 
-    private InputStream getInputStreamWithAccessRight(URI customer, AccessRight accessRight)
+    private InputStream getInputStreamWithAccessRight(
+            URI currentCustomer, URI topLevelCristinOrgId, AccessRight accessRight)
             throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
                 .withHeaders(Map.of(ACCEPT, "application/json"))
                 .withRequestContext(getRequestContext())
                 .withUserName(randomString())
-                .withCurrentCustomer(customer)
-                .withTopLevelCristinOrgId(randomUri())
-                .withAccessRights(customer, accessRight)
+                .withCurrentCustomer(currentCustomer)
+                .withTopLevelCristinOrgId(topLevelCristinOrgId)
+                .withAccessRights(currentCustomer, accessRight)
                 .build();
     }
 

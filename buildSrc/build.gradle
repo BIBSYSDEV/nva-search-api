@@ -16,7 +16,7 @@ dependencies {
 }
 
 group = 'com.github.bibsysdev'
-version '1.0-JDK21'
+version '1.0-JDK_21_8.6'
 java {
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21

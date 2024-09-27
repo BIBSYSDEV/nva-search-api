@@ -345,6 +345,9 @@
     "contributorOrganizations": [
       "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
     ],
+    "curatingInstitutions": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0"
+    ],
     "entityDescription": {
       "type": "EntityDescription",
       "abstract": "In this paper, the authors report on collaboration between two universities from 2003 and beyond. The collaborations have been carried out in four main spheres: in the area of Staff training programmes, in the area of Development and research in information literacy, in the area of Developing Models of Digital Repositories and also in the domain of Research in Library Leadership. This cooperation started in 2003 when the authors worked on developing the first Leonardo da Vinci program in the field of continued education, and is still ongoing. The collaborations have been funded by different national and international funding agencies, as well as from the institutions of the authors.",
@@ -416,12 +419,12 @@
     },
     "resourceOwner": {
       "owner": "bora@184.0.0.0",
-      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/184.0.0.0"
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0"
     },
     "rightsHolder": "Copyright 2014, IGI Global",
     "status": "PUBLISHED",
     "scientificIndex": {
-      "id": "https://api.sandbox.nva.aws.unit.no/scientific-index/period/2019",
+      "id": "https://api.dev.nva.aws.unit.no/scientific-index/period/2019",
       "type": "ScientificIndex",
       "status": "Reported",
       "year": "2019"
@@ -438,7 +441,7 @@
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39",
     "scientificIndex": {
-      "id": "https://api.sandbox.nva.aws.unit.no/scientific-index/period/2019",
+      "id": "https://api.dev.nva.aws.unit.no/scientific-index/period/2019",
       "type": "ScientificIndex",
       "status": "Reported",
       "year": "2020"
@@ -480,6 +483,9 @@
       "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
       "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
       "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.1.0"
+    ],
+    "curatingInstitutions": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0"
     ],
     "entityDescription": {
       "type": "EntityDescription",
@@ -799,7 +805,7 @@
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642",
     "scientificIndex": {
-      "id": "https://api.sandbox.nva.aws.unit.no/scientific-index/period/2019",
+      "id": "https://api.dev.nva.aws.unit.no/scientific-index/period/2019",
       "type": "ScientificIndex",
       "status": "Reported",
       "year": "2023"
@@ -963,7 +969,7 @@
     },
     "resourceOwner": {
       "owner": "ngi@7452.0.0.0",
-      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
     "joinField": {
@@ -977,7 +983,7 @@
     "id": "https://api.dev.nva.aws.unit.no/publication/018b8581b2d1-b46eec8b-01c0-409f-b609-1f1f3ad6fa4a",
     "doi": "https://doi.org/10.1371/journal.pone.1234567",
     "scientificIndex": {
-      "id": "https://api.sandbox.nva.aws.unit.no/scientific-index/period/2019",
+      "id": "https://api.dev.nva.aws.unit.no/scientific-index/period/2019",
       "type": "ScientificIndex",
       "status": "Reported",
       "year": "2011"
@@ -1006,6 +1012,9 @@
       }
     ],
     "createdDate": "2023-09-29T12:11:12Z",
+    "curatingInstitutions": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0"
+    ],
     "entityDescription": {
       "type": "EntityDescription",
       "abstract": "This Note discusses a quasi-three-dimensional model of mixed snow avalanches that could replace the code MoT-Voellmy in NAKSIN. As a starting point, the two-layer model by Eglit is slightly simplified and extended from a profile line to a general topography in three-dimensional space. Possible modifications of the closures proposed by Eglit are discussed. For rapid development, it is suggested to base the new code either on MoT-Voellmy or possibly on the code development system ExaHyPE.",
@@ -1090,7 +1099,7 @@
     },
     "resourceOwner": {
       "owner": "ngi@7452.0.0.0",
-      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED_METADATA",
     "joinField": {
@@ -1193,7 +1202,7 @@
     },
     "resourceOwner": {
       "owner": "ngi@7452.0.0.0",
-      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
     "joinField": {
@@ -1423,7 +1432,7 @@
     },
     "resourceOwner": {
       "owner": "ngi@7452.0.0.0",
-      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
     "joinField": {
@@ -1613,7 +1622,7 @@
     },
     "resourceOwner": {
       "owner": "ngi@7452.0.0.0",
-      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
     "joinField": {
@@ -2406,7 +2415,7 @@
     },
     "resourceOwner": {
       "owner": "ngi@7452.0.0.0",
-      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
     "joinField": {
@@ -2615,7 +2624,7 @@
     },
     "resourceOwner": {
       "owner": "ngi@7452.0.0.0",
-      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
     "joinField": {
@@ -2732,7 +2741,7 @@
     },
     "resourceOwner": {
       "owner": "ngi@7452.0.0.0",
-      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
     "joinField": {
@@ -2871,7 +2880,7 @@
     },
     "resourceOwner": {
       "owner": "ngi@7452.0.0.0",
-      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
     "joinField": {
@@ -2956,7 +2965,7 @@
     },
     "resourceOwner": {
       "owner": "uio@185.90.0.0",
-      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
     "status": "PUBLISHED",
     "joinField": {
@@ -3036,7 +3045,7 @@
     },
     "resourceOwner": {
       "owner": "uio@185.90.0.0",
-      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
     "status": "PUBLISHED",
     "joinField": {
@@ -3116,7 +3125,7 @@
     },
     "resourceOwner": {
       "owner": "uio@185.90.0.0",
-      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
     "status": "PUBLISHED",
     "joinField": {
@@ -3280,7 +3289,7 @@
     },
     "resourceOwner": {
       "owner": "ngi@7452.0.0.0",
-      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
     "joinField": {
@@ -3364,7 +3373,7 @@
     },
     "resourceOwner": {
       "owner": "uio@185.90.0.0",
-      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
     "status": "PUBLISHED",
     "joinField": {
@@ -3451,7 +3460,7 @@
     },
     "resourceOwner": {
       "owner": "uio@185.90.0.0",
-      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
     "status": "PUBLISHED",
     "joinField": {
@@ -3537,7 +3546,7 @@
     },
     "resourceOwner": {
       "owner": "uio@185.90.0.0",
-      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
     "status": "PUBLISHED",
     "joinField": {
@@ -3772,12 +3781,89 @@
             "id": "https://api.dev.nva.aws.unit.no/cristin/person/26698",
             "type": "Identity",
             "name": "Kurt Jörnsten",
-            "verificationStatus": "Verified"
+            "verificationStatus": "UnVerified"
           },
           "role": {
             "type": "Creator"
           },
           "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/26698",
+            "type": "Identity",
+            "name": "Kurt Jörnsten3",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/26698",
+            "type": "Identity",
+            "name": "Kurt Jörnsten4",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 4
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/26698",
+            "type": "Identity",
+            "name": "Kurt Jörnsten5",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 5
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20202.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Unit – Direktoratet for IKT og fellestenester i høgare utdanning og forsking",
+                "nb": "Unit – Direktoratet for IKT og fellestjenester i høyere utdanning og forskning",
+                "en": "Unit – The Norwegian Directorate for ICT and Joint Services in Higher Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Mette Unknown",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 6
         }
       ],
       "language": "http://lexvo.org/id/iso639-3/nob",
