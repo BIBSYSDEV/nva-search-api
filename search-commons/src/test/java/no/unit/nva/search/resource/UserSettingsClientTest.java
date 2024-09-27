@@ -71,7 +71,7 @@ class UserSettingsClientTest {
     void searchWithUriReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
         var resourceAwsQuery =
                 ResourceSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withRequiredParameters(FROM, SIZE)
                         .build();
         var promotedPublications =

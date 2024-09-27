@@ -24,10 +24,8 @@ dependencies {
 
     implementation libs.problem
 
-    testImplementation libs.bundles.logging
     testImplementation libs.bundles.testing
     testImplementation project(':search-testing')
-    testImplementation project(':search-commons')
 }
 
 test {

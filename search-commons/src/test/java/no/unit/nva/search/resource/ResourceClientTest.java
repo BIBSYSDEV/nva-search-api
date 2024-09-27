@@ -271,7 +271,7 @@ class ResourceClientTest {
         when(mockedRequestInfoLocal.getPersonAffiliation()).thenReturn(randomUri());
         var result =
                 ResourceSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri.get()))
+                        .fromTestQueryParameters(queryToMapEntries(uri.get()))
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withRequiredParameters(FROM, SIZE)
                         .build()
@@ -294,7 +294,7 @@ class ResourceClientTest {
 
         var response1 =
                 ResourceSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri1))
+                        .fromTestQueryParameters(queryToMapEntries(uri1))
                         .withDockerHostUri(hostAddress)
                         .withRequiredParameters(FROM, SIZE, AGGREGATION)
                         .build()
@@ -309,10 +309,10 @@ class ResourceClientTest {
 
         assertFalse(aggregations.isEmpty());
         assertThat(aggregations.get(TYPE).size(), is(6));
-        assertThat(aggregations.get(FILES).get(0).count(), is(17));
-        assertThat(aggregations.get(LICENSE).get(0).count(), is(10));
+        assertThat(aggregations.get(FILES).getFirst().count(), is(17));
+        assertThat(aggregations.get(LICENSE).getFirst().count(), is(10));
         assertThat(aggregations.get(FUNDING_SOURCE).size(), is(1));
-        assertThat(aggregations.get(PUBLISHER).get(0).count(), is(2));
+        assertThat(aggregations.get(PUBLISHER).getFirst().count(), is(2));
         assertThat(aggregations.get(CONTRIBUTOR).size(), is(17));
         assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION).size(), is(11));
         assertThat(
@@ -339,7 +339,7 @@ class ResourceClientTest {
                         "https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
         var response =
                 ResourceSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withRequiredParameters(FROM, SIZE)
                         .build()
@@ -370,7 +370,7 @@ class ResourceClientTest {
                         "https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
         var response =
                 ResourceSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withRequiredParameters(FROM, SIZE, SORT)
                         .build()
@@ -400,7 +400,7 @@ class ResourceClientTest {
                         "https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
         var response =
                 ResourceSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withRequiredParameters(FROM, SIZE)
                         .build()
@@ -431,7 +431,7 @@ class ResourceClientTest {
                         "https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
         var response =
                 ResourceSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withRequiredParameters(FROM, SIZE)
                         .build()
@@ -449,7 +449,7 @@ class ResourceClientTest {
 
         var pagedResult =
                 ResourceSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withRequiredParameters(FROM, SIZE)
                         .build()
@@ -477,7 +477,7 @@ class ResourceClientTest {
                 BadRequestException.class,
                 () ->
                         ResourceSearchQuery.builder()
-                            .fromTestQueryParameters(queryToMapEntries(uri))
+                                .fromTestQueryParameters(queryToMapEntries(uri))
                                 .withRequiredParameters(FROM, SIZE)
                                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                                 .build()
@@ -492,7 +492,7 @@ class ResourceClientTest {
 
         var response =
                 ResourceSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withRequiredParameters(FROM, SIZE)
                         .build()
@@ -523,7 +523,7 @@ class ResourceClientTest {
         when(requestInfo.userIsAuthorized(AccessRight.MANAGE_CUSTOMERS)).thenReturn(true);
         var response =
                 ResourceSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withParameter(NODES_EXCLUDED, "metaInfo")
                         .withParameter(STATISTICS, "true")
@@ -551,7 +551,7 @@ class ResourceClientTest {
                                 "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478"));
         var response =
                 ResourceSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withParameter(NODES_EXCLUDED, "metaInfo")
                         .withRequiredParameters(FROM, SIZE)
@@ -603,7 +603,7 @@ class ResourceClientTest {
             throws ApiGatewayException {
         var response =
                 ResourceSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withRequiredParameters(FROM, SIZE)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .validate()
@@ -631,7 +631,7 @@ class ResourceClientTest {
 
         var response =
                 ResourceSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withRequiredParameters(FROM, SIZE)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
@@ -671,7 +671,7 @@ class ResourceClientTest {
 
         var response =
                 ResourceSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withRequiredParameters(FROM, SIZE)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
@@ -681,7 +681,7 @@ class ResourceClientTest {
                         .doSearch(searchClient);
 
         var pagedSearchResourceDto = response.toPagedResponse();
-        var document = pagedSearchResourceDto.hits().get(0);
+        var document = pagedSearchResourceDto.hits().getFirst();
         var actualId = document.get(IDENTIFIER).asText();
 
         assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedHits)));
@@ -703,7 +703,7 @@ class ResourceClientTest {
 
         var response =
                 ResourceSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withRequiredParameters(FROM, SIZE)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
@@ -713,7 +713,7 @@ class ResourceClientTest {
                         .doSearch(searchClient);
 
         var pagedSearchResourceDto = response.toPagedResponse();
-        var document = pagedSearchResourceDto.hits().get(0);
+        var document = pagedSearchResourceDto.hits().getFirst();
         var actualId = document.get(IDENTIFIER).asText();
 
         assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedHits)));
@@ -735,7 +735,7 @@ class ResourceClientTest {
 
         var response =
                 ResourceSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withRequiredParameters(FROM, SIZE)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
@@ -779,7 +779,7 @@ class ResourceClientTest {
 
         var response =
                 ResourceSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withRequiredParameters(FROM, SIZE)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
@@ -819,7 +819,7 @@ class ResourceClientTest {
     void searchWithUriReturnsCsvResponse(URI uri) throws ApiGatewayException {
         var csvResult =
                 ResourceSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withRequiredParameters(FROM, SIZE, AGGREGATION)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withMediaType(Words.TEXT_CSV)
@@ -837,7 +837,7 @@ class ResourceClientTest {
     void searchUriWithSortingReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
         var response =
                 ResourceSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withRequiredParameters(FROM, SIZE, SORT)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
@@ -873,7 +873,7 @@ class ResourceClientTest {
                 BadRequestException.class,
                 () ->
                         ResourceSearchQuery.builder()
-                            .fromTestQueryParameters(queryToMapEntries(uri))
+                                .fromTestQueryParameters(queryToMapEntries(uri))
                                 .withRequiredParameters(FROM, SIZE)
                                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                                 .build()
@@ -884,7 +884,7 @@ class ResourceClientTest {
     void shouldReturnResourcesForScientificPeriods() throws BadRequestException {
         var response =
                 ResourceSearchQuery.builder()
-                    .fromTestParameterMap(
+                        .fromTestParameterMap(
                                 Map.of(
                                         SCIENTIFIC_REPORT_PERIOD_SINCE.asCamelCase(),
                                         "2019",
@@ -906,7 +906,7 @@ class ResourceClientTest {
     void shouldReturnResourcesForSinglePeriods() throws BadRequestException {
         var response =
                 ResourceSearchQuery.builder()
-                    .fromTestParameterMap(
+                        .fromTestParameterMap(
                                 Map.of(
                                         SCIENTIFIC_REPORT_PERIOD_SINCE.asCamelCase(),
                                         "2019",
@@ -933,7 +933,7 @@ class ResourceClientTest {
                         StandardCharsets.UTF_8);
         var response =
                 ResourceSearchQuery.builder()
-                    .fromTestParameterMap(
+                        .fromTestParameterMap(
                                 Map.of(
                                         UNIT.asCamelCase(),
                                         viewingScope,
@@ -968,7 +968,7 @@ class ResourceClientTest {
                         StandardCharsets.UTF_8);
         var response =
                 ResourceSearchQuery.builder()
-                    .fromTestParameterMap(
+                        .fromTestParameterMap(
                                 Map.of(
                                         UNIT.asCamelCase(),
                                         unit,
@@ -999,7 +999,7 @@ class ResourceClientTest {
         var pageRange = String.format("%d,%d", min, max);
         var response =
                 ResourceSearchQuery.builder()
-                    .fromTestParameterMap(Map.of(PUBLICATION_PAGES.asCamelCase(), pageRange))
+                        .fromTestParameterMap(Map.of(PUBLICATION_PAGES.asCamelCase(), pageRange))
                         .withRequiredParameters(FROM, SIZE)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()

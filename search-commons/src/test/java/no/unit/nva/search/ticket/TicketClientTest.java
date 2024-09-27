@@ -221,7 +221,7 @@ class TicketClientTest {
                 () ->
                         TicketSearchQuery.builder()
                                 .withRequiredParameters(SIZE, FROM)
-                            .fromTestQueryParameters(toMapEntries)
+                                .fromTestQueryParameters(toMapEntries)
                                 .build()
                                 .withFilter()
                                 .organization(testOrganizationId)
@@ -235,7 +235,7 @@ class TicketClientTest {
         var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.name() + EQUAL + ALL);
         var response1 =
                 TicketSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri1))
+                        .fromTestQueryParameters(queryToMapEntries(uri1))
                         .withDockerHostUri(hostAddress)
                         .withRequiredParameters(FROM, SIZE)
                         .build()
@@ -256,7 +256,7 @@ class TicketClientTest {
         assertThat(aggregations.size(), is(equalTo(EXPECTED_NUMBER_OF_AGGREGATIONS)));
 
         assertThat(aggregations.get(TYPE).size(), is(3));
-        assertThat(aggregations.get(STATUS).get(0).count(), is(12));
+        assertThat(aggregations.get(STATUS).getFirst().count(), is(12));
         assertThat(aggregations.get(BY_USER_PENDING.asCamelCase()).size(), is(2));
         assertThat(aggregations.get(PUBLICATION_STATUS).size(), is(3));
 
@@ -271,7 +271,7 @@ class TicketClientTest {
 
         var pagedResult =
                 TicketSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withRequiredParameters(FROM, SIZE, SORT)
                         .build()
@@ -296,7 +296,7 @@ class TicketClientTest {
 
         var pagedResult =
                 TicketSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
                         .withFilter()
@@ -319,7 +319,7 @@ class TicketClientTest {
 
         var pagedResult =
                 TicketSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
                         .withFilter()
@@ -346,7 +346,7 @@ class TicketClientTest {
 
         var pagedResult =
                 TicketSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
                         .withFilter()
@@ -370,7 +370,7 @@ class TicketClientTest {
 
         var response =
                 TicketSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withRequiredParameters(FROM, SIZE)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
@@ -398,7 +398,7 @@ class TicketClientTest {
 
         var response =
                 TicketSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withRequiredParameters(FROM, SIZE)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
@@ -444,7 +444,7 @@ class TicketClientTest {
 
         var response =
                 TicketSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withRequiredParameters(FROM, SIZE)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
@@ -489,7 +489,7 @@ class TicketClientTest {
     void uriRequestWithSortingReturnsSuccessfulResponse(URI uri) throws ApiGatewayException {
         var response =
                 TicketSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withRequiredParameters(FROM, SIZE, SORT, AGGREGATION)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
@@ -516,7 +516,7 @@ class TicketClientTest {
                 BadRequestException.class,
                 () ->
                         TicketSearchQuery.builder()
-                            .fromTestQueryParameters(queryToMapEntries(uri))
+                                .fromTestQueryParameters(queryToMapEntries(uri))
                                 .withRequiredParameters(FROM, SIZE)
                                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                                 .build()
@@ -534,7 +534,7 @@ class TicketClientTest {
                 UnauthorizedException.class,
                 () ->
                         TicketSearchQuery.builder()
-                            .fromTestQueryParameters(queryToMapEntries(uri.get()))
+                                .fromTestQueryParameters(queryToMapEntries(uri.get()))
                                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                                 .build()
                                 .withFilter()

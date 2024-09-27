@@ -122,7 +122,7 @@ class ResourceSearchQueryTest {
     void removeKeySuccessfully() throws BadRequestException {
         var response =
                 ResourceSearchQuery.builder()
-                    .fromTestParameterMap(
+                        .fromTestParameterMap(
                                 Map.of(
                                         SCIENTIFIC_REPORT_PERIOD_SINCE.asCamelCase(),
                                         "2019",
@@ -149,7 +149,7 @@ class ResourceSearchQueryTest {
                 () ->
                         ResourceSearchQuery.builder()
                                 .withRequiredParameters(SIZE, FROM)
-                            .fromTestQueryParameters(toMapEntries)
+                                .fromTestQueryParameters(toMapEntries)
                                 .build()
                                 .doSearch(resourceClient));
     }
@@ -163,7 +163,7 @@ class ResourceSearchQueryTest {
                 () ->
                         ResourceSearchQuery.builder()
                                 .withRequiredParameters(ABSTRACT, FUNDING)
-                            .fromTestQueryParameters(toMapEntries)
+                                .fromTestQueryParameters(toMapEntries)
                                 .validate()
                                 .build());
     }
@@ -173,7 +173,7 @@ class ResourceSearchQueryTest {
     void buildOpenSearchSwsUriFromGatewayUri(URI uri) throws BadRequestException {
         var resource =
                 ResourceSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withRequiredParameters(FROM, SIZE)
                         .build();
         assertNotNull(resource.parameters().get(FROM).as());
@@ -196,7 +196,7 @@ class ResourceSearchQueryTest {
     void uriParamsDateToResourceParams(URI uri) throws BadRequestException {
         var query =
                 ResourceSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withRequiredParameters(FROM, SIZE)
                         .build();
 
@@ -220,7 +220,7 @@ class ResourceSearchQueryTest {
     void uriParamsToResourceParams(URI uri) throws BadRequestException {
         var resource =
                 ResourceSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withRequiredParameters(FROM, SIZE)
                         .build();
         assertNotNull(resource.parameters().get(FROM).<Long>as());
@@ -235,7 +235,7 @@ class ResourceSearchQueryTest {
                 BadRequestException.class,
                 () ->
                         ResourceSearchQuery.builder()
-                            .fromTestQueryParameters(queryToMapEntries(uri))
+                                .fromTestQueryParameters(queryToMapEntries(uri))
                                 .withRequiredParameters(FROM, SIZE, DOI)
                                 .validate()
                                 .build()
@@ -249,7 +249,7 @@ class ResourceSearchQueryTest {
                 BadRequestException.class,
                 () ->
                         ResourceSearchQuery.builder()
-                            .fromTestQueryParameters(queryToMapEntries(uri))
+                                .fromTestQueryParameters(queryToMapEntries(uri))
                                 .withRequiredParameters(FROM, SIZE)
                                 .build()
                                 .openSearchUri());
