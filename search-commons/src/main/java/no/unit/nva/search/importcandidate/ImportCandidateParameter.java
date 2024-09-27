@@ -69,6 +69,7 @@ import java.util.stream.Stream;
  *
  * @author Stig Norland
  */
+@SuppressWarnings({"PMD.ExcessivePublicCount"})
 public enum ImportCandidateParameter implements ParameterKey<ImportCandidateParameter> {
     INVALID(ParameterKind.INVALID),
     ADDITIONAL_IDENTIFIERS(FUZZY_KEYWORD, ANY_OF, ADDITIONAL_IDENTIFIERS_KEYWORD),
@@ -122,7 +123,7 @@ public enum ImportCandidateParameter implements ParameterKey<ImportCandidatePara
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
     public static final Set<ImportCandidateParameter> IMPORT_CANDIDATE_PARAMETER_SET =
-            Arrays.stream(ImportCandidateParameter.values())
+            Arrays.stream(values())
                     .filter(ImportCandidateParameter::isSearchField)
                     .sorted(ParameterKey::compareAscending)
                     .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -171,7 +172,7 @@ public enum ImportCandidateParameter implements ParameterKey<ImportCandidatePara
 
     public static ImportCandidateParameter keyFromString(String paramName) {
         var result =
-                Arrays.stream(ImportCandidateParameter.values())
+                Arrays.stream(values())
                         .filter(ImportCandidateParameter::ignoreInvalidKey)
                         .filter(ParameterKey.equalTo(paramName))
                         .collect(Collectors.toSet());

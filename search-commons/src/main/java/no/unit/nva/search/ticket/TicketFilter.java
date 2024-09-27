@@ -22,7 +22,7 @@ import org.opensearch.index.query.TermsQueryBuilder;
 
 import java.net.URI;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -134,7 +134,8 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
     }
 
     private Set<TicketType> getAccessRights(List<AccessRight> accessRights) {
-        var allowed = new HashSet<TicketType>();
+
+        var allowed = EnumSet.noneOf(TicketType.class);
         if (accessRights.contains(MANAGE_DOI)) {
             allowed.add(TicketType.DOI_REQUEST);
         }
