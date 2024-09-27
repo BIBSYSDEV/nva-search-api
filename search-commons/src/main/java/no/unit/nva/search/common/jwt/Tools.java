@@ -12,6 +12,11 @@ import nva.commons.secrets.SecretsReader;
 import java.net.URI;
 import java.util.stream.Stream;
 
+/**
+ * Tools for handling JWT.
+ *
+ * @author Sondre Vestad
+ */
 public final class Tools {
     @JacocoGenerated
     public Tools() {}

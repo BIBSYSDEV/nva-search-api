@@ -1,8 +1,7 @@
 package no.unit.nva.indexingclient.models;
 
-import static com.amazonaws.auth.internal.SignerConstants.AUTHORIZATION;
-
 import static no.unit.nva.constants.Defaults.ENVIRONMENT;
+import static no.unit.nva.constants.Words.AUTHORIZATION;
 
 import no.unit.nva.auth.CognitoCredentials;
 import no.unit.nva.search.common.jwt.CachedJwtProvider;

@@ -11,6 +11,8 @@ import java.time.Instant;
 import java.util.stream.Stream;
 
 /**
+ * Query is a class that represents a query to the search service.
+ *
  * @author Stig Norland
  */
 public abstract class Query<K extends Enum<K> & ParameterKey<K>> {

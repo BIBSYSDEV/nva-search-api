@@ -18,6 +18,8 @@ import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 /**
+ * Class for building OpenSearch queries that check if a field exists.
+ *
  * @author Stig Norland
  */
 public class ExistsQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBuilder<K> {

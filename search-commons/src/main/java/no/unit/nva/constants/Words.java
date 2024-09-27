@@ -3,6 +3,8 @@ package no.unit.nva.constants;
 import nva.commons.core.JacocoGenerated;
 
 /**
+ * Words used in the search service.
+ *
  * @author Stig Norland
  * @author Kir Truhacev
  */
@@ -25,6 +27,7 @@ public final class Words {
     public static final String AMPERSAND = "&";
     public static final String ASSOCIATED_ARTIFACTS = "associatedArtifacts";
     public static final String ASTERISK = "*";
+    public static final String AUTHORIZATION = "Authorization";
     public static final String BODY = "body";
     public static final String BOKMAAL_CODE = "nb";
     public static final String BUCKETS = "buckets";

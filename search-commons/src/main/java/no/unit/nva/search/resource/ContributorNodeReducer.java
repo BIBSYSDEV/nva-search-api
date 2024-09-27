@@ -14,6 +14,11 @@ import com.fasterxml.jackson.databind.node.TextNode;
 
 import no.unit.nva.search.common.records.JsonNodeMutator;
 
+/**
+ * Reduces the number of contributors in a JsonNode.
+ *
+ * @author Stig Norland
+ */
 public final class ContributorNodeReducer implements JsonNodeMutator {
 
     static final int MINIMUM_INCLUDED_CONTRIBUTORS = 5;

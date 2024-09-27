@@ -17,6 +17,8 @@ import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 /**
+ * Class for building OpenSearch queries that search for a range of values.
+ *
  * @author Stig Norland
  */
 public class RangeQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBuilder<K> {

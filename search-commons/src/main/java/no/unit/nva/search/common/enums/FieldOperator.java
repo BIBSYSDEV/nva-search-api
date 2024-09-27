@@ -3,6 +3,8 @@ package no.unit.nva.search.common.enums;
 import java.util.Locale;
 
 /**
+ * Enum for defining the operators used in the search service.
+ *
  * @author Stig Norland
  */
 public enum FieldOperator {

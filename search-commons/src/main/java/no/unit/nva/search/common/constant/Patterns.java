@@ -7,6 +7,8 @@ import static no.unit.nva.constants.Words.SPACE;
 import nva.commons.core.JacocoGenerated;
 
 /**
+ * Class for defining regular expressions used in the search service.
+ *
  * @author Stig Norland
  */
 public final class Patterns {

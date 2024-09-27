@@ -1,8 +1,7 @@
 package no.unit.nva.search.common.jwt;
 
-import static com.amazonaws.auth.internal.SignerConstants.AUTHORIZATION;
-
 import static no.unit.nva.auth.AuthorizedBackendClient.APPLICATION_X_WWW_FORM_URLENCODED;
+import static no.unit.nva.constants.Words.AUTHORIZATION;
 
 import static nva.commons.core.attempt.Try.attempt;
 
@@ -27,6 +26,8 @@ import java.util.Base64;
 import java.util.Objects;
 
 /**
+ * Class for authenticating with Cognito.
+ *
  * @author Sondre Vestad
  */
 public class CognitoAuthenticator {

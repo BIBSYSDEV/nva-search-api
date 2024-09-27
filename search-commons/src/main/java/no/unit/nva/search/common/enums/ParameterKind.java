@@ -5,6 +5,8 @@ import static no.unit.nva.constants.Words.CHAR_UNDERSCORE;
 import org.apache.commons.text.CaseUtils;
 
 /**
+ * Enum for defining the types of parameters that can be used in the search service.
+ *
  * @author Stig Norland
  */
 public enum ParameterKind {

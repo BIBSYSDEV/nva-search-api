@@ -84,6 +84,8 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 /**
+ * Constants for the Resource Search.
+ *
  * @author Stig Norland
  */
 public final class Constants {

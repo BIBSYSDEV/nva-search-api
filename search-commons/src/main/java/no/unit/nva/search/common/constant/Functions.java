@@ -41,6 +41,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * Class for building OpenSearch queries that search across multiple fields.
+ *
  * @author Stig Norland
  */
 public final class Functions {

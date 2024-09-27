@@ -309,10 +309,10 @@ class ResourceClientTest {
 
         assertFalse(aggregations.isEmpty());
         assertThat(aggregations.get(TYPE).size(), is(6));
-        assertThat(aggregations.get(FILES).get(0).count(), is(17));
-        assertThat(aggregations.get(LICENSE).get(0).count(), is(10));
+        assertThat(aggregations.get(FILES).getFirst().count(), is(17));
+        assertThat(aggregations.get(LICENSE).getFirst().count(), is(10));
         assertThat(aggregations.get(FUNDING_SOURCE).size(), is(1));
-        assertThat(aggregations.get(PUBLISHER).get(0).count(), is(2));
+        assertThat(aggregations.get(PUBLISHER).getFirst().count(), is(2));
         assertThat(aggregations.get(CONTRIBUTOR).size(), is(17));
         assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION).size(), is(11));
         assertThat(
@@ -531,7 +531,7 @@ class ResourceClientTest {
                         .build()
                         .withFilter()
                         .requiredStatus(PUBLISHED_METADATA, PUBLISHED)
-                        .organization(requestInfo)
+                        .customer(requestInfo)
                         .apply()
                         .doSearch(searchClient);
 
@@ -558,7 +558,7 @@ class ResourceClientTest {
                         .build()
                         .withFilter()
                         .requiredStatus(PUBLISHED_METADATA, PUBLISHED)
-                        .organization(requestInfo)
+                        .customer(requestInfo)
                         .apply()
                         .doSearch(searchClient);
 
@@ -681,7 +681,7 @@ class ResourceClientTest {
                         .doSearch(searchClient);
 
         var pagedSearchResourceDto = response.toPagedResponse();
-        var document = pagedSearchResourceDto.hits().get(0);
+        var document = pagedSearchResourceDto.hits().getFirst();
         var actualId = document.get(IDENTIFIER).asText();
 
         assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedHits)));
@@ -713,7 +713,7 @@ class ResourceClientTest {
                         .doSearch(searchClient);
 
         var pagedSearchResourceDto = response.toPagedResponse();
-        var document = pagedSearchResourceDto.hits().get(0);
+        var document = pagedSearchResourceDto.hits().getFirst();
         var actualId = document.get(IDENTIFIER).asText();
 
         assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedHits)));
