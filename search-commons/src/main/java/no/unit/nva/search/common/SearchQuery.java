@@ -66,7 +66,11 @@ import java.util.stream.Stream;
 /**
  * @author Stig Norland
  */
-@SuppressWarnings("PMD.GodClass")
+@SuppressWarnings({
+    "PMD.CouplingBetweenObjects",
+    "PMD.GodClass",
+    "PMD.ConstructorCallsOverridableMethod"
+})
 public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Query<K> {
 
     protected static final Logger logger = LoggerFactory.getLogger(SearchQuery.class);

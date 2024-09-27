@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+@SuppressWarnings({"PMD.CloseResource"})
 public final class LogAppender {
 
     @JacocoGenerated
@@ -26,16 +27,16 @@ public final class LogAppender {
     public static ListAppender getAppender(Class<?> clazz) {
 
         var loggerContext = LoggerContext.getContext(false);
-        if (!loggerContext.getConfiguration().getAppenders().containsKey(clazz.getSimpleName())) {
+        if (loggerContext.getConfiguration().getAppenders().containsKey(clazz.getSimpleName())) {
+            return (ListAppender)
+                    loggerContext.getConfiguration().getAppenders().get(clazz.getSimpleName());
+        } else {
             logHasStarted(clazz);
             var logger = (Logger) loggerContext.getLogger(clazz);
             var appender = new ListAppender(clazz.getSimpleName());
             appender.start();
             loggerContext.getConfiguration().addLoggerAppender(logger, appender);
             return appender;
-        } else {
-            return (ListAppender)
-                    loggerContext.getConfiguration().getAppenders().get(clazz.getSimpleName());
         }
     }
 

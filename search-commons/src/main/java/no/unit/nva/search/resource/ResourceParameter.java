@@ -118,6 +118,7 @@ import java.util.stream.Stream;
  * @author Kir Truhacev
  * @author Joachim Jorgensen
  */
+@SuppressWarnings({"PMD.ExcessivePublicCount"})
 public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     INVALID(ParameterKind.INVALID),
     // Parameters used for filtering
@@ -281,7 +282,7 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
     public static final Set<ResourceParameter> RESOURCE_PARAMETER_SET =
-            Arrays.stream(ResourceParameter.values())
+            Arrays.stream(values())
                     .filter(ResourceParameter::isSearchField)
                     .sorted(ParameterKey::compareAscending)
                     .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -357,7 +358,7 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
 
     public static ResourceParameter keyFromString(String paramName) {
         var result =
-                Arrays.stream(ResourceParameter.values())
+                Arrays.stream(values())
                         .filter(ResourceParameter::ignoreInvalidKey)
                         .filter(ParameterKey.equalTo(paramName))
                         .collect(Collectors.toSet());

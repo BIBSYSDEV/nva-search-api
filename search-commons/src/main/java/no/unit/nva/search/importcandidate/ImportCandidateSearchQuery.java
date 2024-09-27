@@ -247,9 +247,9 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
         protected void setValue(String key, String value) {
             var qpKey = ImportCandidateParameter.keyFromString(key);
             var decodedValue =
-                    qpKey.valueEncoding() != ValueEncoding.NONE
-                            ? Functions.decodeUTF(value)
-                            : value;
+                    qpKey.valueEncoding() == ValueEncoding.NONE
+                            ? value
+                            : Functions.decodeUTF(value);
             switch (qpKey) {
                 case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION ->
                         searchQuery.parameters().set(qpKey, decodedValue);
