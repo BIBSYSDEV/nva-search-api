@@ -294,7 +294,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
         protected void setValue(String key, String value) {
             var qpKey = TicketParameter.keyFromString(key);
             var decodedValue =
-                    qpKey.valueEncoding() != ValueEncoding.NONE ? decodeUTF(value) : value;
+                    qpKey.valueEncoding() == ValueEncoding.NONE ? value : decodeUTF(value);
             switch (qpKey) {
                 case INVALID -> invalidKeys.add(key);
                 case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION ->

@@ -331,7 +331,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         protected void setValue(String key, String value) {
             var qpKey = ResourceParameter.keyFromString(key);
             var decodedValue =
-                    qpKey.valueEncoding() != ValueEncoding.NONE ? decodeUTF(value) : value;
+                    qpKey.valueEncoding() == ValueEncoding.NONE ? value : decodeUTF(value);
             switch (qpKey) {
                 case INVALID -> invalidKeys.add(key);
                 case UNIT, UNIT_NOT, TOP_LEVEL_ORGANIZATION ->

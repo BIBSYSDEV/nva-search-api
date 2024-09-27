@@ -24,10 +24,7 @@ public enum TicketType {
     }
 
     public static TicketType fromString(String name) {
-        var result =
-                Arrays.stream(TicketType.values())
-                        .filter(equalTo(name))
-                        .collect(Collectors.toSet());
+        var result = Arrays.stream(values()).filter(equalTo(name)).collect(Collectors.toSet());
         return result.size() == 1 ? result.stream().findFirst().get() : NONE;
     }
 

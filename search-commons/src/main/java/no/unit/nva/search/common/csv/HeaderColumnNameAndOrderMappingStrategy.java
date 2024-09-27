@@ -19,9 +19,8 @@ import java.util.stream.Collectors;
  * @author Rurik Greenall
  */
 public class HeaderColumnNameAndOrderMappingStrategy<T> extends HeaderColumnNameMappingStrategy<T> {
-    public HeaderColumnNameAndOrderMappingStrategy(Class<T> type) {
+    public HeaderColumnNameAndOrderMappingStrategy() {
         super();
-        setType(type);
     }
 
     /**
@@ -100,5 +99,12 @@ public class HeaderColumnNameAndOrderMappingStrategy<T> extends HeaderColumnName
                     .column();
         }
         return StringUtils.EMPTY;
+    }
+
+    public static HeaderColumnNameAndOrderMappingStrategy
+            headerColumnNameAndOrderMappingStrategyWithType(Class type) {
+        var strategy = new HeaderColumnNameAndOrderMappingStrategy<>();
+        strategy.setType(type);
+        return strategy;
     }
 }

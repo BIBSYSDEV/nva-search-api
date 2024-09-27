@@ -55,14 +55,14 @@ public enum ResourceSort implements SortKey {
 
     public static ResourceSort fromSortKey(String keyName) {
         var result =
-                Arrays.stream(ResourceSort.values())
+                Arrays.stream(values())
                         .filter(SortKey.equalTo(keyName))
                         .collect(Collectors.toSet());
         return result.size() == 1 ? result.stream().findFirst().get() : INVALID;
     }
 
     public static Collection<String> validSortKeys() {
-        return Arrays.stream(ResourceSort.values())
+        return Arrays.stream(values())
                 .sorted(SortKey::compareAscending)
                 .skip(1)
                 .map(SortKey::asLowerCase)
