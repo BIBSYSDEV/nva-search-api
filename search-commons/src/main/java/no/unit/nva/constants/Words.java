@@ -3,6 +3,8 @@ package no.unit.nva.constants;
 import nva.commons.core.JacocoGenerated;
 
 /**
+ * Words used in the search service.
+ *
  * @author Stig Norland
  * @author Kir Truhacev
  */
@@ -25,6 +27,7 @@ public final class Words {
     public static final String AMPERSAND = "&";
     public static final String ASSOCIATED_ARTIFACTS = "associatedArtifacts";
     public static final String ASTERISK = "*";
+    public static final String AUTHORIZATION = "Authorization";
     public static final String BODY = "body";
     public static final String BOKMAAL_CODE = "nb";
     public static final String BUCKETS = "buckets";
@@ -41,14 +44,19 @@ public final class Words {
     public static final String CREATED_DATE = "createdDate";
     public static final String CREATOR = "Creator";
     public static final String CRISTIN_AS_TYPE = "Cristin";
+    public static final String CURATING_INSTITUTIONS = "curatingInstitutions";
+    public static final String CUSTOMER_ID = "customerId";
     public static final String DOI = "doi";
     public static final String DOIREQUESTS_INDEX = "doirequests";
     public static final String DOT = ".";
     public static final String ENGLISH_CODE = "en";
     public static final String ENTITY_DESCRIPTION = "entityDescription";
+    public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_PATH =
+            "/entityDescription/contributors";
     public static final String EQUAL = "=";
     public static final String FILES = "files";
     public static final String FILES_STATUS = "filesStatus";
+    public static final String FIRST_NAME = "firstName";
     public static final String FROM = "from";
     public static final String FUNDINGS = "fundings";
     public static final String FUNDING_SOURCE = "fundingSource";
@@ -67,6 +75,7 @@ public final class Words {
     public static final String KEYWORD = "keyword";
     public static final String LABELS = "labels";
     public static final String LANGUAGE = "language";
+    public static final String LAST_NAME = "lastName";
     public static final String LICENSE = "license";
     public static final String MAIN_TITLE = "mainTitle";
     public static final String MESSAGES = "messages";
@@ -79,6 +88,7 @@ public final class Words {
     public static final String NYNORSK_CODE = "nn";
     public static final String ONLINE_ISSN = "onlineIssn";
     public static final String ORC_ID = "orcId";
+    public static final String ORGANIZATION = "organization";
     public static final String OWNER = "owner";
     public static final String OWNER_AFFILIATION = "ownerAffiliation";
     public static final String PAGE = "page";
@@ -90,9 +100,11 @@ public final class Words {
     public static final String PREFIX = "(";
     public static final String PRINT_ISSN = "printIssn";
     public static final String PROJECTS_ID = "projects.id.keyword";
+    public static final String PUBLICATION = "publication";
     public static final String PUBLICATION_CONTEXT = "publicationContext";
     public static final String PUBLICATION_DATE = "publicationDate";
     public static final String PUBLICATION_INSTANCE = "publicationInstance";
+    public static final String PUBLICATION_STATUS = "publicationStatus";
     public static final String PUBLISHED_DATE = "publishedDate";
     public static final String PUBLISHER = "publisher";
     public static final String PUBLISHING_REQUESTS_INDEX = "publishingrequests";
@@ -130,14 +142,13 @@ public final class Words {
     public static final String TOP_LEVEL_ORGANIZATIONS = "topLevelOrganizations";
     public static final String TYPE = "type";
     public static final String UNDERSCORE = "_";
+    public static final String USERNAME = "username";
     public static final String VALUE = "value";
     public static final String VERIFICATION_STATUS = "verificationStatus";
     public static final String VERIFIED = "Verified";
     public static final String VIEWED_BY = "viewedBy";
     public static final String YEAR = "year";
     public static final String ZERO = "0";
-    public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_PATH =
-            "/entityDescription/contributors";
 
     @JacocoGenerated
     public Words() {}

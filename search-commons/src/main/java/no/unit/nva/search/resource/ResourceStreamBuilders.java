@@ -51,6 +51,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Stream builders for resource queries.
+ *
+ * @author Stig Norland
+ */
 public class ResourceStreamBuilders {
 
     private final QueryKeys<ResourceParameter> parameters;

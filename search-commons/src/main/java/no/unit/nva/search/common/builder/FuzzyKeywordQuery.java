@@ -19,6 +19,8 @@ import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 /**
+ * Class for building OpenSearch queries that search for keywords with fuzzy matching.
+ *
  * @author Stig Norland
  */
 public class FuzzyKeywordQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBuilder<K> {
