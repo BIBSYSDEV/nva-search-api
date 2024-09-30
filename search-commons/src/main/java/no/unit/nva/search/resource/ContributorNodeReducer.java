@@ -21,7 +21,7 @@ import no.unit.nva.search.common.records.JsonNodeMutator;
  */
 public final class ContributorNodeReducer implements JsonNodeMutator {
 
-    static final int MINIMUM_INCLUDED_CONTRIBUTORS = 5;
+    static final int MINIMUM_INCLUDED_CONTRIBUTORS = 50;
     static final JsonPointer CONTRIBUTORS_PATH_POINTER =
             JsonPointer.compile(ENTITY_DESCRIPTION_CONTRIBUTORS_PATH);
 
