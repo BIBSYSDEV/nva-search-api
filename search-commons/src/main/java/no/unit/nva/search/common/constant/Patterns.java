@@ -61,7 +61,7 @@ public final class Patterns {
      */
     public static final String PATTERN_IS_FUNDING = "[\\w]+[:\\s]{1}.+";
 
-    public static final String PATTERN_IS_NONE_PRINTABLE_CHARACTERS = "[^ -~]+";
+    public static final String PATTERN_IS_NONE_PRINTABLE_CHARACTERS = "\\p{C}";
 
     @JacocoGenerated
     public Patterns() {}

@@ -259,7 +259,6 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
             }
         }
 
-
         @Override
         protected boolean isKeyValid(String keyName) {
             return ImportCandidateParameter.keyFromString(keyName)
