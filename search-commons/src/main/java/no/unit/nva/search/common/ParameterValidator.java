@@ -7,13 +7,17 @@ import static no.unit.nva.constants.Words.ALL;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.HTTPS;
 import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
+import static no.unit.nva.search.common.constant.Functions.decodeUTF;
 import static no.unit.nva.search.common.constant.Functions.mergeWithColonOrComma;
 
 import static java.util.Objects.isNull;
+import static nva.commons.core.StringUtils.EMPTY_STRING;
 
 import no.unit.nva.constants.ErrorMessages;
+import no.unit.nva.search.common.constant.Patterns;
 import no.unit.nva.search.common.enums.ParameterKey;
 
+import no.unit.nva.search.common.enums.ValueEncoding;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
 
@@ -171,6 +175,11 @@ public abstract class ParameterValidator<
             final var errorMessage = key.errorMessage().formatted(keyName, value);
             throw new BadRequestException(errorMessage);
         }
+    }
+
+    protected String getDecodedValue(ParameterKey<K> qpKey, String value) {
+        return (qpKey.valueEncoding() == ValueEncoding.NONE ? value : decodeUTF(value))
+                .replaceAll(Patterns.PATTERN_IS_NONE_PRINTABLE_CHARACTERS, EMPTY_STRING);
     }
 
     /** Adds query and path parameters from requestInfo. */

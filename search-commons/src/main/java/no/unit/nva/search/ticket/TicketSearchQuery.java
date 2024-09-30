@@ -11,7 +11,6 @@ import static no.unit.nva.constants.Words.POST_FILTER;
 import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.constants.Words.SEARCH;
 import static no.unit.nva.constants.Words.TICKETS;
-import static no.unit.nva.search.common.constant.Functions.decodeUTF;
 import static no.unit.nva.search.common.constant.Functions.toEnumStrings;
 import static no.unit.nva.search.common.constant.Functions.trimSpace;
 import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
@@ -48,7 +47,6 @@ import no.unit.nva.search.common.builder.AcrossFieldsQuery;
 import no.unit.nva.search.common.builder.KeywordQuery;
 import no.unit.nva.search.common.constant.Functions;
 import no.unit.nva.search.common.enums.SortKey;
-import no.unit.nva.search.common.enums.ValueEncoding;
 
 import nva.commons.core.JacocoGenerated;
 
@@ -293,8 +291,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
         @Override
         protected void setValue(String key, String value) {
             var qpKey = TicketParameter.keyFromString(key);
-            var decodedValue =
-                    qpKey.valueEncoding() == ValueEncoding.NONE ? value : decodeUTF(value);
+            var decodedValue = getDecodedValue(qpKey, value);
             switch (qpKey) {
                 case INVALID -> invalidKeys.add(key);
                 case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION ->

@@ -43,7 +43,6 @@ import no.unit.nva.search.common.ParameterValidator;
 import no.unit.nva.search.common.SearchQuery;
 import no.unit.nva.search.common.constant.Functions;
 import no.unit.nva.search.common.enums.SortKey;
-import no.unit.nva.search.common.enums.ValueEncoding;
 
 import nva.commons.core.JacocoGenerated;
 
@@ -246,10 +245,8 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
         @Override
         protected void setValue(String key, String value) {
             var qpKey = ImportCandidateParameter.keyFromString(key);
-            var decodedValue =
-                    qpKey.valueEncoding() == ValueEncoding.NONE
-                            ? value
-                            : Functions.decodeUTF(value);
+            var decodedValue = getDecodedValue(qpKey, value);
+
             switch (qpKey) {
                 case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION ->
                         searchQuery.parameters().set(qpKey, decodedValue);
@@ -261,6 +258,7 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
                 default -> mergeToKey(qpKey, decodedValue);
             }
         }
+
 
         @Override
         protected boolean isKeyValid(String keyName) {

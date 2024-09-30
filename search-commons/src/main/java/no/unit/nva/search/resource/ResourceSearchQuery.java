@@ -13,7 +13,6 @@ import static no.unit.nva.constants.Words.PI;
 import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.constants.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.constants.Words.STATUS;
-import static no.unit.nva.search.common.constant.Functions.decodeUTF;
 import static no.unit.nva.search.common.constant.Functions.trimSpace;
 import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search.resource.Constants.CRISTIN_ORGANIZATION_PATH;
@@ -52,7 +51,6 @@ import no.unit.nva.search.common.ParameterValidator;
 import no.unit.nva.search.common.Query;
 import no.unit.nva.search.common.SearchQuery;
 import no.unit.nva.search.common.enums.SortKey;
-import no.unit.nva.search.common.enums.ValueEncoding;
 import no.unit.nva.search.common.records.HttpResponseFormatter;
 
 import nva.commons.core.JacocoGenerated;
@@ -330,8 +328,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         @Override
         protected void setValue(String key, String value) {
             var qpKey = ResourceParameter.keyFromString(key);
-            var decodedValue =
-                    qpKey.valueEncoding() == ValueEncoding.NONE ? value : decodeUTF(value);
+            var decodedValue = getDecodedValue(qpKey, value);
             switch (qpKey) {
                 case INVALID -> invalidKeys.add(key);
                 case UNIT, UNIT_NOT, TOP_LEVEL_ORGANIZATION ->
