@@ -2,6 +2,7 @@ package no.unit.nva.indexingclient;
 
 import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.constants.Words.RESOURCES;
+import static no.unit.nva.indexingclient.models.Constants.SHARD_ID;
 import static no.unit.nva.indexingclient.models.RestHighLevelClientWrapper.defaultRestHighLevelClientWrapper;
 
 import static nva.commons.core.attempt.Try.attempt;
@@ -26,7 +27,6 @@ import org.opensearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.opensearch.action.bulk.BulkRequest;
 import org.opensearch.action.bulk.BulkResponse;
 import org.opensearch.action.delete.DeleteRequest;
-import org.opensearch.action.delete.DeleteResponse;
 import org.opensearch.action.index.IndexRequest;
 import org.opensearch.action.support.ActiveShardCount;
 import org.opensearch.action.support.WriteRequest.RefreshPolicy;
@@ -95,19 +95,20 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
      * @param identifier og document
      */
     public void removeDocumentFromResourcesIndex(String identifier) throws IOException {
-        DeleteResponse deleteResponse =
-                openSearchClient.delete(
-                        new DeleteRequest(RESOURCES, identifier), getRequestOptions());
+        var deleteRequest = deleteDocumentRequest(RESOURCES, identifier);
+        var deleteResponse = openSearchClient.delete(deleteRequest, getRequestOptions());
         if (deleteResponse.getResult() == DocWriteResponse.Result.NOT_FOUND) {
             logger.warn(DOCUMENT_WITH_ID_WAS_NOT_FOUND_IN_SEARCH_INFRASTRUCTURE, identifier);
         }
     }
 
+    private static DeleteRequest deleteDocumentRequest(String index, String identifier) {
+        return new DeleteRequest(index, identifier).routing(SHARD_ID);
+    }
+
     public void removeDocumentFromImportCandidateIndex(String identifier) throws IOException {
-        DeleteResponse deleteResponse =
-                openSearchClient.delete(
-                        new DeleteRequest(IMPORT_CANDIDATES_INDEX, identifier),
-                        getRequestOptions());
+        var deleteRequest = deleteDocumentRequest(IMPORT_CANDIDATES_INDEX, identifier);
+        var deleteResponse = openSearchClient.delete(deleteRequest, getRequestOptions());
         if (deleteResponse.getResult() == DocWriteResponse.Result.NOT_FOUND) {
             logger.warn(DOCUMENT_WITH_ID_WAS_NOT_FOUND_IN_SEARCH_INFRASTRUCTURE, identifier);
         }
