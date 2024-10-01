@@ -76,13 +76,19 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.constants.Words;
+import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexingclient.IndexingClient;
+import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
+import no.unit.nva.indexingclient.models.IndexDocument;
 import no.unit.nva.indexingclient.models.RestHighLevelClientWrapper;
 import no.unit.nva.search.common.csv.ResourceCsvTransformer;
 import no.unit.nva.search.common.jwt.CachedJwtProvider;
+import no.unit.nva.search.common.records.HttpResponseFormatter;
 import no.unit.nva.search.scroll.ScrollClient;
 import no.unit.nva.search.scroll.ScrollQuery;
 
@@ -1035,22 +1041,49 @@ class ResourceClientTest {
     }
 
     @Test
-    void shouldRemoveDocumentFromIndex() throws BadRequestException, IOException {
-        var documentIdentifier = "018c7c03c7cd-2e2ce462-4428-4169-a959-cdde629fe139";
-        indexingClient.removeDocumentFromResourcesIndex(documentIdentifier);
-        var response =
-                ResourceSearchQuery.builder()
-                        .withRequiredParameters(FROM, SIZE, AGGREGATION)
-                        .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                        .fromTestParameterMap(Map.of(ID, documentIdentifier))
-                        .build()
-                        .withFilter()
-                        .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
-                        .apply()
-                        .doSearch(searchClient);
+    void shouldRemoveDocumentFromIndexWithShards()
+            throws BadRequestException, IOException, InterruptedException {
+        var indexDocument = indexDocumentWithIdentifier();
+        indexingClient.addDocumentToIndex(indexDocument);
+        Thread.sleep(1000);
+        var response = fetchDocumentWithId(indexDocument);
 
         var pagedSearchResourceDto = response.toPagedResponse();
 
-        assertThat(pagedSearchResourceDto.hits(), is(emptyIterable()));
+        assertThat(pagedSearchResourceDto.hits(), hasSize(1));
+
+        indexingClient.removeDocumentFromResourcesIndex(indexDocument.getDocumentIdentifier());
+        Thread.sleep(1000);
+        var responseAfterDeletion = fetchDocumentWithId(indexDocument);
+
+        assertThat(responseAfterDeletion.toPagedResponse().hits(), is(emptyIterable()));
+    }
+
+    private static HttpResponseFormatter<ResourceParameter> fetchDocumentWithId(
+            IndexDocument indexDocument) throws BadRequestException {
+        return ResourceSearchQuery.builder()
+                .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                .fromTestParameterMap(Map.of(ID, indexDocument.getDocumentIdentifier()))
+                .build()
+                .withFilter()
+                .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                .apply()
+                .doSearch(searchClient);
+    }
+
+    private static IndexDocument indexDocumentWithIdentifier() throws JsonProcessingException {
+        var identifier = SortableIdentifier.next();
+        var document =
+                """
+                {
+                     "type": "Publication",
+                     "status": "PUBLISHED",
+                     "identifier": "__ID__"
+                }
+                """
+                        .replace("__ID__", identifier.toString());
+        var jsonNode = JsonUtils.dtoObjectMapper.readTree(document);
+        return new IndexDocument(new EventConsumptionAttributes(RESOURCES, identifier), jsonNode);
     }
 }
