@@ -8,7 +8,6 @@ import static no.unit.nva.constants.Words.CONTENT_TYPE;
 import static nva.commons.core.attempt.Try.attempt;
 
 import static java.net.HttpURLConnection.HTTP_OK;
-import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.joining;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -64,7 +63,7 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
     }
 
     public R doSearch(Q query) {
-        if (nonNull(query.filters()) && query.filters().hasContent()) {
+        if (query.filters().hasContent()) {
             logger.info(query.filters().toString());
         }
         queryBuilderStart = query.getStartTime();

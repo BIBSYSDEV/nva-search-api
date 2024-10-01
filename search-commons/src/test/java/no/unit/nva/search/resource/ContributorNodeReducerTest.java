@@ -27,6 +27,6 @@ class ContributorNodeReducerTest {
         var transformed = firstFewContributorsOrVerifiedOrNorwegian().transform(sourceNode);
         var count = transformed.withArray("/entityDescription/contributors").size();
 
-        assertThat(count, is(equalTo(8)));
+        assertThat(count, is(equalTo(6)));
     }
 }
