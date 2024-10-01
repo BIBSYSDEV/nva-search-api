@@ -28,6 +28,11 @@ import nva.commons.core.JacocoGenerated;
 import java.net.HttpURLConnection;
 import java.util.List;
 
+/**
+ * Handler for searching resources.
+ *
+ * <p>Searches for resources in the OpenSearch index.
+ */
 public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
 
     private final ResourceClient opensearchClient;

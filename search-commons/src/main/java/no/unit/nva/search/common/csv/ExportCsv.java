@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
+ * Class for exporting data to CSV.
+ *
  * @author Rurik Greenall
  * @author Aasarød
  * @author Stig Norland

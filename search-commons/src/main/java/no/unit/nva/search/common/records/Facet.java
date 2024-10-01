@@ -10,7 +10,13 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
+ * Facet is a class that represents a facet in a search result.
+ *
  * @author Stig Norland
+ * @param id the URI of the facet. The URI is a unique identifier for the facet.
+ * @param key the key of the facet.
+ * @param count the count of the facet.
+ * @param labels the labels of the facet.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record Facet(

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import nva.commons.core.JacocoGenerated;
 
 /**
+ * UsernamePasswordWrapper is a class that wraps a username and a password.
+ *
  * @author Sondre Vestad
  */
 public class UsernamePasswordWrapper {

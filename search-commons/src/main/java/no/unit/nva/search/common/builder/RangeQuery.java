@@ -20,6 +20,8 @@ import java.util.stream.Stream;
  * Class for building OpenSearch queries that search for a range of values.
  *
  * @author Stig Norland
+ * @param <K> the type of the parameter keys used in the query. The parameter keys are used to
+ *     define the parameters that can be used in the query.
  */
 public class RangeQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBuilder<K> {
 
