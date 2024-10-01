@@ -67,6 +67,8 @@ import java.util.stream.Stream;
  * SearchQuery is a class that represents a query to the search service.
  *
  * @author Stig Norland
+ * @param <K> the type of the parameter keys used in the query. The parameter keys are used to
+ *     define the parameters that can be used in the query.
  */
 @SuppressWarnings({
     "PMD.CouplingBetweenObjects",

@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * TicketSort is an enum for sorting tickets.
+ *
  * @author Stig Norland
  */
 public enum TicketSort implements SortKey {

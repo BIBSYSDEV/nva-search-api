@@ -180,7 +180,7 @@ public abstract class ParameterValidator<
 
     protected String getDecodedValue(ParameterKey<K> qpKey, String value) {
         return (qpKey.valueEncoding() == ValueEncoding.NONE ? value : decodeUTF(value))
-                .replaceAll(Patterns.PATTERN_IS_NONE_PRINTABLE_CHARACTERS, EMPTY_STRING);
+                .replaceAll(Patterns.PATTERN_IS_NON_PRINTABLE_CHARACTERS, EMPTY_STRING);
     }
 
     /** Adds query and path parameters from requestInfo. */

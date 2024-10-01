@@ -21,6 +21,8 @@ import java.util.stream.Stream;
  * This class operates on the queryKeys that a request provides.
  *
  * @author Stig Norland
+ * @param <K> the type of the parameter keys used in the query. The parameter keys are used to
+ *     define the parameters that can be used in the query.
  */
 public class QueryKeys<K extends Enum<K> & ParameterKey<K>> {
 

@@ -32,6 +32,8 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
+ * Constants for the import candidates search.
+ *
  * @author Stig Norland
  */
 public final class Constants {

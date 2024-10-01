@@ -259,6 +259,11 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         return this;
     }
 
+    /**
+     * ResourceParameterValidator is a class that validates parameters for a ResourceSearchQuery.
+     *
+     * @author Stig Norland
+     */
     public static class ResourceParameterValidator
             extends ParameterValidator<ResourceParameter, ResourceSearchQuery> {
 

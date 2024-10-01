@@ -28,6 +28,8 @@ import java.util.stream.Stream;
  * Interface for defining the keys used in the search service.
  *
  * @author Stig Norland
+ * @param <K> the type of the parameter keys used in the query. The parameter keys are used to
+ *     define the parameters that can be used in the query.
  */
 public interface ParameterKey<K extends Enum<K> & ParameterKey<K>> {
     static Predicate<ParameterKey<?>> equalTo(String name) {

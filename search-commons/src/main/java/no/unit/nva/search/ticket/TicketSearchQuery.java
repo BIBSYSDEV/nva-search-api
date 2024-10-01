@@ -65,6 +65,8 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 /**
+ * TicketSearchQuery is a class that searches for tickets.
+ *
  * @author Stig Norland
  * @author Sondre Vestad
  */

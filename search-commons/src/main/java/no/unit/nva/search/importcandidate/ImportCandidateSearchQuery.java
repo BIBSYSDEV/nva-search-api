@@ -60,6 +60,8 @@ import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 /**
+ * ImportCandidateSearchQuery is a class that represents a search query for import candidates.
+ *
  * @author Stig Norland
  */
 public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidateParameter> {

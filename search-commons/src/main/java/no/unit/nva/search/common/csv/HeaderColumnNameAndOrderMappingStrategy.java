@@ -16,7 +16,10 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 /**
+ * Class for exporting data to CSV.
+ *
  * @author Rurik Greenall
+ * @param <T> The type of the bean to be exported.
  */
 public class HeaderColumnNameAndOrderMappingStrategy<T> extends HeaderColumnNameMappingStrategy<T> {
     public HeaderColumnNameAndOrderMappingStrategy() {
