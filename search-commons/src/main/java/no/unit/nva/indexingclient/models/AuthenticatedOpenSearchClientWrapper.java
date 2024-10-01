@@ -26,6 +26,7 @@ public class AuthenticatedOpenSearchClientWrapper {
      * Creates a new OpensearchClient.
      *
      * @param openSearchClient client to use for access to external search infrastructure
+     * @param cachedJwtProvider provider for JWT tokens
      */
     public AuthenticatedOpenSearchClientWrapper(
             RestHighLevelClientWrapper openSearchClient, CachedJwtProvider cachedJwtProvider) {
@@ -33,6 +34,13 @@ public class AuthenticatedOpenSearchClientWrapper {
         this.cachedJwtProvider = cachedJwtProvider;
     }
 
+    /**
+     * Creates a new OpensearchClient.
+     *
+     * @param secretsReader reader for secrets (used to fetch the username and password for the
+     *     search infrastructure)
+     * @return CognitoCredentials for the search infrastructure
+     */
     protected static CognitoCredentials createCognitoCredentials(SecretsReader secretsReader) {
         var credentials =
                 secretsReader.fetchClassSecret(

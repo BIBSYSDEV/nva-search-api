@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 
 /**
+ * UserSettings is a class that represents a user settings.
+ *
  * @author Stig Norland
  */
 @JsonInclude

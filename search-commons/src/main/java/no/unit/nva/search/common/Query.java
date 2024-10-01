@@ -14,6 +14,8 @@ import java.util.stream.Stream;
  * Query is a class that represents a query to the search service.
  *
  * @author Stig Norland
+ * @param <K> the type of the parameter keys used in the query. The parameter keys are used to
+ *     define the parameters that can be used in the query.
  */
 public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
     private final transient Instant startTime;
@@ -30,7 +32,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
      * Method to mimic Domain driven design.
      *
      * @param queryClient simple service to do i/o (http)
-     * @return ResponseFormatter<ParameterKey>
+     * @return HttpResponseFormatter a formatter for the response
      */
     public abstract <R, Q extends Query<K>> HttpResponseFormatter<K> doSearch(
             OpenSearchClient<R, Q> queryClient);

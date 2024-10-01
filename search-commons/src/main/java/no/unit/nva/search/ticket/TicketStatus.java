@@ -9,6 +9,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
+ * TicketStatus is an enum for sorting tickets.
+ *
  * @author Stig Norland
  */
 public enum TicketStatus {

@@ -40,6 +40,10 @@ import java.util.function.BinaryOperator;
  * Abstract class for OpenSearch clients.
  *
  * @author Stig Norland
+ * @param <R> the type of the response object. The response object is the result of the search
+ *     query.
+ * @param <Q> the type of the query object. The query object is the object that contains the
+ *     parameters for the search query.
  */
 public abstract class OpenSearchClient<R, Q extends Query<?>> {
 

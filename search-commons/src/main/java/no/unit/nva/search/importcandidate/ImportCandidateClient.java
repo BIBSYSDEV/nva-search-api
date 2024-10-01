@@ -18,6 +18,8 @@ import java.net.http.HttpResponse;
 import java.util.function.BinaryOperator;
 
 /**
+ * ImportCandidateClient is a class that sends a request to the search index.
+ *
  * @author Stig Norland
  */
 public class ImportCandidateClient

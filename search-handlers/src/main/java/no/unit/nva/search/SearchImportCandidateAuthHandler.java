@@ -22,6 +22,12 @@ import nva.commons.core.JacocoGenerated;
 import java.net.HttpURLConnection;
 import java.util.List;
 
+/**
+ * Handler for searching import candidates.
+ *
+ * @author Stig Norland
+ * @author Lars-Olav Vågene
+ */
 public class SearchImportCandidateAuthHandler extends ApiGatewayHandler<Void, String> {
 
     private final ImportCandidateClient opensearchClient;

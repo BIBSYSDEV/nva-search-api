@@ -21,6 +21,8 @@ import java.util.stream.Stream;
  * <p>Also holds key and can return value as <samp>optional stream</samp>
  *
  * @author Stig Norland
+ * @param <K> the type of the parameter keys used in the query. The parameter keys are used to
+ *     define the parameters that can be used in the query.
  */
 @SuppressWarnings({"PMD.ShortMethodName"})
 public class AsType<K extends Enum<K> & ParameterKey<K>> {
