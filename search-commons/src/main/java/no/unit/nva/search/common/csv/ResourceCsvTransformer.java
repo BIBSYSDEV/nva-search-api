@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
+ * Class for exporting data to CSV.
+ *
  * @author Rurik Greenall
  * @author Aasarød
  * @author Eyob Teweldemedhin

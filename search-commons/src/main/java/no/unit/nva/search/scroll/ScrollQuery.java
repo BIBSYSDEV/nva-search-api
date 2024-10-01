@@ -26,6 +26,8 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
+ * ScrollQuery is a class that sends a request to the search index.
+ *
  * @author Sondre Vestad
  */
 public final class ScrollQuery extends Query<ScrollParameter> {

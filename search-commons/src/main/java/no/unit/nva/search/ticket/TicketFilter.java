@@ -28,6 +28,8 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
+ * TicketFilter is a class that filters tickets.
+ *
  * @author Stig Norland
  */
 public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
@@ -48,7 +50,7 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
     /**
      * Authorize and set 'ViewScope'.
      *
-     * <p>Authorize and set filters -> ticketTypes, organization & owner
+     * <p>Authorize and set filters -> ticketTypes, organization and owner
      *
      * <p>This is to avoid the Query to return documents that are not available for the user.
      *

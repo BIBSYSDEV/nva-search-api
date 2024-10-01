@@ -25,7 +25,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * HttpResponseFormatter is a class that formats a search response.
+ *
  * @author Stig Norland
+ * @param <K> the type of the parameter keys used in the query. The parameter keys are used to
+ *     define the parameters that can be used in the query.
  */
 public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
     private final SwsResponse response;

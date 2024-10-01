@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * PagedSearchBuilder is a class that builds
+ *
  * @author Stig Norland
  */
 public class PagedSearchBuilder {

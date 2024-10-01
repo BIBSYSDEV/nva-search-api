@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * ImportCandidateSort is an enum for sorting import candidates.
+ *
  * @author Stig Norland
  */
 public enum ImportCandidateSort implements SortKey {

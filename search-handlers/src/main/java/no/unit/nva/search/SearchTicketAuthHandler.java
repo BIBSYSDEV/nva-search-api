@@ -23,6 +23,11 @@ import nva.commons.core.JacocoGenerated;
 import java.net.HttpURLConnection;
 import java.util.List;
 
+/**
+ * Handler for searching tickets.
+ *
+ * <p>Searches for tickets in the OpenSearch index.
+ */
 public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
 
     private final TicketClient opensearchClient;
