@@ -78,7 +78,6 @@ import java.util.stream.Stream;
 public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Query<K> {
 
     protected static final Logger logger = LoggerFactory.getLogger(SearchQuery.class);
-    public final transient QueryFilter filters;
     private transient MediaType mediaType;
 
     /**
@@ -90,7 +89,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
 
     protected SearchQuery() {
         super();
-        filters = new QueryFilter();
         queryKeys = new QueryKeys<>(keyFields());
         setMediaType(JSON_UTF_8.toString());
     }
@@ -256,7 +254,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     }
 
     protected AggregationBuilder builderAggregationsWithFilter() {
-        var aggrFilter = AggregationBuilders.filter(POST_FILTER, filters.get());
+        var aggrFilter = AggregationBuilders.filter(POST_FILTER, filters().get());
         builderAggregations().forEach(aggrFilter::subAggregation);
         return aggrFilter;
     }
@@ -271,7 +269,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
                 .query(queryBuilder)
                 .size(size().as())
                 .from(from().as())
-                .postFilter(filters.get())
+                .postFilter(filters().get())
                 .trackTotalHits(true);
     }
 

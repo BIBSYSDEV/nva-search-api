@@ -223,7 +223,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
         final var filterId =
                 new TermQueryBuilder(ORGANIZATION_ID_KEYWORD, randomUri)
                         .queryName(ORGANIZATION_ID.asCamelCase() + POST_FILTER);
-        filters.set(filterId);
+        filters().set(filterId);
     }
 
     public static class TicketParameterValidator

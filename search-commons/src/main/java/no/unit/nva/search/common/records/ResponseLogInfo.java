@@ -21,6 +21,7 @@ public record ResponseLogInfo(
         long networkDuration,
         long prePostDuration,
         long totalDuration,
+        String filters,
         String query)
         implements JsonSerializable {
 
@@ -35,6 +36,7 @@ public record ResponseLogInfo(
         private long totalTime;
         private long fetchTime;
         private long searchTime;
+        private String filters;
         private String searchQuery;
 
         private Builder() {}
@@ -69,6 +71,11 @@ public record ResponseLogInfo(
             return this;
         }
 
+        public Builder withFilters(String filters) {
+            this.filters = filters;
+            return this;
+        }
+
         public Builder withSwsResponse(SwsResponse response) {
             return this.withOpensearchResponseTime(response.took())
                     .withTotalHits(response.getTotalSize())
@@ -83,6 +90,7 @@ public record ResponseLogInfo(
                             fetchTime - searchTime,
                             totalTime - fetchTime,
                             totalTime,
+                            filters,
                             searchQuery)
                     .toJsonString();
         }

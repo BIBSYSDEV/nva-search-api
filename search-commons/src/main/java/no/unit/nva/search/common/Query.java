@@ -21,6 +21,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
     private final transient Instant startTime;
     protected transient URI infrastructureApiUri = URI.create(readSearchInfrastructureApiUri());
     protected transient QueryKeys<K> queryKeys;
+    protected transient QueryFilter queryFilter = new QueryFilter();
 
     protected Query() {
         startTime = Instant.now();
@@ -41,6 +42,10 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
 
     public QueryKeys<K> parameters() {
         return queryKeys;
+    }
+
+    public QueryFilter filters() {
+        return queryFilter;
     }
 
     public Instant getStartTime() {
