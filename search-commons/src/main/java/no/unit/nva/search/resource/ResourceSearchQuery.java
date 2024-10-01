@@ -106,9 +106,10 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
      * <p>i.e.In order to return any results, withRequiredStatus must be set
      */
     private void assignStatusImpossibleWhiteList() {
-        filters.set(
-                new TermsQueryBuilder(STATUS_KEYWORD, UUID.randomUUID().toString())
-                        .queryName(STATUS));
+        filters()
+                .set(
+                        new TermsQueryBuilder(STATUS_KEYWORD, UUID.randomUUID().toString())
+                                .queryName(STATUS));
     }
 
     @Override

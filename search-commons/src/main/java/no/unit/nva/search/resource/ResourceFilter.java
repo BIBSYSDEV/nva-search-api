@@ -39,7 +39,7 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
 
     public ResourceFilter(ResourceSearchQuery query) {
         this.resourceSearchQuery = query;
-        this.resourceSearchQuery.filters.set();
+        this.resourceSearchQuery.filters().set();
     }
 
     @Override
@@ -74,7 +74,7 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
                         .map(PublicationStatus::toString)
                         .toArray(String[]::new);
         final var filter = new TermsQueryBuilder(STATUS_KEYWORD, values).queryName(STATUS);
-        this.resourceSearchQuery.filters.add(filter);
+        this.resourceSearchQuery.filters().add(filter);
         return this;
     }
 
@@ -129,7 +129,7 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
         final var filter =
                 new TermQueryBuilder(PUBLISHER_ID_KEYWORD, publisher.toString())
                         .queryName(PUBLISHER);
-        this.resourceSearchQuery.filters.add(filter);
+        this.resourceSearchQuery.filters().add(filter);
         return this;
     }
 
@@ -154,7 +154,7 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
                                         .queryName(CURATING_INSTITUTIONS))
                         .minimumShouldMatch(1)
                         .queryName(ORGANIZATION);
-        this.resourceSearchQuery.filters.add(filter);
+        this.resourceSearchQuery.filters().add(filter);
         return this;
     }
 

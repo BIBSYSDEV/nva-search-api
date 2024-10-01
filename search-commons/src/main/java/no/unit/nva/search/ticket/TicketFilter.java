@@ -39,7 +39,7 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
 
     public TicketFilter(TicketSearchQuery ticketSearchQuery) {
         this.ticketSearchQuery = ticketSearchQuery;
-        this.ticketSearchQuery.filters.set();
+        this.ticketSearchQuery.filters().set();
     }
 
     @Override
@@ -105,7 +105,7 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
         if (!ticketTypeList.isEmpty()) {
             disMax.add(new TermsQueryBuilder(TYPE_KEYWORD, ticketTypeList));
         }
-        this.ticketSearchQuery.filters.add(disMax);
+        this.ticketSearchQuery.filters().add(disMax);
         return this;
     }
 
@@ -127,7 +127,7 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
                         .orElseThrow()
                         .getValue()
                         .queryName(ORGANIZATION_ID.asCamelCase() + POST_FILTER);
-        this.ticketSearchQuery.filters.add(organisationId);
+        this.ticketSearchQuery.filters().add(organisationId);
         return this;
     }
 
