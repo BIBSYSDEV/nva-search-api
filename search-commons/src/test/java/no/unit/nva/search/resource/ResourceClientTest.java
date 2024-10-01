@@ -29,7 +29,6 @@ import static no.unit.nva.constants.Words.TYPE;
 import static no.unit.nva.constants.Words.ZERO;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.common.Containers.container;
-import static no.unit.nva.search.common.Containers.indexingClient;
 import static no.unit.nva.search.common.Containers.loadMapFromResource;
 import static no.unit.nva.search.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search.common.MockedHttpResponse.mockedFutureFailed;
@@ -59,6 +58,7 @@ import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
@@ -79,7 +79,10 @@ import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import no.unit.nva.constants.Words;
+import no.unit.nva.indexingclient.IndexingClient;
+import no.unit.nva.indexingclient.models.RestHighLevelClientWrapper;
 import no.unit.nva.search.common.csv.ResourceCsvTransformer;
+import no.unit.nva.search.common.jwt.CachedJwtProvider;
 import no.unit.nva.search.scroll.ScrollClient;
 import no.unit.nva.search.scroll.ScrollQuery;
 
@@ -90,12 +93,14 @@ import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.paths.UriWrapper;
 
+import org.apache.http.HttpHost;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.opensearch.client.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -128,6 +133,7 @@ class ResourceClientTest {
 
     private static ScrollClient scrollClient;
     private static ResourceClient searchClient;
+    private static IndexingClient indexingClient;
 
     @BeforeAll
     static void setUp() {
@@ -143,6 +149,13 @@ class ResourceClientTest {
                 new ResourceClient(
                         HttpClient.newHttpClient(), cachedJwtProvider, userSettingsClient);
         scrollClient = new ScrollClient(HttpClient.newHttpClient(), cachedJwtProvider);
+        indexingClient = initiateIndexingClient(cachedJwtProvider);
+    }
+
+    private static IndexingClient initiateIndexingClient(CachedJwtProvider cachedJwtProvider) {
+        var restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
+        var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
+        return new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
     }
 
     static Stream<Arguments> uriPagingProvider() {
@@ -1019,5 +1032,25 @@ class ResourceClientTest {
                 "All page counts are within the specified range",
                 pageCounts,
                 everyItem(allOf(greaterThanOrEqualTo(min), lessThanOrEqualTo(max))));
+    }
+
+    @Test
+    void shouldRemoveDocumentFromIndex() throws BadRequestException, IOException {
+        var documentIdentifier = "018c7c03c7cd-2e2ce462-4428-4169-a959-cdde629fe139";
+        indexingClient.removeDocumentFromResourcesIndex(documentIdentifier);
+        var response =
+                ResourceSearchQuery.builder()
+                        .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                        .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                        .fromTestParameterMap(Map.of(ID, documentIdentifier))
+                        .build()
+                        .withFilter()
+                        .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                        .apply()
+                        .doSearch(searchClient);
+
+        var pagedSearchResourceDto = response.toPagedResponse();
+
+        assertThat(pagedSearchResourceDto.hits(), is(emptyIterable()));
     }
 }
