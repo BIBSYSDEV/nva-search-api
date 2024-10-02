@@ -19,6 +19,8 @@ import java.net.http.HttpResponse;
 import java.util.function.BinaryOperator;
 
 /**
+ * TicketClient is a class that sends a request to the search index.
+ *
  * @author Stig Norland
  */
 public class TicketClient extends OpenSearchClient<SwsResponse, TicketSearchQuery> {

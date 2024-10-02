@@ -1,6 +1,6 @@
 package no.unit.nva.search.ticket;
 
-import static no.unit.nva.search.common.constant.Words.POST_FILTER;
+import static no.unit.nva.constants.Words.POST_FILTER;
 import static no.unit.nva.search.ticket.Constants.OWNER_USERNAME;
 import static no.unit.nva.search.ticket.Constants.TYPE_KEYWORD;
 import static no.unit.nva.search.ticket.TicketParameter.ORGANIZATION_ID;
@@ -22,12 +22,14 @@ import org.opensearch.index.query.TermsQueryBuilder;
 
 import java.net.URI;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
 /**
+ * TicketFilter is a class that filters tickets.
+ *
  * @author Stig Norland
  */
 public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
@@ -37,7 +39,7 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
 
     public TicketFilter(TicketSearchQuery ticketSearchQuery) {
         this.ticketSearchQuery = ticketSearchQuery;
-        this.ticketSearchQuery.filters.set();
+        this.ticketSearchQuery.filters().set();
     }
 
     @Override
@@ -48,7 +50,7 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
     /**
      * Authorize and set 'ViewScope'.
      *
-     * <p>Authorize and set filters -> ticketTypes, organization & owner
+     * <p>Authorize and set filters -> ticketTypes, organization and owner
      *
      * <p>This is to avoid the Query to return documents that are not available for the user.
      *
@@ -77,8 +79,8 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
     }
 
     private boolean isSearchingForAllTickets(RequestInfo requestInfo) {
-        return requestInfo.userIsAuthorized(AccessRight.MANAGE_CUSTOMERS)
-                && !ticketSearchQuery.parameters().get(STATISTICS).isEmpty();
+        return ticketSearchQuery.parameters().isPresent(STATISTICS)
+                && requestInfo.userIsAuthorized(AccessRight.MANAGE_CUSTOMERS);
     }
 
     /**
@@ -103,7 +105,7 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
         if (!ticketTypeList.isEmpty()) {
             disMax.add(new TermsQueryBuilder(TYPE_KEYWORD, ticketTypeList));
         }
-        this.ticketSearchQuery.filters.add(disMax);
+        this.ticketSearchQuery.filters().add(disMax);
         return this;
     }
 
@@ -125,7 +127,7 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
                         .orElseThrow()
                         .getValue()
                         .queryName(ORGANIZATION_ID.asCamelCase() + POST_FILTER);
-        this.ticketSearchQuery.filters.add(organisationId);
+        this.ticketSearchQuery.filters().add(organisationId);
         return this;
     }
 
@@ -134,7 +136,8 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
     }
 
     private Set<TicketType> getAccessRights(List<AccessRight> accessRights) {
-        var allowed = new HashSet<TicketType>();
+
+        var allowed = EnumSet.noneOf(TicketType.class);
         if (accessRights.contains(MANAGE_DOI)) {
             allowed.add(TicketType.DOI_REQUEST);
         }

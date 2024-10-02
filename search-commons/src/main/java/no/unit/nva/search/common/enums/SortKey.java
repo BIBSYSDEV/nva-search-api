@@ -1,27 +1,19 @@
 package no.unit.nva.search.common.enums;
 
+import static no.unit.nva.constants.Words.UNDERSCORE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
-import static no.unit.nva.search.common.constant.Words.UNDERSCORE;
 
 import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
+ * Interface for defining the keys used in the search service.
+ *
  * @author Stig Norland
  */
 public interface SortKey {
-
-    String name();
-
-    String keyPattern();
-
-    Stream<String> jsonPaths();
-
-    String asCamelCase();
-
-    String asLowerCase();
 
     static Predicate<SortKey> equalTo(String name) {
         return key -> name.matches(key.keyPattern());
@@ -37,4 +29,14 @@ public interface SortKey {
                         .replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
         return "%s%s".formatted(PATTERN_IS_IGNORE_CASE, keyNameIgnoreUnderscoreExpression);
     }
+
+    String name();
+
+    String keyPattern();
+
+    Stream<String> jsonPaths();
+
+    String asCamelCase();
+
+    String asLowerCase();
 }

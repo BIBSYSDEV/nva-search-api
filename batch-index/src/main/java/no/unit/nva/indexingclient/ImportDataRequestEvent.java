@@ -1,5 +1,9 @@
 package no.unit.nva.indexingclient;
 
+import static no.unit.nva.constants.Words.SLASH;
+import static no.unit.nva.indexingclient.Constants.BATCH_INDEX_EVENT_TOPIC;
+import static no.unit.nva.indexingclient.Constants.S3_LOCATION_FIELD;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,9 +19,7 @@ import java.util.Optional;
 
 public class ImportDataRequestEvent implements EventBody, JsonSerializable {
 
-    public static final String S3_LOCATION_FIELD = "s3Location";
-    public static final String PATH_DELIMITER = "/";
-    public static final String START_OF_LISTING_INDEX = "startMarker";
+    private static final String START_OF_LISTING_INDEX = "startMarker";
 
     @JsonProperty(S3_LOCATION_FIELD)
     private final URI s3Location;
@@ -42,7 +44,7 @@ public class ImportDataRequestEvent implements EventBody, JsonSerializable {
 
     @Override
     public String getTopic() {
-        return BatchIndexingConstants.BATCH_INDEX_EVENT_TOPIC;
+        return BATCH_INDEX_EVENT_TOPIC;
     }
 
     public String getStartMarker() {
@@ -74,10 +76,9 @@ public class ImportDataRequestEvent implements EventBody, JsonSerializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ImportDataRequestEvent)) {
+        if (!(o instanceof ImportDataRequestEvent that)) {
             return false;
         }
-        ImportDataRequestEvent that = (ImportDataRequestEvent) o;
         return Objects.equals(getS3Location(), that.getS3Location())
                 && Objects.equals(getStartMarker(), that.getStartMarker());
     }
@@ -93,6 +94,6 @@ public class ImportDataRequestEvent implements EventBody, JsonSerializable {
     }
 
     private String removeRoot(String path) {
-        return path.startsWith(PATH_DELIMITER) ? path.substring(1) : path;
+        return path.startsWith(SLASH) ? path.substring(1) : path;
     }
 }

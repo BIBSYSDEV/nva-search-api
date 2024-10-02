@@ -1,10 +1,12 @@
 package no.unit.nva.search.common.enums;
 
-import static no.unit.nva.search.common.constant.Words.CHAR_UNDERSCORE;
+import static no.unit.nva.constants.Words.CHAR_UNDERSCORE;
 
 import org.apache.commons.text.CaseUtils;
 
 /**
+ * Enum for defining the types of parameters that can be used in the search service.
+ *
  * @author Stig Norland
  */
 public enum ParameterKind {
@@ -13,7 +15,7 @@ public enum ParameterKind {
      * Ignored parameters are not processed by standard or custom handling. Normally used together
      * with other parameters in custom handlers or paging.
      */
-    IGNORED,
+    FLAG,
     BOOLEAN,
     NUMBER,
     DATE,

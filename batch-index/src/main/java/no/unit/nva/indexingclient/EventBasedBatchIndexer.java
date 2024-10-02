@@ -1,9 +1,10 @@
 package no.unit.nva.indexingclient;
 
-import static no.unit.nva.indexingclient.BatchIndexingConstants.NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE;
-import static no.unit.nva.indexingclient.BatchIndexingConstants.defaultEsClient;
-import static no.unit.nva.indexingclient.BatchIndexingConstants.defaultEventBridgeClient;
-import static no.unit.nva.indexingclient.BatchIndexingConstants.defaultS3Client;
+import static no.unit.nva.indexingclient.Constants.NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE;
+import static no.unit.nva.indexingclient.Constants.RECURSION_ENABLED;
+import static no.unit.nva.indexingclient.Constants.defaultEsClient;
+import static no.unit.nva.indexingclient.Constants.defaultEventBridgeClient;
+import static no.unit.nva.indexingclient.Constants.defaultS3Client;
 import static no.unit.nva.indexingclient.EmitEventUtils.emitEvent;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -28,6 +29,7 @@ public class EventBasedBatchIndexer
         extends EventHandler<ImportDataRequestEvent, SortableIdentifier[]> {
 
     private static final Logger logger = LoggerFactory.getLogger(EventBasedBatchIndexer.class);
+
     private final S3Client s3Client;
     private final IndexingClient openSearchClient;
     private final EventBridgeClient eventBridgeClient;
@@ -57,7 +59,7 @@ public class EventBasedBatchIndexer
     @Override
     public void handleRequest(InputStream inputStream, OutputStream outputStream, Context context) {
         String inputString = IoUtils.streamToString(inputStream);
-        logger.info(inputString);
+        logger.debug(inputString);
         super.handleRequest(IoUtils.stringToStream(inputString), outputStream, context);
     }
 
@@ -66,12 +68,12 @@ public class EventBasedBatchIndexer
             ImportDataRequestEvent input,
             AwsEventBridgeEvent<ImportDataRequestEvent> event,
             Context context) {
-        logger.info("Indexing folder:" + input.getS3Location());
-        logger.info("Indexing lastEvaluatedKey:" + input.getStartMarker());
+        logger.debug("Indexing folder:" + input.getS3Location());
+        logger.debug("Indexing lastEvaluatedKey:" + input.getStartMarker());
         IndexingResult<SortableIdentifier> result =
                 new BatchIndexer(input, s3Client, openSearchClient, numberOfFilesPerEvent)
                         .processRequest();
-        if (result.truncated() && BatchIndexingConstants.RECURSION_ENABLED) {
+        if (result.truncated() && RECURSION_ENABLED) {
             emitEventToProcessNextBatch(input, context, result);
         }
         return result.failedResults().toArray(SortableIdentifier[]::new);

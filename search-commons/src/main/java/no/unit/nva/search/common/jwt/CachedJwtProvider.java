@@ -6,6 +6,8 @@ import java.time.Clock;
 import java.util.Date;
 
 /**
+ * Class for providing a cached JWT.
+ *
  * @author Sondre Vestad
  */
 public class CachedJwtProvider extends CachedValueProvider<DecodedJWT> {
@@ -17,6 +19,11 @@ public class CachedJwtProvider extends CachedValueProvider<DecodedJWT> {
         super();
         this.cognitoAuthenticator = cognitoAuthenticator;
         this.clock = clock;
+    }
+
+    public static CachedJwtProvider prepareWithAuthenticator(
+            CognitoAuthenticator cognitoAuthenticator) {
+        return new CachedJwtProvider(cognitoAuthenticator, Clock.systemDefaultZone());
     }
 
     @Override
@@ -32,10 +39,5 @@ public class CachedJwtProvider extends CachedValueProvider<DecodedJWT> {
     @Override
     protected DecodedJWT getNewValue() {
         return cognitoAuthenticator.fetchBearerToken();
-    }
-
-    public static CachedJwtProvider prepareWithAuthenticator(
-            CognitoAuthenticator cognitoAuthenticator) {
-        return new CachedJwtProvider(cognitoAuthenticator, Clock.systemDefaultZone());
     }
 }

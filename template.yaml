@@ -8,7 +8,7 @@ Globals:
   Function:
     Timeout: 60
     MemorySize: 1800
-    Runtime: java17
+    Runtime: java21
     Architectures:
       - arm64
     Environment:
@@ -236,9 +236,8 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Description: Lambda for searching Tickets
-      CodeUri: search-resources-api
+      CodeUri: search-handlers
       Handler: no.unit.nva.search.SearchTicketAuthHandler::handleRequest
-      Runtime: java17
       AutoPublishAlias: live
       DeploymentPreference:
         Enabled: true
@@ -250,7 +249,7 @@ Resources:
       Environment:
         Variables:
           ALLOWED_ORIGIN: !Ref AllowedOrigins
-          COGNITO_HOST: !Ref CognitoUri
+          COGNITO_URI: !Ref CognitoUri
           BACKEND_CLIENT_SECRET_NAME: 'BackendCognitoClientCredentials'
       Events:
         GetTickets:
@@ -264,9 +263,8 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Description: Lambda for searching Resources
-      CodeUri: search-resources-api
+      CodeUri: search-handlers
       Handler: no.unit.nva.search.SearchResourceHandler::handleRequest
-      Runtime: java17
       AutoPublishAlias: live
       DeploymentPreference:
         Enabled: true
@@ -290,9 +288,8 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Description: Lambda for searching Resources
-      CodeUri: search-resources-api
+      CodeUri: search-handlers
       Handler: no.unit.nva.search.ExportResourceHandler::handleRequest
-      Runtime: java17
       Timeout: 180
       AutoPublishAlias: live
       DeploymentPreference:
@@ -315,9 +312,8 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Description: Lambda for searching Resources
-      CodeUri: search-resources-api
+      CodeUri: search-handlers
       Handler: no.unit.nva.search.SearchResourceAuthHandler::handleRequest
-      Runtime: java17
       AutoPublishAlias: live
       DeploymentPreference:
         Enabled: true
@@ -329,6 +325,7 @@ Resources:
       Environment:
         Variables:
           ALLOWED_ORIGIN: !Ref AllowedOrigins
+          COGNITO_URI: !Ref CognitoUri
       Events:
         GetResources:
           Type: Api
@@ -341,9 +338,8 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Description: Lambda for searching Import Candidates
-      CodeUri: search-resources-api
+      CodeUri: search-handlers
       Handler: no.unit.nva.search.SearchImportCandidateAuthHandler::handleRequest
-      Runtime: java17
       AutoPublishAlias: live
       DeploymentPreference:
         Enabled: true
@@ -355,6 +351,7 @@ Resources:
       Environment:
         Variables:
           ALLOWED_ORIGIN: !Ref AllowedOrigins
+          COGNITO_URI: !Ref CognitoUri
       Events:
         GetResources:
           Type: Api
@@ -466,7 +463,6 @@ Resources:
     Properties:
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.IndexResourceHandler::handleRequest
-      Runtime: java17
       ReservedConcurrentExecutions: 32
       Role: !GetAtt TriggerExecutionRole.Arn
       MemorySize: 1408
@@ -508,7 +504,6 @@ Resources:
     Properties:
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.IndexImportCandidateHandler::handleRequest
-      Runtime: java17
       ReservedConcurrentExecutions: 32
       Role: !GetAtt TriggerExecutionRole.Arn
       MemorySize: 1408
@@ -536,7 +531,6 @@ Resources:
     Properties:
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.DeleteResourceFromIndexHandler::handleRequest
-      Runtime: java17
       ReservedConcurrentExecutions: 32
       Role: !GetAtt TriggerExecutionRole.Arn
       MemorySize: 1408
@@ -561,7 +555,6 @@ Resources:
     Properties:
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.DeleteImportCandidateFromIndexHandler::handleRequest
-      Runtime: java17
       ReservedConcurrentExecutions: 32
       Role: !GetAtt TriggerExecutionRole.Arn
       MemorySize: 1408
@@ -591,7 +584,6 @@ Resources:
     Properties:
       CodeUri: batch-index
       Handler: no.unit.nva.search.EventBasedBatchIndexer::handleRequest
-      Runtime: java17
       MemorySize: 1024
       Timeout: 900
       Role: !GetAtt SearchHandlerRole.Arn
@@ -613,7 +605,6 @@ Resources:
     Properties:
       CodeUri: batch-index
       Handler: no.unit.nva.search.StartBatchIndexingHandler::handleRequest
-      Runtime: java17
       MemorySize: 1024
       Timeout: 900
       Role: !GetAtt SearchHandlerRole.Arn
@@ -628,7 +619,6 @@ Resources:
     Properties:
       CodeUri: batch-index
       Handler: no.unit.nva.search.keybatch.StartKeyBasedBatchHandler::handleRequest
-      Runtime: java17
       MemorySize: 1024
       Timeout: 900
       Role: !GetAtt SearchHandlerRole.Arn
@@ -643,7 +633,6 @@ Resources:
     Properties:
       CodeUri: batch-index
       Handler: no.unit.nva.search.keybatch.GenerateKeyBatchesHandler::handleRequest
-      Runtime: java17
       MemorySize: 1024
       Timeout: 900
       Role: !GetAtt SearchHandlerRole.Arn
@@ -667,7 +656,6 @@ Resources:
     Properties:
       CodeUri: batch-index
       Handler: no.unit.nva.search.keybatch.KeyBasedBatchIndexHandler::handleRequest
-      Runtime: java17
       MemorySize: 1024
       Timeout: 900
       Role: !GetAtt SearchHandlerRole.Arn
@@ -693,7 +681,6 @@ Resources:
       Description: Lambda that creates all indices. Needs to be run manually from Test
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.InitHandler::handleRequest
-      Runtime: java17
       MemorySize: 1024
       Role: !GetAtt SearchHandlerRole.Arn
 
@@ -703,7 +690,6 @@ Resources:
       Description: Lambda that creates importCandidates index. Needs to be run manually from Test
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.ImportCandidateInitHandler::handleRequest
-      Runtime: java17
       MemorySize: 1024
       Role: !GetAtt SearchHandlerRole.Arn
 
@@ -713,7 +699,6 @@ Resources:
       Description: Lambda that deletes all indices. Needs to be run manually from Test
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.DeleteIndicesHandler::handleRequest
-      Runtime: java17
       MemorySize: 1024
       Role: !GetAtt SearchHandlerRole.Arn
 
@@ -723,7 +708,6 @@ Resources:
       Description: Lambda that deletes import candidates index. Needs to be run manually from Test
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.DeleteImportCandidateIndexHandler::handleRequest
-      Runtime: java17
       MemorySize: 1024
       Role: !GetAtt SearchHandlerRole.Arn
 

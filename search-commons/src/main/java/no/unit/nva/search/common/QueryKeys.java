@@ -1,8 +1,8 @@
 package no.unit.nva.search.common;
 
+import static no.unit.nva.constants.Words.PLUS;
+import static no.unit.nva.constants.Words.SPACE;
 import static no.unit.nva.search.common.constant.Functions.decodeUTF;
-import static no.unit.nva.search.common.constant.Words.PLUS;
-import static no.unit.nva.search.common.constant.Words.SPACE;
 
 import static java.util.Objects.nonNull;
 
@@ -21,6 +21,8 @@ import java.util.stream.Stream;
  * This class operates on the queryKeys that a request provides.
  *
  * @author Stig Norland
+ * @param <K> the type of the parameter keys used in the query. The parameter keys are used to
+ *     define the parameters that can be used in the query.
  */
 public class QueryKeys<K extends Enum<K> & ParameterKey<K>> {
 
@@ -88,7 +90,7 @@ public class QueryKeys<K extends Enum<K> & ParameterKey<K>> {
      */
     public void set(K key, String value) {
         if (nonNull(value)) {
-            var decodedValue = key.valueEncoding() != ValueEncoding.NONE ? decodeUTF(value) : value;
+            var decodedValue = key.valueEncoding() == ValueEncoding.NONE ? value : decodeUTF(value);
             if (isPagingValue(key)) {
                 page.put(key, decodedValue);
             } else {

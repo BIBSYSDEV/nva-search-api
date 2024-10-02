@@ -1,16 +1,28 @@
 package no.unit.nva.search.resource;
 
+import static no.unit.nva.constants.Words.ADDITIONAL_IDENTIFIERS;
+import static no.unit.nva.constants.Words.AFFILIATIONS;
+import static no.unit.nva.constants.Words.ASTERISK;
+import static no.unit.nva.constants.Words.COLON;
+import static no.unit.nva.constants.Words.CONTRIBUTORS;
+import static no.unit.nva.constants.Words.COUNTRY_CODE;
+import static no.unit.nva.constants.Words.CREATOR;
+import static no.unit.nva.constants.Words.ENTITY_DESCRIPTION;
+import static no.unit.nva.constants.Words.FUNDINGS;
+import static no.unit.nva.constants.Words.IDENTIFIER;
+import static no.unit.nva.constants.Words.IDENTITY;
+import static no.unit.nva.constants.Words.KEYWORD;
+import static no.unit.nva.constants.Words.NO;
+import static no.unit.nva.constants.Words.NOT_VERIFIED;
+import static no.unit.nva.constants.Words.ROLE;
+import static no.unit.nva.constants.Words.SOURCE;
+import static no.unit.nva.constants.Words.SOURCE_NAME;
+import static no.unit.nva.constants.Words.SPACE;
+import static no.unit.nva.constants.Words.TYPE;
+import static no.unit.nva.constants.Words.VALUE;
+import static no.unit.nva.constants.Words.VERIFICATION_STATUS;
+import static no.unit.nva.constants.Words.VERIFIED;
 import static no.unit.nva.search.common.constant.Functions.jsonPath;
-import static no.unit.nva.search.common.constant.Words.ADDITIONAL_IDENTIFIERS;
-import static no.unit.nva.search.common.constant.Words.ASTERISK;
-import static no.unit.nva.search.common.constant.Words.COLON;
-import static no.unit.nva.search.common.constant.Words.FUNDINGS;
-import static no.unit.nva.search.common.constant.Words.IDENTIFIER;
-import static no.unit.nva.search.common.constant.Words.KEYWORD;
-import static no.unit.nva.search.common.constant.Words.SOURCE;
-import static no.unit.nva.search.common.constant.Words.SOURCE_NAME;
-import static no.unit.nva.search.common.constant.Words.SPACE;
-import static no.unit.nva.search.common.constant.Words.VALUE;
 import static no.unit.nva.search.resource.Constants.ENTITY_ABSTRACT;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
 import static no.unit.nva.search.resource.ResourceParameter.ABSTRACT;
@@ -19,8 +31,11 @@ import static no.unit.nva.search.resource.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.search.resource.ResourceParameter.TITLE;
 
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
+import static org.opensearch.index.query.QueryBuilders.existsQuery;
 import static org.opensearch.index.query.QueryBuilders.matchPhrasePrefixQuery;
 import static org.opensearch.index.query.QueryBuilders.matchPhraseQuery;
+import static org.opensearch.index.query.QueryBuilders.multiMatchQuery;
+import static org.opensearch.index.query.QueryBuilders.nestedQuery;
 import static org.opensearch.index.query.QueryBuilders.termQuery;
 
 import no.unit.nva.search.common.QueryKeys;
@@ -31,12 +46,16 @@ import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
-import org.opensearch.index.query.QueryBuilders;
 
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Stream builders for resource queries.
+ *
+ * @author Stig Norland
+ */
 public class ResourceStreamBuilders {
 
     private final QueryKeys<ResourceParameter> parameters;
@@ -64,7 +83,7 @@ public class ResourceStreamBuilders {
                 boolQuery()
                         .queryName(SEARCH_ALL.asCamelCase())
                         .must(
-                                QueryBuilders.multiMatchQuery(sevenValues)
+                                multiMatchQuery(sevenValues)
                                         .fields(fields)
                                         .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
                                         .operator(Operator.AND));
@@ -84,7 +103,7 @@ public class ResourceStreamBuilders {
     public Stream<Map.Entry<ResourceParameter, QueryBuilder>> additionalIdentifierQuery(
             ResourceParameter key, String source) {
         var query =
-                QueryBuilders.nestedQuery(
+                nestedQuery(
                         ADDITIONAL_IDENTIFIERS,
                         boolQuery()
                                 .must(
@@ -103,10 +122,90 @@ public class ResourceStreamBuilders {
         return Functions.queryToEntry(key, query);
     }
 
+    public Stream<Map.Entry<ResourceParameter, QueryBuilder>> unIdentifiedNorwegians(
+            ResourceParameter key) {
+        var query =
+                boolQuery()
+                        .must(
+                                termQuery(
+                                        jsonPath(
+                                                ENTITY_DESCRIPTION,
+                                                CONTRIBUTORS,
+                                                AFFILIATIONS,
+                                                COUNTRY_CODE,
+                                                KEYWORD),
+                                        NO))
+                        .must(
+                                termQuery(
+                                        jsonPath(
+                                                ENTITY_DESCRIPTION,
+                                                CONTRIBUTORS,
+                                                ROLE,
+                                                TYPE,
+                                                KEYWORD),
+                                        CREATOR))
+                        .should(
+                                boolQuery()
+                                        .mustNot(
+                                                existsQuery(
+                                                        jsonPath(
+                                                                ENTITY_DESCRIPTION,
+                                                                CONTRIBUTORS,
+                                                                IDENTITY,
+                                                                VERIFICATION_STATUS))))
+                        .should(
+                                termQuery(
+                                        jsonPath(
+                                                ENTITY_DESCRIPTION,
+                                                CONTRIBUTORS,
+                                                IDENTITY,
+                                                VERIFICATION_STATUS,
+                                                KEYWORD),
+                                        NOT_VERIFIED))
+                        .minimumShouldMatch(1);
+        return Functions.queryToEntry(key, query);
+    }
+
+    public Stream<Map.Entry<ResourceParameter, QueryBuilder>> unIdentifiedContributorOrInstitution(
+            ResourceParameter key) {
+        var query =
+                boolQuery()
+                        .must(
+                                termQuery(
+                                        jsonPath(
+                                                ENTITY_DESCRIPTION,
+                                                CONTRIBUTORS,
+                                                ROLE,
+                                                TYPE,
+                                                KEYWORD),
+                                        CREATOR))
+                        .should(
+                                boolQuery()
+                                        .mustNot(
+                                                termQuery(
+                                                        jsonPath(
+                                                                ENTITY_DESCRIPTION,
+                                                                CONTRIBUTORS,
+                                                                IDENTITY,
+                                                                VERIFICATION_STATUS,
+                                                                KEYWORD),
+                                                        VERIFIED)))
+                        .should(
+                                boolQuery()
+                                        .mustNot(
+                                                existsQuery(
+                                                        jsonPath(
+                                                                ENTITY_DESCRIPTION,
+                                                                CONTRIBUTORS,
+                                                                AFFILIATIONS))))
+                        .minimumShouldMatch(1);
+        return Functions.queryToEntry(key, query);
+    }
+
     public Stream<Map.Entry<ResourceParameter, QueryBuilder>> fundingQuery(ResourceParameter key) {
         var values = parameters.get(key).split(COLON);
         var query =
-                QueryBuilders.nestedQuery(
+                nestedQuery(
                         FUNDINGS,
                         boolQuery()
                                 .must(termQuery(jsonPath(FUNDINGS, IDENTIFIER, KEYWORD), values[1]))

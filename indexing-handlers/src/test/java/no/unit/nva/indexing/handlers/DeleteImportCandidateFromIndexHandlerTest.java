@@ -1,8 +1,7 @@
 package no.unit.nva.indexing.handlers;
 
-import static no.unit.nva.indexingclient.IndexingClient.objectMapper;
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.objectMapperWithEmpty;
+import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 
 import static nva.commons.core.attempt.Try.attempt;
@@ -44,6 +43,16 @@ public class DeleteImportCandidateFromIndexHandlerTest {
 
     private DeleteImportCandidateFromIndexHandler handler;
 
+    private static IndexDocument createSampleResource(SortableIdentifier identifierProvider) {
+        String randomJson = randomJson();
+        ObjectNode objectNode =
+                attempt(() -> (ObjectNode) objectMapperWithEmpty.readTree(randomJson))
+                        .orElseThrow();
+        EventConsumptionAttributes metadata =
+                new EventConsumptionAttributes(IMPORT_CANDIDATES_INDEX, identifierProvider);
+        return new IndexDocument(metadata, objectNode);
+    }
+
     @BeforeEach
     void init() {
         indexingClient = new FakeIndexingClient();
@@ -74,15 +83,6 @@ public class DeleteImportCandidateFromIndexHandlerTest {
         Set<JsonNode> allIndexedDocuments =
                 indexingClient.listAllDocuments(IMPORT_CANDIDATES_INDEX);
         assertThat(allIndexedDocuments, not(contains(sampleDocument.resource())));
-    }
-
-    private static IndexDocument createSampleResource(SortableIdentifier identifierProvider) {
-        String randomJson = randomJson();
-        ObjectNode objectNode =
-                attempt(() -> (ObjectNode) objectMapper.readTree(randomJson)).orElseThrow();
-        EventConsumptionAttributes metadata =
-                new EventConsumptionAttributes(IMPORT_CANDIDATES_INDEX, identifierProvider);
-        return new IndexDocument(metadata, objectNode);
     }
 
     private InputStream createEventBridgeEvent(SortableIdentifier resourceIdentifier)

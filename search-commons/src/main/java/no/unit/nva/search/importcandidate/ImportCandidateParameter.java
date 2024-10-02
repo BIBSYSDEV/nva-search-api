@@ -1,6 +1,10 @@
 package no.unit.nva.search.importcandidate;
 
-import static no.unit.nva.search.common.constant.ErrorMessages.NOT_IMPLEMENTED_FOR;
+import static no.unit.nva.constants.ErrorMessages.NOT_IMPLEMENTED_FOR;
+import static no.unit.nva.constants.Words.CHAR_UNDERSCORE;
+import static no.unit.nva.constants.Words.COLON;
+import static no.unit.nva.constants.Words.Q;
+import static no.unit.nva.constants.Words.UNDERSCORE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_FIELDS_SEARCHED;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_FROM_KEY;
@@ -11,10 +15,6 @@ import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SEARCH_ALL_
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SIZE_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SORT_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SORT_ORDER_KEY;
-import static no.unit.nva.search.common.constant.Words.CHAR_UNDERSCORE;
-import static no.unit.nva.search.common.constant.Words.COLON;
-import static no.unit.nva.search.common.constant.Words.Q;
-import static no.unit.nva.search.common.constant.Words.UNDERSCORE;
 import static no.unit.nva.search.common.enums.FieldOperator.ALL_OF;
 import static no.unit.nva.search.common.enums.FieldOperator.ANY_OF;
 import static no.unit.nva.search.common.enums.FieldOperator.BETWEEN;
@@ -22,9 +22,9 @@ import static no.unit.nva.search.common.enums.FieldOperator.NA;
 import static no.unit.nva.search.common.enums.FieldOperator.NOT_ALL_OF;
 import static no.unit.nva.search.common.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search.common.enums.ParameterKind.DATE;
+import static no.unit.nva.search.common.enums.ParameterKind.FLAG;
 import static no.unit.nva.search.common.enums.ParameterKind.FREE_TEXT;
 import static no.unit.nva.search.common.enums.ParameterKind.FUZZY_KEYWORD;
-import static no.unit.nva.search.common.enums.ParameterKind.IGNORED;
 import static no.unit.nva.search.common.enums.ParameterKind.KEYWORD;
 import static no.unit.nva.search.common.enums.ParameterKind.NUMBER;
 import static no.unit.nva.search.common.enums.ParameterKind.SORT_KEY;
@@ -43,7 +43,7 @@ import static no.unit.nva.search.resource.Constants.ASSOCIATED_ARTIFACTS_LICENSE
 
 import static java.util.Objects.nonNull;
 
-import no.unit.nva.search.common.constant.Words;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.enums.FieldOperator;
 import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.enums.ParameterKind;
@@ -69,6 +69,7 @@ import java.util.stream.Stream;
  *
  * @author Stig Norland
  */
+@SuppressWarnings({"PMD.ExcessivePublicCount"})
 public enum ImportCandidateParameter implements ParameterKey<ImportCandidateParameter> {
     INVALID(ParameterKind.INVALID),
     ADDITIONAL_IDENTIFIERS(FUZZY_KEYWORD, ANY_OF, ADDITIONAL_IDENTIFIERS_KEYWORD),
@@ -107,22 +108,22 @@ public enum ImportCandidateParameter implements ParameterKey<ImportCandidatePara
     // Query parameters passed to SWS/Opensearch
     SEARCH_ALL(FREE_TEXT, ALL_OF, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
     // Pagination parameters
-    NODES_SEARCHED(IGNORED, null, null, PATTERN_IS_FIELDS_SEARCHED, null, null),
-    NODES_INCLUDED(IGNORED),
-    NODES_EXCLUDED(IGNORED),
-    AGGREGATION(IGNORED),
+    NODES_SEARCHED(FLAG, null, null, PATTERN_IS_FIELDS_SEARCHED, null, null),
+    NODES_INCLUDED(FLAG),
+    NODES_EXCLUDED(FLAG),
+    AGGREGATION(FLAG),
     PAGE(NUMBER),
     FROM(NUMBER, null, null, PATTERN_IS_FROM_KEY, null, null),
     SIZE(NUMBER, null, null, PATTERN_IS_SIZE_KEY, null, null),
-    SEARCH_AFTER(IGNORED),
+    SEARCH_AFTER(FLAG),
     SORT(SORT_KEY, null, null, PATTERN_IS_SORT_KEY, null, null),
-    SORT_ORDER(IGNORED, ALL_OF, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE, null),
+    SORT_ORDER(FLAG, ALL_OF, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE, null),
     ;
 
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
     public static final Set<ImportCandidateParameter> IMPORT_CANDIDATE_PARAMETER_SET =
-            Arrays.stream(ImportCandidateParameter.values())
+            Arrays.stream(values())
                     .filter(ImportCandidateParameter::isSearchField)
                     .sorted(ParameterKey::compareAscending)
                     .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -167,6 +168,23 @@ public enum ImportCandidateParameter implements ParameterKey<ImportCandidatePara
                         : PATTERN_IS_IGNORE_CASE
                                 + name().replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
         this.paramkind = kind;
+    }
+
+    public static ImportCandidateParameter keyFromString(String paramName) {
+        var result =
+                Arrays.stream(values())
+                        .filter(ImportCandidateParameter::ignoreInvalidKey)
+                        .filter(ParameterKey.equalTo(paramName))
+                        .collect(Collectors.toSet());
+        return result.size() == 1 ? result.stream().findFirst().get() : INVALID;
+    }
+
+    private static boolean ignoreInvalidKey(ImportCandidateParameter f) {
+        return f.ordinal() > IGNORE_PARAMETER_INDEX;
+    }
+
+    private static boolean isSearchField(ImportCandidateParameter f) {
+        return f.ordinal() > IGNORE_PARAMETER_INDEX && f.ordinal() < SEARCH_ALL.ordinal();
     }
 
     @Override
@@ -232,22 +250,5 @@ public enum ImportCandidateParameter implements ParameterKey<ImportCandidatePara
                 .add(String.valueOf(ordinal()))
                 .add(asCamelCase())
                 .toString();
-    }
-
-    public static ImportCandidateParameter keyFromString(String paramName) {
-        var result =
-                Arrays.stream(ImportCandidateParameter.values())
-                        .filter(ImportCandidateParameter::ignoreInvalidKey)
-                        .filter(ParameterKey.equalTo(paramName))
-                        .collect(Collectors.toSet());
-        return result.size() == 1 ? result.stream().findFirst().get() : INVALID;
-    }
-
-    private static boolean ignoreInvalidKey(ImportCandidateParameter f) {
-        return f.ordinal() > IGNORE_PARAMETER_INDEX;
-    }
-
-    private static boolean isSearchField(ImportCandidateParameter f) {
-        return f.ordinal() > IGNORE_PARAMETER_INDEX && f.ordinal() < SEARCH_ALL.ordinal();
     }
 }

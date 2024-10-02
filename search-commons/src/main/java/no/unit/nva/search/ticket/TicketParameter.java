@@ -1,6 +1,12 @@
 package no.unit.nva.search.ticket;
 
-import static no.unit.nva.search.common.constant.ErrorMessages.NOT_IMPLEMENTED_FOR;
+import static no.unit.nva.constants.ErrorMessages.NOT_IMPLEMENTED_FOR;
+import static no.unit.nva.constants.Words.CHAR_UNDERSCORE;
+import static no.unit.nva.constants.Words.COLON;
+import static no.unit.nva.constants.Words.PHI;
+import static no.unit.nva.constants.Words.PIPE;
+import static no.unit.nva.constants.Words.Q;
+import static no.unit.nva.constants.Words.UNDERSCORE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_FIELDS_SEARCHED;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_FROM_KEY;
@@ -11,12 +17,6 @@ import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SEARCH_ALL_
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SIZE_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SORT_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SORT_ORDER_KEY;
-import static no.unit.nva.search.common.constant.Words.CHAR_UNDERSCORE;
-import static no.unit.nva.search.common.constant.Words.COLON;
-import static no.unit.nva.search.common.constant.Words.PHI;
-import static no.unit.nva.search.common.constant.Words.PIPE;
-import static no.unit.nva.search.common.constant.Words.Q;
-import static no.unit.nva.search.common.constant.Words.UNDERSCORE;
 import static no.unit.nva.search.common.enums.FieldOperator.ALL_OF;
 import static no.unit.nva.search.common.enums.FieldOperator.ANY_OF;
 import static no.unit.nva.search.common.enums.FieldOperator.BETWEEN;
@@ -26,9 +26,9 @@ import static no.unit.nva.search.common.enums.FieldOperator.NOT_ANY_OF;
 import static no.unit.nva.search.common.enums.ParameterKind.ACROSS_FIELDS;
 import static no.unit.nva.search.common.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search.common.enums.ParameterKind.DATE;
+import static no.unit.nva.search.common.enums.ParameterKind.FLAG;
 import static no.unit.nva.search.common.enums.ParameterKind.FREE_TEXT;
 import static no.unit.nva.search.common.enums.ParameterKind.FUZZY_KEYWORD;
-import static no.unit.nva.search.common.enums.ParameterKind.IGNORED;
 import static no.unit.nva.search.common.enums.ParameterKind.KEYWORD;
 import static no.unit.nva.search.common.enums.ParameterKind.NUMBER;
 import static no.unit.nva.search.common.enums.ParameterKind.TEXT;
@@ -52,7 +52,7 @@ import static no.unit.nva.search.ticket.Constants.VIEWED_BY_FIELDS;
 
 import static java.util.Objects.nonNull;
 
-import no.unit.nva.search.common.constant.Words;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.enums.FieldOperator;
 import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.enums.ParameterKind;
@@ -78,22 +78,22 @@ import java.util.stream.Stream;
  *
  * @author Stig Norland
  */
+@SuppressWarnings({"PMD.ExcessivePublicCount"})
 public enum TicketParameter implements ParameterKey<TicketParameter> {
     INVALID(ParameterKind.INVALID),
-    STATISTICS(IGNORED),
     // Parameters used for filtering
     ASSIGNEE(CUSTOM, ANY_OF, ASSIGNEE_FIELDS),
     ASSIGNEE_NOT(ACROSS_FIELDS, NOT_ANY_OF, ASSIGNEE_FIELDS),
-    BY_USER_PENDING(IGNORED),
+    BY_USER_PENDING(FLAG),
     CREATED_DATE(DATE, BETWEEN, Words.CREATED_DATE),
     CUSTOMER_ID(FUZZY_KEYWORD, ANY_OF, CUSTOMER_ID_KEYWORD),
     CUSTOMER_ID_NOT(FUZZY_KEYWORD, NOT_ANY_OF, CUSTOMER_ID_KEYWORD),
-    ID(FUZZY_KEYWORD, ANY_OF, ID_KEYWORD),
-    ID_NOT(FUZZY_KEYWORD, NOT_ANY_OF, ID_KEYWORD),
     EXCLUDE_SUBUNITS(
-            IGNORED, ANY_OF, ORGANIZATION_ID_KEYWORD + PIPE + ORGANIZATION_IDENTIFIER_KEYWORD),
+            FLAG, ANY_OF, ORGANIZATION_ID_KEYWORD + PIPE + ORGANIZATION_IDENTIFIER_KEYWORD),
     FINALIZED_BY(ACROSS_FIELDS, ALL_OF, FINALIZED_BY_FIELDS),
     FINALIZED_BY_NOT(ACROSS_FIELDS, NOT_ALL_OF, FINALIZED_BY_FIELDS),
+    ID(FUZZY_KEYWORD, ANY_OF, ID_KEYWORD),
+    ID_NOT(FUZZY_KEYWORD, NOT_ANY_OF, ID_KEYWORD),
     MESSAGES(TEXT, ALL_OF, MESSAGE_FIELDS),
     MESSAGES_NOT(TEXT, NOT_ALL_OF, MESSAGE_FIELDS),
     MODIFIED_DATE(DATE, BETWEEN, Words.MODIFIED_DATE),
@@ -103,14 +103,15 @@ public enum TicketParameter implements ParameterKey<TicketParameter> {
     OWNER_NOT(ACROSS_FIELDS, NOT_ANY_OF, OWNER_FIELDS),
     PUBLICATION_ID(FUZZY_KEYWORD, ANY_OF, PUBLICATION_ID_OR_IDENTIFIER_KEYWORD),
     PUBLICATION_ID_NOT(FUZZY_KEYWORD, NOT_ANY_OF, PUBLICATION_ID_OR_IDENTIFIER_KEYWORD),
-    PUBLICATION_TYPE(FUZZY_KEYWORD, ANY_OF, PUBLICATION_INSTANCE_KEYWORD),
-    PUBLICATION_TYPE_NOT(FUZZY_KEYWORD, NOT_ANY_OF, PUBLICATION_INSTANCE_KEYWORD),
     PUBLICATION_MODIFIED_DATE(DATE, BETWEEN, Constants.PUBLICATION_MODIFIED_DATE),
     PUBLICATION_OWNER(FUZZY_KEYWORD, ANY_OF, PUBLICATION_OWNER_KEYWORD),
     PUBLICATION_OWNER_NOT(FUZZY_KEYWORD, NOT_ANY_OF, PUBLICATION_OWNER_KEYWORD),
     PUBLICATION_STATUS(KEYWORD, ANY_OF, PUBLICATION_STATUS_KEYWORD),
     PUBLICATION_STATUS_NOT(KEYWORD, NOT_ANY_OF, PUBLICATION_STATUS_KEYWORD),
     PUBLICATION_TITLE(TEXT, ALL_OF, PUBLICATION_MAIN_TITLE_KEYWORD, PHI),
+    PUBLICATION_TYPE(FUZZY_KEYWORD, ANY_OF, PUBLICATION_INSTANCE_KEYWORD),
+    PUBLICATION_TYPE_NOT(FUZZY_KEYWORD, NOT_ANY_OF, PUBLICATION_INSTANCE_KEYWORD),
+    STATISTICS(FLAG),
     STATUS(CUSTOM, ANY_OF, STATUS_KEYWORD),
     STATUS_NOT(CUSTOM, NOT_ANY_OF, STATUS_KEYWORD),
     TYPE(KEYWORD, ANY_OF, TYPE_KEYWORD),
@@ -120,23 +121,23 @@ public enum TicketParameter implements ParameterKey<TicketParameter> {
 
     // Query parameters passed to SWS/Opensearch
     SEARCH_ALL(FREE_TEXT, ALL_OF, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
-    NODES_SEARCHED(IGNORED, null, null, PATTERN_IS_FIELDS_SEARCHED, null, null),
-    NODES_INCLUDED(IGNORED),
-    NODES_EXCLUDED(IGNORED),
+    NODES_SEARCHED(FLAG, null, null, PATTERN_IS_FIELDS_SEARCHED, null, null),
+    NODES_INCLUDED(FLAG),
+    NODES_EXCLUDED(FLAG),
     // Pagination parameters
-    AGGREGATION(IGNORED),
+    AGGREGATION(FLAG),
     PAGE(NUMBER),
     FROM(NUMBER, null, null, PATTERN_IS_FROM_KEY, null, null),
     SIZE(NUMBER, null, null, PATTERN_IS_SIZE_KEY, null, null),
-    SEARCH_AFTER(IGNORED),
+    SEARCH_AFTER(FLAG),
     SORT(ParameterKind.SORT_KEY, null, null, PATTERN_IS_SORT_KEY, null, null),
-    SORT_ORDER(IGNORED, ALL_OF, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE, null),
+    SORT_ORDER(FLAG, ALL_OF, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE, null),
     ;
 
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
     public static final Set<TicketParameter> TICKET_PARAMETER_SET =
-            Arrays.stream(TicketParameter.values())
+            Arrays.stream(values())
                     .filter(TicketParameter::isSearchField)
                     .sorted(ParameterKey::compareAscending)
                     .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -183,6 +184,24 @@ public enum TicketParameter implements ParameterKey<TicketParameter> {
                         : PATTERN_IS_IGNORE_CASE
                                 + name().replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
         this.paramkind = kind;
+    }
+
+    public static TicketParameter keyFromString(String paramName) {
+        var result =
+                Arrays.stream(values())
+                        .filter(TicketParameter::ignoreInvalidKey)
+                        .filter(ParameterKey.equalTo(paramName))
+                        .collect(Collectors.toSet());
+        return result.size() == 1 ? result.stream().findFirst().get() : INVALID;
+    }
+
+    private static boolean ignoreInvalidKey(TicketParameter enumParameter) {
+        return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX;
+    }
+
+    private static boolean isSearchField(TicketParameter enumParameter) {
+        return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX
+                && enumParameter.ordinal() < SEARCH_ALL.ordinal();
     }
 
     @Override
@@ -248,23 +267,5 @@ public enum TicketParameter implements ParameterKey<TicketParameter> {
                 .add(String.valueOf(ordinal()))
                 .add(asCamelCase())
                 .toString();
-    }
-
-    public static TicketParameter keyFromString(String paramName) {
-        var result =
-                Arrays.stream(TicketParameter.values())
-                        .filter(TicketParameter::ignoreInvalidKey)
-                        .filter(ParameterKey.equalTo(paramName))
-                        .collect(Collectors.toSet());
-        return result.size() == 1 ? result.stream().findFirst().get() : INVALID;
-    }
-
-    private static boolean ignoreInvalidKey(TicketParameter enumParameter) {
-        return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX;
-    }
-
-    private static boolean isSearchField(TicketParameter enumParameter) {
-        return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX
-                && enumParameter.ordinal() < SEARCH_ALL.ordinal();
     }
 }

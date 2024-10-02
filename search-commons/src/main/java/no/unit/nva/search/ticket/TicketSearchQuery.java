@@ -1,20 +1,19 @@
 package no.unit.nva.search.ticket;
 
-import static no.unit.nva.search.common.constant.Defaults.DEFAULT_OFFSET;
-import static no.unit.nva.search.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
-import static no.unit.nva.search.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
-import static no.unit.nva.search.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
-import static no.unit.nva.search.common.constant.Functions.decodeUTF;
+import static no.unit.nva.constants.Defaults.DEFAULT_OFFSET;
+import static no.unit.nva.constants.Defaults.DEFAULT_VALUE_PER_PAGE;
+import static no.unit.nva.constants.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.constants.ErrorMessages.TOO_MANY_ARGUMENTS;
+import static no.unit.nva.constants.Words.COMMA;
+import static no.unit.nva.constants.Words.NAME_AND_SORT_LENGTH;
+import static no.unit.nva.constants.Words.NONE;
+import static no.unit.nva.constants.Words.POST_FILTER;
+import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
+import static no.unit.nva.constants.Words.SEARCH;
+import static no.unit.nva.constants.Words.TICKETS;
 import static no.unit.nva.search.common.constant.Functions.toEnumStrings;
 import static no.unit.nva.search.common.constant.Functions.trimSpace;
 import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
-import static no.unit.nva.search.common.constant.Words.COMMA;
-import static no.unit.nva.search.common.constant.Words.NAME_AND_SORT_LENGTH;
-import static no.unit.nva.search.common.constant.Words.NONE;
-import static no.unit.nva.search.common.constant.Words.POST_FILTER;
-import static no.unit.nva.search.common.constant.Words.RELEVANCE_KEY_NAME;
-import static no.unit.nva.search.common.constant.Words.SEARCH;
-import static no.unit.nva.search.common.constant.Words.TICKETS;
 import static no.unit.nva.search.ticket.Constants.ORGANIZATION_ID_KEYWORD;
 import static no.unit.nva.search.ticket.Constants.UNHANDLED_KEY;
 import static no.unit.nva.search.ticket.Constants.facetTicketsPaths;
@@ -48,7 +47,6 @@ import no.unit.nva.search.common.builder.AcrossFieldsQuery;
 import no.unit.nva.search.common.builder.KeywordQuery;
 import no.unit.nva.search.common.constant.Functions;
 import no.unit.nva.search.common.enums.SortKey;
-import no.unit.nva.search.common.enums.ValueEncoding;
 
 import nva.commons.core.JacocoGenerated;
 
@@ -67,6 +65,8 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 /**
+ * TicketSearchQuery is a class that searches for tickets.
+ *
  * @author Stig Norland
  * @author Sondre Vestad
  */
@@ -223,7 +223,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
         final var filterId =
                 new TermQueryBuilder(ORGANIZATION_ID_KEYWORD, randomUri)
                         .queryName(ORGANIZATION_ID.asCamelCase() + POST_FILTER);
-        filters.set(filterId);
+        filters().set(filterId);
     }
 
     public static class TicketParameterValidator
@@ -293,8 +293,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
         @Override
         protected void setValue(String key, String value) {
             var qpKey = TicketParameter.keyFromString(key);
-            var decodedValue =
-                    qpKey.valueEncoding() != ValueEncoding.NONE ? decodeUTF(value) : value;
+            var decodedValue = getDecodedValue(qpKey, value);
             switch (qpKey) {
                 case INVALID -> invalidKeys.add(key);
                 case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION ->

@@ -1,13 +1,13 @@
 package no.unit.nva.search.ticket;
 
+import static no.unit.nva.constants.Words.CHAR_UNDERSCORE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_PIPE;
-import static no.unit.nva.search.common.constant.Words.CHAR_UNDERSCORE;
 import static no.unit.nva.search.ticket.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search.ticket.Constants.TYPE_KEYWORD;
 
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 
-import no.unit.nva.search.common.constant.Words;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.enums.SortKey;
 
 import org.apache.commons.text.CaseUtils;
@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * TicketSort is an enum for sorting tickets.
+ *
  * @author Stig Norland
  */
 public enum TicketSort implements SortKey {
@@ -35,6 +37,22 @@ public enum TicketSort implements SortKey {
     TicketSort(String jsonPath) {
         this.keyValidationRegEx = SortKey.getIgnoreCaseAndUnderscoreKeyExpression(this.name());
         this.path = jsonPath;
+    }
+
+    public static TicketSort fromSortKey(String keyName) {
+        var result =
+                Arrays.stream(values())
+                        .filter(SortKey.equalTo(keyName))
+                        .collect(Collectors.toSet());
+        return result.size() == 1 ? result.stream().findFirst().get() : INVALID;
+    }
+
+    public static Collection<String> validSortKeys() {
+        return Arrays.stream(values())
+                .sorted(SortKey::compareAscending)
+                .skip(1) // skip INVALID
+                .map(TicketSort::asLowerCase)
+                .toList();
     }
 
     @Override
@@ -55,21 +73,5 @@ public enum TicketSort implements SortKey {
     @Override
     public Stream<String> jsonPaths() {
         return Arrays.stream(path.split(PATTERN_IS_PIPE));
-    }
-
-    public static TicketSort fromSortKey(String keyName) {
-        var result =
-                Arrays.stream(TicketSort.values())
-                        .filter(SortKey.equalTo(keyName))
-                        .collect(Collectors.toSet());
-        return result.size() == 1 ? result.stream().findFirst().get() : INVALID;
-    }
-
-    public static Collection<String> validSortKeys() {
-        return Arrays.stream(TicketSort.values())
-                .sorted(SortKey::compareAscending)
-                .skip(1) // skip INVALID
-                .map(TicketSort::asLowerCase)
-                .toList();
     }
 }

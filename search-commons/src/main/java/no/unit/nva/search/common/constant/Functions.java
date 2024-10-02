@@ -1,26 +1,27 @@
 package no.unit.nva.search.common.constant;
 
+import static no.unit.nva.constants.Defaults.ENVIRONMENT;
+import static no.unit.nva.constants.Words.BOKMAAL_CODE;
+import static no.unit.nva.constants.Words.COLON;
+import static no.unit.nva.constants.Words.COMMA;
+import static no.unit.nva.constants.Words.DOT;
+import static no.unit.nva.constants.Words.ENGLISH_CODE;
+import static no.unit.nva.constants.Words.KEYWORD;
+import static no.unit.nva.constants.Words.LABELS;
+import static no.unit.nva.constants.Words.NYNORSK_CODE;
+import static no.unit.nva.constants.Words.PIPE;
+import static no.unit.nva.constants.Words.SAMI_CODE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_ASC_OR_DESC_GROUP;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SELECTED_GROUP;
-import static no.unit.nva.search.common.constant.Words.BOKMAAL_CODE;
-import static no.unit.nva.search.common.constant.Words.COLON;
-import static no.unit.nva.search.common.constant.Words.COMMA;
-import static no.unit.nva.search.common.constant.Words.DOT;
-import static no.unit.nva.search.common.constant.Words.ENGLISH_CODE;
-import static no.unit.nva.search.common.constant.Words.KEYWORD;
-import static no.unit.nva.search.common.constant.Words.LABELS;
-import static no.unit.nva.search.common.constant.Words.NYNORSK_CODE;
-import static no.unit.nva.search.common.constant.Words.PIPE;
-import static no.unit.nva.search.common.constant.Words.SAMI_CODE;
 
 import static nva.commons.core.StringUtils.SPACE;
 
 import static java.util.Objects.nonNull;
 
+import no.unit.nva.constants.Defaults;
 import no.unit.nva.search.common.enums.ParameterKey;
 
-import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
 import org.opensearch.index.query.QueryBuilder;
@@ -40,11 +41,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * Class for building OpenSearch queries that search across multiple fields.
+ *
  * @author Stig Norland
  */
 public final class Functions {
 
-    static final Environment ENVIRONMENT = new Environment();
     private static final String SEARCH_INFRASTRUCTURE_AUTH_URI = "SEARCH_INFRASTRUCTURE_AUTH_URI";
     private static final String SEARCH_INFRASTRUCTURE_API_URI = "SEARCH_INFRASTRUCTURE_API_URI";
     private static final String API_HOST = "API_HOST";

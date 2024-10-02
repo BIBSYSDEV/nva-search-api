@@ -1,6 +1,6 @@
 package no.unit.nva.search.common.builder;
 
-import static no.unit.nva.search.common.constant.Words.KEYWORD_FALSE;
+import static no.unit.nva.constants.Words.KEYWORD_FALSE;
 
 import no.unit.nva.search.common.constant.Functions;
 import no.unit.nva.search.common.enums.ParameterKey;
@@ -16,7 +16,11 @@ import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 /**
+ * Class for building OpenSearch queries that search across multiple fields.
+ *
  * @author Stig Norland
+ * @param <K> the type of the parameter keys used in the query. The parameter keys are used to
+ *     define the parameters that can be used in the query.
  */
 public class AcrossFieldsQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBuilder<K> {
 
@@ -24,7 +28,7 @@ public class AcrossFieldsQuery<K extends Enum<K> & ParameterKey<K>> extends Abst
     public static final String ALL_VALUES = "AcrossFieldsAllValues";
 
     @Override
-    protected Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(K key, String... values) {
+    protected Stream<Entry<K, QueryBuilder>> buildMatchAnyValueQuery(K key, String... values) {
         return Functions.queryToEntry(
                 key,
                 buildMultiMatchQueryStream(key, values)

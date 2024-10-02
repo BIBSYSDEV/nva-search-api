@@ -1,15 +1,15 @@
 package no.unit.nva.search.common;
 
+import static no.unit.nva.constants.Words.BUCKETS;
+import static no.unit.nva.constants.Words.ENGLISH_CODE;
+import static no.unit.nva.constants.Words.KEY;
+import static no.unit.nva.constants.Words.LABELS;
+import static no.unit.nva.constants.Words.NAME;
+import static no.unit.nva.constants.Words.SLASH;
+import static no.unit.nva.constants.Words.VALUE;
+import static no.unit.nva.constants.Words.ZERO;
 import static no.unit.nva.search.common.AggregationFormat.Constants.DOC_COUNT;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_WORD_ENDING_WITH_HASHTAG;
-import static no.unit.nva.search.common.constant.Words.BUCKETS;
-import static no.unit.nva.search.common.constant.Words.ENGLISH_CODE;
-import static no.unit.nva.search.common.constant.Words.KEY;
-import static no.unit.nva.search.common.constant.Words.LABELS;
-import static no.unit.nva.search.common.constant.Words.NAME;
-import static no.unit.nva.search.common.constant.Words.SLASH;
-import static no.unit.nva.search.common.constant.Words.VALUE;
-import static no.unit.nva.search.common.constant.Words.ZERO;
 
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 
@@ -28,6 +28,8 @@ import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 /**
+ * Formats the aggregation response from OpenSearch.
+ *
  * @author Stig Norland
  */
 public final class AggregationFormat {

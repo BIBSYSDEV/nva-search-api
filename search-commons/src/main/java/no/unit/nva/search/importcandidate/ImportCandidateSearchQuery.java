@@ -1,23 +1,23 @@
 package no.unit.nva.search.importcandidate;
 
-import static no.unit.nva.search.common.constant.Defaults.DEFAULT_OFFSET;
-import static no.unit.nva.search.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
-import static no.unit.nva.search.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
-import static no.unit.nva.search.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
+import static no.unit.nva.constants.Defaults.DEFAULT_OFFSET;
+import static no.unit.nva.constants.Defaults.DEFAULT_VALUE_PER_PAGE;
+import static no.unit.nva.constants.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.constants.ErrorMessages.TOO_MANY_ARGUMENTS;
+import static no.unit.nva.constants.Words.ADDITIONAL_IDENTIFIERS;
+import static no.unit.nva.constants.Words.COMMA;
+import static no.unit.nva.constants.Words.CRISTIN_AS_TYPE;
+import static no.unit.nva.constants.Words.KEYWORD;
+import static no.unit.nva.constants.Words.NAME_AND_SORT_LENGTH;
+import static no.unit.nva.constants.Words.NONE;
+import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
+import static no.unit.nva.constants.Words.SCOPUS_AS_TYPE;
+import static no.unit.nva.constants.Words.SEARCH;
+import static no.unit.nva.constants.Words.SOURCE_NAME;
+import static no.unit.nva.constants.Words.VALUE;
 import static no.unit.nva.search.common.constant.Functions.jsonPath;
 import static no.unit.nva.search.common.constant.Functions.trimSpace;
 import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
-import static no.unit.nva.search.common.constant.Words.ADDITIONAL_IDENTIFIERS;
-import static no.unit.nva.search.common.constant.Words.COMMA;
-import static no.unit.nva.search.common.constant.Words.CRISTIN_AS_TYPE;
-import static no.unit.nva.search.common.constant.Words.KEYWORD;
-import static no.unit.nva.search.common.constant.Words.NAME_AND_SORT_LENGTH;
-import static no.unit.nva.search.common.constant.Words.NONE;
-import static no.unit.nva.search.common.constant.Words.RELEVANCE_KEY_NAME;
-import static no.unit.nva.search.common.constant.Words.SCOPUS_AS_TYPE;
-import static no.unit.nva.search.common.constant.Words.SEARCH;
-import static no.unit.nva.search.common.constant.Words.SOURCE_NAME;
-import static no.unit.nva.search.common.constant.Words.VALUE;
 import static no.unit.nva.search.importcandidate.Constants.FACET_IMPORT_CANDIDATE_PATHS;
 import static no.unit.nva.search.importcandidate.Constants.IMPORT_CANDIDATES_AGGREGATIONS;
 import static no.unit.nva.search.importcandidate.Constants.IMPORT_CANDIDATES_INDEX_NAME;
@@ -43,7 +43,6 @@ import no.unit.nva.search.common.ParameterValidator;
 import no.unit.nva.search.common.SearchQuery;
 import no.unit.nva.search.common.constant.Functions;
 import no.unit.nva.search.common.enums.SortKey;
-import no.unit.nva.search.common.enums.ValueEncoding;
 
 import nva.commons.core.JacocoGenerated;
 
@@ -61,6 +60,8 @@ import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 /**
+ * ImportCandidateSearchQuery is a class that represents a search query for import candidates.
+ *
  * @author Stig Norland
  */
 public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidateParameter> {
@@ -246,10 +247,8 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
         @Override
         protected void setValue(String key, String value) {
             var qpKey = ImportCandidateParameter.keyFromString(key);
-            var decodedValue =
-                    qpKey.valueEncoding() != ValueEncoding.NONE
-                            ? Functions.decodeUTF(value)
-                            : value;
+            var decodedValue = getDecodedValue(qpKey, value);
+
             switch (qpKey) {
                 case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION ->
                         searchQuery.parameters().set(qpKey, decodedValue);

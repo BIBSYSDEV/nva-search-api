@@ -3,7 +3,16 @@ package no.unit.nva.search.common.records;
 import no.unit.nva.commons.json.JsonSerializable;
 
 /**
+ * ResponseLogInfo is a class that represents a response log info.
+ *
  * @author Stig Norland
+ * @param totalHits the total number of hits in the search result.
+ * @param hitsReturned the number of hits returned in the search result.
+ * @param queryDuration the duration of the query.
+ * @param networkDuration the duration of the network.
+ * @param prePostDuration the duration of the pre-post.
+ * @param totalDuration the total duration.
+ * @param query the query.
  */
 public record ResponseLogInfo(
         int totalHits,
@@ -59,6 +68,7 @@ public record ResponseLogInfo(
             this.searchQuery = searchQuery;
             return this;
         }
+
 
         public Builder withSwsResponse(SwsResponse response) {
             return this.withOpensearchResponseTime(response.took())

@@ -1,9 +1,9 @@
 package no.unit.nva.indexingclient;
 
-import static no.unit.nva.indexingclient.BatchIndexingConstants.config;
-import static no.unit.nva.indexingclient.BatchIndexingConstants.defaultEventBridgeClient;
+import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.indexingclient.Constants.PERSISTED_RESOURCES_PATH;
+import static no.unit.nva.indexingclient.Constants.defaultEventBridgeClient;
 import static no.unit.nva.indexingclient.EmitEventUtils.emitEvent;
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.objectMapperWithEmpty;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
@@ -21,8 +21,6 @@ import java.io.OutputStreamWriter;
 public class StartBatchIndexingHandler implements RequestStreamHandler {
 
     private final EventBridgeClient eventBridgeClient;
-    public static final String PERSISTED_RESOURCES_PATH =
-            config.getString("batch.persistedResourcesPath");
 
     @JacocoGenerated
     public StartBatchIndexingHandler() {

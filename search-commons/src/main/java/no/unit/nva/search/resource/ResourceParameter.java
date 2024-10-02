@@ -1,5 +1,16 @@
 package no.unit.nva.search.resource;
 
+import static no.unit.nva.constants.Words.CHAR_UNDERSCORE;
+import static no.unit.nva.constants.Words.COLON;
+import static no.unit.nva.constants.Words.CONTRIBUTOR_ORGANIZATIONS;
+import static no.unit.nva.constants.Words.CREATED_DATE;
+import static no.unit.nva.constants.Words.MODIFIED_DATE;
+import static no.unit.nva.constants.Words.PHI;
+import static no.unit.nva.constants.Words.PI;
+import static no.unit.nva.constants.Words.PROJECTS_ID;
+import static no.unit.nva.constants.Words.PUBLISHED_DATE;
+import static no.unit.nva.constants.Words.Q;
+import static no.unit.nva.constants.Words.UNDERSCORE;
 import static no.unit.nva.search.common.constant.Functions.jsonPath;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_CATEGORY_KEYS;
@@ -17,19 +28,6 @@ import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SIZE_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SORT_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SORT_ORDER_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_URI;
-import static no.unit.nva.search.common.constant.Words.ASTERISK;
-import static no.unit.nva.search.common.constant.Words.CHAR_UNDERSCORE;
-import static no.unit.nva.search.common.constant.Words.COLON;
-import static no.unit.nva.search.common.constant.Words.CONTRIBUTOR_ORGANIZATIONS;
-import static no.unit.nva.search.common.constant.Words.CREATED_DATE;
-import static no.unit.nva.search.common.constant.Words.IDENTITY;
-import static no.unit.nva.search.common.constant.Words.MODIFIED_DATE;
-import static no.unit.nva.search.common.constant.Words.PHI;
-import static no.unit.nva.search.common.constant.Words.PI;
-import static no.unit.nva.search.common.constant.Words.PROJECTS_ID;
-import static no.unit.nva.search.common.constant.Words.PUBLISHED_DATE;
-import static no.unit.nva.search.common.constant.Words.Q;
-import static no.unit.nva.search.common.constant.Words.UNDERSCORE;
 import static no.unit.nva.search.common.enums.FieldOperator.ALL_OF;
 import static no.unit.nva.search.common.enums.FieldOperator.ANY_OF;
 import static no.unit.nva.search.common.enums.FieldOperator.BETWEEN;
@@ -42,22 +40,22 @@ import static no.unit.nva.search.common.enums.ParameterKind.ACROSS_FIELDS;
 import static no.unit.nva.search.common.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search.common.enums.ParameterKind.DATE;
 import static no.unit.nva.search.common.enums.ParameterKind.EXISTS;
+import static no.unit.nva.search.common.enums.ParameterKind.FLAG;
 import static no.unit.nva.search.common.enums.ParameterKind.FREE_TEXT;
 import static no.unit.nva.search.common.enums.ParameterKind.FUZZY_KEYWORD;
 import static no.unit.nva.search.common.enums.ParameterKind.HAS_PARTS;
-import static no.unit.nva.search.common.enums.ParameterKind.IGNORED;
 import static no.unit.nva.search.common.enums.ParameterKind.KEYWORD;
 import static no.unit.nva.search.common.enums.ParameterKind.NUMBER;
 import static no.unit.nva.search.common.enums.ParameterKind.PART_OF;
 import static no.unit.nva.search.common.enums.ParameterKind.TEXT;
 import static no.unit.nva.search.resource.Constants.ASSOCIATED_ARTIFACTS_LICENSE;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_AFFILIATION_ID_KEYWORD;
+import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_FIELDS;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_IDENTITY_ID;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_IDENTITY_NAME_KEYWORD;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD;
 import static no.unit.nva.search.resource.Constants.COURSE_CODE_KEYWORD;
 import static no.unit.nva.search.resource.Constants.ENTITY_ABSTRACT;
-import static no.unit.nva.search.resource.Constants.ENTITY_CONTRIBUTORS_DOT;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_LANGUAGE;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
@@ -93,7 +91,7 @@ import static no.unit.nva.search.resource.Constants.TOP_LEVEL_ORG_ID;
 
 import static java.util.Objects.nonNull;
 
-import no.unit.nva.search.common.constant.Words;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.enums.FieldOperator;
 import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.enums.ParameterKind;
@@ -120,18 +118,20 @@ import java.util.stream.Stream;
  * @author Kir Truhacev
  * @author Joachim Jorgensen
  */
+@SuppressWarnings({"PMD.ExcessivePublicCount"})
 public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     INVALID(ParameterKind.INVALID),
-    STATISTICS(IGNORED),
     // Parameters used for filtering
     ABSTRACT(TEXT, ALL_OF, ENTITY_ABSTRACT),
+    ABSTRACT_OF_CHILD(HAS_PARTS, ALL_OF, ABSTRACT),
     ABSTRACT_NOT(TEXT, NOT_ALL_OF, ENTITY_ABSTRACT),
     ABSTRACT_SHOULD(TEXT, ANY_OF, ENTITY_ABSTRACT),
     CONTEXT_TYPE(KEYWORD, ALL_OF, PUBLICATION_CONTEXT_TYPE_KEYWORD),
-    CONTEXT_TYPE_HAS_NO_PARTS(HAS_PARTS, NOT_ANY_OF, null, null, null, null, CONTEXT_TYPE),
+    CONTEXT_TYPE_OF_NO_CHILD(HAS_PARTS, NOT_ANY_OF, null, null, null, null, CONTEXT_TYPE),
     CONTEXT_TYPE_NOT(KEYWORD, NOT_ALL_OF, PUBLICATION_CONTEXT_TYPE_KEYWORD),
     CONTEXT_TYPE_SHOULD(KEYWORD, ANY_OF, PUBLICATION_CONTEXT_TYPE_KEYWORD),
-    CONTRIBUTORS(ACROSS_FIELDS, ANY_OF, ENTITY_CONTRIBUTORS_DOT + IDENTITY + ASTERISK),
+    CONTRIBUTORS(ACROSS_FIELDS, ALL_OF, CONTRIBUTORS_FIELDS),
+    CONTRIBUTORS_OF_CHILD(HAS_PARTS, ALL_OF, CONTRIBUTORS),
     CONTRIBUTOR(KEYWORD, ALL_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI),
     CONTRIBUTOR_NOT(KEYWORD, NOT_ALL_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI),
     CONTRIBUTOR_SHOULD(KEYWORD, ANY_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI),
@@ -148,7 +148,7 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     DOI_NOT(FUZZY_KEYWORD, NOT_ALL_OF, REFERENCE_DOI_KEYWORD),
     DOI_SHOULD(TEXT, ANY_OF, REFERENCE_DOI_KEYWORD),
     /** excludeSubUnits holds path to hierarchical search, used by several keys. */
-    EXCLUDE_SUBUNITS(IGNORED, jsonPath(CONTRIBUTOR_ORGANIZATIONS, Words.KEYWORD)),
+    EXCLUDE_SUBUNITS(FLAG, jsonPath(CONTRIBUTOR_ORGANIZATIONS, Words.KEYWORD)),
     FUNDING(
             CUSTOM,
             ALL_OF,
@@ -167,6 +167,7 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     FUNDING_SOURCE_NOT(TEXT, NOT_ALL_OF, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     FUNDING_SOURCE_SHOULD(TEXT, ANY_OF, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     HANDLE(FUZZY_KEYWORD, ANY_OF, HANDLE_KEYWORD, PHI),
+    HANDLE_OF_PARENT(PART_OF, ALL_OF, HANDLE),
     HANDLE_NOT(FUZZY_KEYWORD, NOT_ANY_OF, HANDLE_KEYWORD, PHI),
     FILES(KEYWORD, ALL_OF, FILES_STATUS_KEYWORD),
     ID(KEYWORD, ANY_OF, IDENTIFIER_KEYWORD),
@@ -174,8 +175,8 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     ID_SHOULD(TEXT, ANY_OF, IDENTIFIER_KEYWORD),
     INSTANCE_TYPE(KEYWORD, ANY_OF, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_KEYS),
     INSTANCE_TYPE_NOT(KEYWORD, NOT_ANY_OF, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_NOT_KEYS),
-    INSTANCE_TYPE_PART_OF(PART_OF, ALL_OF, INSTANCE_TYPE),
-    INSTANCE_TYPE_HAS_PARTS(HAS_PARTS, ALL_OF, INSTANCE_TYPE),
+    INSTANCE_TYPE_OF_PARENT(PART_OF, ALL_OF, INSTANCE_TYPE),
+    INSTANCE_TYPE_OF_CHILD(HAS_PARTS, ALL_OF, INSTANCE_TYPE),
     INSTITUTION(TEXT, ALL_OF, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
     INSTITUTION_NOT(TEXT, NOT_ALL_OF, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
     INSTITUTION_SHOULD(TEXT, ANY_OF, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
@@ -203,8 +204,8 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     PUBLICATION_LANGUAGE(FUZZY_KEYWORD, ANY_OF, ENTITY_DESCRIPTION_LANGUAGE),
     PUBLICATION_LANGUAGE_NOT(FUZZY_KEYWORD, NOT_ANY_OF, ENTITY_DESCRIPTION_LANGUAGE),
     PUBLICATION_LANGUAGE_SHOULD(FUZZY_KEYWORD, ANY_OF, ENTITY_DESCRIPTION_LANGUAGE),
-    PUBLICATION_BOOK_PAGES(NUMBER, BETWEEN, ENTITY_DESCRIPTION_PUBLICATION_PAGES),
-    PUBLICATION_BOOK_PAGES_EXISTS(EXISTS, ANY_OF, ENTITY_DESCRIPTION_PUBLICATION_PAGES),
+    PUBLICATION_PAGES(NUMBER, BETWEEN, ENTITY_DESCRIPTION_PUBLICATION_PAGES),
+    PUBLICATION_PAGES_EXISTS(EXISTS, ANY_OF, ENTITY_DESCRIPTION_PUBLICATION_PAGES),
     PUBLICATION_YEAR(NUMBER, BETWEEN, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR),
     PUBLICATION_YEAR_BEFORE(NUMBER, LESS_THAN, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR),
     PUBLICATION_YEAR_SINCE(
@@ -222,9 +223,10 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     //    REFERENCED(ACROSS_FIELDS, ANY_OF, REFERENCE_PUBLICATION),
     REFERENCE_CONTEXT_REFERENCE_EXISTS(
             EXISTS, ANY_OF, ENTITY_DESCRIPTION_REFERENCE_CONTEXT_REFERENCE),
-    HAS_REFERENCE(CUSTOM, ALL_OF, ENTITY_DESCRIPTION_REFERENCE_CONTEXT_REFERENCE),
+    REFERENCE_EXISTS(CUSTOM, ALL_OF, ENTITY_DESCRIPTION_REFERENCE_CONTEXT_REFERENCE),
     REFERENCED_ID(FUZZY_KEYWORD, ANY_OF, REFERENCE_PUBLICATION_CONTEXT_ID_KEYWORD),
     SCIENTIFIC_VALUE(KEYWORD, ANY_OF, SCIENTIFIC_LEVEL_SEARCH_FIELD),
+    SCIENTIFIC_VALUE_OF_CHILD(HAS_PARTS, ANY_OF, SCIENTIFIC_VALUE),
     SCIENTIFIC_INDEX_STATUS(KEYWORD, ANY_OF, SCIENTIFIC_INDEX_STATUS_KEYWORD),
     SCIENTIFIC_INDEX_STATUS_NOT(KEYWORD, NOT_ANY_OF, SCIENTIFIC_INDEX_STATUS_KEYWORD),
     SCIENTIFIC_REPORT_PERIOD(NUMBER, BETWEEN, SCIENTIFIC_INDEX_YEAR),
@@ -234,6 +236,7 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     SERIES(FUZZY_KEYWORD, ALL_OF, ENTITY_DESCRIPTION_REFERENCE_SERIES),
     SERIES_NOT(FUZZY_KEYWORD, NOT_ALL_OF, ENTITY_DESCRIPTION_REFERENCE_SERIES),
     SERIES_SHOULD(FUZZY_KEYWORD, ANY_OF, ENTITY_DESCRIPTION_REFERENCE_SERIES),
+    STATISTICS(FLAG),
     STATUS(KEYWORD, ANY_OF, STATUS_KEYWORD),
     STATUS_NOT(KEYWORD, NOT_ANY_OF, STATUS_KEYWORD),
     TAGS(TEXT, ALL_OF, ENTITY_TAGS),
@@ -244,6 +247,8 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     TITLE_NOT(TEXT, NOT_ALL_OF, ENTITY_DESCRIPTION_MAIN_TITLE),
     TITLE_SHOULD(TEXT, ANY_OF, ENTITY_DESCRIPTION_MAIN_TITLE),
     TOP_LEVEL_ORGANIZATION(CUSTOM, ANY_OF, TOP_LEVEL_ORG_ID),
+    UNIDENTIFIED_CONTRIBUTOR_INSTITUTION(CUSTOM, ALL_OF, CONTRIBUTORS_FIELDS),
+    UNIDENTIFIED_NORWEGIAN(CUSTOM, ALL_OF, CONTRIBUTORS_FIELDS),
     UNIT(CUSTOM, ALL_OF, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
     UNIT_NOT(CUSTOM, NOT_ALL_OF, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
     UNIT_SHOULD(TEXT, ANY_OF, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
@@ -262,22 +267,22 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     HAS_PARENT(PART_OF, ALL_OF, GET_ALL),
     HAS_NO_PARENT(PART_OF, NOT_ALL_OF, GET_ALL),
     // Query parameters passed to SWS/Opensearch
-    AGGREGATION(IGNORED),
-    NODES_SEARCHED(IGNORED, null, null, PATTERN_IS_FIELDS_SEARCHED),
-    NODES_INCLUDED(IGNORED),
-    NODES_EXCLUDED(IGNORED),
+    AGGREGATION(FLAG),
+    NODES_SEARCHED(FLAG, null, null, PATTERN_IS_FIELDS_SEARCHED),
+    NODES_INCLUDED(FLAG),
+    NODES_EXCLUDED(FLAG),
     // Pagination parameters
     PAGE(NUMBER),
     FROM(NUMBER, null, null, PATTERN_IS_FROM_KEY),
     SIZE(NUMBER, null, null, PATTERN_IS_SIZE_KEY),
-    SEARCH_AFTER(IGNORED),
+    SEARCH_AFTER(FLAG),
     SORT(ParameterKind.SORT_KEY, null, null, PATTERN_IS_SORT_KEY),
-    SORT_ORDER(IGNORED, ALL_OF, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE);
+    SORT_ORDER(FLAG, ALL_OF, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE);
 
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
     public static final Set<ResourceParameter> RESOURCE_PARAMETER_SET =
-            Arrays.stream(ResourceParameter.values())
+            Arrays.stream(values())
                     .filter(ResourceParameter::isSearchField)
                     .sorted(ParameterKey::compareAscending)
                     .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -353,7 +358,7 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
 
     public static ResourceParameter keyFromString(String paramName) {
         var result =
-                Arrays.stream(ResourceParameter.values())
+                Arrays.stream(values())
                         .filter(ResourceParameter::ignoreInvalidKey)
                         .filter(ParameterKey.equalTo(paramName))
                         .collect(Collectors.toSet());

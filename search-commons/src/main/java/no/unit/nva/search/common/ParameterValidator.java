@@ -1,21 +1,26 @@
 package no.unit.nva.search.common;
 
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
-import static no.unit.nva.search.common.constant.ErrorMessages.requiredMissingMessage;
-import static no.unit.nva.search.common.constant.ErrorMessages.validQueryParameterNamesMessage;
+import static no.unit.nva.constants.ErrorMessages.requiredMissingMessage;
+import static no.unit.nva.constants.ErrorMessages.validQueryParameterNamesMessage;
+import static no.unit.nva.constants.Words.ALL;
+import static no.unit.nva.constants.Words.COMMA;
+import static no.unit.nva.constants.Words.HTTPS;
+import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
+import static no.unit.nva.search.common.constant.Functions.decodeUTF;
 import static no.unit.nva.search.common.constant.Functions.mergeWithColonOrComma;
-import static no.unit.nva.search.common.constant.Words.ALL;
-import static no.unit.nva.search.common.constant.Words.COMMA;
-import static no.unit.nva.search.common.constant.Words.RELEVANCE_KEY_NAME;
+
+import static nva.commons.core.StringUtils.EMPTY_STRING;
 
 import static java.util.Objects.isNull;
 
-import no.unit.nva.search.common.constant.ErrorMessages;
+import no.unit.nva.constants.ErrorMessages;
+import no.unit.nva.search.common.constant.Patterns;
 import no.unit.nva.search.common.enums.ParameterKey;
+import no.unit.nva.search.common.enums.ValueEncoding;
 
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
-import nva.commons.core.JacocoGenerated;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +29,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -172,12 +178,27 @@ public abstract class ParameterValidator<
         }
     }
 
+    protected String getDecodedValue(ParameterKey<K> qpKey, String value) {
+        return (qpKey.valueEncoding() == ValueEncoding.NONE ? value : decodeUTF(value))
+                .replaceAll(Patterns.PATTERN_IS_NON_PRINTABLE_CHARACTERS, EMPTY_STRING);
+    }
+
     /** Adds query and path parameters from requestInfo. */
-    @JacocoGenerated
     public ParameterValidator<K, Q> fromRequestInfo(RequestInfo requestInfo) {
         searchQuery.setMediaType(requestInfo.getHeaders().get(ACCEPT));
-        searchQuery.setNvaSearchApiUri(requestInfo.getRequestUri());
-        return fromQueryParameters(requestInfo.getQueryParameters());
+        var uri = URI.create(HTTPS + requestInfo.getDomainName() + requestInfo.getPath());
+        searchQuery.setNvaSearchApiUri(uri);
+        return fromMultiValueParameters(requestInfo.getMultiValueQueryStringParameters());
+    }
+
+    /**
+     * Adds testParameters from query.
+     *
+     * @apiNote This is intended to be used in runtime
+     */
+    public ParameterValidator<K, Q> fromMultiValueParameters(Map<String, List<String>> parameters) {
+        parameters.forEach((k, v) -> v.forEach(value -> setValue(k, value)));
+        return this;
     }
 
     /**
@@ -185,7 +206,7 @@ public abstract class ParameterValidator<
      *
      * @apiNote This is intended to be used when setting up tests, or from {@link #fromRequestInfo}
      */
-    public ParameterValidator<K, Q> fromQueryParameters(Map<String, String> parameters) {
+    public ParameterValidator<K, Q> fromTestParameterMap(Map<String, String> parameters) {
         parameters.forEach(this::setValue);
         return this;
     }
@@ -195,7 +216,7 @@ public abstract class ParameterValidator<
      *
      * @apiNote This is intended to be used when setting up tests.
      */
-    public ParameterValidator<K, Q> fromQueryParameters(
+    public ParameterValidator<K, Q> fromTestQueryParameters(
             Collection<Map.Entry<String, String>> testParameters) {
         testParameters.forEach(this::setEntryValue);
         return this;
@@ -255,7 +276,6 @@ public abstract class ParameterValidator<
                 .set(key, mergeWithColonOrComma(searchQuery.parameters().get(key).as(), value));
     }
 
-    @JacocoGenerated
     protected String ignoreInvalidFields(String value) {
         return ALL.equalsIgnoreCase(value) || isNull(value)
                 ? ALL
@@ -264,7 +284,6 @@ public abstract class ParameterValidator<
                         .collect(Collectors.joining(COMMA));
     }
 
-    @JacocoGenerated
     protected boolean invalidQueryParameter(K key, String value) {
         return isNull(value)
                 || Arrays.stream(value.split(COMMA))

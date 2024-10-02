@@ -1,19 +1,28 @@
 package no.unit.nva.search.ticket;
 
+import static no.unit.nva.constants.Words.CUSTOMER_ID;
+import static no.unit.nva.constants.Words.DOT;
+import static no.unit.nva.constants.Words.FIRST_NAME;
+import static no.unit.nva.constants.Words.ID;
+import static no.unit.nva.constants.Words.IDENTIFIER;
+import static no.unit.nva.constants.Words.KEYWORD;
+import static no.unit.nva.constants.Words.LAST_NAME;
+import static no.unit.nva.constants.Words.MAIN_TITLE;
+import static no.unit.nva.constants.Words.MESSAGES;
+import static no.unit.nva.constants.Words.MODIFIED_DATE;
+import static no.unit.nva.constants.Words.ORGANIZATION;
+import static no.unit.nva.constants.Words.OWNER;
+import static no.unit.nva.constants.Words.PART_OF;
+import static no.unit.nva.constants.Words.PIPE;
+import static no.unit.nva.constants.Words.PUBLICATION;
+import static no.unit.nva.constants.Words.PUBLICATION_INSTANCE;
+import static no.unit.nva.constants.Words.PUBLICATION_STATUS;
+import static no.unit.nva.constants.Words.STATUS;
+import static no.unit.nva.constants.Words.TYPE;
+import static no.unit.nva.constants.Words.USERNAME;
+import static no.unit.nva.constants.Words.VIEWED_BY;
 import static no.unit.nva.search.common.constant.Functions.branchBuilder;
 import static no.unit.nva.search.common.constant.Functions.filterBranchBuilder;
-import static no.unit.nva.search.common.constant.Words.DOT;
-import static no.unit.nva.search.common.constant.Words.ID;
-import static no.unit.nva.search.common.constant.Words.IDENTIFIER;
-import static no.unit.nva.search.common.constant.Words.KEYWORD;
-import static no.unit.nva.search.common.constant.Words.MAIN_TITLE;
-import static no.unit.nva.search.common.constant.Words.MESSAGES;
-import static no.unit.nva.search.common.constant.Words.MODIFIED_DATE;
-import static no.unit.nva.search.common.constant.Words.OWNER;
-import static no.unit.nva.search.common.constant.Words.PIPE;
-import static no.unit.nva.search.common.constant.Words.STATUS;
-import static no.unit.nva.search.common.constant.Words.TYPE;
-import static no.unit.nva.search.common.constant.Words.VIEWED_BY;
 
 import nva.commons.core.JacocoGenerated;
 
@@ -23,26 +32,17 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Constants for the ticket search.
+ *
  * @author Stig Norland
  */
 public final class Constants {
 
-    public static final String CUSTOMER_ID = "customerId";
-    public static final String FIRST_NAME = "firstName";
-    public static final String LAST_NAME = "lastName";
-    public static final String ORGANIZATION = "organization";
-    public static final String PUBLICATION = "publication";
-    public static final String PUBLICATION_STATUS = "publicationStatus";
-    public static final String PUBLICATION_INSTANCE = "publicationInstance";
-    public static final String USERNAME = "username";
     public static final String UNHANDLED_KEY = "unhandled key -> ";
-
-    public static final String PART_OF = "partOf";
 
     public static final String STATUS_KEYWORD = STATUS + DOT + KEYWORD;
     public static final String TYPE_KEYWORD = TYPE + DOT + KEYWORD;
     public static final String CUSTOMER_ID_KEYWORD = CUSTOMER_ID + DOT + KEYWORD;
-    public static final String DEFAULT_TICKET_SORT = TicketSort.CREATED_DATE.asCamelCase();
     public static final String ID_KEYWORD = ID + DOT + KEYWORD;
     public static final String ORGANIZATION_ID_KEYWORD = ORGANIZATION + DOT + ID_KEYWORD;
     public static final String ORGANIZATION_IDENTIFIER_KEYWORD =
@@ -59,7 +59,6 @@ public final class Constants {
                     + PART_OF
                     + DOT
                     + IDENTIFIER;
-
     public static final String ORGANIZATION_PATHS =
             ORGANIZATION_ID_KEYWORD
                     + PIPE
@@ -89,9 +88,6 @@ public final class Constants {
     public static final String PUBLICATION_OWNER_KEYWORD = PUBLICATION + DOT + OWNER_KEYWORD;
     public static final String PUBLICATION_STATUS_KEYWORD = PUBLICATION + DOT + STATUS_KEYWORD;
     public static final String OWNER_USERNAME = OWNER + DOT + USERNAME + DOT + KEYWORD;
-    public static final String MESSAGE_FIELDS =
-            MESSAGES + DOT + "text" + DOT + KEYWORD + PIPE + MESSAGES + DOT + STATUS + DOT
-                    + KEYWORD;
     public static final String OWNER_FIELDS =
             OWNER
                     + DOT
@@ -106,6 +102,9 @@ public final class Constants {
                     + KEYWORD
                     + PIPE
                     + OWNER_USERNAME;
+    public static final String MESSAGE_FIELDS =
+            MESSAGES + DOT + "text" + DOT + KEYWORD + PIPE + MESSAGES + DOT + STATUS + DOT
+                    + KEYWORD;
     public static final String VIEWED_BY_FIELDS =
             VIEWED_BY
                     + DOT
@@ -143,7 +142,16 @@ public final class Constants {
                     + USERNAME
                     + DOT
                     + KEYWORD;
+    public static final String BY_USER_PENDING = "byUserPending";
+
+    public static final Map<String, String> facetTicketsPaths =
+            Map.of(
+                    BY_USER_PENDING, "/withAppliedFilter/byUserPending/status/type",
+                    STATUS, "/withAppliedFilter/status",
+                    TYPE, "/withAppliedFilter/type",
+                    PUBLICATION_STATUS, "/withAppliedFilter/publicationStatus");
     private static final String FINALIZED_BY = "finalizedBy";
+
     public static final String FINALIZED_BY_FIELDS =
             FINALIZED_BY
                     + DOT
@@ -162,14 +170,6 @@ public final class Constants {
                     + USERNAME
                     + DOT
                     + KEYWORD;
-
-    public static final String BY_USER_PENDING = "byUserPending";
-    public static final Map<String, String> facetTicketsPaths =
-            Map.of(
-                    BY_USER_PENDING, "/withAppliedFilter/byUserPending/status/type",
-                    STATUS, "/withAppliedFilter/status",
-                    TYPE, "/withAppliedFilter/type",
-                    PUBLICATION_STATUS, "/withAppliedFilter/publicationStatus");
 
     @JacocoGenerated
     public Constants() {}

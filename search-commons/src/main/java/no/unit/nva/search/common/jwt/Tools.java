@@ -1,7 +1,7 @@
 package no.unit.nva.search.common.jwt;
 
+import static no.unit.nva.constants.Words.SEARCH_INFRASTRUCTURE_CREDENTIALS;
 import static no.unit.nva.search.common.constant.Functions.readSearchInfrastructureAuthUri;
-import static no.unit.nva.search.common.constant.Words.SEARCH_INFRASTRUCTURE_CREDENTIALS;
 
 import no.unit.nva.auth.CognitoCredentials;
 import no.unit.nva.search.common.records.UsernamePasswordWrapper;
@@ -12,7 +12,15 @@ import nva.commons.secrets.SecretsReader;
 import java.net.URI;
 import java.util.stream.Stream;
 
+/**
+ * Tools for handling JWT.
+ *
+ * @author Sondre Vestad
+ */
 public final class Tools {
+    @JacocoGenerated
+    public Tools() {}
+
     @JacocoGenerated
     public static CachedJwtProvider getCachedJwtProvider(SecretsReader reader) {
         return getUsernamePasswordStream(reader)
@@ -36,7 +44,4 @@ public final class Tools {
         var uri = URI.create(readSearchInfrastructureAuthUri());
         return new CognitoCredentials(wrapper::getUsername, wrapper::getPassword, uri);
     }
-
-    @JacocoGenerated
-    public Tools() {}
 }

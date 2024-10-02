@@ -1,7 +1,11 @@
 package no.unit.nva.search.resource;
 
-import static no.unit.nva.search.common.constant.Words.PUBLISHER;
-import static no.unit.nva.search.common.constant.Words.STATUS;
+import static no.unit.nva.constants.Words.CURATING_INSTITUTIONS;
+import static no.unit.nva.constants.Words.DOT;
+import static no.unit.nva.constants.Words.KEYWORD;
+import static no.unit.nva.constants.Words.ORGANIZATION;
+import static no.unit.nva.constants.Words.PUBLISHER;
+import static no.unit.nva.constants.Words.STATUS;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
 import static no.unit.nva.search.resource.Constants.PUBLISHER_ID_KEYWORD;
@@ -15,6 +19,7 @@ import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 
+import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
 
@@ -22,16 +27,19 @@ import java.net.URI;
 import java.util.Arrays;
 
 /**
+ * FilterBuilder for ResourceSearchQuery.
+ *
  * @author Stig Norland
  * @author Sondre Vestad
  */
 public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
 
+    public static final String CURATING_INST_KEYWORD = CURATING_INSTITUTIONS + DOT + KEYWORD;
     private final ResourceSearchQuery resourceSearchQuery;
 
     public ResourceFilter(ResourceSearchQuery query) {
         this.resourceSearchQuery = query;
-        this.resourceSearchQuery.filters.set();
+        this.resourceSearchQuery.filters().set();
     }
 
     @Override
@@ -45,7 +53,7 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
         final var organization =
                 requestInfo.getTopLevelOrgCristinId().orElse(requestInfo.getPersonAffiliation());
 
-        return organization(organization).requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply();
+        return customer(organization).requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply();
     }
 
     /**
@@ -66,7 +74,7 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
                         .map(PublicationStatus::toString)
                         .toArray(String[]::new);
         final var filter = new TermsQueryBuilder(STATUS_KEYWORD, values).queryName(STATUS);
-        this.resourceSearchQuery.filters.add(filter);
+        this.resourceSearchQuery.filters().add(filter);
         return this;
     }
 
@@ -78,25 +86,75 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
      * @param requestInfo fetches getCurrentCustomer
      * @return ResourceQuery (builder pattern)
      */
-    public ResourceFilter organization(RequestInfo requestInfo) throws UnauthorizedException {
+    public ResourceFilter customer(RequestInfo requestInfo) throws UnauthorizedException {
         if (isSearchingForAllPublications(requestInfo)) {
             return this;
         } else {
-            final var filter =
-                    new TermQueryBuilder(
-                                    PUBLISHER_ID_KEYWORD,
-                                    requestInfo.getCurrentCustomer().toString())
-                            .queryName(PUBLISHER);
-            this.resourceSearchQuery.filters.add(filter);
-            return this;
+            return customer(requestInfo.getCurrentCustomer());
         }
     }
 
-    public ResourceFilter organization(URI organization) throws UnauthorizedException {
+    /**
+     * Filter on organization and curationInstitutions.
+     *
+     * <p>Only documents belonging to organization specified are searchable (for the user)
+     *
+     * @param requestInfo fetches getCurrentCustomer / getTopLevelOrgCristinId /
+     *     getPersonAffiliation
+     * @return ResourceQuery (builder pattern)
+     */
+    public ResourceFilter customerCurationInstitutions(RequestInfo requestInfo)
+            throws UnauthorizedException {
+        if (isSearchingForAllPublications(requestInfo)) {
+            return this;
+        } else {
+            var customer = requestInfo.getCurrentCustomer();
+            var curationInstitution =
+                    requestInfo.getTopLevelOrgCristinId().isPresent()
+                            ? requestInfo.getTopLevelOrgCristinId().get()
+                            : requestInfo.getPersonAffiliation();
+            return customerCurationInstitutions(customer, curationInstitution);
+        }
+    }
+
+    /**
+     * Filter on organization.
+     *
+     * <p>Only documents belonging to organization specified are searchable (for the user)
+     *
+     * @param publisher the organization
+     * @return ResourceQuery (builder pattern)
+     */
+    public ResourceFilter customer(URI publisher) throws UnauthorizedException {
         final var filter =
-                new TermQueryBuilder(PUBLISHER_ID_KEYWORD, organization.toString())
+                new TermQueryBuilder(PUBLISHER_ID_KEYWORD, publisher.toString())
                         .queryName(PUBLISHER);
-        this.resourceSearchQuery.filters.add(filter);
+        this.resourceSearchQuery.filters().add(filter);
+        return this;
+    }
+
+    /**
+     * Filter on organization and curationInstitutions.
+     *
+     * <p>Only documents belonging to organization specified are searchable (for the user)
+     *
+     * @param publisher the organization
+     * @return ResourceQuery (builder pattern)
+     */
+    public ResourceFilter customerCurationInstitutions(URI publisher, URI curationInstitutions) {
+        final var filter =
+                QueryBuilders.boolQuery()
+                        .should(
+                                new TermQueryBuilder(PUBLISHER_ID_KEYWORD, publisher.toString())
+                                        .queryName(PUBLISHER))
+                        .should(
+                                new TermQueryBuilder(
+                                                CURATING_INST_KEYWORD,
+                                                curationInstitutions.toString())
+                                        .queryName(CURATING_INSTITUTIONS))
+                        .minimumShouldMatch(1)
+                        .queryName(ORGANIZATION);
+        this.resourceSearchQuery.filters().add(filter);
         return this;
     }
 

@@ -1,6 +1,6 @@
 package no.unit.nva.search.common.builder;
 
-import static no.unit.nva.search.common.constant.ErrorMessages.OPERATOR_NOT_SUPPORTED;
+import static no.unit.nva.constants.ErrorMessages.OPERATOR_NOT_SUPPORTED;
 
 import no.unit.nva.search.common.constant.Functions;
 import no.unit.nva.search.common.enums.ParameterKey;
@@ -17,7 +17,11 @@ import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 /**
+ * Class for building OpenSearch queries that search for a range of values.
+ *
  * @author Stig Norland
+ * @param <K> the type of the parameter keys used in the query. The parameter keys are used to
+ *     define the parameters that can be used in the query.
  */
 public class RangeQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBuilder<K> {
 
@@ -25,16 +29,16 @@ public class RangeQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBui
     public static final String LESS_THAN = "LessThan-";
     public static final String BETWEEN = "Between-";
     public static final String DASH = " - ";
-    private static final Logger logger = LoggerFactory.getLogger(RangeQuery.class);
     public static final int WORD_LENGTH_YEAR = 4;
     public static final int WORD_LENGTH_YEAR_MONTH = 7;
     public static final String STR_01 = "-01";
     public static final String STR_12 = "-12";
     public static final String STR_31 = "-31";
+    private static final Logger logger = LoggerFactory.getLogger(RangeQuery.class);
 
     @JacocoGenerated // never used
     @Override
-    protected Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(K key, String... values) {
+    protected Stream<Entry<K, QueryBuilder>> buildMatchAnyValueQuery(K key, String... values) {
         return queryAsEntryStream(key, values);
     }
 
@@ -48,7 +52,7 @@ public class RangeQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBui
         var firstParam = getFirstParam(values, key);
         var secondParam = getSecondParam(values, key);
 
-        logger.info(firstParam + DASH + secondParam);
+        logger.debug(firstParam + DASH + secondParam);
         return Functions.queryToEntry(
                 key,
                 switch (key.searchOperator()) {

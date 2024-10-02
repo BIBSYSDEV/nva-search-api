@@ -18,6 +18,8 @@ import java.net.http.HttpResponse;
 import java.util.function.BinaryOperator;
 
 /**
+ * ScrollClient is a class that sends a request to the search index.
+ *
  * @author Sondre Vestad
  */
 public class ScrollClient extends OpenSearchClient<SwsResponse, ScrollQuery> {

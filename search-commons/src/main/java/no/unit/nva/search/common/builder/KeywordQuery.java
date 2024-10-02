@@ -1,6 +1,6 @@
 package no.unit.nva.search.common.builder;
 
-import static no.unit.nva.search.common.constant.Words.KEYWORD_TRUE;
+import static no.unit.nva.constants.Words.KEYWORD_TRUE;
 
 import no.unit.nva.search.common.constant.Functions;
 import no.unit.nva.search.common.enums.ParameterKey;
@@ -16,15 +16,24 @@ import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 /**
+ * Class for building OpenSearch queries that search for keywords.
+ *
  * @author Stig Norland
+ * @param <K> the type of the parameter keys used in the query. The parameter keys are used to
+ *     define the parameters that can be used in the query.
  */
 public class KeywordQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBuilder<K> {
 
     public static final String KEYWORD_ALL = "KeywordAll-";
     public static final String KEYWORD_ANY = "KeywordAny-";
 
+    private static <K extends Enum<K> & ParameterKey<K>> TermQueryBuilder getTermQueryBuilder(
+            K key, String value, String searchField) {
+        return new TermQueryBuilder(searchField, value).queryName(KEYWORD_ALL + key.asCamelCase());
+    }
+
     @Override
-    protected Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(K key, String... values) {
+    protected Stream<Entry<K, QueryBuilder>> buildMatchAnyValueQuery(K key, String... values) {
         return buildMatchAnyKeywordStream(key, values)
                 .flatMap(builder -> Functions.queryToEntry(key, builder));
     }
@@ -42,11 +51,8 @@ public class KeywordQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractB
                                 key.searchFields(KEYWORD_TRUE)
                                         .map(
                                                 searchField ->
-                                                        new TermQueryBuilder(searchField, value)
-                                                                .queryName(
-                                                                        KEYWORD_ALL
-                                                                                + key
-                                                                                        .asCamelCase())));
+                                                        getTermQueryBuilder(
+                                                                key, value, searchField)));
     }
 
     private Stream<DisMaxQueryBuilder> buildMatchAnyKeywordStream(K key, String... values) {

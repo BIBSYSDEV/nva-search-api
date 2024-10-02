@@ -4,7 +4,7 @@ import static java.util.Objects.isNull;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import no.unit.nva.search.common.constant.Words;
+import no.unit.nva.constants.Words;
 
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * PagedSearchBuilder is a class that builds
+ *
  * @author Stig Norland
  */
 public class PagedSearchBuilder {

@@ -1,15 +1,15 @@
 package no.unit.nva.search.resource;
 
+import static no.unit.nva.constants.Words.CHAR_UNDERSCORE;
+import static no.unit.nva.constants.Words.DOT;
+import static no.unit.nva.constants.Words.ENTITY_DESCRIPTION;
+import static no.unit.nva.constants.Words.KEYWORD;
+import static no.unit.nva.constants.Words.YEAR;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_PIPE;
-import static no.unit.nva.search.common.constant.Words.CHAR_UNDERSCORE;
-import static no.unit.nva.search.common.constant.Words.DOT;
-import static no.unit.nva.search.common.constant.Words.ENTITY_DESCRIPTION;
-import static no.unit.nva.search.common.constant.Words.KEYWORD;
-import static no.unit.nva.search.common.constant.Words.YEAR;
 
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 
-import no.unit.nva.search.common.constant.Words;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.enums.SortKey;
 
 import org.apache.commons.text.CaseUtils;
@@ -22,6 +22,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * Enum for sorting resources.
+ *
  * @author Stig Norland
  */
 public enum ResourceSort implements SortKey {
@@ -51,6 +53,22 @@ public enum ResourceSort implements SortKey {
         this.path = jsonPath;
     }
 
+    public static ResourceSort fromSortKey(String keyName) {
+        var result =
+                Arrays.stream(values())
+                        .filter(SortKey.equalTo(keyName))
+                        .collect(Collectors.toSet());
+        return result.size() == 1 ? result.stream().findFirst().get() : INVALID;
+    }
+
+    public static Collection<String> validSortKeys() {
+        return Arrays.stream(values())
+                .sorted(SortKey::compareAscending)
+                .skip(1)
+                .map(SortKey::asLowerCase)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
     @Override
     public String asCamelCase() {
         return CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
@@ -69,21 +87,5 @@ public enum ResourceSort implements SortKey {
     @Override
     public Stream<String> jsonPaths() {
         return Arrays.stream(path.split(PATTERN_IS_PIPE));
-    }
-
-    public static ResourceSort fromSortKey(String keyName) {
-        var result =
-                Arrays.stream(ResourceSort.values())
-                        .filter(SortKey.equalTo(keyName))
-                        .collect(Collectors.toSet());
-        return result.size() == 1 ? result.stream().findFirst().get() : INVALID;
-    }
-
-    public static Collection<String> validSortKeys() {
-        return Arrays.stream(ResourceSort.values())
-                .sorted(SortKey::compareAscending)
-                .skip(1)
-                .map(SortKey::asLowerCase)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

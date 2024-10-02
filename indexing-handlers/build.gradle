@@ -1,4 +1,4 @@
-plugins{
+plugins {
     id 'nva.search.service.java-conventions'
 }
 
@@ -19,7 +19,7 @@ dependencies {
 
     implementation libs.bundles.jackson
 
-    testImplementation project (":search-testing")
+    testImplementation project(":search-testing")
     testImplementation libs.bundles.testing
     testImplementation libs.aws.sdk2.s3
 

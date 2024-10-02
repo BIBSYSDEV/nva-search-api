@@ -1,11 +1,13 @@
 package no.unit.nva.search.common.builder;
 
-import static no.unit.nva.search.common.constant.Words.COMMA;
+import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.search.common.enums.FieldOperator.ANY_OF;
 import static no.unit.nva.search.common.enums.FieldOperator.BETWEEN;
 import static no.unit.nva.search.common.enums.FieldOperator.NOT_ANY_OF;
 
 import no.unit.nva.search.common.enums.ParameterKey;
+
+import nva.commons.core.JacocoGenerated;
 
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
@@ -26,14 +28,16 @@ import java.util.stream.Stream;
  * </ul>
  *
  * @author Stig Norland
+ * @param <K> the type of the parameter keys used in the query. The parameter keys are used to
+ *     define the parameters that can be used in the query.
  */
 public abstract class AbstractBuilder<K extends Enum<K> & ParameterKey<K>> {
 
-    protected abstract Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(
-            K key, String... values);
+    @JacocoGenerated
+    abstract Stream<Entry<K, QueryBuilder>> buildMatchAnyValueQuery(K key, String... values);
 
-    protected abstract Stream<Entry<K, QueryBuilder>> buildMatchAllValuesQuery(
-            K key, String... values);
+    @JacocoGenerated
+    abstract Stream<Entry<K, QueryBuilder>> buildMatchAllValuesQuery(K key, String... values);
 
     public Stream<Map.Entry<K, QueryBuilder>> buildQuery(K key, String value) {
         final var values = splitAndFixMissingRangeValue(key, value);
@@ -42,7 +46,7 @@ public abstract class AbstractBuilder<K extends Enum<K> & ParameterKey<K>> {
 
     public Stream<Map.Entry<K, QueryBuilder>> buildQuery(K key, String... values) {
         return isSearchAny(key)
-                ? buildMatchAnyKeyValuesQuery(key, values)
+                ? buildMatchAnyValueQuery(key, values)
                 : buildMatchAllValuesQuery(key, values);
     }
 

@@ -22,12 +22,12 @@ public final class IndexQueueClient implements QueueClient {
     private static final long TIMEOUT_TIME = 30;
     private final SqsClient sqsClient;
 
-    public static IndexQueueClient defaultQueueClient() {
-        return new IndexQueueClient(defaultClient());
-    }
-
     private IndexQueueClient(SqsClient sqsClient) {
         this.sqsClient = sqsClient;
+    }
+
+    public static IndexQueueClient defaultQueueClient() {
+        return new IndexQueueClient(defaultClient());
     }
 
     private static SqsClient defaultClient() {
@@ -35,11 +35,6 @@ public final class IndexQueueClient implements QueueClient {
                 .region(getRegion())
                 .httpClient(httpClientForConcurrentQueries())
                 .build();
-    }
-
-    @Override
-    public void sendMessage(SendMessageRequest sendMessageRequest) {
-        sqsClient.sendMessage(sendMessageRequest);
     }
 
     private static Region getRegion() {
@@ -53,5 +48,10 @@ public final class IndexQueueClient implements QueueClient {
                 .connectionMaxIdleTime(Duration.ofSeconds(IDLE_TIME))
                 .connectionTimeout(Duration.ofSeconds(TIMEOUT_TIME))
                 .build();
+    }
+
+    @Override
+    public void sendMessage(SendMessageRequest sendMessageRequest) {
+        sqsClient.sendMessage(sendMessageRequest);
     }
 }

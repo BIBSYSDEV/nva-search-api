@@ -10,11 +10,13 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import no.unit.nva.search.common.jwt.CachedJwtProvider;
 import no.unit.nva.search.common.jwt.CognitoAuthenticator;
 
+import nva.commons.core.JacocoGenerated;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 
-public class MockedJwtProvider {
+public final class MockedJwtProvider {
 
     public static CachedJwtProvider setupMockedCachedJwtProvider() {
         var jwt = mock(DecodedJWT.class);
@@ -26,4 +28,7 @@ public class MockedJwtProvider {
 
         return CachedJwtProvider.prepareWithAuthenticator(cogintoAuthenticatorMock);
     }
+
+    @JacocoGenerated
+    private MockedJwtProvider() {}
 }

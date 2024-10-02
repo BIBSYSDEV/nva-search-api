@@ -19,12 +19,12 @@ sourceSets {
     test {
         resources {
             srcDir file('src/test/java')
-            exclude '**/*.java' , '*/*.xml'
+            exclude '**/*.java', '*/*.xml'
         }
     }
     check {
         resources {
-            exclude '**/*.java' , '*/*.xml'
+            exclude '**/*.java', '*/*.xml'
         }
     }
 }
@@ -98,7 +98,7 @@ tasks.named('test').configure {
 
 
 pmd {
-    toolVersion = '6.55.0'
+    toolVersion = '7.5.0'
     ruleSetConfig = rootProject.resources.text.fromFile('config/pmd/ruleset.xml')
     ruleSets = []
     ignoreFailures = false
@@ -110,7 +110,7 @@ checkstyle {
     showViolations = true
 }
 
-tasks.withType(Checkstyle).configureEach{
+tasks.withType(Checkstyle).configureEach {
     reports {
         xml.required
         html.required

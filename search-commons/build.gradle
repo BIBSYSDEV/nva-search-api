@@ -1,4 +1,4 @@
-plugins{
+plugins {
     id 'nva.search.service.java-conventions'
     id 'nva.search.service2.dynamodblocal'
 }
@@ -13,11 +13,12 @@ dependencies {
     implementation libs.nva.core
     implementation libs.nva.json
     implementation libs.nva.s3
-    implementation libs.aws.apache.interceptor
 //    implementation libs.bundles.aws.xray
     implementation libs.bundles.jackson
     implementation libs.bundles.jacksonjr
-    implementation libs.bundles.testcontainers
+    implementation(libs.bundles.testcontainers) {
+        exclude group: 'org.apache.commons', module: 'commons-compress'
+    }
     implementation libs.com.auth0.jwt
     implementation libs.csv
     implementation libs.guava
@@ -41,7 +42,6 @@ test {
     environment "ALLOWED_ORIGIN", "*"
     environment "API_HOST", "localhost"
     environment "BACKEND_CLIENT_SECRET_NAME", "secret"
-    environment "COGNITO_HOST", "https://example.org"
     environment "COGNITO_URI", "https://example.org"
     environment "EXPORT_SEARCH_RESULTS_SIZE", "100"
     environment "IDENTITY_SERVICE_SECRET_KEY", "secretKey"

@@ -1,9 +1,9 @@
 package no.unit.nva.search.common;
 
 import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
-import static no.unit.nva.auth.AuthorizedBackendClient.CONTENT_TYPE;
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
-import static no.unit.nva.search.common.constant.Words.AMPERSAND;
+import static no.unit.nva.constants.Words.AMPERSAND;
+import static no.unit.nva.constants.Words.CONTENT_TYPE;
 
 import static nva.commons.core.attempt.Try.attempt;
 
@@ -37,7 +37,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BinaryOperator;
 
 /**
+ * Abstract class for OpenSearch clients.
+ *
  * @author Stig Norland
+ * @param <R> the type of the response object. The response object is the result of the search
+ *     query.
+ * @param <Q> the type of the query object. The query object is the object that contains the
+ *     parameters for the search query.
  */
 public abstract class OpenSearchClient<R, Q extends Query<?>> {
 
@@ -57,6 +63,9 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
     }
 
     public R doSearch(Q query) {
+        if (query.filters().hasContent()) {
+            logger.info(query.filters().toString());
+        }
         queryBuilderStart = query.getStartTime();
         queryParameters =
                 query.parameters().asMap().entrySet().stream()

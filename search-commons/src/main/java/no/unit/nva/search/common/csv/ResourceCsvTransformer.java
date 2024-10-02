@@ -1,5 +1,7 @@
 package no.unit.nva.search.common.csv;
 
+import static no.unit.nva.search.common.csv.HeaderColumnNameAndOrderMappingStrategy.headerColumnNameAndOrderMappingStrategyWithType;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
@@ -11,6 +13,8 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
+ * Class for exporting data to CSV.
+ *
  * @author Rurik Greenall
  * @author Aasarød
  * @author Eyob Teweldemedhin
@@ -61,7 +65,7 @@ public final class ResourceCsvTransformer {
                         .withSeparator(SEPARATOR)
                         .withLineEnd(LINE_END)
                         .withMappingStrategy(
-                                new HeaderColumnNameAndOrderMappingStrategy<>(ExportCsv.class))
+                                headerColumnNameAndOrderMappingStrategyWithType(ExportCsv.class))
                         .build();
         try {
             csvWriter.write(lines);
@@ -142,6 +146,6 @@ public final class ResourceCsvTransformer {
 
     private static String extractText(JsonNode node, String pointer, String defaultValue) {
         var value = node.at(pointer);
-        return !value.isMissingNode() ? value.asText() : defaultValue;
+        return value.isMissingNode() ? defaultValue : value.asText();
     }
 }
