@@ -1,7 +1,7 @@
 package no.unit.nva.search.scroll;
 
+import static no.unit.nva.common.MockedHttpResponse.mockedFutureHttpResponse;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search.common.MockedHttpResponse.mockedFutureHttpResponse;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -19,7 +19,7 @@ import java.nio.file.Path;
 
 class ScrollClientTest {
 
-    public static final String SAMPLE_PUBLICATION_SEARCH = "publication_response.json";
+    public static final String SAMPLE_PUBLICATION_SEARCH = "resource_mocked_sws_search_response.json";
     private static final Logger logger = LoggerFactory.getLogger(ScrollClientTest.class);
     private ScrollClient scrollClient;
 

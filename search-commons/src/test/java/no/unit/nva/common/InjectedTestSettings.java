@@ -1,6 +1,4 @@
-package no.unit.nva.search;
-
-import no.unit.nva.search.common.Containers;
+package no.unit.nva.common;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;

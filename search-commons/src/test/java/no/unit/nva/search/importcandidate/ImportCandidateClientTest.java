@@ -1,10 +1,10 @@
 package no.unit.nva.search.importcandidate;
 
+import static no.unit.nva.common.Containers.container;
+import static no.unit.nva.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.constants.Words.ALL;
 import static no.unit.nva.constants.Words.EQUAL;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search.common.Containers.container;
-import static no.unit.nva.search.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search.importcandidate.ImportCandidateParameter.AGGREGATION;
 import static no.unit.nva.search.importcandidate.ImportCandidateParameter.COLLABORATION_TYPE;
 import static no.unit.nva.search.importcandidate.ImportCandidateParameter.CONTRIBUTOR;
@@ -168,7 +168,7 @@ class ImportCandidateClientTest {
         assertThat(aggregations.get(IMPORT_STATUS.asCamelCase()).size(), is(2));
         assertThat(aggregations.get(CONTRIBUTOR.asCamelCase()).size(), is(5));
         assertThat(aggregations.get(COLLABORATION_TYPE.asCamelCase()).size(), is(2));
-        assertThat(aggregations.get(FILES.asCamelCase()).get(0).count(), is(7));
+        assertThat(aggregations.get(FILES.asCamelCase()).getFirst().count(), is(7));
         assertThat(aggregations.get(PUBLICATION_YEAR.asCamelCase()).size(), is(4));
         assertThat(aggregations.get(TYPE.asCamelCase()).size(), is(4));
         assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION.asCamelCase()).size(), is(9));
