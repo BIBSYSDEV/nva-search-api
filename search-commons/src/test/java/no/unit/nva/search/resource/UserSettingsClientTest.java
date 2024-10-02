@@ -1,9 +1,9 @@
 package no.unit.nva.search.resource;
 
+import static no.unit.nva.common.EntrySetTools.queryToMapEntries;
+import static no.unit.nva.common.MockedHttpResponse.mockedFutureFailed;
+import static no.unit.nva.common.MockedHttpResponse.mockedFutureHttpResponse;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search.common.EntrySetTools.queryToMapEntries;
-import static no.unit.nva.search.common.MockedHttpResponse.mockedFutureFailed;
-import static no.unit.nva.search.common.MockedHttpResponse.mockedFutureHttpResponse;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 

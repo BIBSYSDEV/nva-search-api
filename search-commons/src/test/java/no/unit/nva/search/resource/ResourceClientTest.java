@@ -1,5 +1,11 @@
 package no.unit.nva.search.resource;
 
+import static no.unit.nva.common.Containers.container;
+import static no.unit.nva.common.Containers.loadMapFromResource;
+import static no.unit.nva.common.EntrySetTools.queryToMapEntries;
+import static no.unit.nva.common.MockedHttpResponse.mockedFutureFailed;
+import static no.unit.nva.common.MockedHttpResponse.mockedFutureHttpResponse;
+import static no.unit.nva.common.MockedHttpResponse.mockedHttpResponse;
 import static no.unit.nva.constants.Words.ALL;
 import static no.unit.nva.constants.Words.COLON;
 import static no.unit.nva.constants.Words.COMMA;
@@ -28,12 +34,6 @@ import static no.unit.nva.constants.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.constants.Words.TYPE;
 import static no.unit.nva.constants.Words.ZERO;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search.common.Containers.container;
-import static no.unit.nva.search.common.Containers.loadMapFromResource;
-import static no.unit.nva.search.common.EntrySetTools.queryToMapEntries;
-import static no.unit.nva.search.common.MockedHttpResponse.mockedFutureFailed;
-import static no.unit.nva.search.common.MockedHttpResponse.mockedFutureHttpResponse;
-import static no.unit.nva.search.common.MockedHttpResponse.mockedHttpResponse;
 import static no.unit.nva.search.common.enums.PublicationStatus.DELETED;
 import static no.unit.nva.search.common.enums.PublicationStatus.DRAFT;
 import static no.unit.nva.search.common.enums.PublicationStatus.DRAFT_FOR_DELETION;

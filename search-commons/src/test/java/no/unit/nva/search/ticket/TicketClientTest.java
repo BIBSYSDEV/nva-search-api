@@ -1,6 +1,10 @@
 package no.unit.nva.search.ticket;
 
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
+import static no.unit.nva.common.Containers.container;
+import static no.unit.nva.common.Containers.indexingClient;
+import static no.unit.nva.common.EntrySetTools.queryToMapEntries;
+import static no.unit.nva.common.MockedHttpResponse.mockedFutureHttpResponse;
 import static no.unit.nva.constants.Words.ALL;
 import static no.unit.nva.constants.Words.EQUAL;
 import static no.unit.nva.constants.Words.PUBLICATION_STATUS;
@@ -8,10 +12,6 @@ import static no.unit.nva.constants.Words.STATUS;
 import static no.unit.nva.constants.Words.TICKETS;
 import static no.unit.nva.constants.Words.TYPE;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search.common.Containers.container;
-import static no.unit.nva.search.common.Containers.indexingClient;
-import static no.unit.nva.search.common.EntrySetTools.queryToMapEntries;
-import static no.unit.nva.search.common.MockedHttpResponse.mockedFutureHttpResponse;
 import static no.unit.nva.search.ticket.TicketParameter.AGGREGATION;
 import static no.unit.nva.search.ticket.TicketParameter.BY_USER_PENDING;
 import static no.unit.nva.search.ticket.TicketParameter.FROM;
@@ -256,7 +256,7 @@ class TicketClientTest {
         assertThat(aggregations.size(), is(equalTo(EXPECTED_NUMBER_OF_AGGREGATIONS)));
 
         assertThat(aggregations.get(TYPE).size(), is(3));
-        assertThat(aggregations.get(STATUS).get(0).count(), is(12));
+        assertThat(aggregations.get(STATUS).getFirst().count(), is(12));
         assertThat(aggregations.get(BY_USER_PENDING.asCamelCase()).size(), is(2));
         assertThat(aggregations.get(PUBLICATION_STATUS).size(), is(3));
 
