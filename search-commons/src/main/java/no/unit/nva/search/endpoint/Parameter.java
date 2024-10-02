@@ -1,6 +1,6 @@
 package no.unit.nva.search.endpoint;
 
-import static no.unit.nva.search.common.constant.Words.DOT;
+import static no.unit.nva.constants.Words.DOT;
 import static no.unit.nva.search.common.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search.common.enums.ParameterKind.KEYWORD;
 
@@ -8,7 +8,7 @@ import static nva.commons.core.StringUtils.EMPTY_STRING;
 
 import static java.util.Objects.nonNull;
 
-import no.unit.nva.search.common.constant.Words;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.enums.ValueEncoding;
 import no.unit.nva.search.endpoint.model.ILabel;
 import no.unit.nva.search.endpoint.model.IParameter;

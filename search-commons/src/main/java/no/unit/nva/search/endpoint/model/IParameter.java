@@ -1,17 +1,17 @@
 package no.unit.nva.search.endpoint.model;
 
-import static no.unit.nva.search.common.constant.ErrorMessages.INVALID_BOOLEAN;
-import static no.unit.nva.search.common.constant.ErrorMessages.INVALID_DATE;
-import static no.unit.nva.search.common.constant.ErrorMessages.INVALID_NUMBER;
-import static no.unit.nva.search.common.constant.ErrorMessages.INVALID_VALUE;
-import static no.unit.nva.search.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.constants.ErrorMessages.INVALID_BOOLEAN;
+import static no.unit.nva.constants.ErrorMessages.INVALID_DATE;
+import static no.unit.nva.constants.ErrorMessages.INVALID_NUMBER;
+import static no.unit.nva.constants.ErrorMessages.INVALID_VALUE;
+import static no.unit.nva.constants.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.constants.Words.UNDERSCORE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_BOOLEAN;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_NON_EMPTY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_NUMBER;
-import static no.unit.nva.search.common.constant.Words.UNDERSCORE;
 
 import no.unit.nva.search.common.enums.ValueEncoding;
 import no.unit.nva.search.endpoint.Parameter;
