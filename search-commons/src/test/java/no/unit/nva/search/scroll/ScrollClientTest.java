@@ -19,7 +19,8 @@ import java.nio.file.Path;
 
 class ScrollClientTest {
 
-    public static final String SAMPLE_PUBLICATION_SEARCH = "resource_mocked_sws_search_response.json";
+    public static final String SAMPLE_PUBLICATION_SEARCH =
+            "resource_mocked_sws_search_response.json";
     private static final Logger logger = LoggerFactory.getLogger(ScrollClientTest.class);
     private ScrollClient scrollClient;
 
