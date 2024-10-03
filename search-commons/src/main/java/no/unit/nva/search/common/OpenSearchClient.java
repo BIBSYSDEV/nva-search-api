@@ -64,7 +64,7 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
 
     public R doSearch(Q query) {
         if (query.filters().hasContent()) {
-            logger.info(query.filters().toString());
+            logger.debug(query.filters().toString());
         }
         queryBuilderStart = query.getStartTime();
         queryParameters =

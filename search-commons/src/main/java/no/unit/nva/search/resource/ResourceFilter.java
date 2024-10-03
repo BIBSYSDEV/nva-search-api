@@ -12,6 +12,7 @@ import static no.unit.nva.search.resource.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search.resource.ResourceParameter.STATISTICS;
 
+import no.unit.nva.search.common.builder.KeywordQuery;
 import no.unit.nva.search.common.enums.PublicationStatus;
 import no.unit.nva.search.common.records.FilterBuilder;
 
@@ -142,11 +143,16 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
      * @return ResourceQuery (builder pattern)
      */
     public ResourceFilter customerCurationInstitutions(URI publisher, URI curationInstitutions) {
+        var publishQuery =
+                new KeywordQuery<ResourceParameter>()
+                        .buildQuery(ResourceParameter.PUBLISHER, publisher.toString())
+                        .findFirst()
+                        .orElseThrow()
+                        .getValue();
+
         final var filter =
                 QueryBuilders.boolQuery()
-                        .should(
-                                new TermQueryBuilder(PUBLISHER_ID_KEYWORD, publisher.toString())
-                                        .queryName(PUBLISHER))
+                        .should(publishQuery)
                         .should(
                                 new TermQueryBuilder(
                                                 CURATING_INST_KEYWORD,
