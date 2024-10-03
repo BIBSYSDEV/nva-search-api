@@ -1,9 +1,9 @@
 package no.unit.nva.search.resource;
 
+import static no.unit.nva.common.Containers.container;
+import static no.unit.nva.common.EntrySetTools.queryToMapEntries;
+import static no.unit.nva.common.MockedHttpResponse.mockedFutureHttpResponse;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search.common.Containers.container;
-import static no.unit.nva.search.common.EntrySetTools.queryToMapEntries;
-import static no.unit.nva.search.common.MockedHttpResponse.mockedFutureHttpResponse;
 import static no.unit.nva.search.resource.ResourceParameter.ABSTRACT;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.DOI;

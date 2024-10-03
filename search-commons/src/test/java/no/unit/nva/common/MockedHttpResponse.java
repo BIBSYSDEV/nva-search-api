@@ -1,4 +1,4 @@
-package no.unit.nva.search.common;
+package no.unit.nva.common;
 
 import static no.unit.nva.constants.Words.CONTENT_TYPE;
 import static no.unit.nva.testutils.TestHeaders.APPLICATION_JSON;

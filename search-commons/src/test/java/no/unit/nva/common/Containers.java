@@ -1,12 +1,12 @@
-package no.unit.nva.search.common;
+package no.unit.nva.common;
 
+import static no.unit.nva.common.TestConstants.DELAY_AFTER_INDEXING;
+import static no.unit.nva.common.TestConstants.OPEN_SEARCH_IMAGE;
 import static no.unit.nva.constants.Words.IDENTIFIER;
 import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.constants.Words.TICKETS;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search.common.TestConstants.DELAY_AFTER_INDEXING;
-import static no.unit.nva.search.common.TestConstants.OPEN_SEARCH_IMAGE;
 
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
