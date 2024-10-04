@@ -42,7 +42,8 @@
                   "type": "object",
                   "properties": {
                     "pages": {
-                      "type": "integer"
+                      "type": "integer",
+                      "ignore_malformed": true
                     }
                   }
                 }
