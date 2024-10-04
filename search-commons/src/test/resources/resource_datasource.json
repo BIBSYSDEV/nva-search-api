@@ -578,7 +578,8 @@
           "type": "ReportResearch",
           "pages": {
             "type": "MonographPages",
-            "illustrated": false
+            "illustrated": false,
+            "pages": "[123]"
           }
         }
       }

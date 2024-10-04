@@ -69,7 +69,6 @@ public record ResponseLogInfo(
             return this;
         }
 
-
         public Builder withSwsResponse(SwsResponse response) {
             return this.withOpensearchResponseTime(response.took())
                     .withTotalHits(response.getTotalSize())
