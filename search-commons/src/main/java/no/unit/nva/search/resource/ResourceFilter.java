@@ -4,14 +4,13 @@ import static no.unit.nva.constants.Words.CURATING_INSTITUTIONS;
 import static no.unit.nva.constants.Words.DOT;
 import static no.unit.nva.constants.Words.KEYWORD;
 import static no.unit.nva.constants.Words.ORGANIZATION;
-import static no.unit.nva.constants.Words.PUBLISHER;
 import static no.unit.nva.constants.Words.STATUS;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
-import static no.unit.nva.search.resource.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search.resource.ResourceParameter.STATISTICS;
 
+import no.unit.nva.search.common.builder.KeywordQuery;
 import no.unit.nva.search.common.enums.PublicationStatus;
 import no.unit.nva.search.common.records.FilterBuilder;
 
@@ -50,10 +49,10 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
     @Override
     public ResourceSearchQuery fromRequestInfo(RequestInfo requestInfo)
             throws UnauthorizedException {
-        final var organization =
-                requestInfo.getTopLevelOrgCristinId().orElse(requestInfo.getPersonAffiliation());
 
-        return customer(organization).requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply();
+        return customerCurationInstitutions(requestInfo)
+                .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                .apply();
     }
 
     /**
@@ -79,22 +78,6 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
     }
 
     /**
-     * Filter on organization.
-     *
-     * <p>Only documents belonging to organization specified are searchable (for the user)
-     *
-     * @param requestInfo fetches getCurrentCustomer
-     * @return ResourceQuery (builder pattern)
-     */
-    public ResourceFilter customer(RequestInfo requestInfo) throws UnauthorizedException {
-        if (isSearchingForAllPublications(requestInfo)) {
-            return this;
-        } else {
-            return customer(requestInfo.getCurrentCustomer());
-        }
-    }
-
-    /**
      * Filter on organization and curationInstitutions.
      *
      * <p>Only documents belonging to organization specified are searchable (for the user)
@@ -108,6 +91,7 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
         if (isSearchingForAllPublications(requestInfo)) {
             return this;
         } else {
+
             var customer = requestInfo.getCurrentCustomer();
             var curationInstitution =
                     requestInfo.getTopLevelOrgCristinId().isPresent()
@@ -115,22 +99,6 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
                             : requestInfo.getPersonAffiliation();
             return customerCurationInstitutions(customer, curationInstitution);
         }
-    }
-
-    /**
-     * Filter on organization.
-     *
-     * <p>Only documents belonging to organization specified are searchable (for the user)
-     *
-     * @param publisher the organization
-     * @return ResourceQuery (builder pattern)
-     */
-    public ResourceFilter customer(URI publisher) throws UnauthorizedException {
-        final var filter =
-                new TermQueryBuilder(PUBLISHER_ID_KEYWORD, publisher.toString())
-                        .queryName(PUBLISHER);
-        this.resourceSearchQuery.filters().add(filter);
-        return this;
     }
 
     /**
@@ -142,11 +110,16 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
      * @return ResourceQuery (builder pattern)
      */
     public ResourceFilter customerCurationInstitutions(URI publisher, URI curationInstitutions) {
+        var publishQuery =
+                new KeywordQuery<ResourceParameter>()
+                        .buildQuery(ResourceParameter.PUBLISHER, publisher.toString())
+                        .findFirst()
+                        .orElseThrow()
+                        .getValue();
+
         final var filter =
                 QueryBuilders.boolQuery()
-                        .should(
-                                new TermQueryBuilder(PUBLISHER_ID_KEYWORD, publisher.toString())
-                                        .queryName(PUBLISHER))
+                        .should(publishQuery)
                         .should(
                                 new TermQueryBuilder(
                                                 CURATING_INST_KEYWORD,

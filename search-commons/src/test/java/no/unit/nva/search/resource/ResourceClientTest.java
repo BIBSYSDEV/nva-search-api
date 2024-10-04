@@ -288,6 +288,7 @@ class ResourceClientTest {
         uriSortingProvider().findFirst().ifPresent(uri::set);
         var mockedRequestInfoLocal = mock(RequestInfo.class);
         when(mockedRequestInfoLocal.getPersonAffiliation()).thenReturn(randomUri());
+        when(mockedRequestInfoLocal.getCurrentCustomer()).thenReturn(randomUri());
         var result =
                 ResourceSearchQuery.builder()
                         .fromTestQueryParameters(queryToMapEntries(uri.get()))
@@ -549,9 +550,7 @@ class ResourceClientTest {
                         .withRequiredParameters(FROM, SIZE)
                         .build()
                         .withFilter()
-                        .requiredStatus(PUBLISHED_METADATA, PUBLISHED)
-                        .customer(requestInfo)
-                        .apply()
+                        .fromRequestInfo(requestInfo)
                         .doSearch(searchClient);
 
         assertNotNull(response);
@@ -568,6 +567,11 @@ class ResourceClientTest {
                 .thenReturn(
                         URI.create(
                                 "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478"));
+        when(requestInfo.userIsAuthorized(AccessRight.MANAGE_CUSTOMERS)).thenReturn(true);
+        when(requestInfo.getPersonAffiliation())
+                .thenReturn(
+                        URI.create(
+                                "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0"));
         var response =
                 ResourceSearchQuery.builder()
                         .fromTestQueryParameters(queryToMapEntries(uri))
@@ -576,15 +580,13 @@ class ResourceClientTest {
                         .withRequiredParameters(FROM, SIZE)
                         .build()
                         .withFilter()
-                        .requiredStatus(PUBLISHED_METADATA, PUBLISHED)
-                        .customer(requestInfo)
-                        .apply()
+                        .fromRequestInfo(requestInfo)
                         .doSearch(searchClient);
 
         assertNotNull(response);
 
         var pagedSearchResourceDto = response.toPagedResponse();
-        assertEquals(5, pagedSearchResourceDto.totalHits());
+        assertEquals(3, pagedSearchResourceDto.totalHits());
     }
 
     @Test
