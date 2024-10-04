@@ -1,5 +1,11 @@
 package no.unit.nva.search.resource;
 
+import static no.unit.nva.common.Containers.container;
+import static no.unit.nva.common.Containers.loadMapFromResource;
+import static no.unit.nva.common.EntrySetTools.queryToMapEntries;
+import static no.unit.nva.common.MockedHttpResponse.mockedFutureFailed;
+import static no.unit.nva.common.MockedHttpResponse.mockedFutureHttpResponse;
+import static no.unit.nva.common.MockedHttpResponse.mockedHttpResponse;
 import static no.unit.nva.constants.Words.ALL;
 import static no.unit.nva.constants.Words.COLON;
 import static no.unit.nva.constants.Words.COMMA;
@@ -28,12 +34,6 @@ import static no.unit.nva.constants.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.constants.Words.TYPE;
 import static no.unit.nva.constants.Words.ZERO;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search.common.Containers.container;
-import static no.unit.nva.search.common.Containers.loadMapFromResource;
-import static no.unit.nva.search.common.EntrySetTools.queryToMapEntries;
-import static no.unit.nva.search.common.MockedHttpResponse.mockedFutureFailed;
-import static no.unit.nva.search.common.MockedHttpResponse.mockedFutureHttpResponse;
-import static no.unit.nva.search.common.MockedHttpResponse.mockedHttpResponse;
 import static no.unit.nva.search.common.enums.PublicationStatus.DELETED;
 import static no.unit.nva.search.common.enums.PublicationStatus.DRAFT;
 import static no.unit.nva.search.common.enums.PublicationStatus.DRAFT_FOR_DELETION;
@@ -288,6 +288,7 @@ class ResourceClientTest {
         uriSortingProvider().findFirst().ifPresent(uri::set);
         var mockedRequestInfoLocal = mock(RequestInfo.class);
         when(mockedRequestInfoLocal.getPersonAffiliation()).thenReturn(randomUri());
+        when(mockedRequestInfoLocal.getCurrentCustomer()).thenReturn(randomUri());
         var result =
                 ResourceSearchQuery.builder()
                         .fromTestQueryParameters(queryToMapEntries(uri.get()))
@@ -549,9 +550,7 @@ class ResourceClientTest {
                         .withRequiredParameters(FROM, SIZE)
                         .build()
                         .withFilter()
-                        .requiredStatus(PUBLISHED_METADATA, PUBLISHED)
-                        .customer(requestInfo)
-                        .apply()
+                        .fromRequestInfo(requestInfo)
                         .doSearch(searchClient);
 
         assertNotNull(response);
@@ -568,6 +567,11 @@ class ResourceClientTest {
                 .thenReturn(
                         URI.create(
                                 "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478"));
+        when(requestInfo.userIsAuthorized(AccessRight.MANAGE_CUSTOMERS)).thenReturn(true);
+        when(requestInfo.getPersonAffiliation())
+                .thenReturn(
+                        URI.create(
+                                "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0"));
         var response =
                 ResourceSearchQuery.builder()
                         .fromTestQueryParameters(queryToMapEntries(uri))
@@ -576,15 +580,13 @@ class ResourceClientTest {
                         .withRequiredParameters(FROM, SIZE)
                         .build()
                         .withFilter()
-                        .requiredStatus(PUBLISHED_METADATA, PUBLISHED)
-                        .customer(requestInfo)
-                        .apply()
+                        .fromRequestInfo(requestInfo)
                         .doSearch(searchClient);
 
         assertNotNull(response);
 
         var pagedSearchResourceDto = response.toPagedResponse();
-        assertEquals(5, pagedSearchResourceDto.totalHits());
+        assertEquals(3, pagedSearchResourceDto.totalHits());
     }
 
     @Test
