@@ -628,6 +628,7 @@ Resources:
           PERSISTED_RESOURCES_BUCKET: !Ref ResourcesBucket
           KEY_BATCHES_BUCKET: !Ref KeyBatchesBucket
           TOPIC: 'SearchService.Index.KeyBasedBatch'
+          PERSISTED_RESOURCES_PATH: !Sub "s3://${ResourcesBucket}/resources"
       Events:
         BatchIndexEvent:
           Type: EventBridgeRule
@@ -652,6 +653,7 @@ Resources:
           KEY_BATCHES_BUCKET: !Sub '${KeyBatchesBucketName}-${AWS::AccountId}'
           EVENT_BUS: !GetAtt BatchIndexEventBus.Name
           MAX_PAYLOAD: '3291456'
+          PERSISTED_RESOURCES_PATH: !Sub "s3://${ResourcesBucket}/resources"
       Events:
         BatchIndexEvent:
           Type: EventBridgeRule
