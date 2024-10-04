@@ -583,7 +583,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: batch-index
-      Handler: no.unit.nva.search.EventBasedBatchIndexer::handleRequest
+      Handler: no.unit.nva.indexingclient.EventBasedBatchIndexer::handleRequest
       MemorySize: 1024
       Timeout: 900
       Role: !GetAtt SearchHandlerRole.Arn
@@ -604,7 +604,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: batch-index
-      Handler: no.unit.nva.search.StartBatchIndexingHandler::handleRequest
+      Handler: no.unit.nva.indexingclient.StartBatchIndexingHandler::handleRequest
       MemorySize: 1024
       Timeout: 900
       Role: !GetAtt SearchHandlerRole.Arn
@@ -614,25 +614,11 @@ Resources:
           BATCH_INDEX_EVENT_BUS_NAME: !GetAtt BatchIndexEventBus.Name
           PERSISTED_RESOURCES_PATH: !Sub "s3://${ResourcesBucket}/resources"
 
-  StartKeyBasedBatchHandler:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: batch-index
-      Handler: no.unit.nva.search.keybatch.StartKeyBasedBatchHandler::handleRequest
-      MemorySize: 1024
-      Timeout: 900
-      Role: !GetAtt SearchHandlerRole.Arn
-      Environment:
-        Variables:
-          EVENT_BUS: !GetAtt BatchIndexEventBus.Name
-          EVENTS_BUCKET: !Ref EventsBucketsName
-          TOPIC: 'SearchService.Index.KeyBasedBatch'
-
   GenerateKeyBatchesHandler:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: batch-index
-      Handler: no.unit.nva.search.keybatch.GenerateKeyBatchesHandler::handleRequest
+      Handler: no.unit.nva.indexingclient.keybatch.GenerateKeyBatchesHandler::handleRequest
       MemorySize: 1024
       Timeout: 900
       Role: !GetAtt SearchHandlerRole.Arn
@@ -655,7 +641,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: batch-index
-      Handler: no.unit.nva.search.keybatch.KeyBasedBatchIndexHandler::handleRequest
+      Handler: no.unit.nva.indexingclient.keybatch.KeyBasedBatchIndexHandler::handleRequest
       MemorySize: 1024
       Timeout: 900
       Role: !GetAtt SearchHandlerRole.Arn
