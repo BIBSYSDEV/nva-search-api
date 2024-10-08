@@ -53,7 +53,8 @@ import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
 import static no.unit.nva.search.resource.ResourceParameter.STATISTICS;
 import static no.unit.nva.search.resource.ResourceParameter.UNIT;
-import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
+
+import static nva.commons.apigateway.AccessRight.MANAGE_CUSTOMERS;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
@@ -92,7 +93,6 @@ import no.unit.nva.search.common.records.HttpResponseFormatter;
 import no.unit.nva.search.scroll.ScrollClient;
 import no.unit.nva.search.scroll.ScrollQuery;
 
-import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -117,6 +117,7 @@ import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -286,11 +287,18 @@ class ResourceClientTest {
     void testingFromRequestInfoSuccessful() throws UnauthorizedException, BadRequestException {
         AtomicReference<URI> uri = new AtomicReference<>();
         uriSortingProvider().findFirst().ifPresent(uri::set);
+
+        var accessRights = List.of(MANAGE_CUSTOMERS);
         var mockedRequestInfoLocal = mock(RequestInfo.class);
-        when(mockedRequestInfoLocal.getPersonAffiliation()).thenReturn(randomUri());
-        when(mockedRequestInfoLocal.getCurrentCustomer()).thenReturn(randomUri());
+        when(mockedRequestInfoLocal.getPersonAffiliation())
+                .thenReturn(
+                        URI.create(
+                                "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0"));
+        when(mockedRequestInfoLocal.getAccessRights()).thenReturn(accessRights);
+
         var result =
                 ResourceSearchQuery.builder()
+                        .fromRequestInfo(mockedRequestInfoLocal)
                         .fromTestQueryParameters(queryToMapEntries(uri.get()))
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withRequiredParameters(FROM, SIZE)
@@ -298,7 +306,7 @@ class ResourceClientTest {
                         .withFilter()
                         .fromRequestInfo(mockedRequestInfoLocal)
                         .doSearch(searchClient);
-        assertThat(result.toPagedResponse().hits().size(), is(0));
+        assertThat(result.toPagedResponse().hits().size(), is(2));
     }
 
     @Test
@@ -534,16 +542,18 @@ class ResourceClientTest {
 
     @Test
     void isSearchingForAllPublicationsDoWork() throws UnauthorizedException, BadRequestException {
-        var uri = URI.create("https://x.org/");
         var requestInfo = mock(RequestInfo.class);
         when(requestInfo.getCurrentCustomer())
                 .thenReturn(
                         URI.create(
                                 "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478"));
-        when(requestInfo.userIsAuthorized(AccessRight.MANAGE_CUSTOMERS)).thenReturn(true);
+        when(requestInfo.getAccessRights()).thenReturn(List.of(MANAGE_CUSTOMERS));
+        when(requestInfo.getPersonAffiliation())
+                .thenReturn(URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/"));
+
         var response =
                 ResourceSearchQuery.builder()
-                        .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromRequestInfo(requestInfo)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withParameter(NODES_EXCLUDED, "metaInfo")
                         .withParameter(STATISTICS, "true")
@@ -567,13 +577,14 @@ class ResourceClientTest {
                 .thenReturn(
                         URI.create(
                                 "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478"));
-        when(requestInfo.userIsAuthorized(AccessRight.MANAGE_CUSTOMERS)).thenReturn(true);
+        when(requestInfo.getAccessRights()).thenReturn(List.of(MANAGE_CUSTOMERS));
         when(requestInfo.getPersonAffiliation())
                 .thenReturn(
                         URI.create(
                                 "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0"));
         var response =
                 ResourceSearchQuery.builder()
+                        .fromRequestInfo(requestInfo)
                         .fromTestQueryParameters(queryToMapEntries(uri))
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withParameter(NODES_EXCLUDED, "metaInfo")

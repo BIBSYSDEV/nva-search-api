@@ -3,23 +3,24 @@ package no.unit.nva.search.resource;
 import static no.unit.nva.constants.Words.CURATING_INSTITUTIONS;
 import static no.unit.nva.constants.Words.DOT;
 import static no.unit.nva.constants.Words.KEYWORD;
-import static no.unit.nva.constants.Words.ORGANIZATION;
 import static no.unit.nva.constants.Words.STATUS;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
+import static no.unit.nva.search.resource.Constants.CONTRIBUTOR_ORG_KEYWORD;
 import static no.unit.nva.search.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search.resource.ResourceParameter.STATISTICS;
 
-import no.unit.nva.search.common.builder.KeywordQuery;
+import static nva.commons.apigateway.AccessRight.MANAGE_CUSTOMERS;
+import static nva.commons.apigateway.AccessRight.MANAGE_RESOURCES_ALL;
+
 import no.unit.nva.search.common.enums.PublicationStatus;
 import no.unit.nva.search.common.records.FilterBuilder;
 
-import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 
+import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
 
 import java.net.URI;
@@ -30,20 +31,28 @@ import java.util.Arrays;
  *
  * @author Stig Norland
  * @author Sondre Vestad
+ * @see <a
+ *     href="https://github.com/BIBSYSDEV/nva-identity-service/blob/main/user-access-handlers/src/main/java/no/unit/nva/handlers/data/DefaultRoleSource.java">DefaultRoleSource</a>
+ *     Definitions of roles
+ * @see <a href="https://sikt.atlassian.net/browse/NP-47357">NP-47357</a> Role definitions
  */
 public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
 
-    public static final String CURATING_INST_KEYWORD = CURATING_INSTITUTIONS + DOT + KEYWORD;
-    private final ResourceSearchQuery resourceSearchQuery;
+    private static final String CURATING_INST_KEYWORD = CURATING_INSTITUTIONS + DOT + KEYWORD;
+    private static final String EDITOR_CURATOR_FILTER = "EditorCuratorFilter";
+    private static final String EDITOR_FILTER = "EditorFilter";
+    private static final String CURATOR_FILTER = "CuratorFilter";
+
+    private final ResourceSearchQuery searchQuery;
 
     public ResourceFilter(ResourceSearchQuery query) {
-        this.resourceSearchQuery = query;
-        this.resourceSearchQuery.filters().set();
+        this.searchQuery = query;
+        this.searchQuery.filters().set();
     }
 
     @Override
     public ResourceSearchQuery apply() {
-        return resourceSearchQuery;
+        return searchQuery;
     }
 
     @Override
@@ -65,7 +74,7 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
      * <p>See {@link PublicationStatus} for available values.
      *
      * @param publicationStatus the required statues
-     * @return ResourceQuery (builder pattern)
+     * @return {@link ResourceFilter} (builder pattern)
      */
     public ResourceFilter requiredStatus(PublicationStatus... publicationStatus) {
         final var values =
@@ -73,7 +82,7 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
                         .map(PublicationStatus::toString)
                         .toArray(String[]::new);
         final var filter = new TermsQueryBuilder(STATUS_KEYWORD, values).queryName(STATUS);
-        this.resourceSearchQuery.filters().add(filter);
+        this.searchQuery.filters().add(filter);
         return this;
     }
 
@@ -82,57 +91,57 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
      *
      * <p>Only documents belonging to organization specified are searchable (for the user)
      *
-     * @param requestInfo fetches getCurrentCustomer / getTopLevelOrgCristinId /
-     *     getPersonAffiliation
-     * @return ResourceQuery (builder pattern)
+     * @param requestInfo fetches CurrentCustomer TopLevelOrgCristinId PersonAffiliation
+     * @return {@link ResourceFilter} (builder pattern)
      */
     public ResourceFilter customerCurationInstitutions(RequestInfo requestInfo)
             throws UnauthorizedException {
-        if (isSearchingForAllPublications(requestInfo)) {
-            return this;
-        } else {
-
-            var customer = requestInfo.getCurrentCustomer();
-            var curationInstitution =
-                    requestInfo.getTopLevelOrgCristinId().isPresent()
-                            ? requestInfo.getTopLevelOrgCristinId().get()
-                            : requestInfo.getPersonAffiliation();
-            return customerCurationInstitutions(customer, curationInstitution);
+        if (!isSearchingForAllPublications()) {
+            final var filter =
+                    QueryBuilders.boolQuery()
+                            .minimumShouldMatch(1)
+                            .queryName(EDITOR_CURATOR_FILTER);
+            if (isEditor()) {
+                var customerId = requestInfo.getCurrentCustomer().toString();
+                filter.should(getEditorFilter(customerId));
+            }
+            if (isCurator()) {
+                var curationInstitutionId = getCurationInstitutionId(requestInfo).toString();
+                filter.should(getCuratorFilter(curationInstitutionId));
+            }
+            if (!filter.hasClauses()) {
+                throw new UnauthorizedException();
+            }
+            this.searchQuery.filters().add(filter);
         }
-    }
-
-    /**
-     * Filter on organization and curationInstitutions.
-     *
-     * <p>Only documents belonging to organization specified are searchable (for the user)
-     *
-     * @param publisher the organization
-     * @return ResourceQuery (builder pattern)
-     */
-    public ResourceFilter customerCurationInstitutions(URI publisher, URI curationInstitutions) {
-        var publishQuery =
-                new KeywordQuery<ResourceParameter>()
-                        .buildQuery(ResourceParameter.PUBLISHER, publisher.toString())
-                        .findFirst()
-                        .orElseThrow()
-                        .getValue();
-
-        final var filter =
-                QueryBuilders.boolQuery()
-                        .should(publishQuery)
-                        .should(
-                                new TermQueryBuilder(
-                                                CURATING_INST_KEYWORD,
-                                                curationInstitutions.toString())
-                                        .queryName(CURATING_INSTITUTIONS))
-                        .minimumShouldMatch(1)
-                        .queryName(ORGANIZATION);
-        this.resourceSearchQuery.filters().add(filter);
         return this;
     }
 
-    private boolean isSearchingForAllPublications(RequestInfo requestInfo) {
-        return requestInfo.userIsAuthorized(AccessRight.MANAGE_CUSTOMERS)
-                && resourceSearchQuery.parameters().isPresent(STATISTICS);
+    private static URI getCurationInstitutionId(RequestInfo requestInfo)
+            throws UnauthorizedException {
+        return requestInfo.getTopLevelOrgCristinId().isPresent()
+                ? requestInfo.getTopLevelOrgCristinId().get()
+                : requestInfo.getPersonAffiliation();
+    }
+
+    private QueryBuilder getEditorFilter(String customerId) {
+        return QueryBuilders.termQuery(CONTRIBUTOR_ORG_KEYWORD, customerId)
+                .queryName(EDITOR_FILTER);
+    }
+
+    private QueryBuilder getCuratorFilter(String customerId) {
+        return QueryBuilders.termQuery(CURATING_INST_KEYWORD, customerId).queryName(CURATOR_FILTER);
+    }
+
+    private boolean isCurator() {
+        return searchQuery.hasAccessRights(MANAGE_CUSTOMERS);
+    }
+
+    private boolean isEditor() {
+        return searchQuery.hasAccessRights(MANAGE_RESOURCES_ALL);
+    }
+
+    private boolean isSearchingForAllPublications() {
+        return isCurator() && searchQuery.parameters().isPresent(STATISTICS);
     }
 }

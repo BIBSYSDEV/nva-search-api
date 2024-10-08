@@ -81,8 +81,11 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
     }
 
     private void validateAccessRight(List<AccessRight> accessRights) throws UnauthorizedException {
-        if (accessRights.contains(AccessRight.MANAGE_OWN_AFFILIATION)
-                || accessRights.contains(AccessRight.MANAGE_RESOURCES_STANDARD)) {
+        if (accessRights.contains(AccessRight.MANAGE_RESOURCES_ALL)
+                || accessRights.contains(AccessRight.MANAGE_CUSTOMERS)
+        //                || accessRights.contains(AccessRight.MANAGE_OWN_AFFILIATION)
+        //                || accessRights.contains(AccessRight.MANAGE_RESOURCES_STANDARD)
+        ) {
             return;
         }
         throw new UnauthorizedException();

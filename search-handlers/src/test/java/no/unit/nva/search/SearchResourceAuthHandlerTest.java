@@ -75,7 +75,7 @@ class SearchResourceAuthHandlerTest {
 
         handler.handleRequest(
                 getInputStreamWithAccessRight(
-                        customer, curatorOrganization, AccessRight.MANAGE_RESOURCES_STANDARD),
+                        customer, curatorOrganization, AccessRight.MANAGE_RESOURCES_ALL),
                 outputStream,
                 contextMock);
 
@@ -93,7 +93,7 @@ class SearchResourceAuthHandlerTest {
 
         var input =
                 getInputStreamWithAccessRight(
-                        randomUri(), randomUri(), AccessRight.MANAGE_OWN_AFFILIATION);
+                        randomUri(), randomUri(), AccessRight.MANAGE_RESOURCES_ALL);
         handler.handleRequest(input, outputStream, contextMock);
 
         var gatewayResponse = FakeGatewayResponse.of(outputStream);

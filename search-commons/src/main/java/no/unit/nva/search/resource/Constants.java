@@ -8,6 +8,7 @@ import static no.unit.nva.constants.Words.BOKMAAL_CODE;
 import static no.unit.nva.constants.Words.CODE;
 import static no.unit.nva.constants.Words.CONTRIBUTOR;
 import static no.unit.nva.constants.Words.CONTRIBUTORS;
+import static no.unit.nva.constants.Words.CONTRIBUTOR_ORGANIZATIONS;
 import static no.unit.nva.constants.Words.COURSE;
 import static no.unit.nva.constants.Words.DOI;
 import static no.unit.nva.constants.Words.DOT;
@@ -107,6 +108,9 @@ public final class Constants {
 
     public static final String ENTITY_PUBLICATION_INSTANCE_DOT =
             ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_INSTANCE + DOT;
+
+    public static final String CONTRIBUTOR_ORG_KEYWORD =
+            jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD);
 
     public static final String CONTRIBUTORS_AFFILIATION_ID_KEYWORD =
             ENTITY_CONTRIBUTORS_DOT + AFFILIATIONS + DOT + ID + DOT + KEYWORD;

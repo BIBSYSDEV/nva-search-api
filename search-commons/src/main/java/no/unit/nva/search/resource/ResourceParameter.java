@@ -2,7 +2,6 @@ package no.unit.nva.search.resource;
 
 import static no.unit.nva.constants.Words.CHAR_UNDERSCORE;
 import static no.unit.nva.constants.Words.COLON;
-import static no.unit.nva.constants.Words.CONTRIBUTOR_ORGANIZATIONS;
 import static no.unit.nva.constants.Words.CREATED_DATE;
 import static no.unit.nva.constants.Words.MODIFIED_DATE;
 import static no.unit.nva.constants.Words.PHI;
@@ -11,7 +10,6 @@ import static no.unit.nva.constants.Words.PROJECTS_ID;
 import static no.unit.nva.constants.Words.PUBLISHED_DATE;
 import static no.unit.nva.constants.Words.Q;
 import static no.unit.nva.constants.Words.UNDERSCORE;
-import static no.unit.nva.search.common.constant.Functions.jsonPath;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_CATEGORY_KEYS;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_CATEGORY_NOT_KEYS;
@@ -91,7 +89,6 @@ import static no.unit.nva.search.resource.Constants.TOP_LEVEL_ORG_ID;
 
 import static java.util.Objects.nonNull;
 
-import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.enums.FieldOperator;
 import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.enums.ParameterKind;
@@ -148,7 +145,7 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     DOI_NOT(FUZZY_KEYWORD, NOT_ALL_OF, REFERENCE_DOI_KEYWORD),
     DOI_SHOULD(TEXT, ANY_OF, REFERENCE_DOI_KEYWORD),
     /** excludeSubUnits holds path to hierarchical search, used by several keys. */
-    EXCLUDE_SUBUNITS(FLAG, jsonPath(CONTRIBUTOR_ORGANIZATIONS, Words.KEYWORD)),
+    EXCLUDE_SUBUNITS(FLAG, Constants.CONTRIBUTOR_ORG_KEYWORD),
     FUNDING(
             CUSTOM,
             ALL_OF,
