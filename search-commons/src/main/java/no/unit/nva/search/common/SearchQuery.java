@@ -58,10 +58,11 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -81,7 +82,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
 
     protected static final Logger logger = LoggerFactory.getLogger(SearchQuery.class);
     private transient MediaType mediaType;
-    private transient HashSet<AccessRight> accessRights;
+    private final transient Set<AccessRight> accessRights;
 
     /**
      * Always set at runtime by ParameterValidator.fromRequestInfo(RequestInfo requestInfo); This
@@ -93,7 +94,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     protected SearchQuery() {
         super();
         queryKeys = new QueryKeys<>(keyFields());
-        accessRights = new HashSet<>();
+        accessRights = EnumSet.noneOf(AccessRight.class);
         setMediaType(JSON_UTF_8.toString());
     }
 
@@ -146,7 +147,8 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     }
 
     protected void setAccessRights(List<AccessRight> accessRights) {
-        this.accessRights = new HashSet<>(accessRights);
+        this.accessRights.clear();
+        this.accessRights.addAll(accessRights);
     }
 
     public MediaType getMediaType() {
