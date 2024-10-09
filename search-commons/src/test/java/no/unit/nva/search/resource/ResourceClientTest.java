@@ -55,6 +55,7 @@ import static no.unit.nva.search.resource.ResourceParameter.STATISTICS;
 import static no.unit.nva.search.resource.ResourceParameter.UNIT;
 
 import static nva.commons.apigateway.AccessRight.MANAGE_CUSTOMERS;
+import static nva.commons.apigateway.AccessRight.MANAGE_DEGREE;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
@@ -93,6 +94,7 @@ import no.unit.nva.search.common.records.HttpResponseFormatter;
 import no.unit.nva.search.scroll.ScrollClient;
 import no.unit.nva.search.scroll.ScrollQuery;
 
+import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -117,8 +119,10 @@ import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -540,16 +544,21 @@ class ResourceClientTest {
         assertEquals(expectedHits, pagedSearchResourceDto.totalHits());
     }
 
-    @Test
-    void isSearchingForAllPublicationsDoWork() throws UnauthorizedException, BadRequestException {
+    @ParameterizedTest
+    @CsvSource({
+        "5,MANAGE_RESOURCES_ALL",
+        "22,MANAGE_CUSTOMERS",
+        "22,MANAGE_CUSTOMERS,MANAGE_RESOURCES_ALL"
+    })
+    void isSearchingForAllPublicationsAsRoleWork(int expectedHits, String accessRights)
+            throws UnauthorizedException, BadRequestException {
+        var rights = Arrays.stream(accessRights.split(COMMA)).map(AccessRight::valueOf).toList();
         var requestInfo = mock(RequestInfo.class);
-        when(requestInfo.getCurrentCustomer())
+        when(requestInfo.getAccessRights()).thenReturn(rights);
+        when(requestInfo.getPersonAffiliation())
                 .thenReturn(
                         URI.create(
-                                "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478"));
-        when(requestInfo.getAccessRights()).thenReturn(List.of(MANAGE_CUSTOMERS));
-        when(requestInfo.getPersonAffiliation())
-                .thenReturn(URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/"));
+                                "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"));
 
         var response =
                 ResourceSearchQuery.builder()
@@ -566,26 +575,43 @@ class ResourceClientTest {
         assertNotNull(response);
 
         var pagedSearchResourceDto = response.toPagedResponse();
-        assertEquals(22, pagedSearchResourceDto.totalHits());
+        assertEquals(expectedHits, pagedSearchResourceDto.totalHits());
+    }
+
+    @Test
+    void isSearchingWithWrongAccessFails() throws UnauthorizedException {
+        var requestInfo = mock(RequestInfo.class);
+        when(requestInfo.getAccessRights()).thenReturn(List.of(MANAGE_DEGREE));
+        when(requestInfo.getPersonAffiliation())
+                .thenReturn(URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/"));
+
+        assertThrows(
+                UnauthorizedException.class,
+                () ->
+                        ResourceSearchQuery.builder()
+                                .fromRequestInfo(requestInfo)
+                                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                                .withParameter(NODES_EXCLUDED, "metaInfo")
+                                .withParameter(STATISTICS, "true")
+                                .withRequiredParameters(FROM, SIZE)
+                                .build()
+                                .withFilter()
+                                .fromRequestInfo(requestInfo)
+                                .doSearch(searchClient));
     }
 
     @Test
     void withOrganizationDoWork() throws BadRequestException, UnauthorizedException {
-        var uri = URI.create("https://x.org/");
         var requestInfo = mock(RequestInfo.class);
-        when(requestInfo.getCurrentCustomer())
-                .thenReturn(
-                        URI.create(
-                                "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478"));
         when(requestInfo.getAccessRights()).thenReturn(List.of(MANAGE_CUSTOMERS));
-        when(requestInfo.getPersonAffiliation())
+        when(requestInfo.getTopLevelOrgCristinId())
                 .thenReturn(
-                        URI.create(
-                                "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0"));
+                        Optional.of(
+                                URI.create(
+                                        "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0")));
         var response =
                 ResourceSearchQuery.builder()
                         .fromRequestInfo(requestInfo)
-                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withParameter(NODES_EXCLUDED, "metaInfo")
                         .withRequiredParameters(FROM, SIZE)

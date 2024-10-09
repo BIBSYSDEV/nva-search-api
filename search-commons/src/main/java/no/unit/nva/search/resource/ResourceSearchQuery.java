@@ -83,7 +83,7 @@ import java.util.stream.Stream;
 public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     private final ResourceStreamBuilders streamBuilders;
-    private final ResourceFilter filterBuilder;
+    private final ResourceAccessFilter filterBuilder;
     private final Map<String, String> additionalQueryParameters = new HashMap<>();
     private UserSettingsClient userSettingsClient;
 
@@ -91,7 +91,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         super();
         assignStatusImpossibleWhiteList();
         streamBuilders = new ResourceStreamBuilders(parameters());
-        filterBuilder = new ResourceFilter(this);
+        filterBuilder = new ResourceAccessFilter(this);
     }
 
     public static ResourceParameterValidator builder() {
@@ -246,7 +246,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         return additionalQueryParameters;
     }
 
-    public ResourceFilter withFilter() {
+    public ResourceAccessFilter withFilter() {
         return filterBuilder;
     }
 

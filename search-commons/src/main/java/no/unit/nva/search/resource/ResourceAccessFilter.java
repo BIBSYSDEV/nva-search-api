@@ -6,6 +6,7 @@ import static no.unit.nva.constants.Words.KEYWORD;
 import static no.unit.nva.constants.Words.STATUS;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
+import static no.unit.nva.search.common.enums.PublicationStatus.UNPUBLISHED;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTOR_ORG_KEYWORD;
 import static no.unit.nva.search.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search.resource.ResourceParameter.STATISTICS;
@@ -36,7 +37,7 @@ import java.util.Arrays;
  *     Definitions of roles
  * @see <a href="https://sikt.atlassian.net/browse/NP-47357">NP-47357</a> Role definitions
  */
-public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
+public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> {
 
     private static final String CURATING_INST_KEYWORD = CURATING_INSTITUTIONS + DOT + KEYWORD;
     private static final String EDITOR_CURATOR_FILTER = "EditorCuratorFilter";
@@ -45,7 +46,7 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
 
     private final ResourceSearchQuery searchQuery;
 
-    public ResourceFilter(ResourceSearchQuery query) {
+    public ResourceAccessFilter(ResourceSearchQuery query) {
         this.searchQuery = query;
         this.searchQuery.filters().set();
     }
@@ -74,11 +75,12 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
      * <p>See {@link PublicationStatus} for available values.
      *
      * @param publicationStatus the required statues
-     * @return {@link ResourceFilter} (builder pattern)
+     * @return {@link ResourceAccessFilter} (builder pattern)
      */
-    public ResourceFilter requiredStatus(PublicationStatus... publicationStatus) {
+    public ResourceAccessFilter requiredStatus(PublicationStatus... publicationStatus) {
         final var values =
                 Arrays.stream(publicationStatus)
+                        .filter(this::statusAllowed)
                         .map(PublicationStatus::toString)
                         .toArray(String[]::new);
         final var filter = new TermsQueryBuilder(STATUS_KEYWORD, values).queryName(STATUS);
@@ -92,27 +94,26 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
      * <p>Only documents belonging to organization specified are searchable (for the user)
      *
      * @param requestInfo fetches TopLevelOrgCristinId PersonAffiliation
-     * @return {@link ResourceFilter} (builder pattern)
+     * @return {@link ResourceAccessFilter} (builder pattern)
      */
-    public ResourceFilter customerCurationInstitutions(RequestInfo requestInfo)
+    public ResourceAccessFilter customerCurationInstitutions(RequestInfo requestInfo)
             throws UnauthorizedException {
-        if (!isSearchingForAllPublications()) {
-            final var filter =
-                    QueryBuilders.boolQuery()
-                            .minimumShouldMatch(1)
-                            .queryName(EDITOR_CURATOR_FILTER);
-            var curationInstitutionId = getCurationInstitutionId(requestInfo).toString();
-            if (isEditor()) {
-                filter.should(getEditorFilterWith(curationInstitutionId));
-            }
-            if (isCurator()) {
-                filter.should(getCuratorFilterWith(curationInstitutionId));
-            }
-            if (!filter.hasClauses()) {
-                throw new UnauthorizedException();
-            }
-            this.searchQuery.filters().add(filter);
+        if (isCuratorWantsNoFilter()) {
+            return this;
         }
+        final var filter =
+                QueryBuilders.boolQuery().minimumShouldMatch(1).queryName(EDITOR_CURATOR_FILTER);
+        var curationInstitutionId = getCurationInstitutionId(requestInfo).toString();
+        if (isCurator()) {
+            filter.should(getCuratingInstitutionAccessFilter(curationInstitutionId));
+            filter.should(getContributingOrganisationAccessFilter(curationInstitutionId));
+        } else if (isEditor()) {
+            filter.should(getContributingOrganisationAccessFilter(curationInstitutionId));
+        }
+        if (!filter.hasClauses()) {
+            throw new UnauthorizedException();
+        }
+        this.searchQuery.filters().add(filter);
         return this;
     }
 
@@ -123,13 +124,28 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
                 : requestInfo.getPersonAffiliation();
     }
 
-    private QueryBuilder getEditorFilterWith(String institutionId) {
+    private QueryBuilder getContributingOrganisationAccessFilter(String institutionId) {
         return QueryBuilders.termQuery(CONTRIBUTOR_ORG_KEYWORD, institutionId)
                 .queryName(EDITOR_FILTER);
     }
 
-    private QueryBuilder getCuratorFilterWith(String institutionId) {
-        return QueryBuilders.termQuery(CURATING_INST_KEYWORD, institutionId).queryName(CURATOR_FILTER);
+    private QueryBuilder getCuratingInstitutionAccessFilter(String institutionId) {
+        return QueryBuilders.termQuery(CURATING_INST_KEYWORD, institutionId)
+                .queryName(CURATOR_FILTER);
+    }
+
+    /**
+     * Only Editors are allowed to see UNPUBLISHED publications
+     *
+     * @param publicationStatus status to check
+     * @return true if allowed
+     */
+    private boolean statusAllowed(PublicationStatus publicationStatus) {
+        return isEditor() || publicationStatus != UNPUBLISHED;
+    }
+
+    private boolean isCuratorWantsNoFilter() {
+        return isCurator() && searchQuery.parameters().isPresent(STATISTICS);
     }
 
     private boolean isCurator() {
@@ -138,9 +154,5 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
 
     private boolean isEditor() {
         return searchQuery.hasAccessRights(MANAGE_RESOURCES_ALL);
-    }
-
-    private boolean isSearchingForAllPublications() {
-        return isCurator() && searchQuery.parameters().isPresent(STATISTICS);
     }
 }
