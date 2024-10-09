@@ -91,7 +91,7 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
      *
      * <p>Only documents belonging to organization specified are searchable (for the user)
      *
-     * @param requestInfo fetches TopLevelOrgCristinId PersonAffiliation
+     * @param requestInfo fetches CurrentCustomer TopLevelOrgCristinId PersonAffiliation
      * @return {@link ResourceFilter} (builder pattern)
      */
     public ResourceFilter customerCurationInstitutions(RequestInfo requestInfo)
@@ -101,11 +101,12 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
                     QueryBuilders.boolQuery()
                             .minimumShouldMatch(1)
                             .queryName(EDITOR_CURATOR_FILTER);
-            var curationInstitutionId = getCurationInstitutionId(requestInfo).toString();
             if (isEditor()) {
-                filter.should(getEditorFilter(curationInstitutionId));
+                var customerId = requestInfo.getCurrentCustomer().toString();
+                filter.should(getEditorFilter(customerId));
             }
             if (isCurator()) {
+                var curationInstitutionId = getCurationInstitutionId(requestInfo).toString();
                 filter.should(getCuratorFilter(curationInstitutionId));
             }
             if (!filter.hasClauses()) {
@@ -123,8 +124,8 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
                 : requestInfo.getPersonAffiliation();
     }
 
-    private QueryBuilder getEditorFilter(String institutionId) {
-        return QueryBuilders.termQuery(CONTRIBUTOR_ORG_KEYWORD, institutionId)
+    private QueryBuilder getEditorFilter(String customerId) {
+        return QueryBuilders.termQuery(CONTRIBUTOR_ORG_KEYWORD, customerId)
                 .queryName(EDITOR_FILTER);
     }
 
