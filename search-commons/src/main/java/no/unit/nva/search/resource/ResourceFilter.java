@@ -91,7 +91,7 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
      *
      * <p>Only documents belonging to organization specified are searchable (for the user)
      *
-     * @param requestInfo fetches CurrentCustomer TopLevelOrgCristinId PersonAffiliation
+     * @param requestInfo fetches TopLevelOrgCristinId PersonAffiliation
      * @return {@link ResourceFilter} (builder pattern)
      */
     public ResourceFilter customerCurationInstitutions(RequestInfo requestInfo)
@@ -101,13 +101,12 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
                     QueryBuilders.boolQuery()
                             .minimumShouldMatch(1)
                             .queryName(EDITOR_CURATOR_FILTER);
+            var curationInstitutionId = getCurationInstitutionId(requestInfo).toString();
             if (isEditor()) {
-                var customerId = requestInfo.getCurrentCustomer().toString();
-                filter.should(getEditorFilter(customerId));
+                filter.should(haveEditorFilterWith(curationInstitutionId));
             }
             if (isCurator()) {
-                var curationInstitutionId = getCurationInstitutionId(requestInfo).toString();
-                filter.should(getCuratorFilter(curationInstitutionId));
+                filter.should(haveCuratorFilterWith(curationInstitutionId));
             }
             if (!filter.hasClauses()) {
                 throw new UnauthorizedException();
@@ -124,13 +123,13 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
                 : requestInfo.getPersonAffiliation();
     }
 
-    private QueryBuilder getEditorFilter(String customerId) {
-        return QueryBuilders.termQuery(CONTRIBUTOR_ORG_KEYWORD, customerId)
+    private QueryBuilder haveEditorFilterWith(String institutionId) {
+        return QueryBuilders.termQuery(CONTRIBUTOR_ORG_KEYWORD, institutionId)
                 .queryName(EDITOR_FILTER);
     }
 
-    private QueryBuilder getCuratorFilter(String customerId) {
-        return QueryBuilders.termQuery(CURATING_INST_KEYWORD, customerId).queryName(CURATOR_FILTER);
+    private QueryBuilder haveCuratorFilterWith(String institutionId) {
+        return QueryBuilders.termQuery(CURATING_INST_KEYWORD, institutionId).queryName(CURATOR_FILTER);
     }
 
     private boolean isCurator() {
