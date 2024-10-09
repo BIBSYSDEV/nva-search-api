@@ -187,6 +187,7 @@ public abstract class ParameterValidator<
     public ParameterValidator<K, Q> fromRequestInfo(RequestInfo requestInfo) {
         searchQuery.setMediaType(requestInfo.getHeaders().get(ACCEPT));
         var uri = URI.create(HTTPS + requestInfo.getDomainName() + requestInfo.getPath());
+        searchQuery.setAccessRights(requestInfo.getAccessRights());
         searchQuery.setNvaSearchApiUri(uri);
         return fromMultiValueParameters(requestInfo.getMultiValueQueryStringParameters());
     }

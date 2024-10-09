@@ -39,6 +39,7 @@ import no.unit.nva.search.common.records.HttpResponseFormatter;
 import no.unit.nva.search.common.records.QueryContentWrapper;
 import no.unit.nva.search.common.records.SwsResponse;
 
+import nva.commons.apigateway.AccessRight;
 import nva.commons.core.JacocoGenerated;
 
 import org.opensearch.index.query.BoolQueryBuilder;
@@ -57,9 +58,11 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -79,6 +82,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
 
     protected static final Logger logger = LoggerFactory.getLogger(SearchQuery.class);
     private transient MediaType mediaType;
+    private final transient Set<AccessRight> accessRights;
 
     /**
      * Always set at runtime by ParameterValidator.fromRequestInfo(RequestInfo requestInfo); This
@@ -90,6 +94,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     protected SearchQuery() {
         super();
         queryKeys = new QueryKeys<>(keyFields());
+        accessRights = EnumSet.noneOf(AccessRight.class);
         setMediaType(JSON_UTF_8.toString());
     }
 
@@ -135,6 +140,15 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
                 size().as(),
                 facetPaths(),
                 parameters());
+    }
+
+    public boolean hasAccessRights(AccessRight... rights) {
+        return accessRights.containsAll(List.of(rights));
+    }
+
+    protected void setAccessRights(List<AccessRight> accessRights) {
+        this.accessRights.clear();
+        this.accessRights.addAll(accessRights);
     }
 
     public MediaType getMediaType() {
