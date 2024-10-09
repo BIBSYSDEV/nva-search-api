@@ -103,10 +103,10 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
                             .queryName(EDITOR_CURATOR_FILTER);
             var curationInstitutionId = getCurationInstitutionId(requestInfo).toString();
             if (isEditor()) {
-                filter.should(haveEditorFilterWith(curationInstitutionId));
+                filter.should(getEditorFilterWith(curationInstitutionId));
             }
             if (isCurator()) {
-                filter.should(haveCuratorFilterWith(curationInstitutionId));
+                filter.should(getCuratorFilterWith(curationInstitutionId));
             }
             if (!filter.hasClauses()) {
                 throw new UnauthorizedException();
@@ -123,12 +123,12 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
                 : requestInfo.getPersonAffiliation();
     }
 
-    private QueryBuilder haveEditorFilterWith(String institutionId) {
+    private QueryBuilder getEditorFilterWith(String institutionId) {
         return QueryBuilders.termQuery(CONTRIBUTOR_ORG_KEYWORD, institutionId)
                 .queryName(EDITOR_FILTER);
     }
 
-    private QueryBuilder haveCuratorFilterWith(String institutionId) {
+    private QueryBuilder getCuratorFilterWith(String institutionId) {
         return QueryBuilders.termQuery(CURATING_INST_KEYWORD, institutionId).queryName(CURATOR_FILTER);
     }
 
