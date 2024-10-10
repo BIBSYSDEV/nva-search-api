@@ -5,6 +5,7 @@ import static no.unit.nva.search.common.enums.PublicationStatus.DELETED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
 import static no.unit.nva.search.common.enums.PublicationStatus.UNPUBLISHED;
+import static no.unit.nva.search.resource.Constants.EXCLUDED_FIELDS;
 import static no.unit.nva.search.resource.ResourceClient.defaultClient;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
@@ -48,12 +49,24 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
     }
 
     @Override
+    protected List<MediaType> listSupportedMediaTypes() {
+        return DEFAULT_RESPONSE_MEDIA_TYPES;
+    }
+
+    @Override
+    protected void validateRequest(Void unused, RequestInfo requestInfo, Context context)
+            throws ApiGatewayException {
+        validateAccessRight(requestInfo.getAccessRights());
+    }
+
+    @Override
     protected String processInput(Void input, RequestInfo requestInfo, Context context)
             throws BadRequestException, UnauthorizedException {
 
         return ResourceSearchQuery.builder()
                 .fromRequestInfo(requestInfo)
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                .withAlwaysExcludedFields(EXCLUDED_FIELDS)
                 .validate()
                 .build()
                 .withFilter()
@@ -67,17 +80,6 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
     @Override
     protected Integer getSuccessStatusCode(Void input, String output) {
         return HttpURLConnection.HTTP_OK;
-    }
-
-    @Override
-    protected List<MediaType> listSupportedMediaTypes() {
-        return DEFAULT_RESPONSE_MEDIA_TYPES;
-    }
-
-    @Override
-    protected void validateRequest(Void unused, RequestInfo requestInfo, Context context)
-            throws ApiGatewayException {
-        validateAccessRight(requestInfo.getAccessRights());
     }
 
     private void validateAccessRight(List<AccessRight> accessRights) throws UnauthorizedException {

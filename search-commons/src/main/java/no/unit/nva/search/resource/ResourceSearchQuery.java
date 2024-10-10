@@ -22,7 +22,6 @@ import static no.unit.nva.search.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search.resource.Constants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search.resource.Constants.facetResourcePaths;
-import static no.unit.nva.search.resource.ContributorNodeReducer.firstFewContributorsOrVerifiedOrNorwegian;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.CONTRIBUTOR;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
@@ -90,12 +89,9 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     private ResourceSearchQuery() {
         super();
         assignStatusImpossibleWhiteList();
+        setAlwaysExcludedFields(List.of(EXCLUDED_FIELDS));
         streamBuilders = new ResourceStreamBuilders(parameters());
         filterBuilder = new ResourceFilter(this);
-    }
-
-    public static ResourceParameterValidator builder() {
-        return new ResourceParameterValidator();
     }
 
     /**
@@ -112,14 +108,13 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                                 .queryName(STATUS));
     }
 
-    @Override
-    protected AsType<ResourceParameter> from() {
-        return parameters().get(FROM);
+    public static ResourceParameterValidator builder() {
+        return new ResourceParameterValidator();
     }
 
     @Override
-    protected AsType<ResourceParameter> size() {
-        return parameters().get(SIZE);
+    protected ResourceParameter keyFields() {
+        return NODES_SEARCHED;
     }
 
     @Override
@@ -131,7 +126,8 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     protected String[] exclude() {
         return Stream.concat(
                         parameters().get(NODES_EXCLUDED).asSplitStream(COMMA),
-                        Arrays.stream(EXCLUDED_FIELDS.split(COMMA)))
+                        getExcludedFields().stream())
+                .distinct()
                 .toArray(String[]::new);
     }
 
@@ -143,11 +139,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     @Override
     protected ResourceParameter keyAggregation() {
         return AGGREGATION;
-    }
-
-    @Override
-    protected ResourceParameter keyFields() {
-        return NODES_SEARCHED;
     }
 
     @Override
@@ -163,11 +154,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     @Override
     protected SortKey toSortKey(String sortName) {
         return ResourceSort.fromSortKey(sortName);
-    }
-
-    @Override
-    protected Map<String, String> facetPaths() {
-        return facetResourcePaths;
     }
 
     @Override
@@ -195,8 +181,29 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         };
     }
 
-    private boolean isLookingForOneContributor() {
-        return parameters().get(CONTRIBUTOR).asSplitStream(COMMA).count() == 1;
+    @Override
+    public <R, Q extends Query<ResourceParameter>>
+            HttpResponseFormatter<ResourceParameter> doSearch(OpenSearchClient<R, Q> queryClient) {
+        if (parameters().isPresent(UNIDENTIFIED_NORWEGIAN)) {
+            return super.doSearch(queryClient);
+            //                    .withMutators(firstFewContributorsOrVerifiedOrNorwegian());
+        }
+        return super.doSearch(queryClient);
+    }
+
+    @Override
+    protected AsType<ResourceParameter> from() {
+        return parameters().get(FROM);
+    }
+
+    @Override
+    protected AsType<ResourceParameter> size() {
+        return parameters().get(SIZE);
+    }
+
+    @Override
+    protected Map<String, String> facetPaths() {
+        return facetResourcePaths;
     }
 
     @Override
@@ -206,6 +213,10 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
             addPromotedPublications(this.userSettingsClient, queryBuilder);
         }
         return queryBuilder;
+    }
+
+    private boolean isLookingForOneContributor() {
+        return parameters().get(CONTRIBUTOR).asSplitStream(COMMA).count() == 1;
     }
 
     private void addPromotedPublications(
@@ -230,16 +241,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                 .addChild(Words.RESOURCES, Words.SEARCH)
                 .addQueryParameters(queryParameters())
                 .getUri();
-    }
-
-    @Override
-    public <R, Q extends Query<ResourceParameter>>
-            HttpResponseFormatter<ResourceParameter> doSearch(OpenSearchClient<R, Q> queryClient) {
-        if (parameters().isPresent(UNIDENTIFIED_NORWEGIAN)) {
-            return super.doSearch(queryClient)
-                    .withMutators(firstFewContributorsOrVerifiedOrNorwegian());
-        }
-        return super.doSearch(queryClient);
     }
 
     private Map<String, String> queryParameters() {

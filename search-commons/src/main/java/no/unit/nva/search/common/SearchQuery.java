@@ -59,6 +59,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -81,8 +82,9 @@ import java.util.stream.Stream;
 public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Query<K> {
 
     protected static final Logger logger = LoggerFactory.getLogger(SearchQuery.class);
-    private transient MediaType mediaType;
     private final transient Set<AccessRight> accessRights;
+    private transient MediaType mediaType;
+    private transient Set<String> excludedFields;
 
     /**
      * Always set at runtime by ParameterValidator.fromRequestInfo(RequestInfo requestInfo); This
@@ -98,9 +100,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
         setMediaType(JSON_UTF_8.toString());
     }
 
-    protected abstract AsType<K> from();
-
-    protected abstract AsType<K> size();
+    protected abstract K keyFields();
 
     protected abstract AsType<K> sort();
 
@@ -110,37 +110,15 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
 
     protected abstract K keyAggregation();
 
-    protected abstract K keyFields();
-
     protected abstract K keySearchAfter();
 
     protected abstract K toKey(String keyName);
 
     protected abstract SortKey toSortKey(String sortName);
 
-    /**
-     * Path to each and every facet defined in builderAggregations().
-     *
-     * @return MapOf(Name, Path)
-     */
-    protected abstract Map<String, String> facetPaths();
-
     protected abstract List<AggregationBuilder> builderAggregations();
 
     protected abstract Stream<Entry<K, QueryBuilder>> builderCustomQueryStream(K key);
-
-    @Override
-    public <R, Q extends Query<K>> HttpResponseFormatter<K> doSearch(
-            OpenSearchClient<R, Q> queryClient) {
-        return new HttpResponseFormatter<>(
-                (SwsResponse) queryClient.doSearch((Q) this),
-                getMediaType(),
-                getNvaSearchApiUri(),
-                from().as(),
-                size().as(),
-                facetPaths(),
-                parameters());
-    }
 
     public boolean hasAccessRights(AccessRight... rights) {
         return accessRights.containsAll(List.of(rights));
@@ -151,25 +129,12 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
         this.accessRights.addAll(accessRights);
     }
 
-    public MediaType getMediaType() {
-        return mediaType;
+    public void setAlwaysExcludedFields(List<String> fieldNames) {
+        this.excludedFields = new HashSet<>(fieldNames);
     }
 
-    final void setMediaType(String mediaType) {
-        if (nonNull(mediaType) && mediaType.contains(Words.TEXT_CSV)) {
-            this.mediaType = CSV_UTF_8;
-        } else {
-            this.mediaType = JSON_UTF_8;
-        }
-    }
-
-    public URI getNvaSearchApiUri() {
-        return gatewayUri;
-    }
-
-    @JacocoGenerated
-    public void setNvaSearchApiUri(URI gatewayUri) {
-        this.gatewayUri = gatewayUri;
+    protected Set<String> getExcludedFields() {
+        return excludedFields;
     }
 
     protected void setOpenSearchUri(URI openSearchUri) {
@@ -222,6 +187,51 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
         handleSorting(builder);
         contentWrappers.add(new QueryContentWrapper(builder.toString(), this.openSearchUri()));
         return contentWrappers.stream();
+    }
+
+    @Override
+    public <R, Q extends Query<K>> HttpResponseFormatter<K> doSearch(
+            OpenSearchClient<R, Q> queryClient) {
+        return new HttpResponseFormatter<>(
+                (SwsResponse) queryClient.doSearch((Q) this),
+                getMediaType(),
+                getNvaSearchApiUri(),
+                from().as(),
+                size().as(),
+                facetPaths(),
+                parameters());
+    }
+
+    protected abstract AsType<K> from();
+
+    protected abstract AsType<K> size();
+
+    /**
+     * Path to each and every facet defined in builderAggregations().
+     *
+     * @return MapOf(Name, Path)
+     */
+    protected abstract Map<String, String> facetPaths();
+
+    public MediaType getMediaType() {
+        return mediaType;
+    }
+
+    final void setMediaType(String mediaType) {
+        if (nonNull(mediaType) && mediaType.contains(Words.TEXT_CSV)) {
+            this.mediaType = CSV_UTF_8;
+        } else {
+            this.mediaType = JSON_UTF_8;
+        }
+    }
+
+    public URI getNvaSearchApiUri() {
+        return gatewayUri;
+    }
+
+    @JacocoGenerated
+    public void setNvaSearchApiUri(URI gatewayUri) {
+        this.gatewayUri = gatewayUri;
     }
 
     /**
@@ -324,9 +334,9 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
 
     private void handleSorting(SearchSourceBuilder builder) {
         if (isSortByRelevance()) {
-            builder.trackScores(
-                    true); // Not very well documented. This allows sorting on relevance and other
-            // fields.
+            // Not very well documented.
+            // This allows sorting on relevance together with other fields.
+            builder.trackScores(true);
         }
         builderStreamFieldSort().forEach(builder::sort);
     }

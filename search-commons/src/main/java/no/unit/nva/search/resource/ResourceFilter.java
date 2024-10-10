@@ -129,7 +129,8 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
     }
 
     private QueryBuilder getCuratorFilterWith(String institutionId) {
-        return QueryBuilders.termQuery(CURATING_INST_KEYWORD, institutionId).queryName(CURATOR_FILTER);
+        return QueryBuilders.termQuery(CURATING_INST_KEYWORD, institutionId)
+                .queryName(CURATOR_FILTER);
     }
 
     private boolean isCurator() {
