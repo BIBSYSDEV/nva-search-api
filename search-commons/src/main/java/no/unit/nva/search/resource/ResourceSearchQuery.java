@@ -22,7 +22,6 @@ import static no.unit.nva.search.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search.resource.Constants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search.resource.Constants.facetResourcePaths;
-import static no.unit.nva.search.resource.ContributorNodeReducer.firstFewContributorsOrVerifiedOrNorwegian;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.CONTRIBUTOR;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
@@ -90,9 +89,9 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     private ResourceSearchQuery() {
         super();
         assignStatusImpossibleWhiteList();
+        setAlwaysExcludedFields(List.of(EXCLUDED_FIELDS));
         streamBuilders = new ResourceStreamBuilders(parameters());
         filterBuilder = new ResourceAccessFilter(this);
-        setAlwaysExcludedFields(List.of(EXCLUDED_FIELDS));
     }
 
     /**
