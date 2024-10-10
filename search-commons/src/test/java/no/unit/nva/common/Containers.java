@@ -54,7 +54,7 @@ public class Containers {
     public static IndexingClient indexingClient;
 
     public static void setup() throws IOException, InterruptedException {
-        container.start();
+        container.withEnv("indices.query.bool.max_clause_count", "2048").start();
 
         var restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
         var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);

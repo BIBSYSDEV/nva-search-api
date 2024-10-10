@@ -81,7 +81,7 @@ import java.util.stream.Stream;
  */
 @SuppressWarnings("PMD.GodClass")
 public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
-
+    private static final String EXCLUDED_RESOURCE_FIELDS = "entityDescription.contributors";
     private final ResourceStreamBuilders streamBuilders;
     private final ResourceFilter filterBuilder;
     private final Map<String, String> additionalQueryParameters = new HashMap<>();
@@ -129,9 +129,11 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     @Override
     protected String[] exclude() {
-        return Stream.concat(
+        return Stream.of(
                         parameters().get(NODES_EXCLUDED).asSplitStream(COMMA),
-                        Arrays.stream(EXCLUDED_FIELDS.split(COMMA)))
+                        Arrays.stream(EXCLUDED_FIELDS.split(COMMA)),
+                        Arrays.stream(EXCLUDED_RESOURCE_FIELDS.split(COMMA)))
+                .flatMap(stream -> stream)
                 .toArray(String[]::new);
     }
 
