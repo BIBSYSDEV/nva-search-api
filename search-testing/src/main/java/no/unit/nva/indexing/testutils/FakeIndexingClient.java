@@ -4,8 +4,8 @@ import static nva.commons.core.attempt.Try.attempt;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import no.unit.nva.indexingclient.IndexingClient;
-import no.unit.nva.indexingclient.models.IndexDocument;
+import no.unit.nva.search.model.IndexingClient;
+import no.unit.nva.search.model.records.IndexDocument;
 
 import org.opensearch.action.DocWriteRequest.OpType;
 import org.opensearch.action.DocWriteResponse;

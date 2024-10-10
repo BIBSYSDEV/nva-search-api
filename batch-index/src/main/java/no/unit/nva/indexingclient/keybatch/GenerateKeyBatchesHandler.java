@@ -1,11 +1,11 @@
 package no.unit.nva.indexingclient.keybatch;
 
-import static no.unit.nva.constants.Defaults.ENVIRONMENT;
-import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.indexingclient.Constants.EVENT_BUS;
 import static no.unit.nva.indexingclient.Constants.MANDATORY_UNUSED_SUBTOPIC;
 import static no.unit.nva.indexingclient.Constants.TOPIC;
 import static no.unit.nva.indexingclient.Constants.defaultS3Client;
+import static no.unit.nva.search.model.constant.Defaults.ENVIRONMENT;
+import static no.unit.nva.search.model.constant.Words.RESOURCES;
 
 import static java.util.Objects.nonNull;
 import static java.util.UUID.randomUUID;

@@ -1,6 +1,6 @@
 package no.unit.nva.indexing.handlers;
 
-import static no.unit.nva.constants.Defaults.ENVIRONMENT;
+import static no.unit.nva.search.model.constant.Defaults.ENVIRONMENT;
 
 import static nva.commons.core.attempt.Try.attempt;
 
@@ -11,10 +11,10 @@ import no.unit.nva.events.models.AwsEventBridgeDetail;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
 import no.unit.nva.events.models.EventReference;
 import no.unit.nva.indexing.utils.RecoveryEntry;
-import no.unit.nva.indexingclient.IndexQueueClient;
-import no.unit.nva.indexingclient.IndexingClient;
-import no.unit.nva.indexingclient.models.IndexDocument;
-import no.unit.nva.indexingclient.models.QueueClient;
+import no.unit.nva.search.model.IndexQueueClient;
+import no.unit.nva.search.model.IndexingClient;
+import no.unit.nva.search.model.records.IndexDocument;
+import no.unit.nva.search.model.records.QueueClient;
 import no.unit.nva.s3.S3Driver;
 
 import nva.commons.core.JacocoGenerated;

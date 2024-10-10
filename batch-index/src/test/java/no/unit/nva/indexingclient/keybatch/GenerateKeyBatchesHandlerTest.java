@@ -1,7 +1,7 @@
 package no.unit.nva.indexingclient.keybatch;
 
-import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.indexingclient.TestConstants.RESOURCE_INDEX_NAME;
+import static no.unit.nva.search.model.constant.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 
 import static nva.commons.core.attempt.Try.attempt;

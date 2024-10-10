@@ -1,7 +1,8 @@
 dependencies {
-    implementation project(":search-commons")
+    implementation project(":search-model")
 
     implementation libs.nva.core
+    implementation libs.nva.identifiers
     implementation libs.nva.json
     implementation libs.bundles.jackson
     implementation libs.bundles.opensearch

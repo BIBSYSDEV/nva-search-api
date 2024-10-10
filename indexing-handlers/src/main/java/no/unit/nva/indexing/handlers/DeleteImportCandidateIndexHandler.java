@@ -1,13 +1,13 @@
 package no.unit.nva.indexing.handlers;
 
-import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
+import static no.unit.nva.search.model.constant.Words.IMPORT_CANDIDATES_INDEX;
 
 import static nva.commons.core.attempt.Try.attempt;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 
-import no.unit.nva.indexingclient.IndexingClient;
+import no.unit.nva.search.model.IndexingClient;
 
 import nva.commons.core.JacocoGenerated;
 
