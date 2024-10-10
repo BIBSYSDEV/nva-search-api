@@ -58,6 +58,7 @@ import static no.unit.nva.search.resource.ResourceParameter.UNIT;
 
 import static nva.commons.apigateway.AccessRight.MANAGE_CUSTOMERS;
 import static nva.commons.apigateway.AccessRight.MANAGE_DEGREE;
+import static nva.commons.apigateway.AccessRight.MANAGE_RESOURCES_ALL;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
@@ -121,7 +122,6 @@ import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -226,6 +226,13 @@ class ResourceClientTest {
     static Stream<Arguments> uriProvider() {
         return loadMapFromResource(RESOURCE_VALID_DEV_URLS_JSON).entrySet().stream()
                 .map(entry -> createArgument(entry.getKey(), (Integer) entry.getValue()));
+    }
+
+    static Stream<Arguments> roleProvider() {
+        return Stream.of(
+                Arguments.of(5, List.of(MANAGE_RESOURCES_ALL)),
+                Arguments.of(22, List.of(MANAGE_CUSTOMERS)),
+                Arguments.of(22, List.of(MANAGE_CUSTOMERS, MANAGE_RESOURCES_ALL)));
     }
 
     @Test
@@ -534,16 +541,11 @@ class ResourceClientTest {
     }
 
     @ParameterizedTest
-    @CsvSource({
-        "5,MANAGE_RESOURCES_ALL",
-        "22,MANAGE_CUSTOMERS",
-        "22,MANAGE_CUSTOMERS,MANAGE_RESOURCES_ALL"
-    })
-    void isSearchingForAllPublicationsAsRoleWork(int expectedHits, String accessRights)
+    @MethodSource("roleProvider")
+    void isSearchingForAllPublicationsAsRoleWork(int expectedHits, List<AccessRight> accessRights)
             throws UnauthorizedException, BadRequestException {
-        var rights = Arrays.stream(accessRights.split(COMMA)).map(AccessRight::valueOf).toList();
         var requestInfo = mock(RequestInfo.class);
-        when(requestInfo.getAccessRights()).thenReturn(rights);
+        when(requestInfo.getAccessRights()).thenReturn(accessRights);
         when(requestInfo.getPersonAffiliation())
                 .thenReturn(
                         URI.create(

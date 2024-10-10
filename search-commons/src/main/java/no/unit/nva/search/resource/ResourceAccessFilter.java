@@ -80,7 +80,7 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
     public ResourceAccessFilter requiredStatus(PublicationStatus... publicationStatus) {
         final var values =
                 Arrays.stream(publicationStatus)
-                        .filter(this::statusAllowed)
+                        .filter(this::isStatusAllowed)
                         .map(PublicationStatus::toString)
                         .toArray(String[]::new);
         final var filter = new TermsQueryBuilder(STATUS_KEYWORD, values).queryName(STATUS);
@@ -98,7 +98,7 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
      */
     public ResourceAccessFilter customerCurationInstitutions(RequestInfo requestInfo)
             throws UnauthorizedException {
-        if (isCuratorWantsNoFilter()) {
+        if (isCurator() && isStatisticsQuery()) {
             return this;
         }
         final var filter =
@@ -140,12 +140,12 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
      * @param publicationStatus status to check
      * @return true if allowed
      */
-    private boolean statusAllowed(PublicationStatus publicationStatus) {
+    private boolean isStatusAllowed(PublicationStatus publicationStatus) {
         return isEditor() || publicationStatus != UNPUBLISHED;
     }
 
-    private boolean isCuratorWantsNoFilter() {
-        return isCurator() && searchQuery.parameters().isPresent(STATISTICS);
+    private boolean isStatisticsQuery() {
+        return searchQuery.parameters().isPresent(STATISTICS);
     }
 
     private boolean isCurator() {
