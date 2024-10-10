@@ -1,52 +1,10 @@
 plugins {
-    id 'nva.search.service.java-conventions'
-    id 'nva.search.service2.dynamodblocal'
 }
 
 dependencies {
-    implementation libs.aws.lambda.events
-    implementation libs.aws.lambda.java.core
-    implementation libs.aws.sdk2.sqs
-    implementation libs.bundles.logging
-    implementation libs.jackson.core
-    implementation libs.jackson.databind
-    implementation libs.nva.core
-    implementation libs.nva.json
-    implementation libs.nva.s3
-//    implementation libs.bundles.aws.xray
-    implementation libs.bundles.jackson
-    implementation libs.bundles.jacksonjr
-    implementation(libs.bundles.testcontainers) {
-        exclude group: 'org.apache.commons', module: 'commons-compress'
-    }
-    implementation libs.com.auth0.jwt
-    implementation libs.csv
-    implementation libs.guava
-    implementation libs.nva.apigateway
-    implementation libs.nva.auth
-    implementation libs.nva.identifiers
-    implementation libs.nva.secrets
-    implementation libs.opensearch.java
-    implementation libs.opensearch.rest.highlevel.client
-    implementation libs.slf4j
-    implementation libs.aws.apache.client
-
-    testImplementation libs.bundles.logging
-    testImplementation libs.bundles.testing
-    testImplementation project(':search-testing')
 
 }
 
 test {
     useJUnitPlatform()
-    environment "ALLOWED_ORIGIN", "*"
-    environment "API_HOST", "localhost"
-    environment "BACKEND_CLIENT_SECRET_NAME", "secret"
-    environment "COGNITO_URI", "https://example.org"
-    environment "EXPORT_SEARCH_RESULTS_SIZE", "100"
-    environment "IDENTITY_SERVICE_SECRET_KEY", "secretKey"
-    environment "IDENTITY_SERVICE_SECRET_NAME", "secretName"
-    environment "SEARCH_INFRASTRUCTURE_API_HOST", "localhost"
-    environment "SEARCH_INFRASTRUCTURE_API_URI", "https://localhost"
-    environment "SEARCH_INFRASTRUCTURE_AUTH_URI", "localhost"
 }

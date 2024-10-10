@@ -1,16 +1,16 @@
 package no.unit.nva.search;
 
-import static no.unit.nva.constants.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
-import static no.unit.nva.search.importcandidate.ImportCandidateClient.defaultClient;
-import static no.unit.nva.search.importcandidate.ImportCandidateParameter.AGGREGATION;
-import static no.unit.nva.search.importcandidate.ImportCandidateParameter.FROM;
-import static no.unit.nva.search.importcandidate.ImportCandidateParameter.SIZE;
+import static no.unit.nva.search.service.importcandidate.ImportCandidateClient.defaultClient;
+import static no.unit.nva.search.service.importcandidate.ImportCandidateParameter.AGGREGATION;
+import static no.unit.nva.search.service.importcandidate.ImportCandidateParameter.FROM;
+import static no.unit.nva.search.service.importcandidate.ImportCandidateParameter.SIZE;
+import static no.unit.nva.search.model.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 
-import no.unit.nva.search.importcandidate.ImportCandidateClient;
-import no.unit.nva.search.importcandidate.ImportCandidateSearchQuery;
+import no.unit.nva.search.service.importcandidate.ImportCandidateClient;
+import no.unit.nva.search.service.importcandidate.ImportCandidateSearchQuery;
 
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;

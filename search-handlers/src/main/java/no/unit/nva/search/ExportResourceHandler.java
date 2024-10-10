@@ -1,21 +1,21 @@
 package no.unit.nva.search;
 
-import static no.unit.nva.constants.Words.NONE;
-import static no.unit.nva.constants.Words.ZERO;
-import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
-import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
-import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
-import static no.unit.nva.search.resource.ResourceParameter.FROM;
-import static no.unit.nva.search.resource.ResourceParameter.NODES_INCLUDED;
-import static no.unit.nva.search.resource.ResourceParameter.SIZE;
+import static no.unit.nva.search.model.constant.Words.NONE;
+import static no.unit.nva.search.model.constant.Words.ZERO;
+import static no.unit.nva.search.model.enums.PublicationStatus.PUBLISHED;
+import static no.unit.nva.search.model.enums.PublicationStatus.PUBLISHED_METADATA;
+import static no.unit.nva.search.service.resource.ResourceParameter.AGGREGATION;
+import static no.unit.nva.search.service.resource.ResourceParameter.FROM;
+import static no.unit.nva.search.service.resource.ResourceParameter.NODES_INCLUDED;
+import static no.unit.nva.search.service.resource.ResourceParameter.SIZE;
 
 import com.amazonaws.services.lambda.runtime.Context;
 
-import no.unit.nva.search.common.csv.ResourceCsvTransformer;
-import no.unit.nva.search.resource.ResourceClient;
-import no.unit.nva.search.resource.ResourceSearchQuery;
-import no.unit.nva.search.scroll.ScrollClient;
-import no.unit.nva.search.scroll.ScrollQuery;
+import no.unit.nva.search.model.csv.ResourceCsvTransformer;
+import no.unit.nva.search.service.resource.ResourceClient;
+import no.unit.nva.search.service.resource.ResourceSearchQuery;
+import no.unit.nva.search.service.scroll.ScrollClient;
+import no.unit.nva.search.service.scroll.ScrollQuery;
 
 import nva.commons.apigateway.ApiS3GatewayHandler;
 import nva.commons.apigateway.RequestInfo;

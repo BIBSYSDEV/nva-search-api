@@ -1,8 +1,8 @@
 package no.unit.nva.search;
 
-import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
-import static no.unit.nva.constants.Words.COMMA;
-import static no.unit.nva.search.resource.ResourceParameter.SEARCH_ALL;
+import static no.unit.nva.search.model.constant.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.search.model.constant.Words.COMMA;
+import static no.unit.nva.search.service.resource.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 
@@ -16,10 +16,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import no.unit.nva.indexing.testutils.FakeSearchResponse;
-import no.unit.nva.search.common.csv.ExportCsv;
-import no.unit.nva.search.common.records.SwsResponse;
-import no.unit.nva.search.resource.ResourceClient;
-import no.unit.nva.search.scroll.ScrollClient;
+import no.unit.nva.search.model.csv.ExportCsv;
+import no.unit.nva.search.model.records.SwsResponse;
+import no.unit.nva.search.service.resource.ResourceClient;
+import no.unit.nva.search.service.scroll.ScrollClient;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 
 import nva.commons.apigateway.RequestInfo;

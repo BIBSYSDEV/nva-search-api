@@ -6,7 +6,7 @@ import no.unit.nva.events.handlers.DestinationsEventBridgeEventHandler;
 import no.unit.nva.events.models.AwsEventBridgeDetail;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
 import no.unit.nva.indexing.model.DeleteImportCandidateEvent;
-import no.unit.nva.indexingclient.IndexingClient;
+import no.unit.nva.search.model.IndexingClient;
 
 import nva.commons.core.JacocoGenerated;
 

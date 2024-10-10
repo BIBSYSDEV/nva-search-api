@@ -1,7 +1,8 @@
 package no.unit.nva.indexingclient;
 
 import no.unit.nva.identifiers.SortableIdentifier;
-import no.unit.nva.indexingclient.models.IndexDocument;
+import no.unit.nva.search.model.IndexingClient;
+import no.unit.nva.search.model.records.IndexDocument;
 import no.unit.nva.s3.ListingResult;
 import no.unit.nva.s3.S3Driver;
 

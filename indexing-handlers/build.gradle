@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    implementation project(':search-commons')
+    implementation project(':search-model')
 
     implementation libs.nva.core
     implementation libs.nva.json

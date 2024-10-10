@@ -1,5 +1,6 @@
 rootProject.name = 'nva-search-api'
-include 'search-commons'
+include 'search-model'
+include 'search-service'
 include 'search-testing'
 include 'search-handlers'
 include 'indexing-handlers'
