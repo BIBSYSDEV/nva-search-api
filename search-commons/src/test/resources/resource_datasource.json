@@ -20,6 +20,7 @@
     "entityDescription": {
       "type": "EntityDescription",
       "alternativeAbstracts": {},
+      "contributorsCount" : 1,
       "contributors": [
         {
           "type": "Contributor",
@@ -352,6 +353,7 @@
       "type": "EntityDescription",
       "abstract": "In this paper, the authors report on collaboration between two universities from 2003 and beyond. The collaborations have been carried out in four main spheres: in the area of Staff training programmes, in the area of Development and research in information literacy, in the area of Developing Models of Digital Repositories and also in the domain of Research in Library Leadership. This cooperation started in 2003 when the authors worked on developing the first Leonardo da Vinci program in the field of continued education, and is still ongoing. The collaborations have been funded by different national and international funding agencies, as well as from the institutions of the authors.",
       "alternativeAbstracts": {},
+      "contributorsCount" : 2,
       "contributors": [
         {
           "type": "Contributor",
@@ -490,6 +492,7 @@
     "entityDescription": {
       "type": "EntityDescription",
       "alternativeAbstracts": {},
+      "contributorsCount" : 1,
       "contributors": [
         {
           "type": "Contributor",
@@ -888,6 +891,7 @@
       "type": "EntityDescription",
       "abstract": "The hazard mapping tool NAKSIN estimates the release probability of potential release areas (PRAs) by testing a stability criterion based on the infinite-slope approximation with a large sample of synthetic weather situations. The release area is thus assumed to comprise the entire PRA, which is unrealistic for avalanches with return periods shorter than 100–300 y. To remedy this, a stability criterion is proposed that accounts for stabilizing forces across the slab perimeter and so is sensitive to the slab extent. The criterion is applied to a sequence of subareas of the PRA with increasing minimum slope angle to find the subarea with maximum release probability. The method is described and formulated mathematically. Also, tools for coding it are suggested but implementation in NAKSIN and testing are left for future work.",
       "alternativeAbstracts": {},
+      "contributorsCount" : 1,
       "contributors": [
         {
           "type": "Contributor",
@@ -1020,6 +1024,7 @@
       "type": "EntityDescription",
       "abstract": "This Note discusses a quasi-three-dimensional model of mixed snow avalanches that could replace the code MoT-Voellmy in NAKSIN. As a starting point, the two-layer model by Eglit is slightly simplified and extended from a profile line to a general topography in three-dimensional space. Possible modifications of the closures proposed by Eglit are discussed. For rapid development, it is suggested to base the new code either on MoT-Voellmy or possibly on the code development system ExaHyPE.",
       "alternativeAbstracts": {},
+      "contributorsCount" : 1,
       "contributors": [
         {
           "type": "Contributor",
@@ -1140,6 +1145,7 @@
       "type": "EntityDescription",
       "abstract": "To secure linear infrastructure in the most cost-efficient manner, hazard hot-spots need to be known not only with regard to the intensity of possible events but also their probability. Traditional hazard mapping methods rely on analysis of historical records—which are often missing or scarce—or on experts’ subjective judgment. Either approach is timeconsuming and expensive. The hazard mapping system NAKSIN for snow avalanches contains a module for estimating avalanche release probability automatically using topographical, weather and forest data and calculates avalanche run-out for one target return period. This Note outlines how NAKSIN can be modified to produce maps of avalanche hit probability and optionally probability distribution functions of impact pressure and/or flow velocity. While the needed modifications are easy to implement, the NAKSIN module for release probability requires improvements to produce more reliable estimates in areas with continental climate.",
       "alternativeAbstracts": {},
+      "contributorsCount" : 1,
       "contributors": [
         {
           "type": "Contributor",
@@ -1263,6 +1269,7 @@
       "type": "EntityDescription",
       "abstract": "During the first year of the project period 2020-2022 of NGIs research project on Snow avalanches, Applied Avalanche Research in Norway (AARN), work was conducted in all three work packages (WP 1 – Avalanche formation and release, WP 2 – Avalanche dynamics, WP 3 – Avalanche interaction) and several cross-package topics. In addition, several significant upgrades were made to the research infrastructure at Fonnbu and Ryggfonn. During 2020, the results of the research activities have been published in peer-reviewed journals, summarised in technical notes, and presented online at national and international conferences and seminars. AARN personnel have been actively engaged in educational outreach activities, including as lecturers and student supervisors.",
       "alternativeAbstracts": {},
+      "contributorsCount" : 10,
       "contributors": [
         {
           "type": "Contributor",
@@ -1477,6 +1484,7 @@
       "type": "EntityDescription",
       "abstract": "During the second year of the project period 2020-2022 of NGIs research project on snow avalanches, Applied Avalanche Research in Norway (AARN), work was conducted in all three work packages (WP 1 – Avalanche formation and release, WP 2 – Avalanche dynamics, WP 3 – Avalanche interaction) and several cross-package topics. The successful avalanche experiment in April 2021 has given us valuable insight into the dynamics of a large avalanche event and showed that the Ryggfonn test site produces the avalanches that are needed for the AARN research. During 2021, the results of the research activities have been published in peer-reviewed journals, summarised in technical notes, and presented online at national and international conferences and seminars. AARN personnel have been actively engaged in educational outreach activities, including as lecturers and student supervisors.",
       "alternativeAbstracts": {},
+      "contributorsCount" : 8,
       "contributors": [
         {
           "type": "Contributor",
@@ -1703,6 +1711,7 @@
     "entityDescription": {
       "type": "EntityDescription",
       "alternativeAbstracts": {},
+      "contributorsCount" : 11,
       "contributors": [
         {
           "type": "Contributor",
@@ -2347,6 +2356,7 @@
       "type": "EntityDescription",
       "abstract": "The Norwegian building code regulates the societal acceptable risk from avalanches for three building classes (S1, S1, and S3). The corresponding highest allowed nominal annual probabilities of avalanches reaching the building for these classes are set as 1/100, 1/1000 and 1/5000 respectively (TEK17, 2017). That is, avalanches should not reach a building, or the accompanying outdoor area and cause (considerable) damage more often than the building class permits. These hazard classes are used for delineation of avalanche hazard zones for land use planning (TEK17, 2017). For the assessment of the quantitative risk of avalanches reaching existing settlements only limited methods are available. Thus, historical observations can be of special importance, as they may be direct indicators for the real hazard in the area of interest. To a certain degree, they can also provide an indication of a possible change of hazard over time due to environmental changes. However, historical observations are affected by inherent uncertainties and many questions remain open. Here, we aim to combine results from several work packages to develop a more consistent method of using historical observations that may help improve quantitative hazard assessments and evaluation of the uncertainties involved.",
       "alternativeAbstracts": {},
+      "contributorsCount" : 1,
       "contributors": [
         {
           "type": "Contributor",
@@ -2459,6 +2469,7 @@
       "type": "EntityDescription",
       "abstract": "Snow avalanches are a significant natural hazard and common phenomenon in Norway. Each year, avalanches result in fatalities, evacuations, and interruptions or damage to infrastructure networks such as roads, railways, and electrical transmission lines. Persistent avalanche hazard in steep terrain is a major factor considered during land-use planning and development. During the snow season, daily or weekly variations in the avalanche danger identified in regional and applied bulletins influence the operation of transportation networks. Applied research on avalanches and their societal impacts has been conducted at the Norwegian Geotechnical Institute (NGI) since 1973. This research has been funded in part by an annual grant from the Norwegian parliament, administered by the Norwegian Water Resources and Energy Directorate (NVE – Norges vassdrags- og energi-direktorat). Recent research activities have improved our understanding of avalanche formation, movement, and impacts. Enhanced knowledge of the individual processes leading to avalanche initiation, avalanche dynamics, and avalanche impacts has been applied to developing tools to help predict avalanche occurrence, runout distance, and impact pressures. While much has been accomplished within the avalanche research community in recent years, many key questions remain. This project plan: (1) presents the research goals for the 2020-2022 period, (2) outlines the projects organization – including potential for external collaboration, and (3) presents the work-package structure and specific research tasks to be undertaken by the applied avalanche research group at NGI over the next three years.",
       "alternativeAbstracts": {},
+      "contributorsCount" : 7,
       "contributors": [
         {
           "type": "Contributor",
@@ -2665,6 +2676,7 @@
       "type": "EntityDescription",
       "abstract": "NGI is operating the avalanche test site at Ryggfonn in Stryn municipality, Vestland county, western Norway (61.969°N, 7.275°E) since early 1980s. In addition to the field work and data collection in frame work of WP2, necessary repairs and updating of the data acquisition system at the Ryggfonn avalanche test site were carried out under this task. This is to ensure that the site is ready for the winter season 2020/2021.",
       "alternativeAbstracts": {},
+      "contributorsCount" : 2,
       "contributors": [
         {
           "type": "Contributor",
@@ -2796,6 +2808,7 @@
       "alternativeTitles": {
         "en": "Validity of the NTNU Prediction Model for D&B Tunnelling"
       },
+      "contributorsCount" : 4,
       "contributors": [
         {
           "type": "Contributor",
@@ -3179,6 +3192,7 @@
       "alternativeTitles": {
         "en": "Time series modelling: applications for groundwater control in urban tunnelling"
       },
+      "contributorsCount" : 4,
       "contributors": [
         {
           "type": "Contributor",
@@ -3576,6 +3590,7 @@
       "type": "EntityDescription",
       "abstract": "(Abstract): This chapter's point of departure is that business problems too often are approached in a very narrow manner, due to what we call the inclination of techno-centrism. It involves that we may ignore solutions that are better and more sustainable in the long run. Three additional dimensions for formulation and resolution of complex business-related decision problems are explore, and we argue that these are necessary as complements to the technical dimension - (1) the systemic dimension, (2) the social dimension and (3) the existential dimension. We argue that ethical reflection may create more awareness around these problems and as a consequence be part of the solution. Finally, we present the outline of a new course in business ethics that aims to counterbalance the techno-centricity in contemporary business education, and hopefully this may be seen as a new direction for business ethics along the lines of student-centricity and positive psychology, which may improve the education of business students.",
       "alternativeAbstracts": {},
+      "contributorsCount" : 3,
       "contributors": [
         {
           "type": "Contributor",
@@ -3760,6 +3775,7 @@
     "entityDescription": {
       "type": "EntityDescription",
       "alternativeAbstracts": {},
+      "contributorsCount" : 6,
       "contributors": [
         {
           "type": "Contributor",

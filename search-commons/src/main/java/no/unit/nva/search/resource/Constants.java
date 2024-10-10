@@ -100,6 +100,8 @@ public final class Constants {
     public static final String FILES_STATUS_KEYWORD = FILES_STATUS + DOT + KEYWORD;
     public static final String ENTITY_CONTRIBUTORS_DOT =
             ENTITY_DESCRIPTION + DOT + CONTRIBUTORS + DOT;
+    public static final String CONTRIBUTOR_COUNT_NO_KEYWORD =
+            ENTITY_DESCRIPTION + DOT + "contributorsCount";
     public static final String ENTITY_PUBLICATION_CONTEXT_DOT =
             ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT;
 
@@ -309,6 +311,20 @@ public final class Constants {
                 .subAggregation(license());
     }
 
+    private static TermsAggregationBuilder license() {
+        return branchBuilder(LICENSE, ASSOCIATED_ARTIFACTS, LICENSE, NAME, KEYWORD)
+                .subAggregation(labels(jsonPath(ASSOCIATED_ARTIFACTS, LICENSE)))
+                .subAggregation(getReverseNestedAggregationBuilder());
+    }
+
+    private static ReverseNestedAggregationBuilder getReverseNestedAggregationBuilder() {
+        return AggregationBuilders.reverseNested(ROOT).subAggregation(uniquePublications());
+    }
+
+    private static CardinalityAggregationBuilder uniquePublications() {
+        return AggregationBuilders.cardinality(UNIQUE_PUBLICATIONS).field(jsonPath(ID, KEYWORD));
+    }
+
     private static NestedAggregationBuilder scientificIndexHierarchy() {
         return nestedBranchBuilder(SCIENTIFIC_INDEX, SCIENTIFIC_INDEX)
                 .subAggregation(
@@ -445,19 +461,5 @@ public final class Constants {
                                 PUBLISHER,
                                 NAME,
                                 KEYWORD));
-    }
-
-    private static TermsAggregationBuilder license() {
-        return branchBuilder(LICENSE, ASSOCIATED_ARTIFACTS, LICENSE, NAME, KEYWORD)
-                .subAggregation(labels(jsonPath(ASSOCIATED_ARTIFACTS, LICENSE)))
-                .subAggregation(getReverseNestedAggregationBuilder());
-    }
-
-    private static ReverseNestedAggregationBuilder getReverseNestedAggregationBuilder() {
-        return AggregationBuilders.reverseNested(ROOT).subAggregation(uniquePublications());
-    }
-
-    private static CardinalityAggregationBuilder uniquePublications() {
-        return AggregationBuilders.cardinality(UNIQUE_PUBLICATIONS).field(jsonPath(ID, KEYWORD));
     }
 }

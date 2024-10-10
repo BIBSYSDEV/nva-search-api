@@ -82,7 +82,7 @@ import java.util.stream.Stream;
 public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     private final ResourceStreamBuilders streamBuilders;
-    private final ResourceFilter filterBuilder;
+    private final ResourceAccessFilter filterBuilder;
     private final Map<String, String> additionalQueryParameters = new HashMap<>();
     private UserSettingsClient userSettingsClient;
 
@@ -91,7 +91,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         assignStatusImpossibleWhiteList();
         setAlwaysExcludedFields(List.of(EXCLUDED_FIELDS));
         streamBuilders = new ResourceStreamBuilders(parameters());
-        filterBuilder = new ResourceFilter(this);
+        filterBuilder = new ResourceAccessFilter(this);
     }
 
     /**
@@ -186,7 +186,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
             HttpResponseFormatter<ResourceParameter> doSearch(OpenSearchClient<R, Q> queryClient) {
         if (parameters().isPresent(UNIDENTIFIED_NORWEGIAN)) {
             return super.doSearch(queryClient);
-            //                    .withMutators(firstFewContributorsOrVerifiedOrNorwegian());
         }
         return super.doSearch(queryClient);
     }
@@ -247,7 +246,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         return additionalQueryParameters;
     }
 
-    public ResourceFilter withFilter() {
+    public ResourceAccessFilter withFilter() {
         return filterBuilder;
     }
 

@@ -40,6 +40,8 @@
   "CONTRIBUTOR_NAME_SHOULD=Gauer,Møkkelgjerd": 7,
   "CONTRIBUTOR_NAME_SHOULD=Peter+Gauer,Kjetil+Møkkelgjerd": 7,
   "CONTRIBUTOR_NOT=https://api.dev.nva.aws.unit.no/cristin/person/1136254": 21,
+  "CONTRIBUTOR_COUNT=1": 5,
+  "CONTRIBUTOR_COUNT=2,": 10,
   "course=FYS5960": 1,
   "courseNot=FYS5960": 21,
   "course_should=FYS5960": 1,
