@@ -22,7 +22,6 @@ import static no.unit.nva.search.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search.resource.Constants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search.resource.Constants.facetResourcePaths;
-import static no.unit.nva.search.resource.ContributorNodeReducer.firstFewContributorsOrVerifiedOrNorwegian;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.CONTRIBUTOR;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
@@ -186,8 +185,8 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     public <R, Q extends Query<ResourceParameter>>
             HttpResponseFormatter<ResourceParameter> doSearch(OpenSearchClient<R, Q> queryClient) {
         if (parameters().isPresent(UNIDENTIFIED_NORWEGIAN)) {
-            return super.doSearch(queryClient)
-                    .withMutators(firstFewContributorsOrVerifiedOrNorwegian());
+            return super.doSearch(queryClient);
+            //                    .withMutators(firstFewContributorsOrVerifiedOrNorwegian());
         }
         return super.doSearch(queryClient);
     }
