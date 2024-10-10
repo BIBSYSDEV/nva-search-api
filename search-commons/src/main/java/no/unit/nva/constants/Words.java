@@ -80,6 +80,7 @@ public final class Words {
     public static final String MAIN_TITLE = "mainTitle";
     public static final String MESSAGES = "messages";
     public static final String MESSAGES_INDEX = "messages";
+    public static final String META_INFO = "metaInfo";
     public static final String MODIFIED_DATE = "modifiedDate";
     public static final String NAME = "name";
     public static final String NO = "NO";

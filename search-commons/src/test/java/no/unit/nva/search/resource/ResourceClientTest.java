@@ -19,6 +19,7 @@ import static no.unit.nva.constants.Words.ID;
 import static no.unit.nva.constants.Words.IDENTIFIER;
 import static no.unit.nva.constants.Words.KEYWORD;
 import static no.unit.nva.constants.Words.LICENSE;
+import static no.unit.nva.constants.Words.META_INFO;
 import static no.unit.nva.constants.Words.NONE;
 import static no.unit.nva.constants.Words.PAGES;
 import static no.unit.nva.constants.Words.PIPE;
@@ -41,6 +42,7 @@ import static no.unit.nva.search.common.enums.PublicationStatus.NEW;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
 import static no.unit.nva.search.common.enums.PublicationStatus.UNPUBLISHED;
+import static no.unit.nva.search.resource.Constants.EXCLUDED_FIELDS;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
@@ -140,8 +142,11 @@ class ResourceClientTest {
     public static final String NOT_FOUND = "Not found";
     public static final String NUMBER_FIVE = "5";
     public static final String ONE_MINUTE = "1m";
-    private static final Logger logger = LoggerFactory.getLogger(ResourceClientTest.class);
 
+    static final String Y2019 = "2019";
+    static final String Y2022 = "2022";
+    static final String Y2020 = "2020";
+    private static final Logger logger = LoggerFactory.getLogger(ResourceClientTest.class);
     private static ScrollClient scrollClient;
     private static ResourceClient searchClient;
     private static IndexingClient indexingClient;
@@ -186,41 +191,8 @@ class ResourceClientTest {
                 createArgument("offset=15&aggregation=all&perPage=2", 2));
     }
 
-    static Stream<URI> uriSortingProvider() {
-
-        return Stream.of(
-                URI.create(BASE_URL + "status=PUBLISHED&sort=relevance,createdDate"),
-                URI.create(BASE_URL + "query=year+project&sort=RELEVANCE,modifiedDate"),
-                URI.create(BASE_URL + "status=PUBLISHED&sort=unitId"),
-                URI.create(BASE_URL + "query=PublishedFile&sort=unitId"),
-                URI.create(BASE_URL + "query=research&orderBy=UNIT_ID:asc,title:desc"),
-                URI.create(
-                        BASE_URL
-                                + "query=year+project,PublishedFile&sort=created_date&sortOrder=asc&sort=category&order=desc"),
-                URI.create(
-                        BASE_URL
-                                + "query=project,PublishedFile&sort=modified_date&sortOrder=asc&sort=category"),
-                URI.create(
-                        BASE_URL
-                                + "query=PublishedFile&sort=published_date&sortOrder=asc&sort=category"),
-                URI.create(BASE_URL + "query=PublishedFile&sort=published_date:desc"),
-                URI.create(BASE_URL + "query=PublishedFile&size=10&from=0&sort=modified_date"),
-                URI.create(BASE_URL + "query=infrastructure&sort=instanceType"),
-                URI.create(BASE_URL + "status=PUBLISHED&sort=createdDate"),
-                URI.create(BASE_URL + "status=PUBLISHED&sort=modifiedDate"),
-                URI.create(BASE_URL + "status=PUBLISHED&sort=publishedDate"),
-                URI.create(BASE_URL + "status=PUBLISHED&sort=publicationDate"),
-                URI.create(BASE_URL + "query=PublishedFile&sort=title"),
-                URI.create(BASE_URL + "query=PublishedFile&sort=user"),
-                URI.create(
-                        BASE_URL + "query=year+project&orderBy=created_date:asc,modifiedDate:desc"),
-                URI.create(
-                        BASE_URL
-                                + "query=year+project&orderBy=RELEVANCE,created_date:asc,modifiedDate:desc"
-                                + "&searchAfter=3.4478912,1241234,23412"),
-                URI.create(
-                        BASE_URL
-                                + "query=year+project&sort=published_date+asc&sort=category+desc"));
+    private static Arguments createArgument(String searchUri, int expectedCount) {
+        return Arguments.of(URI.create(BASE_URL + searchUri), expectedCount);
     }
 
     static Stream<URI> uriInvalidProvider() {
@@ -254,26 +226,6 @@ class ResourceClientTest {
     static Stream<Arguments> uriProvider() {
         return loadMapFromResource(RESOURCE_VALID_DEV_URLS_JSON).entrySet().stream()
                 .map(entry -> createArgument(entry.getKey(), (Integer) entry.getValue()));
-    }
-
-    private static Arguments createArgument(String searchUri, int expectedCount) {
-        return Arguments.of(URI.create(BASE_URL + searchUri), expectedCount);
-    }
-
-    private static int pageNodeToInt(JsonNode hit) {
-        return hit.at(
-                        String.join(
-                                SLASH,
-                                SLASH + ENTITY_DESCRIPTION,
-                                REFERENCE,
-                                PUBLICATION_INSTANCE,
-                                PAGES,
-                                PAGES))
-                .asInt();
-    }
-
-    private String trimKeyword(String path) {
-        return path.substring(0, path.indexOf(KEYWORD) - 1);
     }
 
     @Test
@@ -311,6 +263,43 @@ class ResourceClientTest {
                         .fromRequestInfo(mockedRequestInfoLocal)
                         .doSearch(searchClient);
         assertThat(result.toPagedResponse().hits().size(), is(2));
+    }
+
+    static Stream<URI> uriSortingProvider() {
+
+        return Stream.of(
+                URI.create(BASE_URL + "status=PUBLISHED&sort=relevance,createdDate"),
+                URI.create(BASE_URL + "query=year+project&sort=RELEVANCE,modifiedDate"),
+                URI.create(BASE_URL + "status=PUBLISHED&sort=unitId"),
+                URI.create(BASE_URL + "query=PublishedFile&sort=unitId"),
+                URI.create(BASE_URL + "query=research&orderBy=UNIT_ID:asc,title:desc"),
+                URI.create(
+                        BASE_URL
+                                + "query=year+project,PublishedFile&sort=created_date&sortOrder=asc&sort=category&order=desc"),
+                URI.create(
+                        BASE_URL
+                                + "query=project,PublishedFile&sort=modified_date&sortOrder=asc&sort=category"),
+                URI.create(
+                        BASE_URL
+                                + "query=PublishedFile&sort=published_date&sortOrder=asc&sort=category"),
+                URI.create(BASE_URL + "query=PublishedFile&sort=published_date:desc"),
+                URI.create(BASE_URL + "query=PublishedFile&size=10&from=0&sort=modified_date"),
+                URI.create(BASE_URL + "query=infrastructure&sort=instanceType"),
+                URI.create(BASE_URL + "status=PUBLISHED&sort=createdDate"),
+                URI.create(BASE_URL + "status=PUBLISHED&sort=modifiedDate"),
+                URI.create(BASE_URL + "status=PUBLISHED&sort=publishedDate"),
+                URI.create(BASE_URL + "status=PUBLISHED&sort=publicationDate"),
+                URI.create(BASE_URL + "query=PublishedFile&sort=title"),
+                URI.create(BASE_URL + "query=PublishedFile&sort=user"),
+                URI.create(
+                        BASE_URL + "query=year+project&orderBy=created_date:asc,modifiedDate:desc"),
+                URI.create(
+                        BASE_URL
+                                + "query=year+project&orderBy=RELEVANCE,created_date:asc,modifiedDate:desc"
+                                + "&searchAfter=3.4478912,1241234,23412"),
+                URI.create(
+                        BASE_URL
+                                + "query=year+project&sort=published_date+asc&sort=category+desc"));
     }
 
     @Test
@@ -564,8 +553,8 @@ class ResourceClientTest {
                 ResourceSearchQuery.builder()
                         .fromRequestInfo(requestInfo)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                        .withParameter(NODES_EXCLUDED, "metaInfo")
-                        .withParameter(STATISTICS, "true")
+                        .withParameter(NODES_EXCLUDED, META_INFO)
+                        .withParameter(STATISTICS, Boolean.TRUE.toString())
                         .withRequiredParameters(FROM, SIZE)
                         .build()
                         .withFilter()
@@ -591,8 +580,8 @@ class ResourceClientTest {
                         ResourceSearchQuery.builder()
                                 .fromRequestInfo(requestInfo)
                                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                                .withParameter(NODES_EXCLUDED, "metaInfo")
-                                .withParameter(STATISTICS, "true")
+                                .withParameter(NODES_EXCLUDED, META_INFO)
+                                .withParameter(STATISTICS, Boolean.TRUE.toString())
                                 .withRequiredParameters(FROM, SIZE)
                                 .build()
                                 .withFilter()
@@ -613,7 +602,7 @@ class ResourceClientTest {
                 ResourceSearchQuery.builder()
                         .fromRequestInfo(requestInfo)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                        .withParameter(NODES_EXCLUDED, "metaInfo")
+                        .withParameter(NODES_EXCLUDED, META_INFO)
                         .withRequiredParameters(FROM, SIZE)
                         .build()
                         .withFilter()
@@ -879,6 +868,7 @@ class ResourceClientTest {
                 ResourceSearchQuery.builder()
                         .fromTestQueryParameters(queryToMapEntries(uri))
                         .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                        .withAlwaysExcludedFields(EXCLUDED_FIELDS)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withMediaType(Words.TEXT_CSV)
                         .build()
@@ -924,6 +914,10 @@ class ResourceClientTest {
         assertTrue(pagedSearchResourceDto.totalHits() >= 0);
     }
 
+    private String trimKeyword(String path) {
+        return path.substring(0, path.indexOf(KEYWORD) - 1);
+    }
+
     @ParameterizedTest
     @MethodSource("uriInvalidProvider")
     void failToSearchUri(URI uri) {
@@ -945,9 +939,9 @@ class ResourceClientTest {
                         .fromTestParameterMap(
                                 Map.of(
                                         SCIENTIFIC_REPORT_PERIOD_SINCE.asCamelCase(),
-                                        "2019",
+                                        Y2019,
                                         SCIENTIFIC_REPORT_PERIOD_BEFORE.asCamelCase(),
-                                        "2022"))
+                                        Y2022))
                         .withRequiredParameters(FROM, SIZE, AGGREGATION)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
@@ -967,9 +961,9 @@ class ResourceClientTest {
                         .fromTestParameterMap(
                                 Map.of(
                                         SCIENTIFIC_REPORT_PERIOD_SINCE.asCamelCase(),
-                                        "2019",
+                                        Y2019,
                                         SCIENTIFIC_REPORT_PERIOD_BEFORE.asCamelCase(),
-                                        "2020"))
+                                        Y2020))
                         .withRequiredParameters(FROM, SIZE, AGGREGATION)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
@@ -1077,6 +1071,18 @@ class ResourceClientTest {
                 "All page counts are within the specified range",
                 pageCounts,
                 everyItem(allOf(greaterThanOrEqualTo(min), lessThanOrEqualTo(max))));
+    }
+
+    private static int pageNodeToInt(JsonNode hit) {
+        return hit.at(
+                        String.join(
+                                SLASH,
+                                SLASH + ENTITY_DESCRIPTION,
+                                REFERENCE,
+                                PUBLICATION_INSTANCE,
+                                PAGES,
+                                PAGES))
+                .asInt();
     }
 
     @Test

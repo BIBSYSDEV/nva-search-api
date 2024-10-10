@@ -100,7 +100,7 @@ public final class Constants {
     public static final String FILES_STATUS_KEYWORD = FILES_STATUS + DOT + KEYWORD;
     public static final String ENTITY_CONTRIBUTORS_DOT =
             ENTITY_DESCRIPTION + DOT + CONTRIBUTORS + DOT;
-    public static final String CONTRIBUTOR_COUNT_KEYWORD =
+    public static final String CONTRIBUTOR_COUNT_NO_KEYWORD =
             ENTITY_DESCRIPTION + DOT + "contributorsCount";
     public static final String ENTITY_PUBLICATION_CONTEXT_DOT =
             ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT;

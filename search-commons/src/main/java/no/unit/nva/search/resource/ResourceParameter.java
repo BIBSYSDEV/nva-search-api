@@ -52,7 +52,7 @@ import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_FIELDS;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_IDENTITY_ID;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_IDENTITY_NAME_KEYWORD;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD;
-import static no.unit.nva.search.resource.Constants.CONTRIBUTOR_COUNT_KEYWORD;
+import static no.unit.nva.search.resource.Constants.CONTRIBUTOR_COUNT_NO_KEYWORD;
 import static no.unit.nva.search.resource.Constants.COURSE_CODE_KEYWORD;
 import static no.unit.nva.search.resource.Constants.ENTITY_ABSTRACT;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION;
@@ -131,7 +131,7 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     CONTRIBUTORS(ACROSS_FIELDS, ALL_OF, CONTRIBUTORS_FIELDS),
     CONTRIBUTORS_OF_CHILD(HAS_PARTS, ALL_OF, CONTRIBUTORS),
     CONTRIBUTOR(KEYWORD, ALL_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI),
-    CONTRIBUTOR_COUNT(NUMBER, BETWEEN, CONTRIBUTOR_COUNT_KEYWORD),
+    CONTRIBUTOR_COUNT(NUMBER, BETWEEN, CONTRIBUTOR_COUNT_NO_KEYWORD),
     CONTRIBUTOR_NOT(KEYWORD, NOT_ALL_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI),
     CONTRIBUTOR_SHOULD(KEYWORD, ANY_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI),
     CONTRIBUTOR_NAME(FUZZY_KEYWORD, ALL_OF, CONTRIBUTORS_IDENTITY_NAME_KEYWORD),
