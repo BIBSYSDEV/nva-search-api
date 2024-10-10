@@ -29,7 +29,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import no.unit.nva.indexing.testutils.FakeSearchResponse;
-import no.unit.nva.search.model.FakeGatewayResponse;
 import no.unit.nva.search.model.constant.Words;
 import no.unit.nva.search.model.csv.ExportCsv;
 import no.unit.nva.search.model.records.SwsResponse;
