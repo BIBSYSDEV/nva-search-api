@@ -185,8 +185,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     public <R, Q extends Query<ResourceParameter>>
             HttpResponseFormatter<ResourceParameter> doSearch(OpenSearchClient<R, Q> queryClient) {
         if (parameters().isPresent(UNIDENTIFIED_NORWEGIAN)) {
-            return super.doSearch(queryClient)
-                    .withMutators(firstFewContributorsOrVerifiedOrNorwegian());
+            return super.doSearch(queryClient);
         }
         return super.doSearch(queryClient);
     }
