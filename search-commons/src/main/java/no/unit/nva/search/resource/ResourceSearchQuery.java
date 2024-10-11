@@ -17,7 +17,7 @@ import static no.unit.nva.search.common.constant.Functions.trimSpace;
 import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search.resource.Constants.CRISTIN_ORGANIZATION_PATH;
 import static no.unit.nva.search.resource.Constants.CRISTIN_PERSON_PATH;
-import static no.unit.nva.search.resource.Constants.EXCLUDED_FIELDS;
+import static no.unit.nva.search.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
 import static no.unit.nva.search.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search.resource.Constants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search.resource.Constants.STATUS_KEYWORD;
@@ -89,7 +89,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     private ResourceSearchQuery() {
         super();
         assignStatusImpossibleWhiteList();
-        setAlwaysExcludedFields(List.of(EXCLUDED_FIELDS));
+        setAlwaysExcludedFields(GLOBAL_EXCLUDED_FIELDS);
         streamBuilders = new ResourceStreamBuilders(parameters());
         filterBuilder = new ResourceAccessFilter(this);
     }

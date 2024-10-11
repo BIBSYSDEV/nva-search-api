@@ -3,7 +3,7 @@ package no.unit.nva.search;
 import static no.unit.nva.constants.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
-import static no.unit.nva.search.resource.Constants.EXCLUDED_FIELDS;
+import static no.unit.nva.search.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
 import static no.unit.nva.search.resource.ResourceClient.defaultClient;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
@@ -22,7 +22,9 @@ import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
 import java.net.HttpURLConnection;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Handler for searching resources.
@@ -60,7 +62,7 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
         return ResourceSearchQuery.builder()
                 .fromRequestInfo(requestInfo)
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
-                .withAlwaysExcludedFields(EXCLUDED_FIELDS, ENTITY_DESCRIPTION_CONTRIBUTORS)
+                .withAlwaysExcludedFields(getExcludedFields())
                 .validate()
                 .build()
                 .withFilter()
@@ -68,6 +70,12 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
                 .apply()
                 .doSearch(opensearchClient)
                 .toString();
+    }
+
+    private List<String> getExcludedFields() {
+        return Stream.of(GLOBAL_EXCLUDED_FIELDS, List.of(ENTITY_DESCRIPTION_CONTRIBUTORS))
+                .flatMap(Collection::stream)
+                .toList();
     }
 
     @Override

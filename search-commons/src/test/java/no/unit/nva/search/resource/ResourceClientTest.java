@@ -42,7 +42,7 @@ import static no.unit.nva.search.common.enums.PublicationStatus.NEW;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
 import static no.unit.nva.search.common.enums.PublicationStatus.UNPUBLISHED;
-import static no.unit.nva.search.resource.Constants.EXCLUDED_FIELDS;
+import static no.unit.nva.search.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
@@ -870,7 +870,7 @@ class ResourceClientTest {
                 ResourceSearchQuery.builder()
                         .fromTestQueryParameters(queryToMapEntries(uri))
                         .withRequiredParameters(FROM, SIZE, AGGREGATION)
-                        .withAlwaysExcludedFields(EXCLUDED_FIELDS)
+                        .withAlwaysExcludedFields(GLOBAL_EXCLUDED_FIELDS)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withMediaType(Words.TEXT_CSV)
                         .build()
