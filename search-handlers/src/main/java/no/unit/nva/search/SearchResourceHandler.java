@@ -12,6 +12,7 @@ import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 
+import no.unit.nva.search.resource.ContributorCopyMutator;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.ResourceSearchQuery;
 
@@ -69,6 +70,7 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
                 .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
                 .apply()
                 .doSearch(opensearchClient)
+                .withMutators(new ContributorCopyMutator())
                 .toString();
     }
 
