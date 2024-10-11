@@ -15,7 +15,8 @@ public enum TicketType {
     NONE("None"),
     DOI_REQUEST("DoiRequest"),
     GENERAL_SUPPORT_CASE("GeneralSupportCase"),
-    PUBLISHING_REQUEST("PublishingRequest");
+    PUBLISHING_REQUEST("PublishingRequest"),
+    UNPUBLISH_REQUEST("UnpublishRequest");
 
     private final String type;
     private final String keyValidationRegEx;

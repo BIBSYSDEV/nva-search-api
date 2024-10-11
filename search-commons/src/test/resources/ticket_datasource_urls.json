@@ -53,6 +53,7 @@
   "STATUS=New,Pending&ASSIGNEE=Anette+Olli": 9,
   "STATUS_NOT=New": 13,
   "TYPE=GeneralSupportCase": 6,
+  "TYPE=UnpublishRequest": 0,
   "TYPE_NOT=PublishingRequest": 7,
   "VIEWED_BY_NOT=Terje+Hellesvik": 15,
   "VIEWED_BY=Kir+Truhacev": 11,
