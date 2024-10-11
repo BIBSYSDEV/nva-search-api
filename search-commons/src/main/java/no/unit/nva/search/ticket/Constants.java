@@ -170,6 +170,7 @@ public final class Constants {
                     + USERNAME
                     + DOT
                     + KEYWORD;
+    public static final String TYPE_FILTER = "type_filter";
 
     @JacocoGenerated
     public Constants() {}
