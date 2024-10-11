@@ -1046,6 +1046,28 @@ class ResourceClientTest {
         assertThat(pagedSearchResourceDto.hits(), hasSize(2));
     }
 
+    @Test
+    void shouldReturnResourcesWithFieldContributorsPreviewAndNotPreview()
+            throws BadRequestException {
+
+        var response =
+                ResourceSearchQuery.builder()
+                        .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                        .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                        .withAlwaysExcludedFields("entityDescription.contributors")
+                        .build()
+                        .withFilter()
+                        .requiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED)
+                        .apply()
+                        .doSearch(searchClient);
+
+        var pagedSearchResourceDto = response.toPagedResponse();
+
+        assertThat(
+                pagedSearchResourceDto.toJsonString(), containsString("\"contributorsPreview\":"));
+        assertThat(pagedSearchResourceDto.toJsonString(), not(containsString("\"contributors\":")));
+    }
+
     @ParameterizedTest
     @MethodSource("provideValidPageRanges")
     void shouldFilterByPageCount(int min, int max, int expectedResultCount)

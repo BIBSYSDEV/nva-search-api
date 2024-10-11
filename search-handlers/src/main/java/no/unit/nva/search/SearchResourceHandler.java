@@ -31,6 +31,7 @@ import java.util.List;
  */
 public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
 
+    public static final String ENTITY_DESCRIPTION_CONTRIBUTORS = "entityDescription.contributors";
     private final ResourceClient opensearchClient;
 
     @JacocoGenerated
@@ -59,7 +60,7 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
         return ResourceSearchQuery.builder()
                 .fromRequestInfo(requestInfo)
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
-                .withAlwaysExcludedFields(EXCLUDED_FIELDS)
+                .withAlwaysExcludedFields(EXCLUDED_FIELDS, ENTITY_DESCRIPTION_CONTRIBUTORS)
                 .validate()
                 .build()
                 .withFilter()

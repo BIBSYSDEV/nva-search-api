@@ -80,7 +80,7 @@ import java.util.stream.Stream;
  */
 @SuppressWarnings("PMD.GodClass")
 public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
-
+    private static final String EXCLUDED_RESOURCE_FIELDS = "entityDescription.contributors";
     private final ResourceStreamBuilders streamBuilders;
     private final ResourceAccessFilter filterBuilder;
     private final Map<String, String> additionalQueryParameters = new HashMap<>();
