@@ -29,7 +29,7 @@ sourceSets {
     }
 }
 
-
+check.dependsOn jacocoTestCoverageVerification
 tasks.named('jacocoTestCoverageVerification', JacocoCoverageVerification) {
     violationRules {
         rule {
