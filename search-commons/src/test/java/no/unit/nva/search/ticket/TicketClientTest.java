@@ -15,11 +15,13 @@ import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCached
 import static no.unit.nva.search.ticket.TicketParameter.AGGREGATION;
 import static no.unit.nva.search.ticket.TicketParameter.BY_USER_PENDING;
 import static no.unit.nva.search.ticket.TicketParameter.FROM;
+import static no.unit.nva.search.ticket.TicketParameter.OWNER;
 import static no.unit.nva.search.ticket.TicketParameter.SIZE;
 import static no.unit.nva.search.ticket.TicketParameter.SORT;
 import static no.unit.nva.search.ticket.TicketType.DOI_REQUEST;
 import static no.unit.nva.search.ticket.TicketType.GENERAL_SUPPORT_CASE;
 import static no.unit.nva.search.ticket.TicketType.PUBLISHING_REQUEST;
+import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 
 import static nva.commons.apigateway.AccessRight.MANAGE_CUSTOMERS;
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
@@ -77,7 +79,7 @@ import java.util.stream.Stream;
 @Testcontainers
 class TicketClientTest {
 
-    public static final String REQUEST_BASE_URL = "https://x.org/?size=21&";
+    public static final String REQUEST_BASE_URL = "https://x.org/?size=22&";
     public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 4;
     public static final String CURRENT_USERNAME = "1412322@20754.0.0.0";
     public static final URI testOrganizationId =
@@ -115,15 +117,14 @@ class TicketClientTest {
 
     static Stream<Arguments> uriAccessRights() {
         return Stream.of(
-                createAccessRightArgument("", 16, "1412322@20754.0.0.0"),
-                createAccessRightArgument("", 2, "1492596@20754.0.0.0"),
+                createAccessRightArgument("owner=1412322@20754.0.0.0", 16, "1412322@20754.0.0.0"),
+                createAccessRightArgument("owner=1492596@20754.0.0.0", 2, "1492596@20754.0.0.0"),
                 createAccessRightArgument(
-                        "STATISTICS=true", 21, "1492596@20754.0.0.0", MANAGE_CUSTOMERS),
+                        "STATISTICS=true", 22, "1492596@20754.0.0.0", MANAGE_CUSTOMERS),
                 createAccessRightArgument("", 3, "1492596@20754.0.0.0", MANAGE_DOI),
                 createAccessRightArgument("", 7, "1492596@20754.0.0.0", AccessRight.SUPPORT),
                 createAccessRightArgument(
                         "", 14, "1492596@20754.0.0.0", MANAGE_PUBLISHING_REQUESTS),
-                createAccessRightArgument("", 0, "1485369@5923.0.0.0"),
                 createAccessRightArgument("", 1, "1485369@5923.0.0.0", MANAGE_DOI),
                 createAccessRightArgument("", 6, "1485369@5923.0.0.0", AccessRight.SUPPORT),
                 createAccessRightArgument("", 13, "1485369@5923.0.0.0", MANAGE_PUBLISHING_REQUESTS),
@@ -457,6 +458,30 @@ class TicketClientTest {
         assertNotNull(pagedSearchResourceDto);
         assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
         assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedCount)));
+    }
+
+    @Test
+    void shouldThrowUnauthorizedWhenRequestingTicketsForOwnerWhichIsNotCurrentCustomer()
+            throws UnauthorizedException {
+        var currentUserUsername = randomString();
+        var ownerToSearch = randomString();
+
+        var mockedRequestInfoLocal = mock(RequestInfo.class);
+        when(mockedRequestInfoLocal.getUserName()).thenReturn(currentUserUsername);
+        when(mockedRequestInfoLocal.getTopLevelOrgCristinId())
+                .thenReturn(Optional.of(testOrganizationId));
+
+        assertThrows(
+                UnauthorizedException.class,
+                () ->
+                        TicketSearchQuery.builder()
+                                .withParameter(OWNER, ownerToSearch)
+                                .withRequiredParameters(FROM, SIZE)
+                                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                                .build()
+                                .withFilter()
+                                .fromRequestInfo(mockedRequestInfoLocal)
+                                .doSearch(searchClient));
     }
 
     @ParameterizedTest
