@@ -23,13 +23,10 @@ import static no.unit.nva.constants.Words.USERNAME;
 import static no.unit.nva.constants.Words.VIEWED_BY;
 import static no.unit.nva.search.common.constant.Functions.branchBuilder;
 import static no.unit.nva.search.common.constant.Functions.filterBranchBuilder;
-
-import nva.commons.core.JacocoGenerated;
-
-import org.opensearch.search.aggregations.AggregationBuilder;
-
 import java.util.List;
 import java.util.Map;
+import nva.commons.core.JacocoGenerated;
+import org.opensearch.search.aggregations.AggregationBuilder;
 
 /**
  * Constants for the ticket search.
