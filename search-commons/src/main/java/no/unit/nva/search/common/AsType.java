@@ -114,7 +114,7 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
 
     private static Stream<String> splitParts(String delimiter, String value) {
         return Arrays.stream(value.split(delimiter))
-                .filter(predicate -> !predicate.isEmpty())
+                .filter(predicate -> !predicate.isBlank())
                 .sequential();
     }
 
