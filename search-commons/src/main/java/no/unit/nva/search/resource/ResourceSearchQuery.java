@@ -7,17 +7,17 @@ import static no.unit.nva.constants.ErrorMessages.TOO_MANY_ARGUMENTS;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.constants.Words.HTTPS;
+import static no.unit.nva.constants.Words.IDENTITY;
 import static no.unit.nva.constants.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.constants.Words.NONE;
 import static no.unit.nva.constants.Words.PI;
-import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.constants.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.constants.Words.STATUS;
 import static no.unit.nva.search.common.constant.Functions.trimSpace;
 import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search.resource.Constants.CRISTIN_ORGANIZATION_PATH;
 import static no.unit.nva.search.resource.Constants.CRISTIN_PERSON_PATH;
-import static no.unit.nva.search.resource.Constants.DEFAULT_RESOURCE_SORT_FIELD;
+import static no.unit.nva.search.resource.Constants.DEFAULT_RESOURCE_SORT_FIELDS;
 import static no.unit.nva.search.resource.Constants.EXCLUDED_FIELDS;
 import static no.unit.nva.search.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search.resource.Constants.RESOURCES_AGGREGATIONS;
@@ -34,7 +34,6 @@ import static no.unit.nva.search.resource.ResourceParameter.RESOURCE_PARAMETER_S
 import static no.unit.nva.search.resource.ResourceParameter.SEARCH_AFTER;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
-import static no.unit.nva.search.resource.ResourceParameter.UNIDENTIFIED_NORWEGIAN;
 import static no.unit.nva.search.resource.ResourceSort.INVALID;
 
 import static nva.commons.core.attempt.Try.attempt;
@@ -100,7 +99,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
      *
      * <p>This whitelist the ResourceQuery from any forgetful developer (me)
      *
-     * <p>i.e.In order to return any results, withRequiredStatus must be set
+     * @apiNote In order to return any results, withRequiredStatus must be set
      */
     private void assignStatusImpossibleWhiteList() {
         filters()
@@ -120,15 +119,15 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     @Override
     public AsType<ResourceParameter> sort() {
-        if (!parameters().isPresent(SORT)) {
-            parameters().set(SORT, RELEVANCE_KEY_NAME + COMMA + DEFAULT_RESOURCE_SORT_FIELD);
-        }
         var sortString = parameters().get(SORT).as().toString();
-        if (!sortString.contains(DEFAULT_RESOURCE_SORT_FIELD)) {
-            sortString = sortString + COMMA + DEFAULT_RESOURCE_SORT_FIELD;
-            parameters().set(SORT, sortString);
+        if (missingIdentitySortKey(sortString)) {
+            parameters().set(SORT, sortString + COMMA + IDENTITY);
         }
         return parameters().get(SORT);
+    }
+
+    private static boolean missingIdentitySortKey(String sortString) {
+        return !sortString.contains(IDENTITY);
     }
 
     @Override
@@ -193,9 +192,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     @Override
     public <R, Q extends Query<ResourceParameter>>
             HttpResponseFormatter<ResourceParameter> doSearch(OpenSearchClient<R, Q> queryClient) {
-        if (parameters().isPresent(UNIDENTIFIED_NORWEGIAN)) {
-            return super.doSearch(queryClient);
-        }
         return super.doSearch(queryClient);
     }
 
@@ -289,7 +285,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                                 switch (key) {
                                     case FROM -> setValue(key.name(), DEFAULT_OFFSET);
                                     case SIZE -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
-                                    case SORT -> setValue(key.name(), RELEVANCE_KEY_NAME);
+                                    case SORT -> setValue(key.name(), DEFAULT_RESOURCE_SORT_FIELDS);
                                     case AGGREGATION -> setValue(key.name(), NONE);
                                     default -> {
                                         /* ignore and continue */
