@@ -7,16 +7,17 @@ import static no.unit.nva.constants.ErrorMessages.TOO_MANY_ARGUMENTS;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.constants.Words.HTTPS;
+import static no.unit.nva.constants.Words.IDENTIFIER;
 import static no.unit.nva.constants.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.constants.Words.NONE;
 import static no.unit.nva.constants.Words.PI;
-import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.constants.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.constants.Words.STATUS;
 import static no.unit.nva.search.common.constant.Functions.trimSpace;
 import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search.resource.Constants.CRISTIN_ORGANIZATION_PATH;
 import static no.unit.nva.search.resource.Constants.CRISTIN_PERSON_PATH;
+import static no.unit.nva.search.resource.Constants.DEFAULT_RESOURCE_SORT_FIELDS;
 import static no.unit.nva.search.resource.Constants.EXCLUDED_FIELDS;
 import static no.unit.nva.search.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search.resource.Constants.RESOURCES_AGGREGATIONS;
@@ -33,7 +34,6 @@ import static no.unit.nva.search.resource.ResourceParameter.RESOURCE_PARAMETER_S
 import static no.unit.nva.search.resource.ResourceParameter.SEARCH_AFTER;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
-import static no.unit.nva.search.resource.ResourceParameter.UNIDENTIFIED_NORWEGIAN;
 import static no.unit.nva.search.resource.ResourceSort.INVALID;
 
 import static nva.commons.core.attempt.Try.attempt;
@@ -68,6 +68,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -99,7 +100,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
      *
      * <p>This whitelist the ResourceQuery from any forgetful developer (me)
      *
-     * <p>i.e.In order to return any results, withRequiredStatus must be set
+     * @apiNote In order to return any results, withRequiredStatus must be set
      */
     private void assignStatusImpossibleWhiteList() {
         filters()
@@ -119,7 +120,19 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     @Override
     public AsType<ResourceParameter> sort() {
+        var sortString = parameters().get(SORT).toString();
+        if (missingIdentifier(sortString)) {
+            if (sortString.isBlank()) {
+                parameters().set(SORT, IDENTIFIER);
+            } else {
+                parameters().set(SORT, String.join(COMMA, sortString, IDENTIFIER));
+            }
+        }
         return parameters().get(SORT);
+    }
+
+    private static boolean missingIdentifier(String sortString) {
+        return !sortString.contains(IDENTIFIER);
     }
 
     @Override
@@ -184,9 +197,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     @Override
     public <R, Q extends Query<ResourceParameter>>
             HttpResponseFormatter<ResourceParameter> doSearch(OpenSearchClient<R, Q> queryClient) {
-        if (parameters().isPresent(UNIDENTIFIED_NORWEGIAN)) {
-            return super.doSearch(queryClient);
-        }
         return super.doSearch(queryClient);
     }
 
@@ -218,20 +228,29 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         return parameters().get(CONTRIBUTOR).asSplitStream(COMMA).count() == 1;
     }
 
-    private void addPromotedPublications(
-            UserSettingsClient userSettingsClient, BoolQueryBuilder bq) {
+    private void addPromotedPublications(UserSettingsClient client, BoolQueryBuilder builder) {
 
-        var result = attempt(() -> userSettingsClient.doSearch(this));
+        var result = attempt(() -> client.doSearch(this));
         if (result.isSuccess()) {
-            var promotedPublications = result.get().promotedPublications();
-            for (int i = 0; i < promotedPublications.size(); i++) {
-                var qb =
-                        matchQuery(IDENTIFIER_KEYWORD, promotedPublications.get(i))
-                                // 4.14 down to 3.14 (PI)
-                                .boost(PI + 1F - ((float) i / promotedPublications.size()));
-                bq.should(qb);
-            }
+            AtomicInteger i = new AtomicInteger();
+            var promoted = result.get().promotedPublications();
+            promoted.forEach(
+                    identifier ->
+                            builder.should(
+                                    matchQuery(IDENTIFIER_KEYWORD, identifier)
+                                            .boost(calculateBoostValue(i, promoted.size()))));
         }
+    }
+
+    /**
+     * Calculate the boost for a promoted publication. (4.14 down to 3.14 (PI))
+     *
+     * @param i index of the current publication
+     * @param size total number of promoted publications
+     * @return the boost value
+     */
+    private static float calculateBoostValue(AtomicInteger i, int size) {
+        return PI + 1F - ((float) i.getAndIncrement() / size);
     }
 
     @Override
@@ -280,7 +299,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                                 switch (key) {
                                     case FROM -> setValue(key.name(), DEFAULT_OFFSET);
                                     case SIZE -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
-                                    case SORT -> setValue(key.name(), RELEVANCE_KEY_NAME);
+                                    case SORT -> setValue(key.name(), DEFAULT_RESOURCE_SORT_FIELDS);
                                     case AGGREGATION -> setValue(key.name(), NONE);
                                     default -> {
                                         /* ignore and continue */

@@ -1,5 +1,6 @@
 package no.unit.nva.search.common;
 
+import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 
 import static java.util.Objects.isNull;
@@ -107,7 +108,14 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
      * @return The value as an optional Stream, split by delimiter.
      */
     public Stream<String> asSplitStream(String delimiter) {
-        return asStream().flatMap(value -> Arrays.stream(value.split(delimiter)).sequential());
+        // Optional null stream, skipping null check
+        return asStream().flatMap(value -> splitParts(delimiter, value));
+    }
+
+    private static Stream<String> splitParts(String delimiter, String value) {
+        return Arrays.stream(value.split(delimiter))
+                .filter(predicate -> !predicate.isBlank())
+                .sequential();
     }
 
     /**
@@ -134,6 +142,6 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
 
     @Override
     public String toString() {
-        return value;
+        return nonNull(value) ? value : EMPTY_STRING;
     }
 }
