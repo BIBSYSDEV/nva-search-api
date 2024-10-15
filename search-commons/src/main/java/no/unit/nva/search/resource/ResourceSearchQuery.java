@@ -68,6 +68,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -227,20 +228,29 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         return parameters().get(CONTRIBUTOR).asSplitStream(COMMA).count() == 1;
     }
 
-    private void addPromotedPublications(
-            UserSettingsClient userSettingsClient, BoolQueryBuilder bq) {
+    private void addPromotedPublications(UserSettingsClient client, BoolQueryBuilder bq) {
 
-        var result = attempt(() -> userSettingsClient.doSearch(this));
+        var result = attempt(() -> client.doSearch(this));
         if (result.isSuccess()) {
-            var promotedPublications = result.get().promotedPublications();
-            for (int i = 0; i < promotedPublications.size(); i++) {
-                var qb =
-                        matchQuery(IDENTIFIER_KEYWORD, promotedPublications.get(i))
-                                // 4.14 down to 3.14 (PI)
-                                .boost(PI + 1F - ((float) i / promotedPublications.size()));
-                bq.should(qb);
-            }
+            AtomicInteger i = new AtomicInteger();
+            var promoted = result.get().promotedPublications();
+            promoted.forEach(
+                    identifier ->
+                            bq.should(
+                                    matchQuery(IDENTIFIER_KEYWORD, identifier)
+                                            .boost(calculateBoostValue(i, promoted.size()))));
         }
+    }
+
+    /**
+     * Calculate the boost for a promoted publication. (4.14 down to 3.14 (PI))
+     *
+     * @param i index of the current publication
+     * @param size total number of promoted publications
+     * @return the boost value
+     */
+    private static float calculateBoostValue(AtomicInteger i, int size) {
+        return PI + 1F - ((float) i.getAndIncrement() / size);
     }
 
     @Override
