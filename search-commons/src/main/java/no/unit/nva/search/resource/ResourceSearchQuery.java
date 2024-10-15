@@ -228,7 +228,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         return parameters().get(CONTRIBUTOR).asSplitStream(COMMA).count() == 1;
     }
 
-    private void addPromotedPublications(UserSettingsClient client, BoolQueryBuilder bq) {
+    private void addPromotedPublications(UserSettingsClient client, BoolQueryBuilder builder) {
 
         var result = attempt(() -> client.doSearch(this));
         if (result.isSuccess()) {
@@ -236,7 +236,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
             var promoted = result.get().promotedPublications();
             promoted.forEach(
                     identifier ->
-                            bq.should(
+                            builder.should(
                                     matchQuery(IDENTIFIER_KEYWORD, identifier)
                                             .boost(calculateBoostValue(i, promoted.size()))));
         }
