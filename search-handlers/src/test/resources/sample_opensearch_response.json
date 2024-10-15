@@ -24,21 +24,23 @@
           "id": "http://localhost/publication/f367b260-c15e-4d0f-b197-e1dc0e9eb0e8",
           "identifier": "f367b260-c15e-4d0f-b197-e1dc0e9eb0e8",
           "doi": "https://doi.org/10.1016/j.is.2016.09.004",
-          "contributors": [
-            {
-              "name": "Gkorgkas,Orestis Stylianos",
-              "id": "1582627888604"
-            },
-            {
-              "name": "Vlachou, Akrivi"
-            },
-            {
-              "name": "Doulkeridis, Christos"
-            },
-            {
-              "name": "Nørvåg, Kjetil"
-            }
-          ],
+          "entityDescription": {
+            "contributorsPreview": [
+              {
+                "name": "Gkorgkas,Orestis Stylianos",
+                "id": "1582627888604"
+              },
+              {
+                "name": "Vlachou, Akrivi"
+              },
+              {
+                "name": "Doulkeridis, Christos"
+              },
+              {
+                "name": "Nørvåg, Kjetil"
+              }
+            ]
+          },
           "title": "Exploratory product search using top-k join queries",
           "description": "the description",
           "owner": "og@unit.no",
@@ -63,21 +65,23 @@
           "id": "http://localhost/publication/f367b260-c15e-4d0f-b197-e1dc0e9eb0e8",
           "identifier": "f367b260-c15e-4d0f-b197-e1dc0e9eb0e8",
           "doi": "https://doi.org/10.1016/j.is.2016.09.004",
-          "contributors": [
-            {
-              "name": "Gkorgkas,Orestis Stylianos",
-              "id": "1582627888604"
-            },
-            {
-              "name": "Vlachou, Akrivi"
-            },
-            {
-              "name": "Doulkeridis, Christos"
-            },
-            {
-              "name": "Nørvåg, Kjetil"
-            }
-          ],
+          "entityDescription": {
+            "contributors": [
+              {
+                "name": "Gkorgkas,Orestis Stylianos",
+                "id": "1582627888604"
+              },
+              {
+                "name": "Vlachou, Akrivi"
+              },
+              {
+                "name": "Doulkeridis, Christos"
+              },
+              {
+                "name": "Nørvåg, Kjetil"
+              }
+            ]
+          },
           "title": "Exploratory product search using top-k join queries",
           "description": "the description",
           "owner": "og@unit.no",

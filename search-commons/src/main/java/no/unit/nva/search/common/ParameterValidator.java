@@ -271,6 +271,11 @@ public abstract class ParameterValidator<
         return this;
     }
 
+    public final ParameterValidator<K, Q> withAlwaysExcludedFields(List<String> excludedFields) {
+        searchQuery.setAlwaysExcludedFields(excludedFields);
+        return this;
+    }
+
     public final ParameterValidator<K, Q> withAlwaysExcludedFields(String... excludedFields) {
         searchQuery.setAlwaysExcludedFields(List.of(excludedFields));
         return this;

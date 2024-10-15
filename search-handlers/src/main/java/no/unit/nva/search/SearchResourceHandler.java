@@ -3,7 +3,7 @@ package no.unit.nva.search;
 import static no.unit.nva.constants.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
-import static no.unit.nva.search.resource.Constants.EXCLUDED_FIELDS;
+import static no.unit.nva.search.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
 import static no.unit.nva.search.resource.ResourceClient.defaultClient;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
@@ -12,6 +12,7 @@ import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 
+import no.unit.nva.search.resource.ContributorCopyMutator;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.ResourceSearchQuery;
 
@@ -22,7 +23,9 @@ import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
 import java.net.HttpURLConnection;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Handler for searching resources.
@@ -31,6 +34,7 @@ import java.util.List;
  */
 public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
 
+    public static final String ENTITY_DESCRIPTION_CONTRIBUTORS = "entityDescription.contributors";
     private final ResourceClient opensearchClient;
 
     @JacocoGenerated
@@ -59,14 +63,21 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
         return ResourceSearchQuery.builder()
                 .fromRequestInfo(requestInfo)
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
-                .withAlwaysExcludedFields(EXCLUDED_FIELDS)
+                .withAlwaysExcludedFields(getExcludedFields())
                 .validate()
                 .build()
                 .withFilter()
                 .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
                 .apply()
                 .doSearch(opensearchClient)
+                .withMutators(new ContributorCopyMutator())
                 .toString();
+    }
+
+    private List<String> getExcludedFields() {
+        return Stream.of(GLOBAL_EXCLUDED_FIELDS, List.of(ENTITY_DESCRIPTION_CONTRIBUTORS))
+                .flatMap(Collection::stream)
+                .toList();
     }
 
     @Override
