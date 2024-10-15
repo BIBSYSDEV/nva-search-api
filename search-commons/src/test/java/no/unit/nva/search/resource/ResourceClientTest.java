@@ -303,7 +303,7 @@ class ResourceClientTest {
                 URI.create(
                         BASE_URL
                                 + "query=year+project&orderBy=RELEVANCE,created_date:asc,modifiedDate:desc"
-                                + "&searchAfter=3.4478912,1241234,23412"),
+                                + "&searchAfter=3.4478912,1241234,23412,123"),
                 URI.create(
                         BASE_URL
                                 + "query=year+project&sort=published_date+asc&sort=category+desc"));

@@ -17,6 +17,7 @@ import static no.unit.nva.search.common.constant.Functions.trimSpace;
 import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search.resource.Constants.CRISTIN_ORGANIZATION_PATH;
 import static no.unit.nva.search.resource.Constants.CRISTIN_PERSON_PATH;
+import static no.unit.nva.search.resource.Constants.DEFAULT_RESOURCE_SORT_FIELD;
 import static no.unit.nva.search.resource.Constants.EXCLUDED_FIELDS;
 import static no.unit.nva.search.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search.resource.Constants.RESOURCES_AGGREGATIONS;
@@ -119,6 +120,14 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     @Override
     public AsType<ResourceParameter> sort() {
+        if (!parameters().isPresent(SORT)) {
+            parameters().set(SORT, RELEVANCE_KEY_NAME + COMMA + DEFAULT_RESOURCE_SORT_FIELD);
+        }
+        var sortString = parameters().get(SORT).as().toString();
+        if (!sortString.contains(DEFAULT_RESOURCE_SORT_FIELD)) {
+            sortString = sortString + COMMA + DEFAULT_RESOURCE_SORT_FIELD;
+            parameters().set(SORT, sortString);
+        }
         return parameters().get(SORT);
     }
 
