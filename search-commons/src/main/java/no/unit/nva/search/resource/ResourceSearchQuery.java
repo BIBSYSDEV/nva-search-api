@@ -7,7 +7,7 @@ import static no.unit.nva.constants.ErrorMessages.TOO_MANY_ARGUMENTS;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.constants.Words.HTTPS;
-import static no.unit.nva.constants.Words.IDENTITY;
+import static no.unit.nva.constants.Words.IDENTIFIER;
 import static no.unit.nva.constants.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.constants.Words.NONE;
 import static no.unit.nva.constants.Words.PI;
@@ -119,15 +119,19 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     @Override
     public AsType<ResourceParameter> sort() {
-        var sortString = parameters().get(SORT).as().toString();
-        if (missingIdentitySortKey(sortString)) {
-            parameters().set(SORT, sortString + COMMA + IDENTITY);
+        var sortString = parameters().get(SORT).toString();
+        if (missingIdentifierSortKey(sortString)) {
+            if (sortString.isBlank()) {
+                parameters().set(SORT, IDENTIFIER);
+            } else {
+                parameters().set(SORT, String.join(COMMA, sortString, IDENTIFIER));
+            }
         }
         return parameters().get(SORT);
     }
 
-    private static boolean missingIdentitySortKey(String sortString) {
-        return !sortString.contains(IDENTITY);
+    private static boolean missingIdentifierSortKey(String sortString) {
+        return !sortString.contains(IDENTIFIER);
     }
 
     @Override

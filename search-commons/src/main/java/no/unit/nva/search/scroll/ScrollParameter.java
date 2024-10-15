@@ -32,7 +32,8 @@ import java.util.stream.Stream;
  * @author Sondre Vestad
  */
 public enum ScrollParameter implements ParameterKey<ScrollParameter> {
-    INVALID(ParameterKind.INVALID);
+    INVALID(ParameterKind.INVALID),
+    SORT(ParameterKind.SORT_KEY);
 
     private final ParameterKind paramkind;
 

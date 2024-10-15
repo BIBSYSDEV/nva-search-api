@@ -8,6 +8,7 @@ import static no.unit.nva.search.resource.ResourceClient.defaultClient;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
+import static no.unit.nva.search.resource.ResourceParameter.SORT;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
@@ -58,7 +59,7 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
             throws BadRequestException {
         return ResourceSearchQuery.builder()
                 .fromRequestInfo(requestInfo)
-                .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
                 .withAlwaysExcludedFields(EXCLUDED_FIELDS)
                 .validate()
                 .build()
