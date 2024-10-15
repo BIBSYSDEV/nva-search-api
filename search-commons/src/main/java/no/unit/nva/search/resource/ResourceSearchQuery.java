@@ -120,7 +120,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     @Override
     public AsType<ResourceParameter> sort() {
         var sortString = parameters().get(SORT).toString();
-        if (missingIdentifierSortKey(sortString)) {
+        if (hasMissingIdentifierSortKey(sortString)) {
             if (sortString.isBlank()) {
                 parameters().set(SORT, IDENTIFIER);
             } else {
@@ -130,7 +130,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         return parameters().get(SORT);
     }
 
-    private static boolean missingIdentifierSortKey(String sortString) {
+    private static boolean hasMissingIdentifierSortKey(String sortString) {
         return !sortString.contains(IDENTIFIER);
     }
 
