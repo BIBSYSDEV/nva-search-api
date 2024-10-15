@@ -33,6 +33,7 @@ public class IndexResourceHandler
             ENVIRONMENT.readEnv("EXPANDED_RESOURCES_BUCKET");
     private static final String SENT_TO_RECOVERY_QUEUE_MESSAGE =
             "IndexDocument for index {} has been sent to recovery queue: {}";
+    public static final String INDEXING_MESSAGE = "Indexing document with id: {} to {}";
 
     private final S3Driver resourcesS3Driver;
     private final IndexingClient indexingClient;
@@ -69,6 +70,10 @@ public class IndexResourceHandler
         var indexDocument = fetchFileFromS3Bucket(resourceRelativePath).validate();
         attempt(() -> indexingClient.addDocumentToIndex(indexDocument))
                 .orElse(failure -> persistRecoveryMessage(failure, indexDocument));
+        LOGGER.info(
+                INDEXING_MESSAGE,
+                indexDocument.getDocumentIdentifier(),
+                indexDocument.getIndexName());
         return null;
     }
 
