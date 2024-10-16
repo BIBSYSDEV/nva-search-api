@@ -6,13 +6,16 @@ import no.unit.nva.search.resource.ResourceParameter;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.stream.Collectors;
+
 class PartOfQueryTest {
 
     @Test
     void checkPartOfQuery() {
         var partOfQuery = new PartOfQuery<ResourceParameter>();
         assertNotNull(
-                partOfQuery.buildMatchAnyValueQuery(
-                        ResourceParameter.CONTRIBUTORS_OF_CHILD, "ewsrdf"));
+                partOfQuery
+                        .buildMatchAnyValueQuery(ResourceParameter.CONTRIBUTORS_OF_CHILD, "ewsrdf")
+                        .collect(Collectors.toSet()));
     }
 }
