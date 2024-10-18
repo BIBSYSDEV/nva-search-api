@@ -24,6 +24,7 @@ import static no.unit.nva.constants.Words.VERIFICATION_STATUS;
 import static no.unit.nva.constants.Words.VERIFIED;
 import static no.unit.nva.search.common.constant.Functions.jsonPath;
 import static no.unit.nva.search.resource.Constants.ENTITY_ABSTRACT;
+import static no.unit.nva.search.resource.Constants.ENTITY_CONTRIBUTORS;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
 import static no.unit.nva.search.resource.ResourceParameter.ABSTRACT;
 import static no.unit.nva.search.resource.ResourceParameter.EXCLUDE_SUBUNITS;
@@ -58,6 +59,18 @@ import java.util.stream.Stream;
  */
 public class ResourceStreamBuilders {
 
+    public static final String COUNTRY_CODE_PATH =
+            jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, COUNTRY_CODE, KEYWORD);
+    public static final String CONTRIBUTOR_ROLE_PATH =
+            jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, ROLE, TYPE, KEYWORD);
+    public static final String VERIFICATION_STATUS_PATH =
+            jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, VERIFICATION_STATUS);
+    public static final String VERIFICATION_STATUS_KEYWORD_PATH =
+            jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, VERIFICATION_STATUS, KEYWORD);
+    public static final String ADDITIONAL_IDENTIFIERS_VALUE_PATH =
+            jsonPath(ADDITIONAL_IDENTIFIERS, VALUE, KEYWORD);
+    public static final String ADDITIONAL_IDENTIFIERS_NAME_PATH =
+            jsonPath(ADDITIONAL_IDENTIFIERS, SOURCE_NAME, KEYWORD);
     private final QueryKeys<ResourceParameter> parameters;
 
     public ResourceStreamBuilders(QueryKeys<ResourceParameter> parameters) {
@@ -108,15 +121,9 @@ public class ResourceStreamBuilders {
                         boolQuery()
                                 .must(
                                         termQuery(
-                                                jsonPath(ADDITIONAL_IDENTIFIERS, VALUE, KEYWORD),
+                                                ADDITIONAL_IDENTIFIERS_VALUE_PATH,
                                                 parameters.get(key).as()))
-                                .must(
-                                        termQuery(
-                                                jsonPath(
-                                                        ADDITIONAL_IDENTIFIERS,
-                                                        SOURCE_NAME,
-                                                        KEYWORD),
-                                                source)),
+                                .must(termQuery(ADDITIONAL_IDENTIFIERS_NAME_PATH, source)),
                         ScoreMode.None);
 
         return Functions.queryToEntry(key, query);
@@ -125,44 +132,15 @@ public class ResourceStreamBuilders {
     public Stream<Map.Entry<ResourceParameter, QueryBuilder>> unIdentifiedNorwegians(
             ResourceParameter key) {
         var query =
-                boolQuery()
-                        .must(
-                                termQuery(
-                                        jsonPath(
-                                                ENTITY_DESCRIPTION,
-                                                CONTRIBUTORS,
-                                                AFFILIATIONS,
-                                                COUNTRY_CODE,
-                                                KEYWORD),
-                                        NO))
-                        .must(
-                                termQuery(
-                                        jsonPath(
-                                                ENTITY_DESCRIPTION,
-                                                CONTRIBUTORS,
-                                                ROLE,
-                                                TYPE,
-                                                KEYWORD),
-                                        CREATOR))
-                        .should(
-                                boolQuery()
-                                        .mustNot(
-                                                existsQuery(
-                                                        jsonPath(
-                                                                ENTITY_DESCRIPTION,
-                                                                CONTRIBUTORS,
-                                                                IDENTITY,
-                                                                VERIFICATION_STATUS))))
-                        .should(
-                                termQuery(
-                                        jsonPath(
-                                                ENTITY_DESCRIPTION,
-                                                CONTRIBUTORS,
-                                                IDENTITY,
-                                                VERIFICATION_STATUS,
-                                                KEYWORD),
-                                        NOT_VERIFIED))
-                        .minimumShouldMatch(1);
+                nestedQuery(
+                        ENTITY_CONTRIBUTORS,
+                        boolQuery()
+                                .must(termQuery(COUNTRY_CODE_PATH, NO))
+                                .must(termQuery(CONTRIBUTOR_ROLE_PATH, CREATOR))
+                                .should(boolQuery().mustNot(existsQuery(VERIFICATION_STATUS_PATH)))
+                                .should(termQuery(VERIFICATION_STATUS_KEYWORD_PATH, NOT_VERIFIED))
+                                .minimumShouldMatch(1),
+                        ScoreMode.None);
         return Functions.queryToEntry(key, query);
     }
 
@@ -170,25 +148,12 @@ public class ResourceStreamBuilders {
             ResourceParameter key) {
         var query =
                 boolQuery()
-                        .must(
-                                termQuery(
-                                        jsonPath(
-                                                ENTITY_DESCRIPTION,
-                                                CONTRIBUTORS,
-                                                ROLE,
-                                                TYPE,
-                                                KEYWORD),
-                                        CREATOR))
+                        .must(termQuery(CONTRIBUTOR_ROLE_PATH, CREATOR))
                         .should(
                                 boolQuery()
                                         .mustNot(
                                                 termQuery(
-                                                        jsonPath(
-                                                                ENTITY_DESCRIPTION,
-                                                                CONTRIBUTORS,
-                                                                IDENTITY,
-                                                                VERIFICATION_STATUS,
-                                                                KEYWORD),
+                                                        VERIFICATION_STATUS_KEYWORD_PATH,
                                                         VERIFIED)))
                         .should(
                                 boolQuery()
