@@ -18,7 +18,7 @@ import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search.resource.Constants.CRISTIN_ORGANIZATION_PATH;
 import static no.unit.nva.search.resource.Constants.CRISTIN_PERSON_PATH;
 import static no.unit.nva.search.resource.Constants.DEFAULT_RESOURCE_SORT_FIELDS;
-import static no.unit.nva.search.resource.Constants.EXCLUDED_FIELDS;
+import static no.unit.nva.search.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
 import static no.unit.nva.search.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search.resource.Constants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search.resource.Constants.STATUS_KEYWORD;
@@ -81,7 +81,7 @@ import java.util.stream.Stream;
  */
 @SuppressWarnings("PMD.GodClass")
 public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
-
+    private static final String EXCLUDED_RESOURCE_FIELDS = "entityDescription.contributors";
     private final ResourceStreamBuilders streamBuilders;
     private final ResourceAccessFilter filterBuilder;
     private final Map<String, String> additionalQueryParameters = new HashMap<>();
@@ -90,7 +90,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     private ResourceSearchQuery() {
         super();
         assignStatusImpossibleWhiteList();
-        setAlwaysExcludedFields(List.of(EXCLUDED_FIELDS));
+        setAlwaysExcludedFields(GLOBAL_EXCLUDED_FIELDS);
         streamBuilders = new ResourceStreamBuilders(parameters());
         filterBuilder = new ResourceAccessFilter(this);
     }

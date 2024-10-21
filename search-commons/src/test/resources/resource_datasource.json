@@ -69,6 +69,55 @@
           "sequence": 1
         }
       ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
+              "type": "Organization",
+              "countryCode": "IQ",
+              "labels": {
+                "nn": "Al-Iraqia University",
+                "nb": "Al-Iraqia University",
+                "en": "Al-Iraqia University"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.1.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Avdeling for kunde og kommunikasjon",
+                "nb": "Avdeling for kunde og kommunikasjon",
+                "en": "The Customer and Communication Department"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "en": "Norwegian Defence University College",
+                "nb": "Forsvarets høgskole"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136254",
+            "type": "Identity",
+            "name": "Kjetil Møkkelgjerd",
+            "orcId": "https://sandbox.orcid.org/0000-0003-4147-3499",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        }
+      ],
+      "contributorsCount": 1,
       "mainTitle": "Kjetils ticket test",
       "language": "http://lexvo.org/id/iso639-3/nor",
       "publicationDate": {
@@ -392,6 +441,45 @@
           "sequence": 2
         }
       ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "verificationStatus": "NotVerified",
+            "type": "Identity",
+            "name": "Angela Repanovici"
+          },
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Institutt for historiske og klassiske studier",
+                "en": "Department of Historical and Classical Studies"
+              }
+            }
+          ],
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Ane Landøy"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        }
+      ],
+      "contributorsCount": 2,
       "language": "http://lexvo.org/id/iso639-3/eng",
       "mainTitle": "Digital Library Idé in a Collaborative Context: Romania and Norway 2003-2012",
       "publicationDate": {
@@ -541,6 +629,55 @@
           "sequence": 1
         }
       ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
+              "type": "Organization",
+              "countryCode": "IQ",
+              "labels": {
+                "nn": "Al-Iraqia University",
+                "nb": "Al-Iraqia University",
+                "en": "Al-Iraqia University"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.1.1",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Avdeling for kunde og kommunikasjon",
+                "nb": "Avdeling for kunde og kommunikasjon",
+                "en": "The Customer and Communication Department"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "en": "Norwegian Defence University College",
+                "nb": "Forsvarets høgskole"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/113",
+            "type": "Identity",
+            "name": "Kjetil Møkkelgjerd",
+            "orcId": "https://sandbox.orcid.org/0000-0003-4147-3499",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        }
+      ],
+      "contributorsCount": 1,
       "mainTitle": "Kjetils Idé tickét têst",
       "abstract": "ønsker deg av hjerte ære berømmelse. Har du en ide om hva du skal gjøre med Kjærringen og eller konå",
       "language": "http://lexvo.org/id/iso639-3/nor",
@@ -907,6 +1044,22 @@
           "sequence": 1
         }
       ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/11111",
+            "type": "Identity",
+            "name": "Dieter Issler"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        }
+      ],
+      "contributorsCount": 1,
       "language": "http://lexvo.org/id/iso639-3/eng",
       "mainTitle": "A Simple Model for the Ide  Variability of Release Area Size",
       "publicationDate": {
@@ -1040,6 +1193,22 @@
           "sequence": 1
         }
       ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/11111",
+            "type": "Identity",
+            "name": "Dieter Issler"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        }
+      ],
+      "contributorsCount": 1,
       "language": "http://lexvo.org/id/iso639-3/eng",
       "mainTitle": "Idé Outline of a Simple Model of Mixed Snow Avalanches",
       "publicationDate": {
@@ -1161,6 +1330,22 @@
           "sequence": 1
         }
       ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/11111",
+            "type": "Identity",
+            "name": "Dieter Issler"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        }
+      ],
+      "contributorsCount": 1,
       "language": "http://lexvo.org/id/iso639-3/eng",
       "mainTitle": "«Ide APALI» – Avalanche Probability Along Linear Infrastructure",
       "publicationDate": {
@@ -1392,6 +1577,129 @@
           "sequence": 10
         }
       ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Kate Robinson"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Zhongqiang Liu"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Dieter Issler"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Ulrik Domaas"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 4
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Christian Jaedicke"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 5
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Sean Salazar"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 6
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Regula Frauenfelder"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 7
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Graham Gilbert"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 8
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Peter Gauer"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 9
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Henrik Langeland"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 10
+        }
+      ],
+      "contributorsCount": 10,
       "language": "http://lexvo.org/id/iso639-3/eng",
       "mainTitle": "Annual Report 2020",
       "publicationDate": {
@@ -1583,6 +1891,105 @@
           "sequence": 7
         }
       ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Christian Jaedicke"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 4
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Sean Salazar"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 5
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Dieter Issler"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Regula Frauenfelder"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 6
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Peter Gauer"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 8
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Kate Robinson"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Zhongqiang Liu"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Graham Gilbert"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 7
+        }
+      ],
+      "contributorsCount": 8,
       "language": "http://lexvo.org/id/iso639-3/nor",
       "mainTitle": "Annual Report 2021",
       "publicationDate": {
@@ -2120,6 +2527,380 @@
           "sequence": 11
         }
       ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
+              "type": "Organization",
+              "countryCode": "IQ",
+              "labels": {
+                "nn": "Al-Iraqia University",
+                "nb": "Al-Iraqia University",
+                "en": "Al-Iraqia University"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Avdeling for kunde og kommunikasjon",
+                "nb": "Avdeling for kunde og kommunikasjon",
+                "en": "The Customer and Communication Department"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Forsvarets høgskole",
+                "en": "Norwegian Defence University College"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136254",
+            "type": "Identity",
+            "name": "Kjetil Møkkelgjerd",
+            "orcId": "https://sandbox.orcid.org/0000-0003-4147-3499",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/209.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Høgskolen i Innlandet",
+                "en": "Inland Norway University of Applied Sciences"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136918",
+            "type": "Identity",
+            "name": "Isar Kristoffer Buzza",
+            "orcId": "https://sandbox.orcid.org/0000-0003-4999-4483",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Supervisor"
+          },
+          "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Avdeling for kunde og kommunikasjon",
+                "nb": "Avdeling for kunde og kommunikasjon",
+                "en": "The Customer and Communication Department"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/7501.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "RURALIS – Institutt for rural- og regionalforskning",
+                "en": "RURALIS – Institute for Rural and Regional Research"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1990.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Diakonhjemmet sykehus",
+                "en": "Diakonhjemmet Hospital"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1128464",
+            "type": "Identity",
+            "name": "Terje Hellesvik",
+            "orcId": "https://sandbox.orcid.org/0000-0002-8617-3281",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/39463",
+            "type": "Identity",
+            "name": "Siri Coldevin Vikan",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 4
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/217.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Universitetet i Stavanger",
+                "en": "University of Stavanger"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Noregs teknisk-naturvitskaplege universitet",
+                "nb": "Norges teknisk-naturvitenskapelige universitet",
+                "en": "Norwegian University of Science and Technology"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Universitetet i Oslo",
+                "en": "University of Oslo"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/997998",
+            "type": "Identity",
+            "name": "Mona Ullah",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 5
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1615.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Høyskolen Kristiania",
+                "en": "Kristiania University College"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136806",
+            "type": "Identity",
+            "name": "Ketil Aasarød",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 6
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20202.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Unit – Direktoratet for IKT og fellestenester i høgare utdanning og forsking",
+                "nb": "Unit – Direktoratet for IKT og fellestjenester i høyere utdanning og forskning",
+                "en": "Unit – The Norwegian Directorate for ICT and Joint Services in Higher Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1306838",
+            "type": "Identity",
+            "name": "Anette Olli Siiri",
+            "orcId": "https://sandbox.orcid.org/0009-0004-4447-9305",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 7
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/217.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Universitetet i Stavanger",
+                "en": "University of Stavanger"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/42557",
+            "type": "Identity",
+            "name": "Jan E. Garshol",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 8
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20202.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Unit – Direktoratet for IKT og fellestenester i høgare utdanning og forsking",
+                "nb": "Unit – Direktoratet for IKT og fellestjenester i høyere utdanning og forskning",
+                "en": "Unit – The Norwegian Directorate for ICT and Joint Services in Higher Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/854279",
+            "type": "Identity",
+            "name": "Tor Arne Torgersen",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 9
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/860951",
+            "type": "Identity",
+            "name": "Stig Norland",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 10
+        }
+      ],
+      "contibutorsCount": 11,
       "mainTitle": "Kjetils masteroppgave",
       "publicationDate": {
         "type": "PublicationDate",
@@ -2371,6 +3152,21 @@
           "sequence": 1
         }
       ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Peter Gauer"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        }
+      ],
+      "contibutorsCount": 1,
       "language": "http://lexvo.org/id/iso639-3/eng",
       "mainTitle": "CPT 3 – Quantitative risk assessment: Remarks on the uncertainty in the delimitation of hazard zones based on historical observations",
       "publicationDate": {
@@ -2586,6 +3382,123 @@
           "sequence": 4
         }
       ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20202.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Unit – Direktoratet for IKT og fellestenester i høgare utdanning og forsking",
+                "nb": "Unit – Direktoratet for IKT og fellestjenester i høyere utdanning og forskning",
+                "en": "Unit – The Norwegian Directorate for ICT and Joint Services in Higher Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1306838",
+            "type": "Identity",
+            "name": "Anette Olli Siiri",
+            "orcId": "https://sandbox.orcid.org/0009-0004-4447-9305",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 7
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Regula Frauenfelder",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 5
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Kjersti Gisnås",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Peter Gauer",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 6
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Dieter Issler",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Christian Jaedicke",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Sean Salazar"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 4
+        }
+      ],
+      "contributorsCount": 7,
       "language": "http://lexvo.org/id/iso639-3/eng",
       "mainTitle": "Research Plan 2020–2022",
       "publicationDate": {
@@ -2676,7 +3589,34 @@
       "type": "EntityDescription",
       "abstract": "NGI is operating the avalanche test site at Ryggfonn in Stryn municipality, Vestland county, western Norway (61.969°N, 7.275°E) since early 1980s. In addition to the field work and data collection in frame work of WP2, necessary repairs and updating of the data acquisition system at the Ryggfonn avalanche test site were carried out under this task. This is to ensure that the site is ready for the winter season 2020/2021.",
       "alternativeAbstracts": {},
-      "contributorsCount" : 2,
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Peter Gauer",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Henrik Langeland",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        }
+      ],
       "contributors": [
         {
           "type": "Contributor",
@@ -2705,6 +3645,7 @@
           "sequence": 2
         }
       ],
+      "contributorsCount": 2,
       "language": "http://lexvo.org/id/iso639-3/eng",
       "mainTitle": "WP 2 – Full-scale experiments at Ryggfonn Ryggfonn avalanche observations 2019/2020",
       "publicationDate": {
@@ -2862,6 +3803,59 @@
           "sequence": 4
         }
       ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Sondre Gjengedal",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Pål Drevland Jakobsen",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Amund Bruland",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Eivind Grøv"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 4
+        }
+      ],
       "language": "http://lexvo.org/id/iso639-3/eng",
       "mainTitle": "Validity of the NTNU Prediction Model for D&B Tunnelling",
       "publicationDate": {
@@ -2883,6 +3877,7 @@
         }
       }
     },
+    "contributorsCount": 4,
     "handle": "https://hdl.handle.net/11250/3097894",
     "identifier": "018b857d48b0-cbcc81bf-0feb-4058-bf0a-8254b02b4cbd",
     "modelVersion": "0.20.54",
@@ -3271,6 +4266,85 @@
           "sequence": 2
         }
       ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20202.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Unit – Direktoratet for IKT og fellestenester i høgare utdanning og forsking",
+                "nb": "Unit – Direktoratet for IKT og fellestjenester i høyere utdanning og forskning",
+                "en": "Unit – The Norwegian Directorate for ICT and Joint Services in Higher Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1306838",
+            "type": "Identity",
+            "name": "Anette Olli Siiri",
+            "orcId": "https://sandbox.orcid.org/0009-0004-4447-9305",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 7
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Mats Johan Kahlström",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Eivind Stein",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Jenny Langford",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        }
+      ],
+      "contributorsCount": 4,
       "language": "http://lexvo.org/id/iso639-3/eng",
       "mainTitle": "Time series modelling: applications for groundwater control in urban tunnelling",
       "publicationDate": {
@@ -3634,6 +4708,50 @@
           "sequence": 3
         }
       ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/326210",
+            "type": "Identity",
+            "name": "Knut Johannessen Ims",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/326249",
+            "type": "Identity",
+            "name": "Lars Jacob Tynes Pedersen",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Søren Wenstøp",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        }
+      ],
+      "contributorsCount": 3,
       "language": "http://lexvo.org/id/iso639-3/eng",
       "mainTitle": "The Solution: Business Ethics! But what was the problem?",
       "publicationDate": {
