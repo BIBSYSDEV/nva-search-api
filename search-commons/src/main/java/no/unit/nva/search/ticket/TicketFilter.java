@@ -4,6 +4,7 @@ import static no.unit.nva.constants.Words.POST_FILTER;
 import static no.unit.nva.search.ticket.Constants.OWNER_USERNAME;
 import static no.unit.nva.search.ticket.Constants.TYPE_KEYWORD;
 import static no.unit.nva.search.ticket.TicketParameter.ORGANIZATION_ID;
+import static no.unit.nva.search.ticket.TicketParameter.OWNER;
 import static no.unit.nva.search.ticket.TicketParameter.STATISTICS;
 
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
@@ -70,12 +71,38 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
         final var organization =
                 requestInfo.getTopLevelOrgCristinId().orElse(requestInfo.getPersonAffiliation());
 
-        final var curatorRights =
-                getAccessRights(requestInfo.getAccessRights()).toArray(TicketType[]::new);
+        final var allowedTicketTypes = getTicketTypes(requestInfo);
 
         return organization(organization)
-                .userAndTicketTypes(requestInfo.getUserName(), curatorRights)
+                .userAndTicketTypes(requestInfo.getUserName(), allowedTicketTypes)
+                .excludeTicketTypes(TicketType.UNPUBLISH_REQUEST)
                 .apply();
+    }
+
+    private TicketType[] getTicketTypes(RequestInfo requestInfo) throws UnauthorizedException {
+        if (searchingIsTicketOwner()) {
+            validateOwner(requestInfo);
+            return TicketType.values();
+        } else {
+            return getAccessRights(requestInfo.getAccessRights()).toArray(TicketType[]::new);
+        }
+    }
+
+    private void validateOwner(RequestInfo requestInfo) throws UnauthorizedException {
+        if (ownerIsNotCurrentUser(requestInfo)) {
+            throw new UnauthorizedException(
+                    "User is not allowed to search for tickets not owned by themselves");
+        }
+    }
+
+    private boolean ownerIsNotCurrentUser(RequestInfo requestInfo) throws UnauthorizedException {
+        return !requestInfo
+                .getUserName()
+                .equals(ticketSearchQuery.parameters().get(OWNER).toString());
+    }
+
+    private boolean searchingIsTicketOwner() {
+        return ticketSearchQuery.parameters().isPresent(OWNER);
     }
 
     private boolean isSearchingForAllTickets(RequestInfo requestInfo) {
@@ -109,6 +136,15 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
         return this;
     }
 
+    public TicketFilter excludeTicketTypes(TicketType... ticketTypes) {
+        var ticketTypeList = Arrays.stream(ticketTypes).map(TicketType::toString).toList();
+        var filter =
+                QueryBuilders.boolQuery()
+                        .mustNot(QueryBuilders.termsQuery(TYPE_KEYWORD, ticketTypeList));
+        this.ticketSearchQuery.filters().add(filter);
+        return this;
+    }
+
     /**
      * Filter on organization.
      *
@@ -135,7 +171,8 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
         return currentUser;
     }
 
-    private Set<TicketType> getAccessRights(List<AccessRight> accessRights) {
+    private Set<TicketType> getAccessRights(List<AccessRight> accessRights)
+            throws UnauthorizedException {
 
         var allowed = EnumSet.noneOf(TicketType.class);
         if (accessRights.contains(MANAGE_DOI)) {
@@ -146,6 +183,9 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
         }
         if (accessRights.contains(MANAGE_PUBLISHING_REQUESTS)) {
             allowed.add(TicketType.PUBLISHING_REQUEST);
+        }
+        if (allowed.isEmpty()) {
+            throw new UnauthorizedException("User has no access to search for any ticket types!");
         }
         return allowed;
     }

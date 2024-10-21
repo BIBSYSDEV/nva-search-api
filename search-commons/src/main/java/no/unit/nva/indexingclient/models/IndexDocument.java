@@ -1,5 +1,6 @@
 package no.unit.nva.indexingclient.models;
 
+import static no.unit.nva.constants.Defaults.DEFAULT_SHARD_ID;
 import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.constants.ErrorMessages.MISSING_IDENTIFIER_IN_RESOURCE;
 import static no.unit.nva.constants.ErrorMessages.MISSING_INDEX_NAME_IN_RESOURCE;
@@ -8,7 +9,6 @@ import static no.unit.nva.constants.Words.CONSUMPTION_ATTRIBUTES;
 import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.constants.Words.TICKETS;
-import static no.unit.nva.indexingclient.models.Constants.SHARD_ID;
 
 import static nva.commons.core.attempt.Try.attempt;
 
@@ -80,7 +80,7 @@ public record IndexDocument(
     public IndexRequest toIndexRequest() {
         return new IndexRequest(getIndexName())
                 .source(serializeResource(), XContentType.JSON)
-                .routing(SHARD_ID)
+                .routing(DEFAULT_SHARD_ID)
                 .id(getDocumentIdentifier());
     }
 

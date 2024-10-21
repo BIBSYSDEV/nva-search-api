@@ -6,6 +6,7 @@ import static no.unit.nva.constants.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.constants.Words.KEYWORD;
 import static no.unit.nva.constants.Words.YEAR;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_PIPE;
+import static no.unit.nva.search.resource.Constants.IDENTIFIER_KEYWORD;
 
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 
@@ -28,6 +29,7 @@ import java.util.stream.Stream;
  */
 public enum ResourceSort implements SortKey {
     INVALID(EMPTY_STRING),
+    IDENTIFIER(IDENTIFIER_KEYWORD),
     RELEVANCE(Words.SCORE),
     CATEGORY(Constants.PUBLICATION_INSTANCE_TYPE),
     INSTANCE_TYPE(Constants.PUBLICATION_INSTANCE_TYPE),

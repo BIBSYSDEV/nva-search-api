@@ -141,21 +141,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
         this.infrastructureApiUri = openSearchUri;
     }
 
-    /**
-     * Creates a multi match query, all words needs to be present, within a document.
-     *
-     * @return a MultiMatchQueryBuilder
-     */
-    protected Map<String, Float> mapOfPathAndBoost(AsType<K> fieldValue) {
-        return fieldValue.isEmpty() || fieldValue.asLowerCase().contains(ALL)
-                ? Map.of(ASTERISK, 1F) // NONE or ALL -> <'*',1.0>
-                : fieldValue
-                        .asSplitStream(COMMA)
-                        .map(this::toKey)
-                        .flatMap(this::entryStreamOfPathAndBoost)
-                        .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-    }
-
     @JacocoGenerated // default can only be tested if we add a new fieldtype not in use....
     protected Stream<Entry<K, QueryBuilder>> builderStreamDefaultQuery(K key) {
         final var value = parameters().get(key).toString();
@@ -297,6 +282,11 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
                 .trackTotalHits(true);
     }
 
+    /**
+     * Creates a multi match query, all words needs to be present, within a document.
+     *
+     * @return a MultiMatchQueryBuilder
+     */
     protected QueryBuilder builderSearchAllQuery(K searchAllKey) {
         var fields = mapOfPathAndBoost(parameters().get(keyFields()));
         var value = parameters().get(searchAllKey).toString();
@@ -304,6 +294,16 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
                 .fields(fields)
                 .type(Type.CROSS_FIELDS)
                 .operator(Operator.AND);
+    }
+
+    protected Map<String, Float> mapOfPathAndBoost(AsType<K> fieldValue) {
+        return fieldValue.isEmpty() || fieldValue.asLowerCase().contains(ALL)
+                ? Map.of(ASTERISK, 1F) // NONE or ALL -> <'*',1.0>
+                : fieldValue
+                        .asSplitStream(COMMA)
+                        .map(this::toKey)
+                        .flatMap(this::entryStreamOfPathAndBoost)
+                        .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 
     private void handleAggregation(
@@ -333,7 +333,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     }
 
     private void handleSorting(SearchSourceBuilder builder) {
-        if (isSortByRelevance()) {
+        if (hasSortBy(RELEVANCE_KEY_NAME)) {
             // Not very well documented.
             // This allows sorting on relevance together with other fields.
             builder.trackScores(true);
@@ -353,11 +353,9 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
         return hasAggregation() ? 2 : 1;
     }
 
-    private boolean isSortByRelevance() {
+    protected boolean hasSortBy(String sortKeyName) {
         var sorts = sort().toString();
-        return nonNull(sorts)
-                && sorts.split(COMMA).length > 1
-                && sorts.contains(RELEVANCE_KEY_NAME);
+        return nonNull(sorts) && sorts.split(COMMA).length > 1 && sorts.contains(sortKeyName);
     }
 
     private boolean isMustNot(K key) {

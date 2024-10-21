@@ -6,6 +6,7 @@ import static no.unit.nva.constants.Words.ASSOCIATED_ARTIFACTS;
 import static no.unit.nva.constants.Words.ASTERISK;
 import static no.unit.nva.constants.Words.BOKMAAL_CODE;
 import static no.unit.nva.constants.Words.CODE;
+import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.CONTRIBUTOR;
 import static no.unit.nva.constants.Words.CONTRIBUTORS;
 import static no.unit.nva.constants.Words.CONTRIBUTOR_ORGANIZATIONS;
@@ -45,6 +46,7 @@ import static no.unit.nva.constants.Words.PUBLICATION_DATE;
 import static no.unit.nva.constants.Words.PUBLICATION_INSTANCE;
 import static no.unit.nva.constants.Words.PUBLISHER;
 import static no.unit.nva.constants.Words.REFERENCE;
+import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.constants.Words.RESOURCE_OWNER;
 import static no.unit.nva.constants.Words.ROLE;
 import static no.unit.nva.constants.Words.ROOT;
@@ -96,6 +98,8 @@ public final class Constants {
     public static final String CRISTIN_ORGANIZATION_PATH = "/cristin/organization/";
     public static final String CRISTIN_PERSON_PATH = "/cristin/person/";
     public static final List<String> GLOBAL_EXCLUDED_FIELDS = List.of("joinField");
+    public static final String DEFAULT_RESOURCE_SORT_FIELDS =
+            RELEVANCE_KEY_NAME + COMMA + IDENTIFIER;
     public static final String IDENTIFIER_KEYWORD = IDENTIFIER + DOT + KEYWORD;
     public static final String FILES_STATUS_KEYWORD = FILES_STATUS + DOT + KEYWORD;
     public static final String ENTITY_CONTRIBUTORS_DOT =
