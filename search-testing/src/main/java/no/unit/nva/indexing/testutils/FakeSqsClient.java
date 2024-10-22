@@ -1,6 +1,6 @@
 package no.unit.nva.indexing.testutils;
 
-import no.unit.nva.indexingclient.models.QueueClient;
+import no.unit.nva.search.model.records.QueueClient;
 
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 

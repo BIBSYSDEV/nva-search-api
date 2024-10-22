@@ -1,11 +1,11 @@
 package no.unit.nva.indexing.handlers;
 
-import static no.unit.nva.constants.Words.DOIREQUESTS_INDEX;
-import static no.unit.nva.constants.Words.MESSAGES_INDEX;
-import static no.unit.nva.constants.Words.PUBLISHING_REQUESTS_INDEX;
-import static no.unit.nva.constants.Words.RESOURCES;
-import static no.unit.nva.constants.Words.TICKETS;
-import static no.unit.nva.indexingclient.IndexingClient.defaultIndexingClient;
+import static no.unit.nva.search.model.IndexingClient.defaultIndexingClient;
+import static no.unit.nva.search.model.constant.Words.DOIREQUESTS_INDEX;
+import static no.unit.nva.search.model.constant.Words.MESSAGES_INDEX;
+import static no.unit.nva.search.model.constant.Words.PUBLISHING_REQUESTS_INDEX;
+import static no.unit.nva.search.model.constant.Words.RESOURCES;
+import static no.unit.nva.search.model.constant.Words.TICKETS;
 
 import static nva.commons.core.attempt.Try.attempt;
 
@@ -13,7 +13,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 
 import no.unit.nva.indexing.model.IndexRequest;
-import no.unit.nva.indexingclient.IndexingClient;
+import no.unit.nva.search.model.IndexingClient;
 
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.Failure;

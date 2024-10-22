@@ -1,16 +1,16 @@
 package no.unit.nva.search;
 
-import static no.unit.nva.constants.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
-import static no.unit.nva.search.ticket.TicketClient.defaultClient;
-import static no.unit.nva.search.ticket.TicketParameter.AGGREGATION;
-import static no.unit.nva.search.ticket.TicketParameter.FROM;
-import static no.unit.nva.search.ticket.TicketParameter.SIZE;
+import static no.unit.nva.search.model.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
+import static no.unit.nva.search.service.ticket.TicketClient.defaultClient;
+import static no.unit.nva.search.service.ticket.TicketParameter.AGGREGATION;
+import static no.unit.nva.search.service.ticket.TicketParameter.FROM;
+import static no.unit.nva.search.service.ticket.TicketParameter.SIZE;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 
-import no.unit.nva.search.ticket.TicketClient;
-import no.unit.nva.search.ticket.TicketSearchQuery;
+import no.unit.nva.search.service.ticket.TicketClient;
+import no.unit.nva.search.service.ticket.TicketSearchQuery;
 
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;

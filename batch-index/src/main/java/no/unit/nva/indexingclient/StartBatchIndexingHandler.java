@@ -1,9 +1,9 @@
 package no.unit.nva.indexingclient;
 
-import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.indexingclient.Constants.PERSISTED_RESOURCES_PATH;
 import static no.unit.nva.indexingclient.Constants.defaultEventBridgeClient;
 import static no.unit.nva.indexingclient.EmitEventUtils.emitEvent;
+import static no.unit.nva.search.model.constant.Defaults.objectMapperWithEmpty;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;

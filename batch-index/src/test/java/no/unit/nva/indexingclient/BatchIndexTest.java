@@ -7,7 +7,7 @@ import static org.mockito.Mockito.mock;
 import com.amazonaws.services.lambda.runtime.Context;
 
 import no.unit.nva.indexing.testutils.FakeIndexingClient;
-import no.unit.nva.indexingclient.models.IndexDocument;
+import no.unit.nva.search.model.records.IndexDocument;
 
 import org.opensearch.action.DocWriteRequest.OpType;
 import org.opensearch.action.bulk.BulkItemResponse;

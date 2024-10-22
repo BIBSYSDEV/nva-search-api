@@ -1,6 +1,6 @@
 package no.unit.nva.indexing.testutils;
 
-import no.unit.nva.search.common.csv.ExportCsv;
+import no.unit.nva.search.model.csv.ExportCsv;
 
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.ioutils.IoUtils;

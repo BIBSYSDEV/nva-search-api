@@ -7,8 +7,8 @@ import static org.mockito.Mockito.when;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 
-import no.unit.nva.search.common.jwt.CachedJwtProvider;
-import no.unit.nva.search.common.jwt.CognitoAuthenticator;
+import no.unit.nva.search.model.jwt.CachedJwtProvider;
+import no.unit.nva.search.model.jwt.CognitoAuthenticator;
 
 import nva.commons.core.JacocoGenerated;
 

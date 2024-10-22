@@ -1,9 +1,9 @@
 package no.unit.nva.indexingclient;
 
-import static no.unit.nva.constants.Defaults.objectMapperNoEmpty;
-import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
-import static no.unit.nva.constants.Words.SLASH;
 import static no.unit.nva.indexingclient.Constants.S3_LOCATION_FIELD;
+import static no.unit.nva.search.model.constant.Defaults.objectMapperNoEmpty;
+import static no.unit.nva.search.model.constant.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.search.model.constant.Words.SLASH;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;

@@ -1,6 +1,6 @@
 package no.unit.nva.indexingclient;
 
-import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.search.model.constant.Defaults.objectMapperWithEmpty;
 
 import static nva.commons.core.attempt.Try.attempt;
 

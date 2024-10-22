@@ -1,10 +1,11 @@
 package no.unit.nva.indexingclient;
 
-import static no.unit.nva.constants.Defaults.ENVIRONMENT;
+import static no.unit.nva.search.model.constant.Defaults.ENVIRONMENT;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
+import no.unit.nva.search.model.IndexingClient;
 import nva.commons.core.JacocoGenerated;
 
 import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
