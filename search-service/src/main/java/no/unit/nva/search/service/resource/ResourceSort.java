@@ -28,6 +28,7 @@ import java.util.stream.Stream;
  */
 public enum ResourceSort implements SortKey {
     INVALID(EMPTY_STRING),
+    IDENTIFIER(IDENTIFIER_KEYWORD),
     RELEVANCE(Words.SCORE),
     CATEGORY(Constants.PUBLICATION_INSTANCE_TYPE),
     INSTANCE_TYPE(Constants.PUBLICATION_INSTANCE_TYPE),
@@ -35,7 +36,7 @@ public enum ResourceSort implements SortKey {
     MODIFIED_DATE(Words.MODIFIED_DATE),
     PUBLISHED_DATE(Words.PUBLISHED_DATE),
     PUBLICATION_DATE(
-            Words.ENTITY_DESCRIPTION + Words.DOT + Words.PUBLICATION_DATE + Words.DOT + Words.YEAR + Words.DOT + Words.KEYWORD),
+            ENTITY_DESCRIPTION + DOT + Words.PUBLICATION_DATE + DOT + YEAR + DOT + KEYWORD),
     TITLE(Constants.ENTITY_DESCRIPTION_MAIN_TITLE_KEYWORD),
     UNIT_ID(Constants.CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
     USER("(?i)(user)|(owner)", Constants.RESOURCE_OWNER_OWNER_KEYWORD);
@@ -71,7 +72,7 @@ public enum ResourceSort implements SortKey {
 
     @Override
     public String asCamelCase() {
-        return CaseUtils.toCamelCase(this.name(), false, Words.CHAR_UNDERSCORE);
+        return CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
     }
 
     @Override

@@ -91,7 +91,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
         super();
         queryKeys = new QueryKeys<>(keyFields());
         accessRights = EnumSet.noneOf(AccessRight.class);
-        setMediaType(MediaType.JSON_UTF_8.toString());
+        setMediaType(JSON_UTF_8.toString());
     }
 
     protected abstract K keyFields();
@@ -135,38 +135,22 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
         this.infrastructureApiUri = openSearchUri;
     }
 
-    /**
-     * Creates a multi match query, all words needs to be present, within a document.
-     *
-     * @return a MultiMatchQueryBuilder
-     */
-    protected Map<String, Float> mapOfPathAndBoost(AsType<K> fieldValue) {
-        return fieldValue.isEmpty() || fieldValue.asLowerCase().contains(ALL)
-                ? Map.of(ASTERISK, 1F) // NONE or ALL -> <'*',1.0>
-                : fieldValue
-                        .asSplitStream(COMMA)
-                        .map(this::toKey)
-                        .flatMap(this::entryStreamOfPathAndBoost)
-                        .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-    }
-
     @JacocoGenerated // default can only be tested if we add a new fieldtype not in use....
     protected Stream<Entry<K, QueryBuilder>> builderStreamDefaultQuery(K key) {
         final var value = parameters().get(key).toString();
         return switch (key.fieldType()) {
-            case ParameterKind.DATE, ParameterKind.NUMBER ->
-                    new RangeQuery<K>().buildQuery(key, value);
-            case ParameterKind.KEYWORD -> new KeywordQuery<K>().buildQuery(key, value);
-            case ParameterKind.FUZZY_KEYWORD -> new FuzzyKeywordQuery<K>().buildQuery(key, value);
-            case ParameterKind.TEXT -> new TextQuery<K>().buildQuery(key, value);
-            case ParameterKind.FREE_TEXT -> queryToEntry(key, builderSearchAllQuery(key));
-            case ParameterKind.ACROSS_FIELDS -> new AcrossFieldsQuery<K>().buildQuery(key, value);
-            case ParameterKind.EXISTS -> new ExistsQuery<K>().buildQuery(key, value);
-            case ParameterKind.HAS_PARTS -> new HasPartsQuery<K>().buildQuery(key, value);
-            case ParameterKind.PART_OF -> new PartOfQuery<K>().buildQuery(key, value);
-            case ParameterKind.CUSTOM -> builderCustomQueryStream(key);
-            case ParameterKind.FLAG -> Stream.empty();
-            default -> throw new RuntimeException(HANDLER_NOT_DEFINED + key.name());
+            case DATE, NUMBER -> new RangeQuery<K>().buildQuery(key, value);
+            case KEYWORD -> new KeywordQuery<K>().buildQuery(key, value);
+            case FUZZY_KEYWORD -> new FuzzyKeywordQuery<K>().buildQuery(key, value);
+            case TEXT -> new TextQuery<K>().buildQuery(key, value);
+            case FREE_TEXT -> Functions.queryToEntry(key, builderSearchAllQuery(key));
+            case ACROSS_FIELDS -> new AcrossFieldsQuery<K>().buildQuery(key, value);
+            case EXISTS -> new ExistsQuery<K>().buildQuery(key, value);
+            case HAS_PARTS -> new HasPartsQuery<K>().buildQuery(key, value);
+            case PART_OF -> new PartOfQuery<K>().buildQuery(key, value);
+            case CUSTOM -> builderCustomQueryStream(key);
+            case FLAG -> Stream.empty();
+            default -> throw new RuntimeException(ErrorMessages.HANDLER_NOT_DEFINED + key.name());
         };
     }
 
@@ -214,9 +198,9 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
 
     final void setMediaType(String mediaType) {
         if (nonNull(mediaType) && mediaType.contains(Words.TEXT_CSV)) {
-            this.mediaType = MediaType.CSV_UTF_8;
+            this.mediaType = CSV_UTF_8;
         } else {
-            this.mediaType = MediaType.JSON_UTF_8;
+            this.mediaType = JSON_UTF_8;
         }
     }
 
@@ -261,19 +245,19 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
                                                     .orElse((f) -> DEFAULT_SORT_ORDER));
                             final var sortKey = toSortKey(parts[0]);
 
-                            return Words.RELEVANCE_KEY_NAME.equalsIgnoreCase(sortKey.name())
+                            return RELEVANCE_KEY_NAME.equalsIgnoreCase(sortKey.name())
                                     ? Stream.of(SortBuilders.scoreSort().order(order))
                                     : sortKey.jsonPaths()
                                             .map(
                                                     path ->
                                                             SortBuilders.fieldSort(path)
                                                                     .order(order)
-                                                                    .missing(Words.SORT_LAST));
+                                                                    .missing(SORT_LAST));
                         });
     }
 
     protected AggregationBuilder builderAggregationsWithFilter() {
-        var aggrFilter = AggregationBuilders.filter(Words.POST_FILTER, filters().get());
+        var aggrFilter = AggregationBuilders.filter(POST_FILTER, filters().get());
         builderAggregations().forEach(aggrFilter::subAggregation);
         return aggrFilter;
     }
@@ -292,6 +276,11 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
                 .trackTotalHits(true);
     }
 
+    /**
+     * Creates a multi match query, all words needs to be present, within a document.
+     *
+     * @return a MultiMatchQueryBuilder
+     */
     protected QueryBuilder builderSearchAllQuery(K searchAllKey) {
         var fields = mapOfPathAndBoost(parameters().get(keyFields()));
         var value = parameters().get(searchAllKey).toString();
@@ -299,6 +288,16 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
                 .fields(fields)
                 .type(Type.CROSS_FIELDS)
                 .operator(Operator.AND);
+    }
+
+    protected Map<String, Float> mapOfPathAndBoost(AsType<K> fieldValue) {
+        return fieldValue.isEmpty() || fieldValue.asLowerCase().contains(ALL)
+                ? Map.of(ASTERISK, 1F) // NONE or ALL -> <'*',1.0>
+                : fieldValue
+                        .asSplitStream(COMMA)
+                        .map(this::toKey)
+                        .flatMap(this::entryStreamOfPathAndBoost)
+                        .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 
     private void handleAggregation(
@@ -328,7 +327,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     }
 
     private void handleSorting(SearchSourceBuilder builder) {
-        if (isSortByRelevance()) {
+        if (hasSortBy(RELEVANCE_KEY_NAME)) {
             // Not very well documented.
             // This allows sorting on relevance together with other fields.
             builder.trackScores(true);
@@ -337,8 +336,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     }
 
     private Stream<Entry<String, Float>> entryStreamOfPathAndBoost(K key) {
-        return key.searchFields(Words.KEYWORD_FALSE)
-                .map(jsonPath -> entryOfPathAndBoost(key, jsonPath));
+        return key.searchFields(KEYWORD_FALSE).map(jsonPath -> entryOfPathAndBoost(key, jsonPath));
     }
 
     private Entry<String, Float> entryOfPathAndBoost(K key, String jsonPath) {
@@ -349,11 +347,9 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
         return hasAggregation() ? 2 : 1;
     }
 
-    private boolean isSortByRelevance() {
+    protected boolean hasSortBy(String sortKeyName) {
         var sorts = sort().toString();
-        return nonNull(sorts)
-                && sorts.split(COMMA).length > 1
-                && sorts.contains(Words.RELEVANCE_KEY_NAME);
+        return nonNull(sorts) && sorts.split(COMMA).length > 1 && sorts.contains(sortKeyName);
     }
 
     private boolean isMustNot(K key) {
@@ -365,7 +361,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     }
 
     private boolean hasAggregation() {
-        return getMediaType().is(MediaType.JSON_UTF_8)
+        return getMediaType().is(JSON_UTF_8)
                 && ALL.equalsIgnoreCase(parameters().get(keyAggregation()).as());
     }
 }

@@ -95,30 +95,31 @@ public final class Constants {
     public static final String UNIQUE_PUBLICATIONS = "unique_publications";
     public static final String CRISTIN_ORGANIZATION_PATH = "/cristin/organization/";
     public static final String CRISTIN_PERSON_PATH = "/cristin/person/";
-    public static final String EXCLUDED_FIELDS = "joinField";
-    public static final String IDENTIFIER_KEYWORD = IDENTIFIER + DOT + KEYWORD;
-    public static final String FILES_STATUS_KEYWORD = FILES_STATUS + DOT + KEYWORD;
-    public static final String ENTITY_CONTRIBUTORS_DOT =
-            ENTITY_DESCRIPTION + DOT + CONTRIBUTORS + DOT;
+    public static final List<String> GLOBAL_EXCLUDED_FIELDS = List.of("joinField");
+    public static final String DEFAULT_RESOURCE_SORT_FIELDS =
+            RELEVANCE_KEY_NAME + COMMA + IDENTIFIER;
+    public static final String IDENTIFIER_KEYWORD = jsonPath(IDENTIFIER, KEYWORD);
+    public static final String FILES_STATUS_KEYWORD = jsonPath(FILES_STATUS, KEYWORD);
+    public static final String ENTITY_CONTRIBUTORS = jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS);
     public static final String CONTRIBUTOR_COUNT_NO_KEYWORD =
-            ENTITY_DESCRIPTION + DOT + "contributorsCount";
-    public static final String ENTITY_PUBLICATION_CONTEXT_DOT =
-            ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT;
+            jsonPath(ENTITY_DESCRIPTION, "contributorsCount");
+    public static final String ENTITY_PUBLICATION_CONTEXT =
+            jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT);
 
     public static final String REFERENCE_PUBLICATION_CONTEXT_ID_KEYWORD =
-            ENTITY_PUBLICATION_CONTEXT_DOT + ID + DOT + KEYWORD;
+            jsonPath(ENTITY_PUBLICATION_CONTEXT, ID, KEYWORD);
 
-    public static final String ENTITY_PUBLICATION_INSTANCE_DOT =
-            ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_INSTANCE + DOT;
+    public static final String ENTITY_PUBLICATION_INSTANCE =
+            jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE);
 
     public static final String CONTRIBUTOR_ORG_KEYWORD =
             jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD);
 
     public static final String CONTRIBUTORS_AFFILIATION_ID_KEYWORD =
-            ENTITY_CONTRIBUTORS_DOT + AFFILIATIONS + DOT + ID + DOT + KEYWORD;
+            jsonPath(ENTITY_CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD);
 
     public static final String CONTRIBUTORS_AFFILIATION_LABELS =
-            ENTITY_CONTRIBUTORS_DOT + AFFILIATIONS + DOT + LABELS;
+            jsonPath(ENTITY_CONTRIBUTORS, AFFILIATIONS, LABELS);
     public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS_KEYWORD =
             multipleFields(
                     jsonPath(CONTRIBUTORS_AFFILIATION_LABELS, ENGLISH_CODE, KEYWORD),
@@ -131,45 +132,39 @@ public final class Constants {
                     ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS_KEYWORD);
     public static final String CONTRIBUTORS_FIELDS =
             multipleFields(
-                    ENTITY_CONTRIBUTORS_DOT + IDENTITY + DOT + ASTERISK,
-                    ENTITY_CONTRIBUTORS_DOT + ROLE + DOT + ASTERISK,
-                    ENTITY_CONTRIBUTORS_DOT + AFFILIATIONS + DOT + ASTERISK);
+                    jsonPath(ENTITY_CONTRIBUTORS, IDENTITY, ASTERISK),
+                    jsonPath(ENTITY_CONTRIBUTORS, ROLE, ASTERISK),
+                    jsonPath(ENTITY_CONTRIBUTORS, AFFILIATIONS, ASTERISK));
     public static final String CONTRIBUTORS_IDENTITY_ID =
-            ENTITY_CONTRIBUTORS_DOT + IDENTITY + DOT + ID + DOT + KEYWORD;
+            jsonPath(ENTITY_CONTRIBUTORS, IDENTITY, ID, KEYWORD);
     public static final String CONTRIBUTORS_IDENTITY_NAME_KEYWORD =
-            ENTITY_CONTRIBUTORS_DOT
-                    + IDENTITY
-                    + DOT
-                    + NAME
-                    + DOT
-                    + KEYWORD
-                    + PIPE
-                    + CONTRIBUTORS_IDENTITY_ID;
-    public static final String CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD =
-            ENTITY_CONTRIBUTORS_DOT + IDENTITY + DOT + ORC_ID + DOT + KEYWORD;
-    public static final String SCIENTIFIC_LEVEL_SEARCH_FIELD =
             multipleFields(
-                    ENTITY_PUBLICATION_CONTEXT_DOT
-                            + PUBLISHER
-                            + DOT
-                            + SCIENTIFIC_VALUE
-                            + DOT
-                            + KEYWORD,
-                    ENTITY_PUBLICATION_CONTEXT_DOT + SCIENTIFIC_VALUE + DOT + KEYWORD);
+                    jsonPath(ENTITY_CONTRIBUTORS, IDENTITY, NAME, KEYWORD),
+                    CONTRIBUTORS_IDENTITY_ID);
+    public static final String CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD =
+            jsonPath(ENTITY_CONTRIBUTORS, IDENTITY, ORC_ID, KEYWORD);
+    public static final String SCIENTIFIC_SERIES =
+            jsonPath(ENTITY_PUBLICATION_CONTEXT, SERIES, SCIENTIFIC_VALUE, KEYWORD);
+    public static final String SCIENTIFIC_PUBLISHER =
+            jsonPath(ENTITY_PUBLICATION_CONTEXT, PUBLISHER, SCIENTIFIC_VALUE, KEYWORD);
+    public static final String SCIENTIFIC_OTHER =
+            jsonPath(ENTITY_PUBLICATION_CONTEXT, SCIENTIFIC_VALUE, KEYWORD);
+    public static final String SCIENTIFIC_LEVEL_SEARCH_FIELD =
+            multipleFields(SCIENTIFIC_SERIES, SCIENTIFIC_PUBLISHER, SCIENTIFIC_OTHER);
     public static final String COURSE_CODE_KEYWORD =
-            ENTITY_PUBLICATION_CONTEXT_DOT + COURSE + DOT + CODE + DOT + KEYWORD;
+            jsonPath(ENTITY_PUBLICATION_CONTEXT, COURSE, CODE, KEYWORD);
     public static final String ENTITY_DESCRIPTION_PUBLICATION_PAGES =
-            ENTITY_PUBLICATION_INSTANCE_DOT + PAGES + DOT + PAGES + DOT + KEYWORD;
+            jsonPath(ENTITY_PUBLICATION_INSTANCE, PAGES, PAGES, KEYWORD);
     public static final String SUBJECTS = "subjects";
     public static final String ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR =
-            ENTITY_DESCRIPTION + DOT + PUBLICATION_DATE + DOT + YEAR;
+            jsonPath(ENTITY_DESCRIPTION, PUBLICATION_DATE, YEAR);
     public static final String REFERENCE_DOI_KEYWORD =
             multipleFields(
                     jsonPath(
                         ENTITY_DESCRIPTION, REFERENCE, DOI, KEYWORD), jsonPath(
                     DOI, KEYWORD));
     public static final String ASSOCIATED_ARTIFACTS_LABELS =
-            ASSOCIATED_ARTIFACTS + DOT + LICENSE + DOT + LABELS;
+            jsonPath(ASSOCIATED_ARTIFACTS, LICENSE, LABELS);
     public static final String ASSOCIATED_ARTIFACTS_LICENSE =
             multipleFields(
                     jsonPath(ASSOCIATED_ARTIFACTS, LICENSE, NAME, KEYWORD),
@@ -178,57 +173,56 @@ public final class Constants {
                     jsonPath(ASSOCIATED_ARTIFACTS_LABELS, NYNORSK_CODE, KEYWORD),
                     jsonPath(ASSOCIATED_ARTIFACTS_LABELS, BOKMAAL_CODE, KEYWORD),
                     jsonPath(ASSOCIATED_ARTIFACTS_LABELS, SAMI_CODE, KEYWORD));
-    public static final String PUBLISHER_ID_KEYWORD = PUBLISHER + DOT + ID + DOT + KEYWORD;
-    public static final String STATUS_KEYWORD = STATUS + DOT + KEYWORD;
+    public static final String PUBLISHER_ID_KEYWORD = jsonPath(PUBLISHER, ID, KEYWORD);
+    public static final String STATUS_KEYWORD = jsonPath(STATUS, KEYWORD);
     public static final String PUBLICATION_CONTEXT_ISBN_LIST =
-            ENTITY_PUBLICATION_CONTEXT_DOT + ISBN_LIST;
+            jsonPath(ENTITY_PUBLICATION_CONTEXT, ISBN_LIST);
     public static final String PUBLICATION_CONTEXT_TYPE_KEYWORD =
-            ENTITY_PUBLICATION_CONTEXT_DOT + TYPE + DOT + KEYWORD;
+            jsonPath(ENTITY_PUBLICATION_CONTEXT, TYPE, KEYWORD);
     public static final String PUBLICATION_INSTANCE_TYPE =
-            ENTITY_PUBLICATION_INSTANCE_DOT + TYPE + DOT + KEYWORD;
+            jsonPath(ENTITY_PUBLICATION_INSTANCE, TYPE, KEYWORD);
     public static final String PUBLICATION_CONTEXT_PUBLISHER =
             multipleFields(
-                    ENTITY_PUBLICATION_CONTEXT_DOT + PUBLISHER + DOT + NAME + DOT + KEYWORD,
-                    ENTITY_PUBLICATION_CONTEXT_DOT + PUBLISHER + DOT + ID + DOT + KEYWORD,
-                    ENTITY_PUBLICATION_CONTEXT_DOT + PUBLISHER + DOT + ISBN_PREFIX + DOT + KEYWORD);
+                    jsonPath(ENTITY_PUBLICATION_CONTEXT, PUBLISHER, NAME, KEYWORD),
+                    jsonPath(ENTITY_PUBLICATION_CONTEXT, PUBLISHER, ID, KEYWORD),
+                    jsonPath(ENTITY_PUBLICATION_CONTEXT, PUBLISHER, ISBN_PREFIX, KEYWORD));
+
     public static final String ENTITY_DESCRIPTION_REFERENCE_CONTEXT_REFERENCE =
-            ENTITY_PUBLICATION_CONTEXT_DOT + ENTITY_DESCRIPTION + DOT + REFERENCE;
+            jsonPath(ENTITY_PUBLICATION_CONTEXT, ENTITY_DESCRIPTION, REFERENCE);
     public static final String ENTITY_DESCRIPTION_REFERENCE_SERIES =
             multipleFields(
-                    ENTITY_PUBLICATION_CONTEXT_DOT + SERIES + DOT + "issn" + DOT + KEYWORD,
-                    ENTITY_PUBLICATION_CONTEXT_DOT + SERIES + DOT + NAME + DOT + KEYWORD,
-                    ENTITY_PUBLICATION_CONTEXT_DOT + SERIES + DOT + TITLE + DOT + KEYWORD,
-                    ENTITY_PUBLICATION_CONTEXT_DOT + SERIES + DOT + ID + DOT + KEYWORD);
+                    jsonPath(ENTITY_PUBLICATION_CONTEXT, SERIES, "issn", KEYWORD),
+                    jsonPath(ENTITY_PUBLICATION_CONTEXT, SERIES, NAME, KEYWORD),
+                    jsonPath(ENTITY_PUBLICATION_CONTEXT, SERIES, TITLE, KEYWORD),
+                    jsonPath(ENTITY_PUBLICATION_CONTEXT, SERIES, ID, KEYWORD));
     public static final String ENTITY_DESCRIPTION_REFERENCE_JOURNAL =
             multipleFields(
-                    ENTITY_PUBLICATION_CONTEXT_DOT + NAME + DOT + KEYWORD,
-                    ENTITY_PUBLICATION_CONTEXT_DOT + ID + DOT + KEYWORD,
-                    ENTITY_PUBLICATION_CONTEXT_DOT + PRINT_ISSN + DOT + KEYWORD,
-                    ENTITY_PUBLICATION_CONTEXT_DOT + ONLINE_ISSN + DOT + KEYWORD);
+                    jsonPath(ENTITY_PUBLICATION_CONTEXT, NAME, KEYWORD),
+                    jsonPath(ENTITY_PUBLICATION_CONTEXT, ID, KEYWORD),
+                    jsonPath(ENTITY_PUBLICATION_CONTEXT, PRINT_ISSN, KEYWORD),
+                    jsonPath(ENTITY_PUBLICATION_CONTEXT, ONLINE_ISSN, KEYWORD));
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE =
-            ENTITY_DESCRIPTION + DOT + MAIN_TITLE;
+            jsonPath(ENTITY_DESCRIPTION, MAIN_TITLE);
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE_KEYWORD =
-            ENTITY_DESCRIPTION_MAIN_TITLE + DOT + KEYWORD;
-    public static final String FUNDINGS_SOURCE_LABELS =
-            FUNDINGS + DOT + SOURCE + DOT + LABELS + DOT;
+            jsonPath(ENTITY_DESCRIPTION_MAIN_TITLE, KEYWORD);
+    public static final String FUNDINGS_SOURCE_LABELS = jsonPath(FUNDINGS, SOURCE, LABELS);
     public static final String HANDLE_KEYWORD =
             multipleFields(
                     jsonPath(
                         HANDLE, KEYWORD), jsonPath("additionalIdentifiers", VALUE, KEYWORD));
     public static final String RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD =
-            RESOURCE_OWNER + DOT + OWNER_AFFILIATION + DOT + KEYWORD;
+            jsonPath(RESOURCE_OWNER, OWNER_AFFILIATION, KEYWORD);
     public static final String RESOURCE_OWNER_OWNER_KEYWORD =
-            RESOURCE_OWNER + DOT + OWNER + DOT + KEYWORD;
-    public static final String ENTITY_TAGS = ENTITY_DESCRIPTION + DOT + TAGS + DOT + KEYWORD;
+            jsonPath(RESOURCE_OWNER, OWNER, KEYWORD);
+    public static final String ENTITY_TAGS = jsonPath(ENTITY_DESCRIPTION, TAGS, KEYWORD);
     // -----------------------------------
-    public static final String TOP_LEVEL_ORG_ID = jsonPath(
-        TOP_LEVEL_ORGANIZATIONS, ID, KEYWORD);
-    public static final String ENTITY_ABSTRACT = ENTITY_DESCRIPTION + DOT + ABSTRACT;
+    public static final String TOP_LEVEL_ORG_ID = jsonPath(TOP_LEVEL_ORGANIZATIONS, ID, KEYWORD);
+    public static final String ENTITY_ABSTRACT = jsonPath(ENTITY_DESCRIPTION, ABSTRACT);
     public static final String ENTITY_DESCRIPTION_LANGUAGE =
-            ENTITY_DESCRIPTION + DOT + LANGUAGE + DOT + KEYWORD;
-    public static final String SCIENTIFIC_INDEX_YEAR = SCIENTIFIC_INDEX + DOT + YEAR;
+            jsonPath(ENTITY_DESCRIPTION, LANGUAGE, KEYWORD);
+    public static final String SCIENTIFIC_INDEX_YEAR = jsonPath(SCIENTIFIC_INDEX, YEAR);
     public static final String SCIENTIFIC_INDEX_STATUS_KEYWORD =
-            SCIENTIFIC_INDEX + DOT + STATUS_KEYWORD;
+            jsonPath(SCIENTIFIC_INDEX, STATUS_KEYWORD);
     public static final String PUBLICATION_CONTEXT_PATH =
             jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT);
     public static final String ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN =
@@ -238,28 +232,28 @@ public final class Constants {
                     jsonPath(PUBLICATION_CONTEXT_PATH, SERIES, ONLINE_ISSN, KEYWORD),
                     jsonPath(PUBLICATION_CONTEXT_PATH, SERIES, PRINT_ISSN, KEYWORD));
 
-    public static final String FUNDING_IDENTIFIER_KEYWORD = FUNDINGS + DOT + IDENTIFIER_KEYWORD;
+    public static final String FUNDING_IDENTIFIER_KEYWORD = jsonPath(FUNDINGS, IDENTIFIER_KEYWORD);
 
     public static final String FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER =
             multipleFields(
-                    FUNDINGS + DOT + IDENTIFIER_KEYWORD,
-                    FUNDINGS + DOT + SOURCE + DOT + IDENTIFIER + DOT + KEYWORD);
+                    jsonPath(FUNDINGS, IDENTIFIER_KEYWORD),
+                    jsonPath(FUNDINGS, SOURCE, IDENTIFIER, KEYWORD));
 
     public static final String FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS =
             multipleFields(
                     FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER,
-                    FUNDINGS_SOURCE_LABELS + ENGLISH_CODE + DOT + KEYWORD,
-                    FUNDINGS_SOURCE_LABELS + NYNORSK_CODE + DOT + KEYWORD,
-                    FUNDINGS_SOURCE_LABELS + BOKMAAL_CODE + DOT + KEYWORD,
-                    FUNDINGS_SOURCE_LABELS + SAMI_CODE + DOT + KEYWORD);
+                    jsonPath(FUNDINGS_SOURCE_LABELS, ENGLISH_CODE, KEYWORD),
+                    jsonPath(FUNDINGS_SOURCE_LABELS, NYNORSK_CODE, KEYWORD),
+                    jsonPath(FUNDINGS_SOURCE_LABELS, BOKMAAL_CODE, KEYWORD),
+                    jsonPath(FUNDINGS_SOURCE_LABELS, SAMI_CODE, KEYWORD));
 
     public static final String PARENT_PUBLICATION_ID =
             multipleFields(
-                    ENTITY_PUBLICATION_INSTANCE_DOT + "compliesWith" + DOT + KEYWORD,
-                    ENTITY_PUBLICATION_INSTANCE_DOT + "referencedBy" + DOT + KEYWORD,
-                    ENTITY_PUBLICATION_INSTANCE_DOT + "corrigendumFor" + DOT + KEYWORD,
-                    ENTITY_PUBLICATION_INSTANCE_DOT + "manifestations" + DOT + ID + DOT + KEYWORD,
-                    ENTITY_PUBLICATION_INSTANCE_DOT + ID + DOT + KEYWORD);
+                    jsonPath(ENTITY_PUBLICATION_INSTANCE, "compliesWith", KEYWORD),
+                    jsonPath(ENTITY_PUBLICATION_INSTANCE, "referencedBy", KEYWORD),
+                    jsonPath(ENTITY_PUBLICATION_INSTANCE, "corrigendumFor", KEYWORD),
+                    jsonPath(ENTITY_PUBLICATION_INSTANCE, "manifestations", ID, KEYWORD),
+                    jsonPath(ENTITY_PUBLICATION_INSTANCE, ID, KEYWORD));
     public static final String PAINLESS = "painless";
     public static final List<AggregationBuilder> RESOURCES_AGGREGATIONS =
             List.of(
@@ -270,8 +264,6 @@ public final class Constants {
                     scientificIndexHierarchy(),
                     topLevelOrganisationsHierarchy());
     public static final String SEQUENCE = "sequence";
-
-
     private static final Map<String, String> facetResourcePaths1 =
             Map.of(
                     TYPE, "/withAppliedFilter/entityDescription/reference/publicationInstance/type",
@@ -318,8 +310,7 @@ public final class Constants {
     }
 
     private static TermsAggregationBuilder license() {
-        return branchBuilder(
-                LICENSE, ASSOCIATED_ARTIFACTS, LICENSE, NAME, KEYWORD)
+        return branchBuilder(LICENSE, ASSOCIATED_ARTIFACTS, LICENSE, NAME, KEYWORD)
                 .subAggregation(labels(jsonPath(ASSOCIATED_ARTIFACTS, LICENSE)))
                 .subAggregation(getReverseNestedAggregationBuilder());
     }
@@ -337,8 +328,7 @@ public final class Constants {
                 .subAggregation(
                         branchBuilder(YEAR, SCIENTIFIC_INDEX, YEAR, KEYWORD)
                                 .subAggregation(
-                                        branchBuilder(
-                                            NAME, SCIENTIFIC_INDEX, STATUS, KEYWORD)));
+                                        branchBuilder(NAME, SCIENTIFIC_INDEX, STATUS, KEYWORD)));
     }
 
     public static NestedAggregationBuilder fundingSourceHierarchy() {

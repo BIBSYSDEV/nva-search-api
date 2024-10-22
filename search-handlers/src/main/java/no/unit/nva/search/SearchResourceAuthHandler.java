@@ -65,8 +65,8 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
 
         return ResourceSearchQuery.builder()
                 .fromRequestInfo(requestInfo)
-                .withRequiredParameters(FROM, SIZE, AGGREGATION)
-                .withAlwaysExcludedFields(EXCLUDED_FIELDS)
+                .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
+                .withAlwaysExcludedFields(GLOBAL_EXCLUDED_FIELDS)
                 .validate()
                 .build()
                 .withFilter()

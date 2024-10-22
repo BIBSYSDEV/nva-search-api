@@ -19,7 +19,6 @@ import no.unit.nva.search.service.scroll.ScrollQuery;
 
 import nva.commons.apigateway.ApiS3GatewayHandler;
 import nva.commons.apigateway.RequestInfo;
-import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.JacocoGenerated;
 
@@ -70,6 +69,7 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
                         .withParameter(SIZE, MAX_HITS_PER_PAGE)
                         .withParameter(AGGREGATION, NONE)
                         .withParameter(NODES_INCLUDED, INCLUDED_NODES)
+                        .withRequiredParameters(SORT)
                         .build()
                         .withFilter()
                         .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
@@ -94,8 +94,7 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
 
     @JacocoGenerated
     @Override
-    protected void validateRequest(Void unused, RequestInfo requestInfo, Context context)
-            throws ApiGatewayException {
+    protected void validateRequest(Void unused, RequestInfo requestInfo, Context context) {
         // Do nothing
     }
 

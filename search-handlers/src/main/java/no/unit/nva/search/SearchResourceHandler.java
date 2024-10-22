@@ -22,7 +22,9 @@ import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
 import java.net.HttpURLConnection;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Handler for searching resources.
@@ -31,6 +33,7 @@ import java.util.List;
  */
 public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
 
+    public static final String ENTITY_DESCRIPTION_CONTRIBUTORS = "entityDescription.contributors";
     private final ResourceClient opensearchClient;
 
     @JacocoGenerated
@@ -58,15 +61,22 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
             throws BadRequestException {
         return ResourceSearchQuery.builder()
                 .fromRequestInfo(requestInfo)
-                .withRequiredParameters(FROM, SIZE, AGGREGATION)
-                .withAlwaysExcludedFields(EXCLUDED_FIELDS)
+                .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
+                .withAlwaysExcludedFields(getExcludedFields())
                 .validate()
                 .build()
                 .withFilter()
                 .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
                 .apply()
                 .doSearch(opensearchClient)
+                .withMutators(new ContributorCopyMutator())
                 .toString();
+    }
+
+    private List<String> getExcludedFields() {
+        return Stream.of(GLOBAL_EXCLUDED_FIELDS, List.of(ENTITY_DESCRIPTION_CONTRIBUTORS))
+                .flatMap(Collection::stream)
+                .toList();
     }
 
     @Override

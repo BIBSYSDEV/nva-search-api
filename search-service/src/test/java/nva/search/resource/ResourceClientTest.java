@@ -1,31 +1,65 @@
-package nva.search.resource;
+package no.unit.nva.search.resource;
 
 import static no.unit.nva.common.Containers.container;
 import static no.unit.nva.common.Containers.loadMapFromResource;
-
+import static no.unit.nva.common.EntrySetTools.queryToMapEntries;
+import static no.unit.nva.common.MockedHttpResponse.mockedFutureFailed;
+import static no.unit.nva.common.MockedHttpResponse.mockedFutureHttpResponse;
+import static no.unit.nva.common.MockedHttpResponse.mockedHttpResponse;
+import static no.unit.nva.constants.Words.ALL;
+import static no.unit.nva.constants.Words.COLON;
+import static no.unit.nva.constants.Words.COMMA;
+import static no.unit.nva.constants.Words.CONTRIBUTOR;
+import static no.unit.nva.constants.Words.DOT;
+import static no.unit.nva.constants.Words.ENTITY_DESCRIPTION;
+import static no.unit.nva.constants.Words.EQUAL;
+import static no.unit.nva.constants.Words.FILES;
+import static no.unit.nva.constants.Words.FUNDING_SOURCE;
+import static no.unit.nva.constants.Words.ID;
+import static no.unit.nva.constants.Words.IDENTIFIER;
+import static no.unit.nva.constants.Words.KEYWORD;
+import static no.unit.nva.constants.Words.LICENSE;
+import static no.unit.nva.constants.Words.META_INFO;
+import static no.unit.nva.constants.Words.NONE;
+import static no.unit.nva.constants.Words.PAGES;
+import static no.unit.nva.constants.Words.PIPE;
+import static no.unit.nva.constants.Words.PUBLICATION_CONTEXT;
+import static no.unit.nva.constants.Words.PUBLICATION_INSTANCE;
+import static no.unit.nva.constants.Words.PUBLISHER;
+import static no.unit.nva.constants.Words.REFERENCE;
+import static no.unit.nva.constants.Words.RESOURCES;
+import static no.unit.nva.constants.Words.SLASH;
+import static no.unit.nva.constants.Words.SPACE;
+import static no.unit.nva.constants.Words.TOP_LEVEL_ORGANIZATION;
+import static no.unit.nva.constants.Words.TOP_LEVEL_ORGANIZATIONS;
+import static no.unit.nva.constants.Words.TYPE;
+import static no.unit.nva.constants.Words.ZERO;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search.model.enums.PublicationStatus.DELETED;
-import static no.unit.nva.search.model.enums.PublicationStatus.DRAFT;
-import static no.unit.nva.search.model.enums.PublicationStatus.DRAFT_FOR_DELETION;
-import static no.unit.nva.search.model.enums.PublicationStatus.NEW;
-import static no.unit.nva.search.model.enums.PublicationStatus.PUBLISHED;
-import static no.unit.nva.search.model.enums.PublicationStatus.PUBLISHED_METADATA;
-import static no.unit.nva.search.model.enums.PublicationStatus.UNPUBLISHED;
-import static no.unit.nva.search.service.resource.Constants.EXCLUDED_FIELDS;
-import static no.unit.nva.search.service.resource.ResourceParameter.AGGREGATION;
-import static no.unit.nva.search.service.resource.ResourceParameter.EXCLUDE_SUBUNITS;
-import static no.unit.nva.search.service.resource.ResourceParameter.FROM;
-import static no.unit.nva.search.service.resource.ResourceParameter.NODES_EXCLUDED;
-import static no.unit.nva.search.service.resource.ResourceParameter.NODES_INCLUDED;
-import static no.unit.nva.search.service.resource.ResourceParameter.PUBLICATION_PAGES;
-import static no.unit.nva.search.service.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_BEFORE;
-import static no.unit.nva.search.service.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_SINCE;
-import static no.unit.nva.search.service.resource.ResourceParameter.SIZE;
-import static no.unit.nva.search.service.resource.ResourceParameter.SORT;
-import static no.unit.nva.search.service.resource.ResourceParameter.STATISTICS;
-import static no.unit.nva.search.service.resource.ResourceParameter.UNIT;
+import static no.unit.nva.search.common.enums.PublicationStatus.DELETED;
+import static no.unit.nva.search.common.enums.PublicationStatus.DRAFT;
+import static no.unit.nva.search.common.enums.PublicationStatus.DRAFT_FOR_DELETION;
+import static no.unit.nva.search.common.enums.PublicationStatus.NEW;
+import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
+import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
+import static no.unit.nva.search.common.enums.PublicationStatus.UNPUBLISHED;
+import static no.unit.nva.search.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
+import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
+import static no.unit.nva.search.resource.ResourceParameter.EXCLUDE_SUBUNITS;
+import static no.unit.nva.search.resource.ResourceParameter.FROM;
+import static no.unit.nva.search.resource.ResourceParameter.NODES_EXCLUDED;
+import static no.unit.nva.search.resource.ResourceParameter.NODES_INCLUDED;
+import static no.unit.nva.search.resource.ResourceParameter.PUBLICATION_PAGES;
+import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_BEFORE;
+import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_SINCE;
+import static no.unit.nva.search.resource.ResourceParameter.SIZE;
+import static no.unit.nva.search.resource.ResourceParameter.SORT;
+import static no.unit.nva.search.resource.ResourceParameter.STATISTICS;
+import static no.unit.nva.search.resource.ResourceParameter.UNIT;
 
-import static no.unit.nva.search.service.resource.ResourceSort.fromSortKey;
+import static nva.commons.apigateway.AccessRight.MANAGE_CUSTOMERS;
+import static nva.commons.apigateway.AccessRight.MANAGE_DEGREE;
+import static nva.commons.apigateway.AccessRight.MANAGE_RESOURCES_ALL;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
@@ -51,24 +85,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import no.unit.nva.commons.json.JsonUtils;
+import no.unit.nva.constants.Words;
 import no.unit.nva.identifiers.SortableIdentifier;
-import no.unit.nva.search.model.IndexingClient;
-import no.unit.nva.search.model.records.EventConsumptionAttributes;
-import no.unit.nva.search.model.records.HttpResponseFormatter;
-import no.unit.nva.search.model.records.IndexDocument;
-import no.unit.nva.search.model.records.RestHighLevelClientWrapper;
-import no.unit.nva.search.model.constant.Words;
-import no.unit.nva.search.model.csv.ResourceCsvTransformer;
-import no.unit.nva.search.model.jwt.CachedJwtProvider;
+import no.unit.nva.indexingclient.IndexingClient;
+import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
+import no.unit.nva.indexingclient.models.IndexDocument;
+import no.unit.nva.indexingclient.models.RestHighLevelClientWrapper;
+import no.unit.nva.search.common.csv.ResourceCsvTransformer;
+import no.unit.nva.search.common.jwt.CachedJwtProvider;
+import no.unit.nva.search.common.records.HttpResponseFormatter;
+import no.unit.nva.search.scroll.ScrollClient;
+import no.unit.nva.search.scroll.ScrollQuery;
 
-import no.unit.nva.common.EntrySetTools;
-import no.unit.nva.common.MockedHttpResponse;
-import no.unit.nva.search.service.resource.ResourceClient;
-import no.unit.nva.search.service.resource.ResourceParameter;
-import no.unit.nva.search.service.resource.ResourceSearchQuery;
-import no.unit.nva.search.service.resource.UserSettingsClient;
-import no.unit.nva.search.service.scroll.ScrollClient;
-import no.unit.nva.search.service.scroll.ScrollQuery;
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
@@ -77,14 +105,12 @@ import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.paths.UriWrapper;
 
 import org.apache.http.HttpHost;
-import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mockito;
 import org.opensearch.client.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,11 +156,11 @@ class ResourceClientTest {
         var cachedJwtProvider = setupMockedCachedJwtProvider();
         var mochedHttpClient = mock(HttpClient.class);
         var userSettingsClient = new UserSettingsClient(mochedHttpClient, cachedJwtProvider);
-        var response = MockedHttpResponse.mockedFutureHttpResponse(Path.of(USER_SETTINGS_JSON));
+        var response = mockedFutureHttpResponse(Path.of(USER_SETTINGS_JSON));
         when(mochedHttpClient.sendAsync(any(), any()))
                 .thenReturn(response)
-                .thenReturn(MockedHttpResponse.mockedFutureHttpResponse(""))
-                .thenReturn(MockedHttpResponse.mockedFutureFailed());
+                .thenReturn(mockedFutureHttpResponse(""))
+                .thenReturn(mockedFutureFailed());
         searchClient =
                 new ResourceClient(
                         HttpClient.newHttpClient(), cachedJwtProvider, userSettingsClient);
@@ -204,18 +230,18 @@ class ResourceClientTest {
 
     static Stream<Arguments> roleProvider() {
         return Stream.of(
-                Arguments.of(5, List.of(AccessRight.MANAGE_RESOURCES_ALL)),
-                Arguments.of(22, List.of(AccessRight.MANAGE_CUSTOMERS)),
-                Arguments.of(22, List.of(AccessRight.MANAGE_CUSTOMERS, AccessRight.MANAGE_RESOURCES_ALL)));
+                Arguments.of(5, List.of(MANAGE_RESOURCES_ALL)),
+                Arguments.of(22, List.of(MANAGE_CUSTOMERS)),
+                Arguments.of(22, List.of(MANAGE_CUSTOMERS, MANAGE_RESOURCES_ALL)));
     }
 
     @Test
     void shouldCheckMapping() {
 
-        var mapping = indexingClient.getMapping(Words.RESOURCES);
+        var mapping = indexingClient.getMapping(RESOURCES);
         assertThat(mapping, is(notNullValue()));
         var topLevelOrgType =
-                mapping.path(PROPERTIES).path(Words.TOP_LEVEL_ORGANIZATIONS).path(Words.TYPE).textValue();
+                mapping.path(PROPERTIES).path(TOP_LEVEL_ORGANIZATIONS).path(TYPE).textValue();
         assertThat(topLevelOrgType, is(equalTo(NESTED)));
         logger.info(mapping.toString());
     }
@@ -225,8 +251,8 @@ class ResourceClientTest {
         AtomicReference<URI> uri = new AtomicReference<>();
         uriSortingProvider().findFirst().ifPresent(uri::set);
 
-        var accessRights = List.of(AccessRight.MANAGE_CUSTOMERS);
-        var mockedRequestInfoLocal = Mockito.mock(RequestInfo.class);
+        var accessRights = List.of(MANAGE_CUSTOMERS);
+        var mockedRequestInfoLocal = mock(RequestInfo.class);
         when(mockedRequestInfoLocal.getPersonAffiliation())
                 .thenReturn(
                         URI.create(
@@ -236,7 +262,7 @@ class ResourceClientTest {
         var result =
                 ResourceSearchQuery.builder()
                         .fromRequestInfo(mockedRequestInfoLocal)
-                        .fromTestQueryParameters(EntrySetTools.queryToMapEntries(uri.get()))
+                        .fromTestQueryParameters(queryToMapEntries(uri.get()))
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withRequiredParameters(FROM, SIZE)
                         .build()
@@ -277,7 +303,7 @@ class ResourceClientTest {
                 URI.create(
                         BASE_URL
                                 + "query=year+project&orderBy=RELEVANCE,created_date:asc,modifiedDate:desc"
-                                + "&searchAfter=3.4478912,1241234,23412"),
+                                + "&searchAfter=3.4478912,1241234,23412,123"),
                 URI.create(
                         BASE_URL
                                 + "query=year+project&sort=published_date+asc&sort=category+desc"));
@@ -290,13 +316,13 @@ class ResourceClientTest {
                 URI.create(
                         BASE_URL
                                 + AGGREGATION.asCamelCase()
-                                + Words.EQUAL
-                                + Words.ALL
+                                + EQUAL
+                                + ALL
                                 + "&query=EntityDescription");
 
         var response1 =
                 ResourceSearchQuery.builder()
-                        .fromTestQueryParameters(EntrySetTools.queryToMapEntries(uri1))
+                        .fromTestQueryParameters(queryToMapEntries(uri1))
                         .withDockerHostUri(hostAddress)
                         .withRequiredParameters(FROM, SIZE, AGGREGATION)
                         .build()
@@ -310,15 +336,15 @@ class ResourceClientTest {
         var aggregations = response1.toPagedResponse().aggregations();
 
         assertFalse(aggregations.isEmpty());
-        assertThat(aggregations.get(Words.TYPE).size(), is(6));
-        assertThat(aggregations.get(Words.FILES).getFirst().count(), is(17));
-        assertThat(aggregations.get(Words.LICENSE).getFirst().count(), is(10));
-        assertThat(aggregations.get(Words.FUNDING_SOURCE).size(), is(1));
-        assertThat(aggregations.get(Words.PUBLISHER).getFirst().count(), is(2));
-        assertThat(aggregations.get(Words.CONTRIBUTOR).size(), is(17));
-        assertThat(aggregations.get(Words.TOP_LEVEL_ORGANIZATION).size(), is(11));
+        assertThat(aggregations.get(TYPE).size(), is(6));
+        assertThat(aggregations.get(FILES).getFirst().count(), is(17));
+        assertThat(aggregations.get(LICENSE).getFirst().count(), is(10));
+        assertThat(aggregations.get(FUNDING_SOURCE).size(), is(1));
+        assertThat(aggregations.get(PUBLISHER).getFirst().count(), is(2));
+        assertThat(aggregations.get(CONTRIBUTOR).size(), is(17));
+        assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION).size(), is(11));
         assertThat(
-                aggregations.get(Words.TOP_LEVEL_ORGANIZATION).get(1).labels().get("nb"),
+                aggregations.get(TOP_LEVEL_ORGANIZATION).get(1).labels().get("nb"),
                 is(equalTo("Sikt – Kunnskapssektorens tjenesteleverandør")));
     }
 
@@ -328,7 +354,7 @@ class ResourceClientTest {
         var mochedHttpClient = mock(HttpClient.class);
         var userSettingsClient =
                 new UserSettingsClient(mochedHttpClient, setupMockedCachedJwtProvider());
-        var mockedResponse = MockedHttpResponse.mockedHttpResponse(USER_SETTINGS_EMPTY_JSON, 200);
+        var mockedResponse = mockedHttpResponse(USER_SETTINGS_EMPTY_JSON, 200);
         when(mochedHttpClient.send(any(), any())).thenReturn(mockedResponse);
         var searchClient =
                 new ResourceClient(
@@ -341,7 +367,7 @@ class ResourceClientTest {
                         "https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
         var response =
                 ResourceSearchQuery.builder()
-                        .fromTestQueryParameters(EntrySetTools.queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withRequiredParameters(FROM, SIZE)
                         .build()
@@ -359,7 +385,7 @@ class ResourceClientTest {
         var mochedHttpClient = mock(HttpClient.class);
         var userSettingsClient =
                 new UserSettingsClient(mochedHttpClient, setupMockedCachedJwtProvider());
-        var mockedResponse = MockedHttpResponse.mockedHttpResponse(USER_SETTINGS_EMPTY_JSON, 404);
+        var mockedResponse = mockedHttpResponse(USER_SETTINGS_EMPTY_JSON, 404);
         when(mochedHttpClient.send(any(), any())).thenReturn(mockedResponse);
         var searchClient =
                 new ResourceClient(
@@ -372,7 +398,7 @@ class ResourceClientTest {
                         "https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
         var response =
                 ResourceSearchQuery.builder()
-                        .fromTestQueryParameters(EntrySetTools.queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withRequiredParameters(FROM, SIZE, SORT)
                         .build()
@@ -402,7 +428,7 @@ class ResourceClientTest {
                         "https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
         var response =
                 ResourceSearchQuery.builder()
-                        .fromTestQueryParameters(EntrySetTools.queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withRequiredParameters(FROM, SIZE)
                         .build()
@@ -421,7 +447,7 @@ class ResourceClientTest {
         var userSettingsClient =
                 new UserSettingsClient(mochedHttpClient, setupMockedCachedJwtProvider());
         when(mochedHttpClient.send(any(), any()))
-                .thenReturn(MockedHttpResponse.mockedHttpResponse(USER_SETTINGS_EMPTY_JSON, 200));
+                .thenReturn(mockedHttpResponse(USER_SETTINGS_EMPTY_JSON, 200));
         var searchClient =
                 new ResourceClient(
                         HttpClient.newHttpClient(),
@@ -433,7 +459,7 @@ class ResourceClientTest {
                         "https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
         var response =
                 ResourceSearchQuery.builder()
-                        .fromTestQueryParameters(EntrySetTools.queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withRequiredParameters(FROM, SIZE)
                         .build()
@@ -451,7 +477,7 @@ class ResourceClientTest {
 
         var pagedResult =
                 ResourceSearchQuery.builder()
-                        .fromTestQueryParameters(EntrySetTools.queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withRequiredParameters(FROM, SIZE)
                         .build()
@@ -479,7 +505,7 @@ class ResourceClientTest {
                 BadRequestException.class,
                 () ->
                         ResourceSearchQuery.builder()
-                                .fromTestQueryParameters(EntrySetTools.queryToMapEntries(uri))
+                                .fromTestQueryParameters(queryToMapEntries(uri))
                                 .withRequiredParameters(FROM, SIZE)
                                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                                 .build()
@@ -494,7 +520,7 @@ class ResourceClientTest {
 
         var response =
                 ResourceSearchQuery.builder()
-                        .fromTestQueryParameters(EntrySetTools.queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withRequiredParameters(FROM, SIZE)
                         .build()
@@ -518,7 +544,7 @@ class ResourceClientTest {
     @MethodSource("roleProvider")
     void isSearchingForAllPublicationsAsRoleWork(int expectedHits, List<AccessRight> accessRights)
             throws UnauthorizedException, BadRequestException {
-        var requestInfo = Mockito.mock(RequestInfo.class);
+        var requestInfo = mock(RequestInfo.class);
         when(requestInfo.getAccessRights()).thenReturn(accessRights);
         when(requestInfo.getPersonAffiliation())
                 .thenReturn(
@@ -529,7 +555,7 @@ class ResourceClientTest {
                 ResourceSearchQuery.builder()
                         .fromRequestInfo(requestInfo)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                        .withParameter(NODES_EXCLUDED, Words.META_INFO)
+                        .withParameter(NODES_EXCLUDED, META_INFO)
                         .withParameter(STATISTICS, Boolean.TRUE.toString())
                         .withRequiredParameters(FROM, SIZE)
                         .build()
@@ -545,8 +571,8 @@ class ResourceClientTest {
 
     @Test
     void isSearchingWithWrongAccessFails() throws UnauthorizedException {
-        var requestInfo = Mockito.mock(RequestInfo.class);
-        when(requestInfo.getAccessRights()).thenReturn(List.of(AccessRight.MANAGE_DEGREE));
+        var requestInfo = mock(RequestInfo.class);
+        when(requestInfo.getAccessRights()).thenReturn(List.of(MANAGE_DEGREE));
         when(requestInfo.getPersonAffiliation())
                 .thenReturn(URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/"));
 
@@ -556,7 +582,7 @@ class ResourceClientTest {
                         ResourceSearchQuery.builder()
                                 .fromRequestInfo(requestInfo)
                                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                                .withParameter(NODES_EXCLUDED, Words.META_INFO)
+                                .withParameter(NODES_EXCLUDED, META_INFO)
                                 .withParameter(STATISTICS, Boolean.TRUE.toString())
                                 .withRequiredParameters(FROM, SIZE)
                                 .build()
@@ -567,8 +593,8 @@ class ResourceClientTest {
 
     @Test
     void withOrganizationDoWork() throws BadRequestException, UnauthorizedException {
-        var requestInfo = Mockito.mock(RequestInfo.class);
-        when(requestInfo.getAccessRights()).thenReturn(List.of(AccessRight.MANAGE_CUSTOMERS));
+        var requestInfo = mock(RequestInfo.class);
+        when(requestInfo.getAccessRights()).thenReturn(List.of(MANAGE_CUSTOMERS));
         when(requestInfo.getTopLevelOrgCristinId())
                 .thenReturn(
                         Optional.of(
@@ -578,7 +604,7 @@ class ResourceClientTest {
                 ResourceSearchQuery.builder()
                         .fromRequestInfo(requestInfo)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                        .withParameter(NODES_EXCLUDED, Words.META_INFO)
+                        .withParameter(NODES_EXCLUDED, META_INFO)
                         .withRequiredParameters(FROM, SIZE)
                         .build()
                         .withFilter()
@@ -593,13 +619,13 @@ class ResourceClientTest {
 
     @Test
     void scrollClientExceuteOK() throws BadRequestException {
-        var includedNodes = String.join(Words.COMMA, ResourceCsvTransformer.getJsonFields());
+        var includedNodes = String.join(COMMA, ResourceCsvTransformer.getJsonFields());
         var firstResponse =
                 ResourceSearchQuery.builder()
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                        .withParameter(FROM, Words.ZERO)
+                        .withParameter(FROM, ZERO)
                         .withParameter(SIZE, NUMBER_FIVE)
-                        .withParameter(AGGREGATION, Words.NONE)
+                        .withParameter(AGGREGATION, NONE)
                         .withParameter(NODES_INCLUDED, includedNodes)
                         .build()
                         .withFilter()
@@ -626,7 +652,7 @@ class ResourceClientTest {
             throws ApiGatewayException {
         var response =
                 ResourceSearchQuery.builder()
-                        .fromTestQueryParameters(EntrySetTools.queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withRequiredParameters(FROM, SIZE)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .validate()
@@ -654,7 +680,7 @@ class ResourceClientTest {
 
         var response =
                 ResourceSearchQuery.builder()
-                        .fromTestQueryParameters(EntrySetTools.queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withRequiredParameters(FROM, SIZE)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
@@ -694,7 +720,7 @@ class ResourceClientTest {
 
         var response =
                 ResourceSearchQuery.builder()
-                        .fromTestQueryParameters(EntrySetTools.queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withRequiredParameters(FROM, SIZE)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
@@ -705,7 +731,7 @@ class ResourceClientTest {
 
         var pagedSearchResourceDto = response.toPagedResponse();
         var document = pagedSearchResourceDto.hits().getFirst();
-        var actualId = document.get(Words.IDENTIFIER).asText();
+        var actualId = document.get(IDENTIFIER).asText();
 
         assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedHits)));
         assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedHits)));
@@ -726,7 +752,7 @@ class ResourceClientTest {
 
         var response =
                 ResourceSearchQuery.builder()
-                        .fromTestQueryParameters(EntrySetTools.queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withRequiredParameters(FROM, SIZE)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
@@ -737,7 +763,7 @@ class ResourceClientTest {
 
         var pagedSearchResourceDto = response.toPagedResponse();
         var document = pagedSearchResourceDto.hits().getFirst();
-        var actualId = document.get(Words.IDENTIFIER).asText();
+        var actualId = document.get(IDENTIFIER).asText();
 
         assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedHits)));
         assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedHits)));
@@ -758,7 +784,7 @@ class ResourceClientTest {
 
         var response =
                 ResourceSearchQuery.builder()
-                        .fromTestQueryParameters(EntrySetTools.queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withRequiredParameters(FROM, SIZE)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
@@ -772,10 +798,10 @@ class ResourceClientTest {
 
         for (var document : documents) {
             var actualParentId =
-                    document.get(Words.ENTITY_DESCRIPTION)
-                            .get(Words.REFERENCE)
-                            .get(Words.PUBLICATION_CONTEXT)
-                            .get(Words.ID)
+                    document.get(ENTITY_DESCRIPTION)
+                            .get(REFERENCE)
+                            .get(PUBLICATION_CONTEXT)
+                            .get(ID)
                             .asText();
 
             assertThat(actualParentId, containsString(expectedParentIdSuffix));
@@ -802,7 +828,7 @@ class ResourceClientTest {
 
         var response =
                 ResourceSearchQuery.builder()
-                        .fromTestQueryParameters(EntrySetTools.queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withRequiredParameters(FROM, SIZE)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
@@ -816,17 +842,17 @@ class ResourceClientTest {
 
         for (var document : documents) {
             var actualParentId =
-                    document.get(Words.ENTITY_DESCRIPTION)
-                            .get(Words.REFERENCE)
-                            .get(Words.PUBLICATION_CONTEXT)
-                            .get(Words.ID)
+                    document.get(ENTITY_DESCRIPTION)
+                            .get(REFERENCE)
+                            .get(PUBLICATION_CONTEXT)
+                            .get(ID)
                             .asText();
 
             var actualInstanceType =
-                    document.get(Words.ENTITY_DESCRIPTION)
-                            .get(Words.REFERENCE)
-                            .get(Words.PUBLICATION_INSTANCE)
-                            .get(Words.TYPE)
+                    document.get(ENTITY_DESCRIPTION)
+                            .get(REFERENCE)
+                            .get(PUBLICATION_INSTANCE)
+                            .get(TYPE)
                             .asText();
 
             assertThat(actualParentId, containsString(expectedParentIdSuffix));
@@ -842,9 +868,9 @@ class ResourceClientTest {
     void searchWithUriReturnsCsvResponse(URI uri) throws ApiGatewayException {
         var csvResult =
                 ResourceSearchQuery.builder()
-                        .fromTestQueryParameters(EntrySetTools.queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withRequiredParameters(FROM, SIZE, AGGREGATION)
-                        .withAlwaysExcludedFields(EXCLUDED_FIELDS)
+                        .withAlwaysExcludedFields(GLOBAL_EXCLUDED_FIELDS)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withMediaType(Words.TEXT_CSV)
                         .build()
@@ -861,7 +887,7 @@ class ResourceClientTest {
     void searchUriWithSortingReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
         var response =
                 ResourceSearchQuery.builder()
-                        .fromTestQueryParameters(EntrySetTools.queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withRequiredParameters(FROM, SIZE, SORT)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
@@ -872,26 +898,26 @@ class ResourceClientTest {
 
         var pagedSearchResourceDto = response.toPagedResponse();
         assertNotNull(pagedSearchResourceDto.id());
-        var searchName = response.parameters().get(SORT).split(Words.COMMA)[0].split(Words.COLON)[0];
+        var searchName = response.parameters().get(SORT).split(COMMA)[0].split(COLON)[0];
         var searchFieldName =
-                fromSortKey(searchName)
+                ResourceSort.fromSortKey(searchName)
                         .jsonPaths()
                         .findFirst()
-                        .map(path -> path.contains(Words.KEYWORD) ? trimKeyword(path) : path)
-                        .map(path -> Words.SLASH + path.replace(Words.DOT, Words.SLASH))
+                        .map(path -> path.contains(KEYWORD) ? trimKeyword(path) : path)
+                        .map(path -> SLASH + path.replace(DOT, SLASH))
                         .orElseThrow();
 
         var logInfo =
                 response.swsResponse().hits().hits().stream()
                         .map(item -> item._score() + " + " + searchFieldName)
-                        .collect(Collectors.joining(Words.SPACE + Words.PIPE + Words.SPACE));
+                        .collect(Collectors.joining(SPACE + PIPE + SPACE));
         logger.debug(logInfo);
         assertNotNull(pagedSearchResourceDto.context());
         assertTrue(pagedSearchResourceDto.totalHits() >= 0);
     }
 
     private String trimKeyword(String path) {
-        return path.substring(0, path.indexOf(Words.KEYWORD) - 1);
+        return path.substring(0, path.indexOf(KEYWORD) - 1);
     }
 
     @ParameterizedTest
@@ -901,7 +927,7 @@ class ResourceClientTest {
                 BadRequestException.class,
                 () ->
                         ResourceSearchQuery.builder()
-                                .fromTestQueryParameters(EntrySetTools.queryToMapEntries(uri))
+                                .fromTestQueryParameters(queryToMapEntries(uri))
                                 .withRequiredParameters(FROM, SIZE)
                                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                                 .build()
@@ -1000,7 +1026,7 @@ class ResourceClientTest {
                                 Map.of(
                                         UNIT.asCamelCase(),
                                         unit,
-                                        Words.TOP_LEVEL_ORGANIZATION,
+                                        TOP_LEVEL_ORGANIZATION,
                                         topLevelOrg))
                         .withRequiredParameters(FROM, SIZE, AGGREGATION)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
@@ -1018,6 +1044,28 @@ class ResourceClientTest {
         assertThat(pagedSearchResourceDto.toJsonString(), containsString(includedSubunitI));
         assertThat(pagedSearchResourceDto.toJsonString(), containsString(includedSubunitII));
         assertThat(pagedSearchResourceDto.hits(), hasSize(2));
+    }
+
+    @Test
+    void shouldReturnResourcesWithFieldContributorsPreviewAndNotPreview()
+            throws BadRequestException {
+
+        var response =
+                ResourceSearchQuery.builder()
+                        .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                        .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                        .withAlwaysExcludedFields("entityDescription.contributors")
+                        .build()
+                        .withFilter()
+                        .requiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED)
+                        .apply()
+                        .doSearch(searchClient);
+
+        var pagedSearchResourceDto = response.toPagedResponse();
+
+        assertThat(
+                pagedSearchResourceDto.toJsonString(), containsString("\"contributorsPreview\":"));
+        assertThat(pagedSearchResourceDto.toJsonString(), not(containsString("\"contributors\":")));
     }
 
     @ParameterizedTest
@@ -1052,12 +1100,12 @@ class ResourceClientTest {
     private static int pageNodeToInt(JsonNode hit) {
         return hit.at(
                         String.join(
-                                Words.SLASH,
-                                Words.SLASH + Words.ENTITY_DESCRIPTION,
-                                Words.REFERENCE,
-                                Words.PUBLICATION_INSTANCE,
-                                Words.PAGES,
-                                Words.PAGES))
+                                SLASH,
+                                SLASH + ENTITY_DESCRIPTION,
+                                REFERENCE,
+                                PUBLICATION_INSTANCE,
+                                PAGES,
+                                PAGES))
                 .asInt();
     }
 
@@ -1071,13 +1119,13 @@ class ResourceClientTest {
 
         var pagedSearchResourceDto = response.toPagedResponse();
 
-        MatcherAssert.assertThat(pagedSearchResourceDto.hits(), hasSize(1));
+        assertThat(pagedSearchResourceDto.hits(), hasSize(1));
 
         indexingClient.removeDocumentFromResourcesIndex(indexDocument.getDocumentIdentifier());
         Thread.sleep(1000);
         var responseAfterDeletion = fetchDocumentWithId(indexDocument);
 
-        MatcherAssert.assertThat(responseAfterDeletion.toPagedResponse().hits(), is(emptyIterable()));
+        assertThat(responseAfterDeletion.toPagedResponse().hits(), is(emptyIterable()));
     }
 
     private static HttpResponseFormatter<ResourceParameter> fetchDocumentWithId(
@@ -1085,7 +1133,7 @@ class ResourceClientTest {
         return ResourceSearchQuery.builder()
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                .fromTestParameterMap(Map.of(Words.ID, indexDocument.getDocumentIdentifier()))
+                .fromTestParameterMap(Map.of(ID, indexDocument.getDocumentIdentifier()))
                 .build()
                 .withFilter()
                 .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
@@ -1105,6 +1153,6 @@ class ResourceClientTest {
                 """
                         .replace("__ID__", identifier.toString());
         var jsonNode = JsonUtils.dtoObjectMapper.readTree(document);
-        return new IndexDocument(new EventConsumptionAttributes(Words.RESOURCES, identifier), jsonNode);
+        return new IndexDocument(new EventConsumptionAttributes(RESOURCES, identifier), jsonNode);
     }
 }

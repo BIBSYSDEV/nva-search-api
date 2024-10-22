@@ -16,6 +16,7 @@ import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -148,6 +149,25 @@ class SearchResourceHandlerTest {
 
         assertNotNull(gatewayResponse.headers());
         assertEquals(HTTP_OK, gatewayResponse.statusCode());
+    }
+
+    @Test
+    void shouldReturnResultWithEqualContributorAndContributorPreview() throws IOException {
+        prepareRestHighLevelClientOkResponse();
+
+        handler.handleRequest(getInputStreamWithMultipleContributorId(), outputStream, contextMock);
+
+        var gatewayResponse = FakeGatewayResponse.of(outputStream);
+        var actualBody = gatewayResponse.body();
+        var firstHit = actualBody.hits().getFirst();
+
+        assertNotNull(gatewayResponse.headers());
+        assertEquals(HTTP_OK, gatewayResponse.statusCode());
+        assertFalse(firstHit.path("entityDescription").path("contributors").isMissingNode());
+        assertNotNull(firstHit.path("entityDescription").path("contributors").get(0));
+        assertEquals(
+                firstHit.path("entityDescription").path("contributors"),
+                firstHit.path("entityDescription").path("contributorsPreview"));
     }
 
     @Test

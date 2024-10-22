@@ -73,7 +73,7 @@ import java.util.stream.Stream;
  */
 @SuppressWarnings("PMD.GodClass")
 public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
-
+    private static final String EXCLUDED_RESOURCE_FIELDS = "entityDescription.contributors";
     private final ResourceStreamBuilders streamBuilders;
     private final ResourceAccessFilter filterBuilder;
     private final Map<String, String> additionalQueryParameters = new HashMap<>();
@@ -82,7 +82,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     private ResourceSearchQuery() {
         super();
         assignStatusImpossibleWhiteList();
-        setAlwaysExcludedFields(List.of(Constants.EXCLUDED_FIELDS));
+        setAlwaysExcludedFields(GLOBAL_EXCLUDED_FIELDS);
         streamBuilders = new ResourceStreamBuilders(parameters());
         filterBuilder = new ResourceAccessFilter(this);
     }
@@ -92,13 +92,13 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
      *
      * <p>This whitelist the ResourceQuery from any forgetful developer (me)
      *
-     * <p>i.e.In order to return any results, withRequiredStatus must be set
+     * @apiNote In order to return any results, withRequiredStatus must be set
      */
     private void assignStatusImpossibleWhiteList() {
         filters()
                 .set(
-                        new TermsQueryBuilder(Constants.STATUS_KEYWORD, UUID.randomUUID().toString())
-                                .queryName(Words.STATUS));
+                        new TermsQueryBuilder(STATUS_KEYWORD, UUID.randomUUID().toString())
+                                .queryName(STATUS));
     }
 
     public static ResourceParameterValidator builder() {
@@ -112,13 +112,25 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     @Override
     public AsType<ResourceParameter> sort() {
+        var sortString = parameters().get(SORT).toString();
+        if (missingIdentifier(sortString)) {
+            if (sortString.isBlank()) {
+                parameters().set(SORT, IDENTIFIER);
+            } else {
+                parameters().set(SORT, String.join(COMMA, sortString, IDENTIFIER));
+            }
+        }
         return parameters().get(SORT);
+    }
+
+    private static boolean missingIdentifier(String sortString) {
+        return !sortString.contains(IDENTIFIER);
     }
 
     @Override
     protected String[] exclude() {
         return Stream.concat(
-                        parameters().get(NODES_EXCLUDED).asSplitStream(Words.COMMA),
+                        parameters().get(NODES_EXCLUDED).asSplitStream(COMMA),
                         getExcludedFields().stream())
                 .distinct()
                 .toArray(String[]::new);
@@ -126,7 +138,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     @Override
     protected String[] include() {
-        return parameters().get(NODES_INCLUDED).split(Words.COMMA);
+        return parameters().get(NODES_INCLUDED).split(COMMA);
     }
 
     @Override
@@ -151,7 +163,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     @Override
     protected List<AggregationBuilder> builderAggregations() {
-        return Constants.RESOURCES_AGGREGATIONS;
+        return RESOURCES_AGGREGATIONS;
     }
 
     @JacocoGenerated // default value shouldn't happen, (developer have forgotten to handle a key)
@@ -161,8 +173,9 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         return switch (key) {
             case FUNDING -> streamBuilders.fundingQuery(key);
             case CRISTIN_IDENTIFIER ->
-                    streamBuilders.additionalIdentifierQuery(key, Words.CRISTIN_AS_TYPE);
-            case SCOPUS_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, Words.SCOPUS_AS_TYPE);
+                    streamBuilders.additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
+            case SCOPUS_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
+            case SCIENTIFIC_VALUE -> streamBuilders.scientificValueQuery(key);
             case TOP_LEVEL_ORGANIZATION, UNIT, UNIT_NOT -> streamBuilders.subUnitIncludedQuery(key);
             case UNIDENTIFIED_NORWEGIAN -> streamBuilders.unIdentifiedNorwegians(key);
             case UNIDENTIFIED_CONTRIBUTOR_INSTITUTION ->
@@ -177,9 +190,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     @Override
     public <R, Q extends Query<ResourceParameter>>
             HttpResponseFormatter<ResourceParameter> doSearch(OpenSearchClient<R, Q> queryClient) {
-        if (parameters().isPresent(UNIDENTIFIED_NORWEGIAN)) {
-            return super.doSearch(queryClient);
-        }
         return super.doSearch(queryClient);
     }
 
@@ -195,7 +205,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     @Override
     protected Map<String, String> facetPaths() {
-        return Constants.facetResourcePaths;
+        return facetResourcePaths;
     }
 
     @Override
@@ -208,23 +218,32 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     }
 
     private boolean isLookingForOneContributor() {
-        return parameters().get(CONTRIBUTOR).asSplitStream(Words.COMMA).count() == 1;
+        return parameters().get(CONTRIBUTOR).asSplitStream(COMMA).count() == 1;
     }
 
-    private void addPromotedPublications(
-            UserSettingsClient userSettingsClient, BoolQueryBuilder bq) {
+    private void addPromotedPublications(UserSettingsClient client, BoolQueryBuilder builder) {
 
-        var result = attempt(() -> userSettingsClient.doSearch(this));
+        var result = attempt(() -> client.doSearch(this));
         if (result.isSuccess()) {
-            var promotedPublications = result.get().promotedPublications();
-            for (int i = 0; i < promotedPublications.size(); i++) {
-                var qb =
-                        matchQuery(Constants.IDENTIFIER_KEYWORD, promotedPublications.get(i))
-                                // 4.14 down to 3.14 (PI)
-                                .boost(Words.PI + 1F - ((float) i / promotedPublications.size()));
-                bq.should(qb);
-            }
+            AtomicInteger i = new AtomicInteger();
+            var promoted = result.get().promotedPublications();
+            promoted.forEach(
+                    identifier ->
+                            builder.should(
+                                    matchQuery(IDENTIFIER_KEYWORD, identifier)
+                                            .boost(calculateBoostValue(i, promoted.size()))));
         }
+    }
+
+    /**
+     * Calculate the boost for a promoted publication. (4.14 down to 3.14 (PI))
+     *
+     * @param i index of the current publication
+     * @param size total number of promoted publications
+     * @return the boost value
+     */
+    private static float calculateBoostValue(AtomicInteger i, int size) {
+        return PI + 1F - ((float) i.getAndIncrement() / size);
     }
 
     @Override
@@ -273,8 +292,8 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                                 switch (key) {
                                     case FROM -> setValue(key.name(), DEFAULT_OFFSET);
                                     case SIZE -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
-                                    case SORT -> setValue(key.name(), Words.RELEVANCE_KEY_NAME);
-                                    case AGGREGATION -> setValue(key.name(), Words.NONE);
+                                    case SORT -> setValue(key.name(), DEFAULT_RESOURCE_SORT_FIELDS);
+                                    case AGGREGATION -> setValue(key.name(), NONE);
                                     default -> {
                                         /* ignore and continue */
                                     }
@@ -311,10 +330,10 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         @Override
         protected void validateSortKeyName(String name) {
             var nameSort = name.split(COLON_OR_SPACE);
-            if (nameSort.length == Words.NAME_AND_SORT_LENGTH) {
+            if (nameSort.length == NAME_AND_SORT_LENGTH) {
                 SortOrder.fromString(nameSort[1]);
             }
-            if (nameSort.length > Words.NAME_AND_SORT_LENGTH) {
+            if (nameSort.length > NAME_AND_SORT_LENGTH) {
                 throw new IllegalArgumentException(TOO_MANY_ARGUMENTS + name);
             }
 
@@ -345,19 +364,19 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         }
 
         private String identifierToCristinId(String decodedValue) {
-            return Arrays.stream(decodedValue.split(Words.COMMA))
-                    .map(value -> identifierToUri(value, Constants.CRISTIN_ORGANIZATION_PATH))
-                    .collect(Collectors.joining(Words.COMMA));
+            return Arrays.stream(decodedValue.split(COMMA))
+                    .map(value -> identifierToUri(value, CRISTIN_ORGANIZATION_PATH))
+                    .collect(Collectors.joining(COMMA));
         }
 
         private String identifierToCristinPersonId(String decodedValue) {
-            return Arrays.stream(decodedValue.split(Words.COMMA))
-                    .map(value -> identifierToUri(value, Constants.CRISTIN_PERSON_PATH))
-                    .collect(Collectors.joining(Words.COMMA));
+            return Arrays.stream(decodedValue.split(COMMA))
+                    .map(value -> identifierToUri(value, CRISTIN_PERSON_PATH))
+                    .collect(Collectors.joining(COMMA));
         }
 
         private String currentHost() {
-            return Words.HTTPS + searchQuery.getNvaSearchApiUri().getHost();
+            return HTTPS + searchQuery.getNvaSearchApiUri().getHost();
         }
 
         private String identifierToUri(String decodedValue, String uriPath) {
@@ -367,7 +386,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         }
 
         private boolean isUriId(String decodedValue) {
-            return decodedValue.startsWith(Words.HTTPS);
+            return decodedValue.startsWith(HTTPS);
         }
     }
 }

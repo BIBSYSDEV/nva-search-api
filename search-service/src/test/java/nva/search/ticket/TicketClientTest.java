@@ -75,14 +75,14 @@ import java.util.stream.Stream;
 @Testcontainers
 class TicketClientTest {
 
-    public static final String REQUEST_BASE_URL = "https://x.org/?size=21&";
+    public static final String REQUEST_BASE_URL = "https://x.org/?size=22&";
     public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 4;
     public static final String CURRENT_USERNAME = "1412322@20754.0.0.0";
     public static final URI testOrganizationId =
             URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0");
     private static final Logger logger = LoggerFactory.getLogger(TicketClientTest.class);
     private static final String TICKETS_VALID_TEST_URL_JSON = "ticket_datasource_urls.json";
-    private static final RequestInfo mockedRequestInfo = Mockito.mock(RequestInfo.class);
+    private static final RequestInfo mockedRequestInfo = mock(RequestInfo.class);
     private static TicketClient searchClient;
 
     @BeforeAll
@@ -93,7 +93,7 @@ class TicketClientTest {
         when(mockedRequestInfo.getTopLevelOrgCristinId())
                 .thenReturn(Optional.of(testOrganizationId));
         when(mockedRequestInfo.getUserName()).thenReturn(CURRENT_USERNAME);
-        when(mockedRequestInfo.getHeaders()).thenReturn(Map.of(UriRetriever.ACCEPT, Words.TEXT_CSV));
+        when(mockedRequestInfo.getHeaders()).thenReturn(Map.of(ACCEPT, Words.TEXT_CSV));
     }
 
     static Stream<Arguments> uriPagingProvider() {
@@ -113,34 +113,33 @@ class TicketClientTest {
 
     static Stream<Arguments> uriAccessRights() {
         return Stream.of(
-                createAccessRightArgument("", 16, "1412322@20754.0.0.0"),
-                createAccessRightArgument("", 2, "1492596@20754.0.0.0"),
+                createAccessRightArgument("owner=1412322@20754.0.0.0", 16, "1412322@20754.0.0.0"),
+                createAccessRightArgument("owner=1492596@20754.0.0.0", 2, "1492596@20754.0.0.0"),
                 createAccessRightArgument(
-                        "STATISTICS=true", 21, "1492596@20754.0.0.0", AccessRight.MANAGE_CUSTOMERS),
-                createAccessRightArgument("", 3, "1492596@20754.0.0.0", AccessRight.MANAGE_DOI),
+                        "STATISTICS=true", 22, "1492596@20754.0.0.0", MANAGE_CUSTOMERS),
+                createAccessRightArgument("", 3, "1492596@20754.0.0.0", MANAGE_DOI),
                 createAccessRightArgument("", 7, "1492596@20754.0.0.0", AccessRight.SUPPORT),
                 createAccessRightArgument(
-                        "", 14, "1492596@20754.0.0.0", AccessRight.MANAGE_PUBLISHING_REQUESTS),
-                createAccessRightArgument("", 0, "1485369@5923.0.0.0"),
-                createAccessRightArgument("", 1, "1485369@5923.0.0.0", AccessRight.MANAGE_DOI),
+                        "", 14, "1492596@20754.0.0.0", MANAGE_PUBLISHING_REQUESTS),
+                createAccessRightArgument("", 1, "1485369@5923.0.0.0", MANAGE_DOI),
                 createAccessRightArgument("", 6, "1485369@5923.0.0.0", AccessRight.SUPPORT),
-                createAccessRightArgument("", 13, "1485369@5923.0.0.0", AccessRight.MANAGE_PUBLISHING_REQUESTS),
+                createAccessRightArgument("", 13, "1485369@5923.0.0.0", MANAGE_PUBLISHING_REQUESTS),
                 createAccessRightArgument(
-                        "", 7, "1485369@5923.0.0.0", AccessRight.MANAGE_DOI, AccessRight.SUPPORT),
+                        "", 7, "1485369@5923.0.0.0", MANAGE_DOI, AccessRight.SUPPORT),
                 createAccessRightArgument(
                         "",
                         20,
                         "1485369@5923.0.0.0",
-                        AccessRight.MANAGE_DOI,
+                        MANAGE_DOI,
                         AccessRight.SUPPORT,
-                        AccessRight.MANAGE_PUBLISHING_REQUESTS),
+                        MANAGE_PUBLISHING_REQUESTS),
                 createAccessRightArgument(
                         "",
                         20,
                         "1412322@20754.0.0.0",
-                        AccessRight.MANAGE_DOI,
+                        MANAGE_DOI,
                         AccessRight.SUPPORT,
-                        AccessRight.MANAGE_PUBLISHING_REQUESTS));
+                        MANAGE_PUBLISHING_REQUESTS));
     }
 
     static Stream<URI> uriSortingProvider() {
@@ -196,7 +195,7 @@ class TicketClientTest {
     @Test
     void shouldCheckMapping() {
 
-        var mapping = indexingClient.getMapping(Words.TICKETS);
+        var mapping = indexingClient.getMapping(TICKETS);
         assertThat(mapping, is(notNullValue()));
         //            var topLevelOrgType = mapping.path("properties")
         //                .path(PUBLICATION)
@@ -230,7 +229,7 @@ class TicketClientTest {
     @Test
     void shouldCheckFacets() throws BadRequestException {
         var hostAddress = URI.create(container.getHttpHostAddress());
-        var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.name() + Words.EQUAL + Words.ALL);
+        var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.name() + EQUAL + ALL);
         var response1 =
                 TicketSearchQuery.builder()
                         .fromTestQueryParameters(queryToMapEntries(uri1))
@@ -253,10 +252,10 @@ class TicketClientTest {
         assertFalse(aggregations.isEmpty());
         assertThat(aggregations.size(), is(equalTo(EXPECTED_NUMBER_OF_AGGREGATIONS)));
 
-        assertThat(aggregations.get(Words.TYPE).size(), is(3));
-        assertThat(aggregations.get(Words.STATUS).getFirst().count(), is(12));
+        assertThat(aggregations.get(TYPE).size(), is(3));
+        assertThat(aggregations.get(STATUS).getFirst().count(), is(12));
         assertThat(aggregations.get(BY_USER_PENDING.asCamelCase()).size(), is(2));
-        assertThat(aggregations.get(Words.PUBLICATION_STATUS).size(), is(3));
+        assertThat(aggregations.get(PUBLICATION_STATUS).size(), is(3));
 
         assertNotNull(FROM.asLowerCase());
         assertEquals(TicketStatus.fromString("ewrdfg"), TicketStatus.NONE);
@@ -432,11 +431,11 @@ class TicketClientTest {
         final var accessRightList =
                 nonNull(accessRights) ? Arrays.asList(accessRights) : List.<AccessRight>of();
 
-        var mockedRequestInfoLocal = Mockito.mock(RequestInfo.class);
+        var mockedRequestInfoLocal = mock(RequestInfo.class);
         when(mockedRequestInfoLocal.getUserName()).thenReturn(userName);
         when(mockedRequestInfoLocal.getTopLevelOrgCristinId())
                 .thenReturn(Optional.of(testOrganizationId));
-        when(mockedRequestInfoLocal.userIsAuthorized(AccessRight.MANAGE_CUSTOMERS)).thenReturn(true);
+        when(mockedRequestInfoLocal.userIsAuthorized(MANAGE_CUSTOMERS)).thenReturn(true);
 
         when(mockedRequestInfoLocal.getAccessRights()).thenReturn(accessRightList);
 
@@ -455,6 +454,30 @@ class TicketClientTest {
         assertNotNull(pagedSearchResourceDto);
         assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
         assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedCount)));
+    }
+
+    @Test
+    void shouldThrowUnauthorizedWhenRequestingTicketsForOwnerWhichIsNotCurrentCustomer()
+            throws UnauthorizedException {
+        var currentUserUsername = randomString();
+        var ownerToSearch = randomString();
+
+        var mockedRequestInfoLocal = mock(RequestInfo.class);
+        when(mockedRequestInfoLocal.getUserName()).thenReturn(currentUserUsername);
+        when(mockedRequestInfoLocal.getTopLevelOrgCristinId())
+                .thenReturn(Optional.of(testOrganizationId));
+
+        assertThrows(
+                UnauthorizedException.class,
+                () ->
+                        TicketSearchQuery.builder()
+                                .withParameter(OWNER, ownerToSearch)
+                                .withRequiredParameters(FROM, SIZE)
+                                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                                .build()
+                                .withFilter()
+                                .fromRequestInfo(mockedRequestInfoLocal)
+                                .doSearch(searchClient));
     }
 
     @ParameterizedTest
@@ -525,7 +548,7 @@ class TicketClientTest {
     void uriRequestReturnsUnauthorized() throws UnauthorizedException {
         AtomicReference<URI> uri = new AtomicReference<>();
         uriSortingProvider().findFirst().ifPresent(uri::set);
-        var mockedRequestInfoLocal = Mockito.mock(RequestInfo.class);
+        var mockedRequestInfoLocal = mock(RequestInfo.class);
         when(mockedRequestInfoLocal.getAccessRights()).thenReturn(List.of());
         when(mockedRequestInfoLocal.getCurrentCustomer()).thenReturn(null);
         assertThrows(
