@@ -95,7 +95,7 @@ public final class Constants {
     public static final String UNIQUE_PUBLICATIONS = "unique_publications";
     public static final String CRISTIN_ORGANIZATION_PATH = "/cristin/organization/";
     public static final String CRISTIN_PERSON_PATH = "/cristin/person/";
-    public static final String EXCLUDED_FIELDS = "joinField";
+    public static final List<String> GLOBAL_EXCLUDED_FIELDS = List.of("joinField");
     public static final String DEFAULT_RESOURCE_SORT_FIELDS =
             RELEVANCE_KEY_NAME + COMMA + IDENTIFIER;
     public static final String IDENTIFIER_KEYWORD = jsonPath(IDENTIFIER, KEYWORD);

@@ -5,7 +5,7 @@ import static no.unit.nva.search.common.enums.PublicationStatus.DELETED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
 import static no.unit.nva.search.common.enums.PublicationStatus.UNPUBLISHED;
-import static no.unit.nva.search.resource.Constants.EXCLUDED_FIELDS;
+import static no.unit.nva.search.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
 import static no.unit.nva.search.resource.ResourceClient.defaultClient;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
@@ -67,7 +67,7 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
         return ResourceSearchQuery.builder()
                 .fromRequestInfo(requestInfo)
                 .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
-                .withAlwaysExcludedFields(EXCLUDED_FIELDS)
+                .withAlwaysExcludedFields(GLOBAL_EXCLUDED_FIELDS)
                 .validate()
                 .build()
                 .withFilter()
