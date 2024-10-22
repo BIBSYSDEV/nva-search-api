@@ -183,6 +183,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
             case CRISTIN_IDENTIFIER ->
                     streamBuilders.additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
             case SCOPUS_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
+            case SCIENTIFIC_VALUE -> streamBuilders.scientificValueQuery(key);
             case TOP_LEVEL_ORGANIZATION, UNIT, UNIT_NOT -> streamBuilders.subUnitIncludedQuery(key);
             case UNIDENTIFIED_NORWEGIAN -> streamBuilders.unIdentifiedNorwegians(key);
             case UNIDENTIFIED_CONTRIBUTOR_INSTITUTION ->
