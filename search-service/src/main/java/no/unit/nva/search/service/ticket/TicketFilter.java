@@ -4,6 +4,7 @@ import static no.unit.nva.search.model.constant.Words.POST_FILTER;
 import static no.unit.nva.search.service.ticket.Constants.OWNER_USERNAME;
 import static no.unit.nva.search.service.ticket.Constants.TYPE_KEYWORD;
 import static no.unit.nva.search.service.ticket.TicketParameter.ORGANIZATION_ID;
+import static no.unit.nva.search.service.ticket.TicketParameter.OWNER;
 import static no.unit.nva.search.service.ticket.TicketParameter.STATISTICS;
 
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;

@@ -9,12 +9,20 @@ import static no.unit.nva.search.model.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search.model.constant.Words.COMMA;
 import static no.unit.nva.search.model.constant.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.search.model.constant.Words.HTTPS;
+import static no.unit.nva.search.model.constant.Words.IDENTIFIER;
 import static no.unit.nva.search.model.constant.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.search.model.constant.Words.NONE;
 import static no.unit.nva.search.model.constant.Words.PI;
-import static no.unit.nva.search.model.constant.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.search.model.constant.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.search.model.constant.Words.STATUS;
+import static no.unit.nva.search.service.resource.Constants.CRISTIN_ORGANIZATION_PATH;
+import static no.unit.nva.search.service.resource.Constants.CRISTIN_PERSON_PATH;
+import static no.unit.nva.search.service.resource.Constants.DEFAULT_RESOURCE_SORT_FIELDS;
+import static no.unit.nva.search.service.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
+import static no.unit.nva.search.service.resource.Constants.IDENTIFIER_KEYWORD;
+import static no.unit.nva.search.service.resource.Constants.RESOURCES_AGGREGATIONS;
+import static no.unit.nva.search.service.resource.Constants.STATUS_KEYWORD;
+import static no.unit.nva.search.service.resource.Constants.facetResourcePaths;
 import static no.unit.nva.search.service.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.service.resource.ResourceParameter.CONTRIBUTOR;
 import static no.unit.nva.search.service.resource.ResourceParameter.FROM;
@@ -26,7 +34,6 @@ import static no.unit.nva.search.service.resource.ResourceParameter.RESOURCE_PAR
 import static no.unit.nva.search.service.resource.ResourceParameter.SEARCH_AFTER;
 import static no.unit.nva.search.service.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.service.resource.ResourceParameter.SORT;
-import static no.unit.nva.search.service.resource.ResourceParameter.UNIDENTIFIED_NORWEGIAN;
 import static no.unit.nva.search.service.resource.ResourceSort.INVALID;
 
 import static nva.commons.core.attempt.Try.attempt;
@@ -61,6 +68,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

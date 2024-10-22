@@ -1,15 +1,14 @@
 package no.unit.nva.search.model.records;
 
-import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
-import static no.unit.nva.constants.ErrorMessages.MISSING_IDENTIFIER_IN_RESOURCE;
-import static no.unit.nva.constants.ErrorMessages.MISSING_INDEX_NAME_IN_RESOURCE;
-import static no.unit.nva.constants.Words.BODY;
-import static no.unit.nva.constants.Words.CONSUMPTION_ATTRIBUTES;
-import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
-import static no.unit.nva.constants.Words.RESOURCES;
-import static no.unit.nva.constants.Words.TICKETS;
-import static no.unit.nva.indexingclient.models.Constants.SHARD_ID;
-
+import static no.unit.nva.search.model.constant.Defaults.DEFAULT_SHARD_ID;
+import static no.unit.nva.search.model.constant.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.search.model.constant.ErrorMessages.MISSING_IDENTIFIER_IN_RESOURCE;
+import static no.unit.nva.search.model.constant.ErrorMessages.MISSING_INDEX_NAME_IN_RESOURCE;
+import static no.unit.nva.search.model.constant.Words.BODY;
+import static no.unit.nva.search.model.constant.Words.CONSUMPTION_ATTRIBUTES;
+import static no.unit.nva.search.model.constant.Words.IMPORT_CANDIDATES_INDEX;
+import static no.unit.nva.search.model.constant.Words.RESOURCES;
+import static no.unit.nva.search.model.constant.Words.TICKETS;
 import static nva.commons.core.attempt.Try.attempt;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

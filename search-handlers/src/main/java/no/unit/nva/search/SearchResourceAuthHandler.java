@@ -5,11 +5,12 @@ import static no.unit.nva.search.model.enums.PublicationStatus.DELETED;
 import static no.unit.nva.search.model.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.model.enums.PublicationStatus.PUBLISHED_METADATA;
 import static no.unit.nva.search.model.enums.PublicationStatus.UNPUBLISHED;
-import static no.unit.nva.search.service.resource.Constants.EXCLUDED_FIELDS;
+import static no.unit.nva.search.service.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
 import static no.unit.nva.search.service.resource.ResourceClient.defaultClient;
 import static no.unit.nva.search.service.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.service.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.service.resource.ResourceParameter.SIZE;
+import static no.unit.nva.search.service.resource.ResourceParameter.SORT;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;

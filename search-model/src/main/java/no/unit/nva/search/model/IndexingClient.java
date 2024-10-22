@@ -1,10 +1,10 @@
 package no.unit.nva.search.model;
 
-import static no.unit.nva.search.model.records.Constants.SHARD_ID;
-import static no.unit.nva.search.model.records.RestHighLevelClientWrapper.defaultRestHighLevelClientWrapper;
+import static no.unit.nva.search.model.constant.Defaults.DEFAULT_SHARD_ID;
 import static no.unit.nva.search.model.constant.Words.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.search.model.constant.Words.RESOURCES;
 import static no.unit.nva.search.model.jwt.CognitoAuthenticator.prepareWithCognitoCredentials;
+import static no.unit.nva.search.model.records.RestHighLevelClientWrapper.defaultRestHighLevelClientWrapper;
 
 import static nva.commons.core.attempt.Try.attempt;
 
@@ -13,10 +13,10 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.UnmodifiableIterator;
 
 import no.unit.nva.commons.json.JsonUtils;
+import no.unit.nva.search.model.jwt.CachedJwtProvider;
 import no.unit.nva.search.model.records.AuthenticatedOpenSearchClientWrapper;
 import no.unit.nva.search.model.records.IndexDocument;
 import no.unit.nva.search.model.records.RestHighLevelClientWrapper;
-import no.unit.nva.search.model.jwt.CachedJwtProvider;
 
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.Try;

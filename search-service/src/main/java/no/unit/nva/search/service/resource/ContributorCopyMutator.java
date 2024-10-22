@@ -1,9 +1,8 @@
-package no.unit.nva.search.resource;
+package no.unit.nva.search.service.resource;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import no.unit.nva.search.common.records.JsonNodeMutator;
+import no.unit.nva.search.model.records.JsonNodeMutator;
 
 public class ContributorCopyMutator implements JsonNodeMutator {
 
@@ -16,7 +15,7 @@ public class ContributorCopyMutator implements JsonNodeMutator {
         var contributorsPreview = source.path(ENTITY_DESCRIPTION).path(CONTRIBUTORS_PREVIEW);
         if (!contributorsPreview.isMissingNode()) {
             var entityDescription = (ObjectNode) source.path(ENTITY_DESCRIPTION);
-            entityDescription.put(CONTRIBUTORS, contributorsPreview);
+            entityDescription.putIfAbsent(CONTRIBUTORS, contributorsPreview);
         }
         return source;
     }

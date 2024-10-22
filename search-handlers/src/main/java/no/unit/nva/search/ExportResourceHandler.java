@@ -8,6 +8,7 @@ import static no.unit.nva.search.service.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.service.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.service.resource.ResourceParameter.NODES_INCLUDED;
 import static no.unit.nva.search.service.resource.ResourceParameter.SIZE;
+import static no.unit.nva.search.service.resource.ResourceParameter.SORT;
 
 import com.amazonaws.services.lambda.runtime.Context;
 

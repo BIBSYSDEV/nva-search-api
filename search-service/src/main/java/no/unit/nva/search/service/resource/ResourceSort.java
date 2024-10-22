@@ -7,6 +7,7 @@ import static no.unit.nva.search.model.constant.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.search.model.constant.Words.KEYWORD;
 import static no.unit.nva.search.model.constant.Words.YEAR;
 
+import static no.unit.nva.search.service.resource.Constants.IDENTIFIER_KEYWORD;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 
 import no.unit.nva.search.model.constant.Words;
