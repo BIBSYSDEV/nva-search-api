@@ -143,10 +143,14 @@ public final class Constants {
                     CONTRIBUTORS_IDENTITY_ID);
     public static final String CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD =
             jsonPath(ENTITY_CONTRIBUTORS, IDENTITY, ORC_ID, KEYWORD);
+    public static final String SCIENTIFIC_SERIES =
+            jsonPath(ENTITY_PUBLICATION_CONTEXT, SERIES, SCIENTIFIC_VALUE, KEYWORD);
+    public static final String SCIENTIFIC_PUBLISHER =
+            jsonPath(ENTITY_PUBLICATION_CONTEXT, PUBLISHER, SCIENTIFIC_VALUE, KEYWORD);
+    public static final String SCIENTIFIC_OTHER =
+            jsonPath(ENTITY_PUBLICATION_CONTEXT, SCIENTIFIC_VALUE, KEYWORD);
     public static final String SCIENTIFIC_LEVEL_SEARCH_FIELD =
-            multipleFields(
-                    jsonPath(ENTITY_PUBLICATION_CONTEXT, PUBLISHER, SCIENTIFIC_VALUE, KEYWORD),
-                    jsonPath(ENTITY_PUBLICATION_CONTEXT, SCIENTIFIC_VALUE, KEYWORD));
+            multipleFields(SCIENTIFIC_SERIES, SCIENTIFIC_PUBLISHER, SCIENTIFIC_OTHER);
     public static final String COURSE_CODE_KEYWORD =
             jsonPath(ENTITY_PUBLICATION_CONTEXT, COURSE, CODE, KEYWORD);
     public static final String ENTITY_DESCRIPTION_PUBLICATION_PAGES =
