@@ -159,8 +159,7 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
         return UriWrapper.fromUri(decodedValue).getLastPathElement();
     }
 
-    private <K extends Enum<K> & ParameterKey<K>> String decodedValue(
-            QueryKeys<K> parameters, K key) {
+    private String decodedValue(QueryKeys<K> parameters, K key) {
         return key.valueEncoding() == ValueEncoding.NONE
                 ? parameters.get(key).toString()
                 : decodeUTF(parameters.get(key).toString());
