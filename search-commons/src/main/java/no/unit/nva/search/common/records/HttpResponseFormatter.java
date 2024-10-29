@@ -3,8 +3,11 @@ package no.unit.nva.search.common.records;
 import static com.google.common.net.MediaType.CSV_UTF_8;
 
 import static no.unit.nva.constants.Words.COMMA;
+import static no.unit.nva.search.common.constant.Functions.decodeUTF;
 import static no.unit.nva.search.common.constant.Functions.hasContent;
+import static no.unit.nva.search.common.enums.ParameterKind.FUZZY_KEYWORD;
 
+import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 
 import static java.util.Objects.nonNull;
@@ -16,6 +19,9 @@ import no.unit.nva.search.common.AggregationFormat;
 import no.unit.nva.search.common.QueryKeys;
 import no.unit.nva.search.common.csv.ResourceCsvTransformer;
 import no.unit.nva.search.common.enums.ParameterKey;
+import no.unit.nva.search.common.enums.ValueEncoding;
+
+import nva.commons.core.paths.UriWrapper;
 
 import java.net.URI;
 import java.util.List;
@@ -55,7 +61,23 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
         this.offset = offset;
         this.size = size;
         this.facetPaths = facetPaths;
+        trimUriToIdentifierWhereApplicable(requestParameter);
         this.queryKeys = requestParameter;
+    }
+
+    private void trimUriToIdentifierWhereApplicable(QueryKeys<K> requestParameter) {
+        if (nonNull(requestParameter)) {
+            requestParameter
+                    .getSearchKeys()
+                    .filter(this::isFuzzyKeyword)
+                    .forEach(
+                            key -> {
+                                var value = decodedValue(requestParameter, key);
+                                if (isUri(value)) {
+                                    requestParameter.set(key, uriToIdentifier(value));
+                                }
+                            });
+        }
     }
 
     public HttpResponseFormatter(SwsResponse response, MediaType mediaType) {
@@ -123,6 +145,25 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
         var searchAfter = Words.SEARCH_AFTER.toLowerCase(Locale.getDefault());
         requestParameter.put(searchAfter, sortParameter);
         return fromUri(gatewayUri).addQueryParameters(requestParameter).getUri();
+    }
+
+    private boolean isFuzzyKeyword(K key) {
+        return FUZZY_KEYWORD.equals(key.fieldType());
+    }
+
+    private boolean isUri(String decodedValue) {
+        return attempt(() -> URI.create(decodedValue).toURL()).isSuccess();
+    }
+
+    private String uriToIdentifier(String decodedValue) {
+        return UriWrapper.fromUri(decodedValue).getLastPathElement();
+    }
+
+    private <K extends Enum<K> & ParameterKey<K>> String decodedValue(
+            QueryKeys<K> parameters, K key) {
+        return key.valueEncoding() == ValueEncoding.NONE
+                ? parameters.get(key).toString()
+                : decodeUTF(parameters.get(key).toString());
     }
 
     @Override
