@@ -8,16 +8,16 @@ public class OtherIdentifiers {
     @JsonProperty("scopus")
     private List<String> scopus;
 
-    @JsonProperty("scopus")
+    @JsonProperty("cristin")
     private List<String> cristin;
 
-    @JsonProperty("scopus")
+    @JsonProperty("handle")
     private List<String> handle;
 
-    @JsonProperty("scopus")
+    @JsonProperty("issn")
     private List<String> issn;
 
-    @JsonProperty("scopus")
+    @JsonProperty("isbn")
     private List<String> isbn;
 
 }

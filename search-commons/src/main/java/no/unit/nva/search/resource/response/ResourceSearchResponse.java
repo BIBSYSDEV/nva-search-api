@@ -30,7 +30,7 @@ public class ResourceSearchResponse {
     private List<String> alternativeTitles;
 
     @JsonProperty("publicationDate")
-    private String publicationDate;
+    private PublicationDate publicationDate;
 
     @JsonProperty("contributorsPreview")
     private List<Contributor> contributorsPreview;
