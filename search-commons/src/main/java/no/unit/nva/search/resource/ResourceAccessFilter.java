@@ -28,10 +28,11 @@ import java.net.URI;
 import java.util.Arrays;
 
 /**
- * FilterBuilder for ResourceSearchQuery.
+ * ResourceAccessFilter is a class that filters tickets based on access rights.
  *
  * @author Stig Norland
  * @author Sondre Vestad
+ * @author Lars-Olav Vågene
  * @see <a
  *     href="https://github.com/BIBSYSDEV/nva-identity-service/blob/main/user-access-handlers/src/main/java/no/unit/nva/handlers/data/DefaultRoleSource.java">DefaultRoleSource</a>
  *     Definitions of roles

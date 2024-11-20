@@ -27,6 +27,11 @@ public class QueryFilter {
         return boolQueryBuilder;
     }
 
+    /**
+     * Clears filter and sets new filters.
+     *
+     * @param filters QueryBuilder
+     */
     public void set(QueryBuilder... filters) {
         this.filters.clear();
         Arrays.stream(filters).forEach(this::add);

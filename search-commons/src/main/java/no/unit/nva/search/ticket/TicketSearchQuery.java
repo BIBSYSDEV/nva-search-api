@@ -72,12 +72,12 @@ import java.util.stream.Stream;
  */
 public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
 
-    private final TicketFilter filterBuilder;
+    private final TicketAccessFilter accessFilter;
 
     private TicketSearchQuery() {
         super();
         applyImpossibleWhiteListFilters();
-        filterBuilder = new TicketFilter(this);
+        accessFilter = new TicketAccessFilter(this);
     }
 
     public static TicketParameterValidator builder() {
@@ -146,7 +146,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
 
     @Override
     protected List<AggregationBuilder> builderAggregations() {
-        return getTicketsAggregations(filterBuilder.getCurrentUser());
+        return getTicketsAggregations(accessFilter.getCurrentUser());
     }
 
     @JacocoGenerated // default value shouldn't happen, (developer have forgotten to handle a key)
@@ -170,15 +170,15 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
                         .buildQuery(key, parameters().get(key).toString());
     }
 
-    public TicketFilter withFilter() {
-        return filterBuilder;
+    public TicketAccessFilter withFilter() {
+        return accessFilter;
     }
 
     private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByAssignee() {
         var searchByUserName =
                 parameters().isPresent(BY_USER_PENDING) // override assignee if <user pending> is
                         // used
-                        ? filterBuilder.getCurrentUser()
+                        ? accessFilter.getCurrentUser()
                         : parameters().get(ASSIGNEE).toString();
 
         var builtQuery =

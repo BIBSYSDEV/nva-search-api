@@ -29,16 +29,19 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * TicketFilter is a class that filters tickets.
+ * TicketAccessFilter is a class that filters tickets based on access rights.
  *
  * @author Stig Norland
+ * @author Sondre Vestad
+ * @author Lars-Olav Vågene
+ * @author Kir Truhacev
  */
-public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
+public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
 
     private final TicketSearchQuery ticketSearchQuery;
     private String currentUser;
 
-    public TicketFilter(TicketSearchQuery ticketSearchQuery) {
+    public TicketAccessFilter(TicketSearchQuery ticketSearchQuery) {
         this.ticketSearchQuery = ticketSearchQuery;
         this.ticketSearchQuery.filters().set();
     }
@@ -122,7 +125,7 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
      * @param userName current user
      * @return TicketQuery (builder pattern)
      */
-    public TicketFilter userAndTicketTypes(String userName, TicketType... ticketTypes) {
+    public TicketAccessFilter userAndTicketTypes(String userName, TicketType... ticketTypes) {
         this.currentUser = userName;
         var ticketTypeList = Arrays.stream(ticketTypes).map(TicketType::toString).toList();
         var disMax =
@@ -136,7 +139,7 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
         return this;
     }
 
-    public TicketFilter excludeTicketTypes(TicketType... ticketTypes) {
+    public TicketAccessFilter excludeTicketTypes(TicketType... ticketTypes) {
         var ticketTypeList = Arrays.stream(ticketTypes).map(TicketType::toString).toList();
         var filter =
                 QueryBuilders.boolQuery()
@@ -155,7 +158,7 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
      * @param organization uri of publisher
      * @return ResourceQuery (builder pattern)
      */
-    public TicketFilter organization(URI organization) {
+    public TicketAccessFilter organization(URI organization) {
         final var organisationId =
                 new KeywordQuery<TicketParameter>()
                         .buildQuery(ORGANIZATION_ID, organization.toString())
