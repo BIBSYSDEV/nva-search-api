@@ -1,6 +1,5 @@
 package no.unit.nva.search.common;
 
-import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.constants.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.constants.ErrorMessages.validQueryParameterNamesMessage;
 import static no.unit.nva.constants.Words.ALL;
@@ -185,7 +184,7 @@ public abstract class ParameterValidator<
 
     /** Adds query and path parameters from requestInfo. */
     public ParameterValidator<K, Q> fromRequestInfo(RequestInfo requestInfo) {
-        searchQuery.setMediaType(requestInfo.getHeaders().get(ACCEPT));
+        searchQuery.setMediaType(ContentTypeUtils.extractMimeTypeFromRequestInfo(requestInfo));
         var uri = URI.create(HTTPS + requestInfo.getDomainName() + requestInfo.getPath());
         searchQuery.setAccessRights(requestInfo.getAccessRights());
         searchQuery.setNvaSearchApiUri(uri);

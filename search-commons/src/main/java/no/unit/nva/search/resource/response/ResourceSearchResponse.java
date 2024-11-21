@@ -1,43 +1,118 @@
 package no.unit.nva.search.resource.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
-public class ResourceSearchResponse {
+public record ResourceSearchResponse(
+        String id,
+        String type,
+        OtherIdentifiers otherIdentifiers,
+        RecordMetadata recordMetadata,
+        String mainTitle,
+        @JsonProperty("abstract") String mainLanguageAbstract,
+        String description,
+        List<String> alternativeTitles,
+        PublicationDate publicationDate,
+        List<Contributor> contributorsPreview,
+        int contributorsCount,
+        PublishingDetails publishingDetails) {
 
-    @JsonProperty("id")
-    private String id;
+    public static final class Builder {
 
-    @JsonProperty("type")
-    private String type;
+        private String id;
+        private String type;
+        private OtherIdentifiers otherIdentifiers;
+        private RecordMetadata recordMetadata;
+        private String mainTitle;
+        private String mainLanguageAbstract;
+        private String description;
+        private List<String> alternativeTitles;
+        private PublicationDate publicationDate;
+        private List<Contributor> contributorsPreview;
+        private int contributorsCount;
+        private PublishingDetails publishingDetails;
 
-    @JsonProperty("otherIdentifiers")
-    private OtherIdentifiers otherIdentifiers;
+        public Builder() {}
 
-    @JsonProperty("recordMetadata")
-    private RecordMetadata recordMetadata;
+        public static Builder aResourceSearchResponse() {
+            return new Builder();
+        }
 
-    @JsonProperty("mainTitle")
-    private String mainTitle;
+        public Builder withId(String id) {
+            this.id = id;
+            return this;
+        }
 
-    @JsonProperty("abstract")
-    private String mainLanguageAbstract;
+        public Builder withType(String type) {
+            this.type = type;
+            return this;
+        }
 
-    @JsonProperty("description")
-    private String description;
+        public Builder withOtherIdentifiers(OtherIdentifiers otherIdentifiers) {
+            this.otherIdentifiers = otherIdentifiers;
+            return this;
+        }
 
-    @JsonProperty("alternativeTitles")
-    private List<String> alternativeTitles;
+        public Builder withRecordMetadata(RecordMetadata recordMetadata) {
+            this.recordMetadata = recordMetadata;
+            return this;
+        }
 
-    @JsonProperty("publicationDate")
-    private PublicationDate publicationDate;
+        public Builder withMainTitle(String mainTitle) {
+            this.mainTitle = mainTitle;
+            return this;
+        }
 
-    @JsonProperty("contributorsPreview")
-    private List<Contributor> contributorsPreview;
+        public Builder withMainLanguageAbstract(String mainLanguageAbstract) {
+            this.mainLanguageAbstract = mainLanguageAbstract;
+            return this;
+        }
 
-    @JsonProperty("contributorsCount")
-    private int contributorsCount;
+        public Builder withDescription(String description) {
+            this.description = description;
+            return this;
+        }
 
-    @JsonProperty("publishingDetails")
-    private PublishingDetails publishingDetails;
+        public Builder withAlternativeTitles(List<String> alternativeTitles) {
+            this.alternativeTitles = alternativeTitles;
+            return this;
+        }
+
+        public Builder withPublicationDate(PublicationDate publicationDate) {
+            this.publicationDate = publicationDate;
+            return this;
+        }
+
+        public Builder withContributorsPreview(List<Contributor> contributorsPreview) {
+            this.contributorsPreview = contributorsPreview;
+            return this;
+        }
+
+        public Builder withContributorsCount(int contributorsCount) {
+            this.contributorsCount = contributorsCount;
+            return this;
+        }
+
+        public Builder withPublishingDetails(PublishingDetails publishingDetails) {
+            this.publishingDetails = publishingDetails;
+            return this;
+        }
+
+        public ResourceSearchResponse build() {
+            return new ResourceSearchResponse(
+                    id,
+                    type,
+                    otherIdentifiers,
+                    recordMetadata,
+                    mainTitle,
+                    mainLanguageAbstract,
+                    description,
+                    alternativeTitles,
+                    publicationDate,
+                    contributorsPreview,
+                    contributorsCount,
+                    publishingDetails);
+        }
+    }
 }
