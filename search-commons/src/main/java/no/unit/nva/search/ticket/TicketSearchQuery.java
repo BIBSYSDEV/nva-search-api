@@ -163,9 +163,9 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
 
     private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByStatus(
             TicketParameter key) {
+        // we cannot query status New here, it is done together with assignee.
         return hasAssigneeAndOnlyStatusNew()
-                ? Stream.empty() // we cannot query status New here, it is done together with
-                // assignee.
+                ? Stream.empty()
                 : new KeywordQuery<TicketParameter>()
                         .buildQuery(key, parameters().get(key).toString());
     }
@@ -176,8 +176,8 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
 
     private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByAssignee() {
         var searchByUserName =
-                parameters().isPresent(BY_USER_PENDING) // override assignee if <user pending> is
-                        // used
+                // override assignee if <user pending> is used
+                parameters().isPresent(BY_USER_PENDING)
                         ? accessFilter.getCurrentUser()
                         : parameters().get(ASSIGNEE).toString();
 
@@ -194,11 +194,14 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
 
     private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByOrganization(
             TicketParameter key) {
-        var searchKey = parameters().get(EXCLUDE_SUBUNITS).asBoolean() ? EXCLUDE_SUBUNITS : key;
-
-        return new KeywordQuery<TicketParameter>()
-                .buildQuery(searchKey, parameters().get(key).toString())
-                .map(query -> Map.entry(key, query.getValue()));
+        if (parameters().get(EXCLUDE_SUBUNITS).asBoolean()) {
+            return new KeywordQuery<TicketParameter>()
+                    .buildQuery(EXCLUDE_SUBUNITS, parameters().get(key).toString())
+                    .map(query -> Map.entry(key, query.getValue()));
+        } else {
+            return new AcrossFieldsQuery<TicketParameter>()
+                    .buildQuery(key, parameters().get(key).toString());
+        }
     }
 
     private boolean hasStatusNew() {

@@ -26,6 +26,7 @@ import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.apigateway.AccessRight.MANAGE_CUSTOMERS;
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
 import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
+import static nva.commons.apigateway.AccessRight.SUPPORT;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 
@@ -120,29 +121,28 @@ class TicketClientTest {
                 createAccessRightArgument("owner=1412322@20754.0.0.0", 16, "1412322@20754.0.0.0"),
                 createAccessRightArgument("owner=1492596@20754.0.0.0", 2, "1492596@20754.0.0.0"),
                 createAccessRightArgument(
-                        "STATISTICS=true", 22, "1492596@20754.0.0.0", MANAGE_CUSTOMERS),
+                        "STATISTICS=true", 20, "1492596@20754.0.0.0", MANAGE_CUSTOMERS),
                 createAccessRightArgument("", 3, "1492596@20754.0.0.0", MANAGE_DOI),
-                createAccessRightArgument("", 7, "1492596@20754.0.0.0", AccessRight.SUPPORT),
+                createAccessRightArgument("", 7, "1492596@20754.0.0.0", SUPPORT),
                 createAccessRightArgument(
                         "", 14, "1492596@20754.0.0.0", MANAGE_PUBLISHING_REQUESTS),
                 createAccessRightArgument("", 1, "1485369@5923.0.0.0", MANAGE_DOI),
-                createAccessRightArgument("", 6, "1485369@5923.0.0.0", AccessRight.SUPPORT),
+                createAccessRightArgument("", 6, "1485369@5923.0.0.0", SUPPORT),
                 createAccessRightArgument("", 13, "1485369@5923.0.0.0", MANAGE_PUBLISHING_REQUESTS),
-                createAccessRightArgument(
-                        "", 7, "1485369@5923.0.0.0", MANAGE_DOI, AccessRight.SUPPORT),
+                createAccessRightArgument("", 7, "1485369@5923.0.0.0", MANAGE_DOI, SUPPORT),
                 createAccessRightArgument(
                         "",
                         20,
                         "1485369@5923.0.0.0",
                         MANAGE_DOI,
-                        AccessRight.SUPPORT,
+                        SUPPORT,
                         MANAGE_PUBLISHING_REQUESTS),
                 createAccessRightArgument(
                         "",
                         20,
                         "1412322@20754.0.0.0",
                         MANAGE_DOI,
-                        AccessRight.SUPPORT,
+                        SUPPORT,
                         MANAGE_PUBLISHING_REQUESTS));
     }
 
@@ -241,11 +241,8 @@ class TicketClientTest {
                         .withRequiredParameters(FROM, SIZE)
                         .build()
                         .withFilter()
-                        .userAndTicketTypes(
-                                CURRENT_USERNAME,
-                                DOI_REQUEST,
-                                PUBLISHING_REQUEST,
-                                GENERAL_SUPPORT_CASE)
+                        .user(CURRENT_USERNAME)
+                        .includedTypes(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
                         .apply()
                         .doSearch(searchClient);
 
@@ -262,8 +259,8 @@ class TicketClientTest {
         assertThat(aggregations.get(PUBLICATION_STATUS).size(), is(3));
 
         assertNotNull(FROM.asLowerCase());
-        assertEquals(TicketStatus.fromString("ewrdfg"), TicketStatus.NONE);
-        assertEquals(TicketType.fromString("wre"), TicketType.NONE);
+        assertEquals(TicketStatus.NONE, TicketStatus.fromString("ewrdfg"));
+        assertEquals(TicketType.NONE, TicketType.fromString("wre"));
     }
 
     @Test
@@ -277,11 +274,8 @@ class TicketClientTest {
                         .withRequiredParameters(FROM, SIZE, SORT)
                         .build()
                         .withFilter()
-                        .userAndTicketTypes(
-                                CURRENT_USERNAME,
-                                DOI_REQUEST,
-                                PUBLISHING_REQUEST,
-                                GENERAL_SUPPORT_CASE)
+                        .user(CURRENT_USERNAME)
+                        .includedTypes(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
                         .organization(testOrganizationId)
                         .apply()
                         .doSearch(searchClient);
@@ -301,11 +295,8 @@ class TicketClientTest {
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
                         .withFilter()
-                        .userAndTicketTypes(
-                                CURRENT_USERNAME,
-                                DOI_REQUEST,
-                                PUBLISHING_REQUEST,
-                                GENERAL_SUPPORT_CASE)
+                        .user(CURRENT_USERNAME)
+                        .includedTypes(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
                         .organization(testOrganizationId)
                         .apply()
                         .doSearch(searchClient)
@@ -324,11 +315,8 @@ class TicketClientTest {
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
                         .withFilter()
-                        .userAndTicketTypes(
-                                CURRENT_USERNAME,
-                                DOI_REQUEST,
-                                PUBLISHING_REQUEST,
-                                GENERAL_SUPPORT_CASE)
+                        .user(CURRENT_USERNAME)
+                        .includedTypes(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
                         .organization(testOrganizationId)
                         .apply()
                         .doSearch(searchClient)
@@ -351,11 +339,8 @@ class TicketClientTest {
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
                         .withFilter()
-                        .userAndTicketTypes(
-                                CURRENT_USERNAME,
-                                DOI_REQUEST,
-                                PUBLISHING_REQUEST,
-                                GENERAL_SUPPORT_CASE)
+                        .user(CURRENT_USERNAME)
+                        .includedTypes(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
                         .organization(testOrganizationId)
                         .apply()
                         .doSearch(searchClient)
@@ -376,11 +361,8 @@ class TicketClientTest {
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
                         .withFilter()
-                        .userAndTicketTypes(
-                                CURRENT_USERNAME,
-                                DOI_REQUEST,
-                                PUBLISHING_REQUEST,
-                                GENERAL_SUPPORT_CASE)
+                        .user(CURRENT_USERNAME)
+                        .includedTypes(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
                         .organization(testOrganizationId)
                         .apply()
                         .doSearch(searchClient);
@@ -404,11 +386,8 @@ class TicketClientTest {
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
                         .withFilter()
-                        .userAndTicketTypes(
-                                CURRENT_USERNAME,
-                                DOI_REQUEST,
-                                PUBLISHING_REQUEST,
-                                GENERAL_SUPPORT_CASE)
+                        .user(CURRENT_USERNAME)
+                        .includedTypes(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
                         .organization(testOrganizationId)
                         .apply()
                         .doSearch(searchClient);
@@ -432,15 +411,14 @@ class TicketClientTest {
             URI uri, Integer expectedCount, String userName, AccessRight... accessRights)
             throws ApiGatewayException {
 
-        final var accessRightList =
-                nonNull(accessRights) ? Arrays.asList(accessRights) : List.<AccessRight>of();
+        var accessRightList =
+                new java.util.ArrayList<>(
+                        nonNull(accessRights) ? Arrays.asList(accessRights) : List.of());
 
         var mockedRequestInfoLocal = mock(RequestInfo.class);
         when(mockedRequestInfoLocal.getUserName()).thenReturn(userName);
         when(mockedRequestInfoLocal.getTopLevelOrgCristinId())
                 .thenReturn(Optional.of(testOrganizationId));
-        when(mockedRequestInfoLocal.userIsAuthorized(MANAGE_CUSTOMERS)).thenReturn(true);
-
         when(mockedRequestInfoLocal.getAccessRights()).thenReturn(accessRightList);
 
         var response =
@@ -519,12 +497,9 @@ class TicketClientTest {
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
                         .withFilter()
-                        .userAndTicketTypes(
-                                CURRENT_USERNAME,
-                                DOI_REQUEST,
-                                PUBLISHING_REQUEST,
-                                GENERAL_SUPPORT_CASE)
                         .organization(testOrganizationId)
+                        .user(CURRENT_USERNAME)
+                        .includedTypes(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
                         .apply()
                         .doSearch(searchClient);
 

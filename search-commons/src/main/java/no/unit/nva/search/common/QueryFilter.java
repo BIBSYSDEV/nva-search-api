@@ -49,6 +49,6 @@ public class QueryFilter {
     public String toString() {
         return filters.values().stream()
                 .map(QueryBuilder::toString)
-                .collect(Collectors.joining(COMMA));
+                .collect(Collectors.joining(COMMA, "{", "}"));
     }
 }
