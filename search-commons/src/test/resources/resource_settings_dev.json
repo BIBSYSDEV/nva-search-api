@@ -1,4 +1,9 @@
 {
+  "mapping": {
+    "total_fields": {
+      "limit": "1100"
+    }
+  },
   "analysis": {
     "char_filter": {
       "quote": {
