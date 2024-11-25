@@ -1,5 +1,6 @@
 package no.unit.nva.search.ticket;
 
+import static no.unit.nva.constants.Words.ASTERISK;
 import static no.unit.nva.constants.Words.CUSTOMER_ID;
 import static no.unit.nva.constants.Words.DOT;
 import static no.unit.nva.constants.Words.FIRST_NAME;
@@ -12,7 +13,6 @@ import static no.unit.nva.constants.Words.MESSAGES;
 import static no.unit.nva.constants.Words.MODIFIED_DATE;
 import static no.unit.nva.constants.Words.ORGANIZATION;
 import static no.unit.nva.constants.Words.OWNER;
-import static no.unit.nva.constants.Words.PART_OF;
 import static no.unit.nva.constants.Words.PIPE;
 import static no.unit.nva.constants.Words.PUBLICATION;
 import static no.unit.nva.constants.Words.PUBLICATION_INSTANCE;
@@ -47,24 +47,8 @@ public final class Constants {
     public static final String ORGANIZATION_ID_KEYWORD = ORGANIZATION + DOT + ID_KEYWORD;
     public static final String ORGANIZATION_IDENTIFIER_KEYWORD =
             ORGANIZATION + DOT + IDENTIFIER + DOT + KEYWORD;
-    public static final String ORGANIZATION_PART_OF =
-            ORGANIZATION
-                    + DOT
-                    + PART_OF
-                    + DOT
-                    + ID
-                    + PIPE
-                    + ORGANIZATION
-                    + DOT
-                    + PART_OF
-                    + DOT
-                    + IDENTIFIER;
-    public static final String ORGANIZATION_PATHS =
-            ORGANIZATION_ID_KEYWORD
-                    + PIPE
-                    + ORGANIZATION_IDENTIFIER_KEYWORD
-                    + PIPE
-                    + ORGANIZATION_PART_OF;
+
+    public static final String ORGANIZATION_PATHS = ORGANIZATION + DOT + ASTERISK;
     public static final String OWNER_KEYWORD = OWNER + DOT + KEYWORD;
     public static final String PUBLICATION_ID_OR_IDENTIFIER_KEYWORD =
             PUBLICATION
