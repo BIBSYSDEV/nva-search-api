@@ -18,9 +18,6 @@ import static no.unit.nva.search.ticket.TicketParameter.FROM;
 import static no.unit.nva.search.ticket.TicketParameter.OWNER;
 import static no.unit.nva.search.ticket.TicketParameter.SIZE;
 import static no.unit.nva.search.ticket.TicketParameter.SORT;
-import static no.unit.nva.search.ticket.TicketType.DOI_REQUEST;
-import static no.unit.nva.search.ticket.TicketType.GENERAL_SUPPORT_CASE;
-import static no.unit.nva.search.ticket.TicketType.PUBLISHING_REQUEST;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 
 import static nva.commons.apigateway.AccessRight.MANAGE_CUSTOMERS;
@@ -119,13 +116,13 @@ class TicketClientTest {
     static Stream<Arguments> uriAccessRights() {
         return Stream.of(
                 createAccessRightArgument("owner=1412322@20754.0.0.0", 16, "1412322@20754.0.0.0"),
-                createAccessRightArgument("owner=1492596@20754.0.0.0", 2, "1492596@20754.0.0.0"),
+                createAccessRightArgument("owner=1492596@20754.0.0.0", 3, "1492596@20754.0.0.0"),
                 createAccessRightArgument(
-                        "STATISTICS=true", 20, "1492596@20754.0.0.0", MANAGE_CUSTOMERS),
-                createAccessRightArgument("", 3, "1492596@20754.0.0.0", MANAGE_DOI),
-                createAccessRightArgument("", 7, "1492596@20754.0.0.0", SUPPORT),
+                        "STATISTICS=true", 22, "1492596@20754.0.0.0", MANAGE_CUSTOMERS),
+                createAccessRightArgument("", 4, "1492596@20754.0.0.0", MANAGE_DOI),
+                createAccessRightArgument("", 8, "1492596@20754.0.0.0", SUPPORT),
                 createAccessRightArgument(
-                        "", 14, "1492596@20754.0.0.0", MANAGE_PUBLISHING_REQUESTS),
+                        "", 15, "1492596@20754.0.0.0", MANAGE_PUBLISHING_REQUESTS),
                 createAccessRightArgument("", 1, "1485369@5923.0.0.0", MANAGE_DOI),
                 createAccessRightArgument("", 6, "1485369@5923.0.0.0", SUPPORT),
                 createAccessRightArgument("", 13, "1485369@5923.0.0.0", MANAGE_PUBLISHING_REQUESTS),
@@ -224,14 +221,11 @@ class TicketClientTest {
                                 .withRequiredParameters(SIZE, FROM)
                                 .fromTestQueryParameters(toMapEntries)
                                 .build()
-                                .withFilter()
-                                .organization(testOrganizationId)
-                                .apply()
                                 .doSearch(resourceClient2));
     }
 
     @Test
-    void shouldCheckFacets() throws BadRequestException {
+    void shouldCheckFacets() throws BadRequestException, UnauthorizedException {
         var hostAddress = URI.create(container.getHttpHostAddress());
         var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.name() + EQUAL + ALL);
         var response1 =
@@ -241,8 +235,9 @@ class TicketClientTest {
                         .withRequiredParameters(FROM, SIZE)
                         .build()
                         .withFilter()
+                        .organization(testOrganizationId)
                         .user(CURRENT_USERNAME)
-                        .includedTypes(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                        .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
                         .apply()
                         .doSearch(searchClient);
 
@@ -254,7 +249,7 @@ class TicketClientTest {
         assertThat(aggregations.size(), is(equalTo(EXPECTED_NUMBER_OF_AGGREGATIONS)));
 
         assertThat(aggregations.get(TYPE).size(), is(3));
-        assertThat(aggregations.get(STATUS).getFirst().count(), is(12));
+        assertThat(aggregations.get(STATUS).getFirst().count(), is(11));
         assertThat(aggregations.get(BY_USER_PENDING.asCamelCase()).size(), is(2));
         assertThat(aggregations.get(PUBLICATION_STATUS).size(), is(3));
 
@@ -264,7 +259,7 @@ class TicketClientTest {
     }
 
     @Test
-    void emptyResultShouldIncludeHits() throws BadRequestException {
+    void emptyResultShouldIncludeHits() throws BadRequestException, UnauthorizedException {
         var uri = URI.create("https://x.org/?id=018b857b77b7");
 
         var pagedResult =
@@ -275,7 +270,7 @@ class TicketClientTest {
                         .build()
                         .withFilter()
                         .user(CURRENT_USERNAME)
-                        .includedTypes(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                        .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
                         .organization(testOrganizationId)
                         .apply()
                         .doSearch(searchClient);
@@ -284,7 +279,8 @@ class TicketClientTest {
     }
 
     @Test
-    void shouldReturnNewTicketsWhenSearchingForNewTicketsOnlyAndTypes() throws BadRequestException {
+    void shouldReturnNewTicketsWhenSearchingForNewTicketsOnlyAndTypes()
+            throws BadRequestException, UnauthorizedException {
         var uri =
                 URI.create(
                         "https://x.org/?status=New&size=500&type=doiRequest,generalSupportCase,publishingRequest&from=0");
@@ -296,7 +292,7 @@ class TicketClientTest {
                         .build()
                         .withFilter()
                         .user(CURRENT_USERNAME)
-                        .includedTypes(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                        .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
                         .organization(testOrganizationId)
                         .apply()
                         .doSearch(searchClient)
@@ -306,7 +302,8 @@ class TicketClientTest {
     }
 
     @Test
-    void shouldReturnNewTicketsWhenSearchingForNewTicketsOnly() throws BadRequestException {
+    void shouldReturnNewTicketsWhenSearchingForNewTicketsOnly()
+            throws BadRequestException, UnauthorizedException {
         var uri = URI.create("https://x.org/?status=New&size=500&from=0");
 
         var pagedResult =
@@ -316,7 +313,7 @@ class TicketClientTest {
                         .build()
                         .withFilter()
                         .user(CURRENT_USERNAME)
-                        .includedTypes(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                        .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
                         .organization(testOrganizationId)
                         .apply()
                         .doSearch(searchClient)
@@ -328,7 +325,7 @@ class TicketClientTest {
     @Test
     void
             shouldReturnNewAndPendingTicketsWithAssigneeWhenSearchingForTicketsWithStatusNewAndPendingAndAssignee()
-                    throws BadRequestException {
+                    throws BadRequestException, UnauthorizedException {
         var uri =
                 URI.create(
                         "https://x.org/?status=New,Pending&assignee=1412322@20754.0.0.0&size=10&from=0");
@@ -340,7 +337,7 @@ class TicketClientTest {
                         .build()
                         .withFilter()
                         .user(CURRENT_USERNAME)
-                        .includedTypes(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                        .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
                         .organization(testOrganizationId)
                         .apply()
                         .doSearch(searchClient)
@@ -362,7 +359,7 @@ class TicketClientTest {
                         .build()
                         .withFilter()
                         .user(CURRENT_USERNAME)
-                        .includedTypes(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                        .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
                         .organization(testOrganizationId)
                         .apply()
                         .doSearch(searchClient);
@@ -387,7 +384,8 @@ class TicketClientTest {
                         .build()
                         .withFilter()
                         .user(CURRENT_USERNAME)
-                        .includedTypes(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                        .accessRights(
+                                MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT, MANAGE_CUSTOMERS)
                         .organization(testOrganizationId)
                         .apply()
                         .doSearch(searchClient);
@@ -499,7 +497,7 @@ class TicketClientTest {
                         .withFilter()
                         .organization(testOrganizationId)
                         .user(CURRENT_USERNAME)
-                        .includedTypes(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                        .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
                         .apply()
                         .doSearch(searchClient);
 

@@ -187,7 +187,11 @@ public abstract class ParameterValidator<
     public ParameterValidator<K, Q> fromRequestInfo(RequestInfo requestInfo) {
         searchQuery.setMediaType(requestInfo.getHeaders().get(ACCEPT));
         var uri = URI.create(HTTPS + requestInfo.getDomainName() + requestInfo.getPath());
-        searchQuery.setAccessRights(requestInfo.getAccessRights());
+        try {
+            searchQuery.setAccessRights(requestInfo.getAccessRights());
+        } catch (Exception e) {
+            logger.warn("Error getting access rights from requestInfo", e);
+        }
         searchQuery.setNvaSearchApiUri(uri);
         return fromMultiValueParameters(requestInfo.getMultiValueQueryStringParameters());
     }
