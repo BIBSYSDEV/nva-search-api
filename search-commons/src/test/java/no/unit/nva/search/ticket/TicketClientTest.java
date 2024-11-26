@@ -46,6 +46,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.constants.Words;
+import no.unit.nva.search.common.records.Facet;
 
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
@@ -143,6 +144,24 @@ class TicketClientTest {
                         MANAGE_PUBLISHING_REQUESTS));
     }
 
+    static Arguments aggrBuilder(
+            URI searchUri, int expectedCount, String userName, AccessRight... accessRights) {
+        return Arguments.of(searchUri, expectedCount, userName, accessRights);
+    }
+
+    static Stream<Arguments> uriProviderWithAggregations() {
+        var url = URI.create("https://x.org/?size=0&aggregation=all");
+        return Stream.of(
+                aggrBuilder(url, 0, "1492596@20754.0.0.0"),
+                aggrBuilder(url, 0, "1492596@20754.0.0.0", MANAGE_DOI),
+                aggrBuilder(url, 0, "1492596@20754.0.0.0", SUPPORT),
+                aggrBuilder(url, 0, "1492596@20754.0.0.0", MANAGE_PUBLISHING_REQUESTS),
+                aggrBuilder(url, 2, "1412322@20754.0.0.0"),
+                aggrBuilder(url, 2, "1412322@20754.0.0.0", MANAGE_DOI),
+                aggrBuilder(url, 2, "1412322@20754.0.0.0", SUPPORT),
+                aggrBuilder(url, 2, "1412322@20754.0.0.0", MANAGE_PUBLISHING_REQUESTS));
+    }
+
     static Stream<URI> uriSortingProvider() {
 
         return Stream.of(
@@ -198,12 +217,6 @@ class TicketClientTest {
 
         var mapping = indexingClient.getMapping(TICKETS);
         assertThat(mapping, is(notNullValue()));
-        //            var topLevelOrgType = mapping.path("properties")
-        //                .path(PUBLICATION)
-        //                .path(CONTRIBUTORS)
-        //                .path(AFFILIATIONS)
-        //                .;
-        //            assertThat(topLevelOrgType, is(equalTo("<MISSING>")));
         logger.info(mapping.toString());
     }
 
@@ -399,6 +412,10 @@ class TicketClientTest {
             logger.debug(pagedSearchResourceDto.toString());
         }
 
+        assertEquals(
+                expectedCount,
+                pagedSearchResourceDto.aggregations().get(Constants.BY_USER_PENDING).size());
+
         assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
         assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedCount)));
     }
@@ -434,6 +451,34 @@ class TicketClientTest {
         assertNotNull(pagedSearchResourceDto);
         assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
         assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedCount)));
+    }
+
+    @ParameterizedTest()
+    @MethodSource("uriProviderWithAggregations")
+    void uriRequestReturnsSuccessfulResponseWithAggregations(
+            URI uri, Integer expectedCount, String userName, AccessRight... accessRights)
+            throws ApiGatewayException {
+        var response =
+                TicketSearchQuery.builder()
+                        .fromTestQueryParameters(queryToMapEntries(uri))
+                        .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                        .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                        .build()
+                        .withFilter()
+                        .organization(testOrganizationId)
+                        .user(userName)
+                        .accessRights(accessRights)
+                        .apply()
+                        .doSearch(searchClient);
+
+        var aggregations = response.toPagedResponse().aggregations();
+
+        assertNotNull(aggregations);
+
+        aggregations.forEach(
+                (key, value) ->
+                        logger.warn("{} : {}", value.stream().mapToLong(Facet::count).sum(), key));
+        assertThat(aggregations.get(Constants.BY_USER_PENDING).size(), is(equalTo(expectedCount)));
     }
 
     @Test

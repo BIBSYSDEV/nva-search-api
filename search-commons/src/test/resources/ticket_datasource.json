@@ -221,6 +221,80 @@
     "status": "New"
   },
   {
+    "type": "UnpublishRequest",
+    "status": "New",
+    "modifiedDate": "2024-10-11T06:55:08.648463671Z",
+    "createdDate": "2024-10-11T06:55:08.648470350Z",
+    "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+    "id": "https://api.dev.nva.aws.unit.no/publication/01927a5ad3f5-bc4aaca7-4a8e-4cf7-990d-4f81e2e0ab5c/ticket/01927a5c1768-1d15008a-7a92-43af-9248-e287505152dd",
+    "messages": [],
+    "viewedBy": [
+      {
+        "type": "Person",
+        "firstName": "Kir ",
+        "lastName": "Truhacev",
+        "username": "1492596@20754.0.0.0"
+      }
+    ],
+    "publication": {
+      "owner": "1492596@20754.0.0.0",
+      "status": "UNPUBLISHED",
+      "publicationInstance": {
+        "type": "AcademicArticle",
+        "pages": {
+          "type": "Range"
+        }
+      },
+      "publishedDate": "2024-10-11T06:54:55.494219397Z",
+      "contributors": [
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1492596",
+            "name": "Kir  Truhacev",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0"
+            },
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0"
+            }
+          ],
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1,
+          "correspondingAuthor": false
+        }
+      ],
+      "id": "https://api.dev.nva.aws.unit.no/publication/01927a5ad3f5-bc4aaca7-4a8e-4cf7-990d-4f81e2e0ab5c",
+      "identifier": "01927a5ad3f5-bc4aaca7-4a8e-4cf7-990d-4f81e2e0ab5c",
+      "mainTitle": "Kir tester avpublisering"
+    },
+    "owner": {
+      "type": "Person",
+      "firstName": "Kir ",
+      "lastName": "Truhacev",
+      "username": "1492596@20754.0.0.0"
+    },
+    "organization": {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "identifier": "20754.0.0.0",
+      "partOf": [
+        {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+          "identifier": "20754.0.0.0"
+        }
+      ]
+    }
+  },
+  {
     "type": "PublishingRequest",
     "customerId": "https://api.dev.nva.aws.unit.no/customer/9d02e866-aeba-466d-993a-b519c664d38c",
     "modifiedDate": "2024-02-26T12:08:36.469286345Z",
@@ -2340,80 +2414,6 @@
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
       "identifier": "20754.0.0.0",
       "partOf": [
-      ]
-    }
-  },
-  {
-    "type": "UnpublishRequest",
-    "status": "New",
-    "modifiedDate": "2024-10-11T06:55:08.648463671Z",
-    "createdDate": "2024-10-11T06:55:08.648470350Z",
-    "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
-    "id": "https://api.dev.nva.aws.unit.no/publication/01927a5ad3f5-bc4aaca7-4a8e-4cf7-990d-4f81e2e0ab5c/ticket/01927a5c1768-1d15008a-7a92-43af-9248-e287505152dd",
-    "messages": [],
-    "viewedBy": [
-      {
-        "type": "Person",
-        "firstName": "Kir ",
-        "lastName": "Truhacev",
-        "username": "1492596@20754.0.0.0"
-      }
-    ],
-    "publication": {
-      "owner": "1492596@20754.0.0.0",
-      "status": "UNPUBLISHED",
-      "publicationInstance": {
-        "type": "AcademicArticle",
-        "pages": {
-          "type": "Range"
-        }
-      },
-      "publishedDate": "2024-10-11T06:54:55.494219397Z",
-      "contributors": [
-        {
-          "type": "Contributor",
-          "identity": {
-            "type": "Identity",
-            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1492596",
-            "name": "Kir  Truhacev",
-            "verificationStatus": "Verified",
-            "additionalIdentifiers": []
-          },
-          "affiliations": [
-            {
-              "type": "Organization",
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0"
-            },
-            {
-              "type": "Organization",
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0"
-            }
-          ],
-          "role": {
-            "type": "Creator"
-          },
-          "sequence": 1,
-          "correspondingAuthor": false
-        }
-      ],
-      "id": "https://api.dev.nva.aws.unit.no/publication/01927a5ad3f5-bc4aaca7-4a8e-4cf7-990d-4f81e2e0ab5c",
-      "identifier": "01927a5ad3f5-bc4aaca7-4a8e-4cf7-990d-4f81e2e0ab5c",
-      "mainTitle": "Kir tester avpublisering"
-    },
-    "owner": {
-      "type": "Person",
-      "firstName": "Kir ",
-      "lastName": "Truhacev",
-      "username": "1492596@20754.0.0.0"
-    },
-    "organization": {
-      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "identifier": "20754.0.0.0",
-      "partOf": [
-        {
-          "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-          "identifier": "20754.0.0.0"
-        }
       ]
     }
   }
