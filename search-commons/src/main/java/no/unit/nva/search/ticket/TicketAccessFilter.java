@@ -103,6 +103,7 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
 
         if (searchAsTicketOwner() && curatorTicketTypes.isEmpty()) {
             validateOwner(currentUser);
+            // If the user is not a curator, they can only see their own tickets
         }
         /// TODO: 2021-09-29 should this still be here?
         //        this.excludeTypes(TicketType.UNPUBLISH_REQUEST);
@@ -138,7 +139,7 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
     }
 
     /**
-     * Filter on owner (user).
+     * Filter on access rights.
      *
      * @param accessRights access rights
      * @return TicketQuery (builder pattern)
@@ -225,12 +226,11 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
         return true;
     }
 
-    private boolean validateOwner(String userName) throws UnauthorizedException {
+    private void validateOwner(String userName) throws UnauthorizedException {
         if (currentUserIsNotOwner(userName)) {
             throw new UnauthorizedException(
                     USER_IS_NOT_ALLOWED_TO_SEARCH_FOR_TICKETS_NOT_OWNED_BY_THEMSELVES);
         }
-        return true;
     }
 
     private boolean currentUserIsNotOwner(String userName) {
