@@ -23,6 +23,7 @@ import no.unit.nva.search.resource.response.Series;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -79,8 +80,26 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 
+    public static String path(String... path) {
+        return Arrays.stream(path).collect(Collectors.joining("."));
+    }
+
     public static List<String> getIncludedFields() {
-        return List.of(ID, REFERENCE, ENTITY_DESCRIPTION);
+        return List.of(
+                ID,
+                path(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, TYPE),
+                path(ENTITY_DESCRIPTION, REFERENCE, DOI),
+                path(
+                        ENTITY_DESCRIPTION,
+                        REFERENCE,
+                        PUBLICATION_CONTEXT), // TODO: Narrow down further?
+                path(DESCRIPTION),
+                path(ENTITY_DESCRIPTION, MAIN_TITLE),
+                path(ENTITY_DESCRIPTION, ABSTRACT),
+                path(ENTITY_DESCRIPTION, ALTERNATIVE_TITLES),
+                path(ENTITY_DESCRIPTION, CONTRIBUTORS_COUNT),
+                path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW),
+                path(ENTITY_DESCRIPTION, PUBLICATION_DATE));
     }
 
     @Override
@@ -92,7 +111,12 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
     private ResourceSearchResponse transformToDto(JsonNode source) throws IOException {
         return new Builder()
                 .withId(source.path(ID).textValue())
-                .withType(source.path(REFERENCE).path(PUBLICATION_INSTANCE).path(TYPE).textValue())
+                .withType(
+                        source.path(ENTITY_DESCRIPTION)
+                                .path(REFERENCE)
+                                .path(PUBLICATION_INSTANCE)
+                                .path(TYPE)
+                                .textValue())
                 .withMainTitle(source.path(ENTITY_DESCRIPTION).path(MAIN_TITLE).textValue())
                 .withMainLanguageAbstract(
                         source.path(ENTITY_DESCRIPTION).path(ABSTRACT).textValue())
@@ -218,7 +242,7 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
                         .path(PUBLICATION_CONTEXT)
                         .path(NAME)
                         .textValue(),
-                source.path(REFERENCE).path(DOI).textValue());
+                source.path(ENTITY_DESCRIPTION).path(REFERENCE).path(DOI).textValue());
     }
 
     private String mutateJournalOrPublisher(JsonNode source) {
