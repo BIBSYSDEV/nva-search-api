@@ -149,13 +149,39 @@ class TicketClientTest {
         return Arguments.of(searchUri, expectedCount, userName, accessRights);
     }
 
-    static Stream<Arguments> uriProviderWithAggregations() {
-        var url = URI.create("https://x.org/?size=0&aggregation=all");
+    static Stream<Arguments> uriProviderWithAggregationsAndAccessRights() {
+        final var url = URI.create("https://x.org/?size=0&aggregation=all");
+        final var url2 = URI.create("https://x.org/?size=0&aggregation=all&STATISTICS=true");
         return Stream.of(
                 aggrBuilder(url, 0, "1492596@20754.0.0.0"),
                 aggrBuilder(url, 0, "1492596@20754.0.0.0", MANAGE_DOI),
                 aggrBuilder(url, 0, "1492596@20754.0.0.0", SUPPORT),
                 aggrBuilder(url, 0, "1492596@20754.0.0.0", MANAGE_PUBLISHING_REQUESTS),
+                aggrBuilder(url, 0, "34322@20754.0.0.0"),
+                aggrBuilder(
+                        url,
+                        0,
+                        "34322@20754.0.0.0",
+                        MANAGE_DOI,
+                        SUPPORT,
+                        MANAGE_PUBLISHING_REQUESTS),
+                aggrBuilder(url, 0, "1485369@5923.0.0.0"),
+                aggrBuilder(
+                        url,
+                        0,
+                        "1485369@5923.0.0.0",
+                        MANAGE_DOI,
+                        SUPPORT,
+                        MANAGE_PUBLISHING_REQUESTS),
+                aggrBuilder(url2, 0, "1485369@5923.0.0.0", MANAGE_CUSTOMERS),
+                aggrBuilder(url, 0, "1485369@20754.0.0.0"),
+                aggrBuilder(
+                        url,
+                        0,
+                        "1485369@20754.0.0.0",
+                        MANAGE_DOI,
+                        SUPPORT,
+                        MANAGE_PUBLISHING_REQUESTS),
                 aggrBuilder(url, 2, "1412322@20754.0.0.0"),
                 aggrBuilder(url, 2, "1412322@20754.0.0.0", MANAGE_DOI),
                 aggrBuilder(url, 2, "1412322@20754.0.0.0", SUPPORT),
@@ -454,7 +480,7 @@ class TicketClientTest {
     }
 
     @ParameterizedTest()
-    @MethodSource("uriProviderWithAggregations")
+    @MethodSource("uriProviderWithAggregationsAndAccessRights")
     void uriRequestReturnsSuccessfulResponseWithAggregations(
             URI uri, Integer expectedCount, String userName, AccessRight... accessRights)
             throws ApiGatewayException {
