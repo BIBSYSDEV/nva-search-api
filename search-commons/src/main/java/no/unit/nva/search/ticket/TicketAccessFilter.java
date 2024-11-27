@@ -55,8 +55,7 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
     private final TicketSearchQuery ticketSearchQuery;
     private String currentUser;
     private URI organizationId;
-    private Set<AccessRight> accessRights = EnumSet.noneOf(AccessRight.class);
-    private Set<TicketType> curatorTicketTypes;
+    private Set<AccessRight> accessRightEnumSet = EnumSet.noneOf(AccessRight.class);
 
     //    private Set<TicketType> excludeTicketTypes;
 
@@ -90,7 +89,7 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
     @Override
     public TicketSearchQuery apply() throws UnauthorizedException {
 
-        if (searchAsSiktAdmin() && validateSiktAdmin(accessRights)) {
+        if (searchAsSiktAdmin() && validateSiktAdmin(accessRightEnumSet)) {
             return ticketSearchQuery; // See everything, NO FILTERS!!!
         }
 
@@ -98,7 +97,7 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
             throw new UnauthorizedException("Organization is required");
         }
 
-        this.curatorTicketTypes = curatorsAllowedTicketTypes(accessRights);
+        var curatorTicketTypes = curatorsAllowedTicketTypes(accessRightEnumSet);
 
         if (searchAsTicketOwner() && curatorTicketTypes.contains(TicketType.NONE)) {
             validateOwner(currentUser);
@@ -158,7 +157,7 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
     }
 
     private TicketAccessFilter accessRights(List<AccessRight> accessRights) {
-        this.accessRights =
+        this.accessRightEnumSet =
                 accessRights.stream()
                         .collect(Collectors.toCollection(() -> EnumSet.noneOf(AccessRight.class)));
         return this;

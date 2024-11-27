@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
  * @param <Q> Instance of OpenSearchQuery
  * @author Stig Norland
  */
+@SuppressWarnings("PMD.GodClass")
 public abstract class ParameterValidator<
         K extends Enum<K> & ParameterKey<K>, Q extends SearchQuery<K>> {
 
