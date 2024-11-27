@@ -69,6 +69,22 @@ class SimplifiedResourceModelMutatorTest {
     }
 
     @Test
+    void shouldMapAlternativeTitles() throws JsonProcessingException {
+        var expectedAlternativeTitle = randomString();
+        var input = new ObjectMapper().createObjectNode();
+        var entityDescription = new ObjectMapper().createObjectNode();
+        var alternativeTitles = new ObjectMapper().createObjectNode();
+        alternativeTitles.put("no", expectedAlternativeTitle);
+        entityDescription.set("alternativeTitles", alternativeTitles);
+        input.set("entityDescription", entityDescription);
+
+        var mutated = new SimplifiedResourceModelMutator().transform(input);
+        var asDto = objectMapper.treeToValue(mutated, ResourceSearchResponse.class);
+        assertThat(asDto.alternativeTitles().size(), is(equalTo(1)));
+        assertThat(asDto.alternativeTitles().get(0), is(equalTo(expectedAlternativeTitle)));
+    }
+
+    @Test
     void shouldParseSampleFileWithNoExceptions() throws JsonProcessingException {
         var json =
                 new ObjectMapper()

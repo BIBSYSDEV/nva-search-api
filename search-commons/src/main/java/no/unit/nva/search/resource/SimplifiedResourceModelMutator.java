@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -94,11 +95,8 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
                 .withDescription(source.path(DESCRIPTION).textValue())
                 .withAlternativeTitles(
                         source.path(ENTITY_DESCRIPTION).has(ALTERNATIVE_TITLES)
-                                ? objectMapper
-                                        .readerForListOf(String.class)
-                                        .readValue(
-                                                source.path(ENTITY_DESCRIPTION)
-                                                        .path(ALTERNATIVE_TITLES))
+                                ? jsonNodeMapToValueList(
+                                        source.path(ENTITY_DESCRIPTION).path(ALTERNATIVE_TITLES))
                                 : null)
                 .withPublicationDate(
                         new PublicationDate(
@@ -121,6 +119,11 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
                 .withOtherIdentifiers(mutateOtherIdentifiers(source))
                 .withRecordMetadata(mutateRecordMetadata(source))
                 .build();
+    }
+
+    private List<String> jsonNodeMapToValueList(JsonNode source) throws IOException {
+        Map<String, String> map = objectMapper.convertValue(source, Map.class);
+        return map.values().stream().collect(Collectors.toList());
     }
 
     private OtherIdentifiers mutateOtherIdentifiers(JsonNode source) throws IOException {
