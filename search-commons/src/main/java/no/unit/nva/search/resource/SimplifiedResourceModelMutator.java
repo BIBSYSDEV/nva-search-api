@@ -79,6 +79,10 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 
+    public static List<String> getIncludedFields() {
+        return List.of(ID, REFERENCE, ENTITY_DESCRIPTION);
+    }
+
     @Override
     public JsonNode transform(JsonNode source) {
         return (JsonNode)

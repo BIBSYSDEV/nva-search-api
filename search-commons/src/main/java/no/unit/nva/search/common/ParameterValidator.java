@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
  * @param <Q> Instance of OpenSearchQuery
  * @author Stig Norland
  */
+@SuppressWarnings("PMD.GodClass")
 public abstract class ParameterValidator<
         K extends Enum<K> & ParameterKey<K>, Q extends SearchQuery<K>> {
 
@@ -267,6 +268,11 @@ public abstract class ParameterValidator<
      */
     public final ParameterValidator<K, Q> withDockerHostUri(URI uri) {
         searchQuery.setOpenSearchUri(uri);
+        return this;
+    }
+
+    public final ParameterValidator<K, Q> withAlwaysIncludedFields(List<String> includedFields) {
+        searchQuery.setAlwaysIncludedFields(includedFields);
         return this;
     }
 
