@@ -203,7 +203,6 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
         return allowed;
     }
 
-
     private boolean validateSiktAdmin(Set<AccessRight> accessRights) throws UnauthorizedException {
         if (!accessRights.contains(MANAGE_CUSTOMERS)) {
             throw new UnauthorizedException(

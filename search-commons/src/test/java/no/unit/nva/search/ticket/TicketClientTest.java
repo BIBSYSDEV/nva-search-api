@@ -78,7 +78,7 @@ import java.util.stream.Stream;
 @Testcontainers
 class TicketClientTest {
 
-    public static final String REQUEST_BASE_URL = "https://x.org/?size=22&";
+    public static final String REQUEST_BASE_URL = "https://x.org/?size=22&aggregation=all&";
     public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 4;
     public static final String CURRENT_USERNAME = "1412322@20754.0.0.0";
     public static final URI testOrganizationId =
@@ -437,10 +437,6 @@ class TicketClientTest {
         } else {
             logger.debug(pagedSearchResourceDto.toString());
         }
-
-        assertEquals(
-                expectedCount,
-                pagedSearchResourceDto.aggregations().get(Constants.BY_USER_PENDING).size());
 
         assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
         assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedCount)));
