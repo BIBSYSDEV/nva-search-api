@@ -339,6 +339,8 @@ paths:
         - name: Accept
           in: header
           description: Requested response format and version of the returned payload
+          schema:
+            type: string
           examples:
             versionOne:
               value: application/json; version=1
