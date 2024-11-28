@@ -27,6 +27,7 @@ import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
 import static nva.commons.apigateway.AccessRight.SUPPORT;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
+import static nva.commons.core.paths.UriWrapper.fromUri;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -54,7 +55,6 @@ import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
-import nva.commons.core.paths.UriWrapper;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -82,12 +82,18 @@ class TicketClientTest {
 
     public static final String REQUEST_BASE_URL = "https://x.org/?size=22&aggregation=all&";
     public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 4;
-    public static final String CURRENT_USERNAME = "1412322@20754.0.0.0";
     public static final URI testOrganizationId =
             URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0");
     private static final Logger logger = LoggerFactory.getLogger(TicketClientTest.class);
     private static final String TICKETS_VALID_TEST_URL_JSON = "ticket_datasource_urls.json";
     private static final RequestInfo mockedRequestInfo = mock(RequestInfo.class);
+    public static final String USER_01 = "1412322@20754.0.0.0";
+    public static final String USER_02 = "1492596@20754.0.0.0";
+    public static final String USER_03 = "1485369@5923.0.0.0";
+    public static final String TRUE = "true";
+    public static final String CURRENT_USERNAME = USER_01;
+    public static final String USER_04 = "34322@20754.0.0.0";
+    public static final String USER_05 = "1485369@20754.0.0.0";
     private static TicketClient searchClient;
 
     @BeforeAll
@@ -118,35 +124,30 @@ class TicketClientTest {
 
     static Stream<Arguments> uriAccessRights() {
         final AccessRight[] accessRights = {MANAGE_DOI, SUPPORT, MANAGE_PUBLISHING_REQUESTS};
-        var url = UriWrapper.fromUri(REQUEST_BASE_URL);
+        final var statistics = STATISTICS.asCamelCase();
+        var uri = fromUri(REQUEST_BASE_URL).getUri();
         return Stream.of(
-                accessRightArgument(
-                        url.addQueryParameter(Words.OWNER, "1412322@20754.0.0.0").getUri(),
-                        16,
-                        "1412322@20754.0.0.0"),
-                accessRightArgument(
-                        url.addQueryParameter(Words.OWNER, "1492596@20754.0.0.0").getUri(),
-                        3,
-                        "1492596@20754.0.0.0"),
-                accessRightArgument(
-                        url.addQueryParameter(STATISTICS.asCamelCase(), "true").getUri(),
+                accessRightArg(
+                        fromUri(uri).addQueryParameter(Words.OWNER, USER_01).getUri(), 16, USER_01),
+                accessRightArg(
+                        fromUri(uri).addQueryParameter(Words.OWNER, USER_02).getUri(), 3, USER_02),
+                accessRightArg(
+                        fromUri(uri).addQueryParameter(statistics, TRUE).getUri(),
                         22,
-                        "1492596@20754.0.0.0",
+                        USER_02,
                         MANAGE_CUSTOMERS),
-                accessRightArgument(url.getUri(), 4, "1492596@20754.0.0.0", MANAGE_DOI),
-                accessRightArgument(url.getUri(), 8, "1492596@20754.0.0.0", SUPPORT),
-                accessRightArgument(
-                        url.getUri(), 15, "1492596@20754.0.0.0", MANAGE_PUBLISHING_REQUESTS),
-                accessRightArgument(url.getUri(), 1, "1485369@5923.0.0.0", MANAGE_DOI),
-                accessRightArgument(url.getUri(), 6, "1485369@5923.0.0.0", SUPPORT),
-                accessRightArgument(
-                        url.getUri(), 13, "1485369@5923.0.0.0", MANAGE_PUBLISHING_REQUESTS),
-                accessRightArgument(url.getUri(), 7, "1485369@5923.0.0.0", MANAGE_DOI, SUPPORT),
-                accessRightArgument(url.getUri(), 20, "1485369@5923.0.0.0", accessRights),
-                accessRightArgument(url.getUri(), 20, "1412322@20754.0.0.0", accessRights));
+                accessRightArg(uri, 4, USER_02, MANAGE_DOI),
+                accessRightArg(uri, 8, USER_02, SUPPORT),
+                accessRightArg(uri, 15, USER_02, MANAGE_PUBLISHING_REQUESTS),
+                accessRightArg(uri, 1, USER_03, MANAGE_DOI),
+                accessRightArg(uri, 6, USER_03, SUPPORT),
+                accessRightArg(uri, 13, USER_03, MANAGE_PUBLISHING_REQUESTS),
+                accessRightArg(uri, 7, USER_03, MANAGE_DOI, SUPPORT),
+                accessRightArg(uri, 20, USER_01, accessRights),
+                accessRightArg(uri, 20, USER_03, accessRights));
     }
 
-    static Arguments accessRightArgument(
+    static Arguments accessRightArg(
             URI searchUri, int expectedCount, String userName, AccessRight... accessRights) {
         return Arguments.of(searchUri, expectedCount, userName, accessRights);
     }
@@ -156,21 +157,21 @@ class TicketClientTest {
         final var url2 = URI.create("https://x.org/?size=0&aggregation=all&STATISTICS=true");
         final AccessRight[] accessRights = {MANAGE_DOI, SUPPORT, MANAGE_PUBLISHING_REQUESTS};
         return Stream.of(
-                accessRightArgument(url, 0, "1492596@20754.0.0.0"),
-                accessRightArgument(url, 0, "1492596@20754.0.0.0", MANAGE_DOI),
-                accessRightArgument(url, 0, "1492596@20754.0.0.0", SUPPORT),
-                accessRightArgument(url, 0, "1492596@20754.0.0.0", MANAGE_PUBLISHING_REQUESTS),
-                accessRightArgument(url, 2, "1412322@20754.0.0.0"),
-                accessRightArgument(url, 2, "1412322@20754.0.0.0", MANAGE_DOI),
-                accessRightArgument(url, 2, "1412322@20754.0.0.0", SUPPORT),
-                accessRightArgument(url, 2, "1412322@20754.0.0.0", MANAGE_PUBLISHING_REQUESTS),
-                accessRightArgument(url, 0, "34322@20754.0.0.0"),
-                accessRightArgument(url, 0, "34322@20754.0.0.0", accessRights),
-                accessRightArgument(url, 0, "1485369@20754.0.0.0"),
-                accessRightArgument(url, 0, "1485369@20754.0.0.0", accessRights),
-                accessRightArgument(url, 0, "1485369@5923.0.0.0"),
-                accessRightArgument(url, 0, "1485369@5923.0.0.0", accessRights),
-                accessRightArgument(url2, 0, "1485369@5923.0.0.0", MANAGE_CUSTOMERS));
+                accessRightArg(url, 2, USER_01),
+                accessRightArg(url, 2, USER_01, MANAGE_DOI),
+                accessRightArg(url, 2, USER_01, SUPPORT),
+                accessRightArg(url, 2, USER_01, MANAGE_PUBLISHING_REQUESTS),
+                accessRightArg(url, 0, USER_02),
+                accessRightArg(url, 0, USER_02, MANAGE_DOI),
+                accessRightArg(url, 0, USER_02, SUPPORT),
+                accessRightArg(url, 0, USER_02, MANAGE_PUBLISHING_REQUESTS),
+                accessRightArg(url2, 0, USER_03, MANAGE_CUSTOMERS),
+                accessRightArg(url, 0, USER_03),
+                accessRightArg(url, 0, USER_03, accessRights),
+                accessRightArg(url, 0, USER_04),
+                accessRightArg(url, 0, USER_04, accessRights),
+                accessRightArg(url, 0, USER_05),
+                accessRightArg(url, 0, USER_05, accessRights));
     }
 
     static Stream<URI> uriSortingProvider() {
