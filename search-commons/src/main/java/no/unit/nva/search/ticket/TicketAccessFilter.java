@@ -1,6 +1,6 @@
 package no.unit.nva.search.ticket;
 
-import static no.unit.nva.search.ticket.Constants.ANY_OF_TICKET_TYPE_OR_USER_NAME;
+import static no.unit.nva.search.ticket.Constants.ORG_AND_TYPE_OR_USER_NAME;
 import static no.unit.nva.search.ticket.Constants.OWNER_USERNAME;
 import static no.unit.nva.search.ticket.Constants.TYPE_KEYWORD;
 import static no.unit.nva.search.ticket.Constants.USER_IS_NOT_ALLOWED_TO_SEARCH_FOR_TICKETS_NOT_OWNED_BY_THEMSELVES;
@@ -23,6 +23,7 @@ import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 
+import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
@@ -93,31 +94,27 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
             return ticketSearchQuery; // See everything, NO FILTERS!!!
         }
 
-        if (isNull(organizationId)) { // Default, see only tickets for this organization
+        if (isNull(organizationId)) {
             throw new UnauthorizedException("Organization is required");
         }
 
-        var curatorTicketTypes = curatorsAllowedTicketTypes(accessRightEnumSet);
-
-        if (searchAsTicketOwner() && curatorTicketTypes.contains(TicketType.NONE)) {
-            validateOwner(currentUser);
-            // If the user is not a curator, they can only see their own tickets
+        if (isNull(currentUser)) {
+            throw new UnauthorizedException("User is required");
         }
 
-        var filter =
-                boolQuery()
-                        .must(getOrgFilter())
-                        .must(
-                                boolQuery()
-                                        .should(new TermQueryBuilder(OWNER_USERNAME, currentUser))
-                                        .should(
-                                                new TermsQueryBuilder(
-                                                        TYPE_KEYWORD, curatorTicketTypes))
-                                        .minimumShouldMatch(1))
-                        .queryName(ANY_OF_TICKET_TYPE_OR_USER_NAME);
+        final var curatorTicketTypes = accessRightsToTicketTypes(accessRightEnumSet);
 
-        this.ticketSearchQuery.filters().add(filter);
+        if (searchAsTicketOwner() && hasNoCuratorRoles(curatorTicketTypes)) {
+            validateOwner(currentUser);
+        }
 
+        this.ticketSearchQuery
+                .filters()
+                .add(
+                        boolQuery()
+                                .must(filterByOrganization(organizationId.toString()))
+                                .must(filterByUserAndTicketTypes(currentUser, curatorTicketTypes))
+                                .queryName(ORG_AND_TYPE_OR_USER_NAME));
         return ticketSearchQuery;
     }
 
@@ -167,15 +164,6 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
         return currentUser;
     }
 
-    protected QueryBuilder getOrgFilter() {
-        return new AcrossFieldsQuery<TicketParameter>()
-                .buildQuery(ORGANIZATION_ID, organizationId.toString())
-                .findFirst()
-                .orElseThrow()
-                .getValue()
-                .queryName(ORGANIZATION_ID.asCamelCase());
-    }
-
     /**
      * Apply business rules to determine which ticket types are allowed.
      *
@@ -185,7 +173,7 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
      *   <li>manage_publishing_requests -> PUBLISHING_REQUEST
      * </ul>
      */
-    private Set<TicketType> curatorsAllowedTicketTypes(Set<AccessRight> accessRights) {
+    private Set<TicketType> accessRightsToTicketTypes(Set<AccessRight> accessRights) {
         var allowed = EnumSet.noneOf(TicketType.class);
         if (accessRights.contains(MANAGE_DOI)) {
             allowed.add(TicketType.DOI_REQUEST);
@@ -202,6 +190,31 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
         return allowed;
     }
 
+    private QueryBuilder filterByOrganization(String organizationId) {
+        return new AcrossFieldsQuery<TicketParameter>()
+                .buildQuery(ORGANIZATION_ID, organizationId)
+                .findFirst()
+                .orElseThrow()
+                .getValue()
+                .queryName(ORGANIZATION_ID.asCamelCase());
+    }
+
+    private BoolQueryBuilder filterByUserAndTicketTypes(
+            String userName, Set<TicketType> curatorTicketTypes) {
+        return boolQuery()
+                .should(usernameTerm(userName))
+                .should(ticketTypeTerms(curatorTicketTypes))
+                .minimumShouldMatch(1);
+    }
+
+    private TermsQueryBuilder ticketTypeTerms(Set<TicketType> curatorTicketTypes) {
+        return new TermsQueryBuilder(TYPE_KEYWORD, curatorTicketTypes);
+    }
+
+    private TermQueryBuilder usernameTerm(String userName) {
+        return new TermQueryBuilder(OWNER_USERNAME, userName);
+    }
+
     private boolean validateSiktAdmin(Set<AccessRight> accessRights) throws UnauthorizedException {
         if (!accessRights.contains(MANAGE_CUSTOMERS)) {
             throw new UnauthorizedException(
@@ -215,6 +228,10 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
             throw new UnauthorizedException(
                     USER_IS_NOT_ALLOWED_TO_SEARCH_FOR_TICKETS_NOT_OWNED_BY_THEMSELVES);
         }
+    }
+
+    private boolean hasNoCuratorRoles(Set<TicketType> curatorTicketTypes) {
+        return curatorTicketTypes.contains(TicketType.NONE);
     }
 
     private boolean currentUserIsNotOwner(String userName) {

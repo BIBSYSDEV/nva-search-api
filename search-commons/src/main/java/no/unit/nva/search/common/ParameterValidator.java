@@ -41,7 +41,6 @@ import java.util.stream.Collectors;
  * @param <Q> Instance of OpenSearchQuery
  * @author Stig Norland
  */
-@SuppressWarnings("PMD.GodClass")
 public abstract class ParameterValidator<
         K extends Enum<K> & ParameterKey<K>, Q extends SearchQuery<K>> {
 
@@ -188,11 +187,7 @@ public abstract class ParameterValidator<
     public ParameterValidator<K, Q> fromRequestInfo(RequestInfo requestInfo) {
         searchQuery.setMediaType(requestInfo.getHeaders().get(ACCEPT));
         var uri = URI.create(HTTPS + requestInfo.getDomainName() + requestInfo.getPath());
-        try {
-            searchQuery.setAccessRights(requestInfo.getAccessRights());
-        } catch (Exception e) {
-            logger.warn("Error getting access rights from requestInfo", e);
-        }
+        searchQuery.setAccessRights(requestInfo.getAccessRights());
         searchQuery.setNvaSearchApiUri(uri);
         return fromMultiValueParameters(requestInfo.getMultiValueQueryStringParameters());
     }

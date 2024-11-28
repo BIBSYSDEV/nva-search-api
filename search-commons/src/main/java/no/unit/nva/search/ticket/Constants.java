@@ -40,8 +40,7 @@ import java.util.Map;
  */
 public final class Constants {
 
-    static final String NOT_ANY_OF_TICKET_TYPE = "notAnyOfTicketType";
-    static final String ANY_OF_TICKET_TYPE_OR_USER_NAME = "anyOfTicketTypeOrUserName";
+    static final String ORG_AND_TYPE_OR_USER_NAME = "organizationAndAnyOfTicketTypeOrUserName";
     static final String USER_IS_NOT_ALLOWED_TO_SEARCH_FOR_TICKETS_NOT_OWNED_BY_THEMSELVES =
             "User is not allowed to search for tickets not owned by themselves";
 

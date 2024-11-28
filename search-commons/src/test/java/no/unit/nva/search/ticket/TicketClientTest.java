@@ -18,6 +18,7 @@ import static no.unit.nva.search.ticket.TicketParameter.FROM;
 import static no.unit.nva.search.ticket.TicketParameter.OWNER;
 import static no.unit.nva.search.ticket.TicketParameter.SIZE;
 import static no.unit.nva.search.ticket.TicketParameter.SORT;
+import static no.unit.nva.search.ticket.TicketParameter.STATISTICS;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 
 import static nva.commons.apigateway.AccessRight.MANAGE_CUSTOMERS;
@@ -53,6 +54,7 @@ import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
+import nva.commons.core.paths.UriWrapper;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -115,36 +117,36 @@ class TicketClientTest {
     }
 
     static Stream<Arguments> uriAccessRights() {
+        final AccessRight[] accessRights = {MANAGE_DOI, SUPPORT, MANAGE_PUBLISHING_REQUESTS};
+        var url = UriWrapper.fromUri(REQUEST_BASE_URL);
         return Stream.of(
-                createAccessRightArgument("owner=1412322@20754.0.0.0", 16, "1412322@20754.0.0.0"),
-                createAccessRightArgument("owner=1492596@20754.0.0.0", 3, "1492596@20754.0.0.0"),
-                createAccessRightArgument(
-                        "STATISTICS=true", 22, "1492596@20754.0.0.0", MANAGE_CUSTOMERS),
-                createAccessRightArgument("", 4, "1492596@20754.0.0.0", MANAGE_DOI),
-                createAccessRightArgument("", 8, "1492596@20754.0.0.0", SUPPORT),
-                createAccessRightArgument(
-                        "", 15, "1492596@20754.0.0.0", MANAGE_PUBLISHING_REQUESTS),
-                createAccessRightArgument("", 1, "1485369@5923.0.0.0", MANAGE_DOI),
-                createAccessRightArgument("", 6, "1485369@5923.0.0.0", SUPPORT),
-                createAccessRightArgument("", 13, "1485369@5923.0.0.0", MANAGE_PUBLISHING_REQUESTS),
-                createAccessRightArgument("", 7, "1485369@5923.0.0.0", MANAGE_DOI, SUPPORT),
-                createAccessRightArgument(
-                        "",
-                        20,
-                        "1485369@5923.0.0.0",
-                        MANAGE_DOI,
-                        SUPPORT,
-                        MANAGE_PUBLISHING_REQUESTS),
-                createAccessRightArgument(
-                        "",
-                        20,
-                        "1412322@20754.0.0.0",
-                        MANAGE_DOI,
-                        SUPPORT,
-                        MANAGE_PUBLISHING_REQUESTS));
+                accessRightArgument(
+                        url.addQueryParameter(Words.OWNER, "1412322@20754.0.0.0").getUri(),
+                        16,
+                        "1412322@20754.0.0.0"),
+                accessRightArgument(
+                        url.addQueryParameter(Words.OWNER, "1492596@20754.0.0.0").getUri(),
+                        3,
+                        "1492596@20754.0.0.0"),
+                accessRightArgument(
+                        url.addQueryParameter(STATISTICS.asCamelCase(), "true").getUri(),
+                        22,
+                        "1492596@20754.0.0.0",
+                        MANAGE_CUSTOMERS),
+                accessRightArgument(url.getUri(), 4, "1492596@20754.0.0.0", MANAGE_DOI),
+                accessRightArgument(url.getUri(), 8, "1492596@20754.0.0.0", SUPPORT),
+                accessRightArgument(
+                        url.getUri(), 15, "1492596@20754.0.0.0", MANAGE_PUBLISHING_REQUESTS),
+                accessRightArgument(url.getUri(), 1, "1485369@5923.0.0.0", MANAGE_DOI),
+                accessRightArgument(url.getUri(), 6, "1485369@5923.0.0.0", SUPPORT),
+                accessRightArgument(
+                        url.getUri(), 13, "1485369@5923.0.0.0", MANAGE_PUBLISHING_REQUESTS),
+                accessRightArgument(url.getUri(), 7, "1485369@5923.0.0.0", MANAGE_DOI, SUPPORT),
+                accessRightArgument(url.getUri(), 20, "1485369@5923.0.0.0", accessRights),
+                accessRightArgument(url.getUri(), 20, "1412322@20754.0.0.0", accessRights));
     }
 
-    static Arguments aggrBuilder(
+    static Arguments accessRightArgument(
             URI searchUri, int expectedCount, String userName, AccessRight... accessRights) {
         return Arguments.of(searchUri, expectedCount, userName, accessRights);
     }
@@ -152,40 +154,23 @@ class TicketClientTest {
     static Stream<Arguments> uriProviderWithAggregationsAndAccessRights() {
         final var url = URI.create("https://x.org/?size=0&aggregation=all");
         final var url2 = URI.create("https://x.org/?size=0&aggregation=all&STATISTICS=true");
+        final AccessRight[] accessRights = {MANAGE_DOI, SUPPORT, MANAGE_PUBLISHING_REQUESTS};
         return Stream.of(
-                aggrBuilder(url, 0, "1492596@20754.0.0.0"),
-                aggrBuilder(url, 0, "1492596@20754.0.0.0", MANAGE_DOI),
-                aggrBuilder(url, 0, "1492596@20754.0.0.0", SUPPORT),
-                aggrBuilder(url, 0, "1492596@20754.0.0.0", MANAGE_PUBLISHING_REQUESTS),
-                aggrBuilder(url, 0, "34322@20754.0.0.0"),
-                aggrBuilder(
-                        url,
-                        0,
-                        "34322@20754.0.0.0",
-                        MANAGE_DOI,
-                        SUPPORT,
-                        MANAGE_PUBLISHING_REQUESTS),
-                aggrBuilder(url, 0, "1485369@5923.0.0.0"),
-                aggrBuilder(
-                        url,
-                        0,
-                        "1485369@5923.0.0.0",
-                        MANAGE_DOI,
-                        SUPPORT,
-                        MANAGE_PUBLISHING_REQUESTS),
-                aggrBuilder(url2, 0, "1485369@5923.0.0.0", MANAGE_CUSTOMERS),
-                aggrBuilder(url, 0, "1485369@20754.0.0.0"),
-                aggrBuilder(
-                        url,
-                        0,
-                        "1485369@20754.0.0.0",
-                        MANAGE_DOI,
-                        SUPPORT,
-                        MANAGE_PUBLISHING_REQUESTS),
-                aggrBuilder(url, 2, "1412322@20754.0.0.0"),
-                aggrBuilder(url, 2, "1412322@20754.0.0.0", MANAGE_DOI),
-                aggrBuilder(url, 2, "1412322@20754.0.0.0", SUPPORT),
-                aggrBuilder(url, 2, "1412322@20754.0.0.0", MANAGE_PUBLISHING_REQUESTS));
+                accessRightArgument(url, 0, "1492596@20754.0.0.0"),
+                accessRightArgument(url, 0, "1492596@20754.0.0.0", MANAGE_DOI),
+                accessRightArgument(url, 0, "1492596@20754.0.0.0", SUPPORT),
+                accessRightArgument(url, 0, "1492596@20754.0.0.0", MANAGE_PUBLISHING_REQUESTS),
+                accessRightArgument(url, 2, "1412322@20754.0.0.0"),
+                accessRightArgument(url, 2, "1412322@20754.0.0.0", MANAGE_DOI),
+                accessRightArgument(url, 2, "1412322@20754.0.0.0", SUPPORT),
+                accessRightArgument(url, 2, "1412322@20754.0.0.0", MANAGE_PUBLISHING_REQUESTS),
+                accessRightArgument(url, 0, "34322@20754.0.0.0"),
+                accessRightArgument(url, 0, "34322@20754.0.0.0", accessRights),
+                accessRightArgument(url, 0, "1485369@20754.0.0.0"),
+                accessRightArgument(url, 0, "1485369@20754.0.0.0", accessRights),
+                accessRightArgument(url, 0, "1485369@5923.0.0.0"),
+                accessRightArgument(url, 0, "1485369@5923.0.0.0", accessRights),
+                accessRightArgument(url2, 0, "1485369@5923.0.0.0", MANAGE_CUSTOMERS));
     }
 
     static Stream<URI> uriSortingProvider() {
@@ -220,12 +205,6 @@ class TicketClientTest {
     static Stream<Arguments> uriProviderAsAdmin() {
         return loadMapFromResource(TICKETS_VALID_TEST_URL_JSON).entrySet().stream()
                 .map(entry -> createArgument(entry.getKey(), entry.getValue()));
-    }
-
-    private static Arguments createAccessRightArgument(
-            String searchUri, int expectedCount, String userName, AccessRight... accessRights) {
-        return Arguments.of(
-                URI.create(REQUEST_BASE_URL + searchUri), expectedCount, userName, accessRights);
     }
 
     private static Arguments createArgument(String searchUri, int expectedCount) {
