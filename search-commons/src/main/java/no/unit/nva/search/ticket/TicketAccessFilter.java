@@ -120,7 +120,7 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
                         boolQuery()
                                 .must(filterByOrganization(organizationId.toString()))
                                 .must(filterByUserAndTicketTypes(currentUser, curatorTicketTypes))
-                                .must(filterByEitherAssigneeOrOwner(currentUser))
+                                .must(filterByEitherAssigneeOrOwnerIfPresent(currentUser))
                                 .queryName(ORG_AND_TYPE_OR_USER_NAME));
         return ticketSearchQuery;
     }
@@ -197,7 +197,7 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
         return allowed;
     }
 
-    private QueryBuilder filterByEitherAssigneeOrOwner(String userName) {
+    private QueryBuilder filterByEitherAssigneeOrOwnerIfPresent(String userName) {
         var boolQueryBuilder = boolQuery();
         if (searchAsAssignee()) {
             boolQueryBuilder.mustNot(ownerTerm(userName));
