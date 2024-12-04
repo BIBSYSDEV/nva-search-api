@@ -257,7 +257,7 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
     }
 
     private void validateAssigneeAndOwner() throws UnauthorizedException {
-        if (query.parameters().get(OWNER).equals(query.parameters().get(ASSIGNEE))) {
+        if (query.parameters().get(OWNER).as().equals(query.parameters().get(ASSIGNEE).as())) {
             throw new UnauthorizedException(
                     CANNOT_SEARCH_AS_BOTH_ASSIGNEE_AND_OWNER_AT_THE_SAME_TIME);
         }

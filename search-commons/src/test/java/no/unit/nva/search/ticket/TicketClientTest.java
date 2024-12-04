@@ -84,9 +84,6 @@ class TicketClientTest {
     public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 4;
     public static final URI testOrganizationId =
             URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0");
-    private static final Logger logger = LoggerFactory.getLogger(TicketClientTest.class);
-    private static final String TICKETS_VALID_TEST_URL_JSON = "ticket_datasource_urls.json";
-    private static final RequestInfo mockedRequestInfo = mock(RequestInfo.class);
     public static final String AnetteOlli = "1412322@20754.0.0.0";
     public static final String Kir = "1492596@20754.0.0.0";
     public static final String USER_03 = "1485369@5923.0.0.0";
@@ -94,6 +91,9 @@ class TicketClientTest {
     public static final String CURRENT_USERNAME = AnetteOlli;
     public static final String USER_04 = "34322@20754.0.0.0";
     public static final String USER_05 = "1485369@20754.0.0.0";
+    private static final Logger logger = LoggerFactory.getLogger(TicketClientTest.class);
+    private static final String TICKETS_VALID_TEST_URL_JSON = "ticket_datasource_urls.json";
+    private static final RequestInfo mockedRequestInfo = mock(RequestInfo.class);
     private static TicketClient searchClient;
 
     @BeforeAll
@@ -122,6 +122,10 @@ class TicketClientTest {
                 createArgument("offset=15&perPage=2", 2));
     }
 
+    private static Arguments createArgument(String searchUri, int expectedCount) {
+        return Arguments.of(URI.create(REQUEST_BASE_URL + searchUri), expectedCount);
+    }
+
     static Stream<Arguments> uriAccessRights() {
         final AccessRight[] accessRights = {MANAGE_DOI, SUPPORT, MANAGE_PUBLISHING_REQUESTS};
         final var statistics = STATISTICS.asCamelCase();
@@ -129,28 +133,35 @@ class TicketClientTest {
         return Stream.of(
                 accessRightArg(
                         fromUri(uri).addQueryParameter(Words.OWNER, AnetteOlli).getUri(),
+                        0,
                         7,
                         AnetteOlli),
-                accessRightArg(fromUri(uri).addQueryParameter(Words.OWNER, Kir).getUri(), 10, Kir),
+                accessRightArg(
+                        fromUri(uri).addQueryParameter(Words.OWNER, Kir).getUri(), 0, 10, Kir),
                 accessRightArg(
                         fromUri(uri).addQueryParameter(statistics, TRUE).getUri(),
+                        0,
                         22,
                         Kir,
                         MANAGE_CUSTOMERS),
-                accessRightArg(uri, 11, Kir, MANAGE_DOI),
-                accessRightArg(uri, 15, Kir, SUPPORT),
-                accessRightArg(uri, 15, Kir, MANAGE_PUBLISHING_REQUESTS),
-                accessRightArg(uri, 1, USER_03, MANAGE_DOI),
-                accessRightArg(uri, 6, USER_03, SUPPORT),
-                accessRightArg(uri, 13, USER_03, MANAGE_PUBLISHING_REQUESTS),
-                accessRightArg(uri, 7, USER_03, MANAGE_DOI, SUPPORT),
-                accessRightArg(uri, 20, AnetteOlli, accessRights),
-                accessRightArg(uri, 20, USER_03, accessRights));
+                accessRightArg(uri, 0, 11, Kir, MANAGE_DOI),
+                accessRightArg(uri, 0, 15, Kir, SUPPORT),
+                accessRightArg(uri, 0, 15, Kir, MANAGE_PUBLISHING_REQUESTS),
+                accessRightArg(uri, 0, 1, USER_03, MANAGE_DOI),
+                accessRightArg(uri, 0, 6, USER_03, SUPPORT),
+                accessRightArg(uri, 0, 13, USER_03, MANAGE_PUBLISHING_REQUESTS),
+                accessRightArg(uri, 0, 7, USER_03, MANAGE_DOI, SUPPORT),
+                accessRightArg(uri, 0, 20, AnetteOlli, accessRights),
+                accessRightArg(uri, 0, 20, USER_03, accessRights));
     }
 
     static Arguments accessRightArg(
-            URI searchUri, int expectedCount, String userName, AccessRight... accessRights) {
-        return Arguments.of(searchUri, expectedCount, userName, accessRights);
+            URI searchUri,
+            int pending,
+            int expectedCount,
+            String userName,
+            AccessRight... accessRights) {
+        return Arguments.of(searchUri, pending, expectedCount, userName, accessRights);
     }
 
     static Stream<Arguments> uriProviderWithAggregationsAndAccessRights() {
@@ -158,36 +169,21 @@ class TicketClientTest {
         final var url2 = URI.create("https://x.org/?size=0&aggregation=all&STATISTICS=true");
         final AccessRight[] accessRights = {MANAGE_DOI, SUPPORT, MANAGE_PUBLISHING_REQUESTS};
         return Stream.of(
-                accessRightArg(url, 0, AnetteOlli),
-                accessRightArg(url, 0, AnetteOlli, MANAGE_DOI),
-                accessRightArg(url, 0, AnetteOlli, SUPPORT),
-                accessRightArg(url, 1, AnetteOlli, MANAGE_PUBLISHING_REQUESTS),
-                accessRightArg(url, 0, Kir),
-                accessRightArg(url, 1, Kir, MANAGE_DOI),
-                accessRightArg(url, 0, Kir, SUPPORT),
-                accessRightArg(url, 0, Kir, MANAGE_PUBLISHING_REQUESTS),
-                accessRightArg(url2, 0, USER_03, MANAGE_CUSTOMERS),
-                accessRightArg(url, 0, USER_03),
-                accessRightArg(url, 0, USER_03, accessRights),
-                accessRightArg(url, 0, USER_04),
-                accessRightArg(url, 0, USER_04, accessRights),
-                accessRightArg(url, 0, USER_05),
-                accessRightArg(url, 0, USER_05, accessRights));
-    }
-
-    static Stream<URI> uriSortingProvider() {
-
-        return Stream.of(
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "sort=status&sortOrder=asc&sort=created_date&order=desc"),
-                URI.create(REQUEST_BASE_URL + "orderBy=status:asc,created_date:desc"),
-                URI.create(REQUEST_BASE_URL + "sort=status+asc&sort=created_date+desc"),
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "sort=created_date&sortOrder=asc&sort=status&order=desc"),
-                URI.create(REQUEST_BASE_URL + "sort=modified_date+asc&sort=type+desc"),
-                URI.create(REQUEST_BASE_URL + "sort=relevance,modified_date+asc"));
+                accessRightArg(url, 0, 7, AnetteOlli),
+                accessRightArg(url, 0, 7, AnetteOlli, MANAGE_DOI),
+                accessRightArg(url, 0, 8, AnetteOlli, SUPPORT),
+                accessRightArg(url, 1, 19, AnetteOlli, MANAGE_PUBLISHING_REQUESTS),
+                accessRightArg(url, 0, 10, Kir),
+                accessRightArg(url, 1, 11, Kir, MANAGE_DOI),
+                accessRightArg(url, 0, 15, Kir, SUPPORT),
+                accessRightArg(url, 0, 15, Kir, MANAGE_PUBLISHING_REQUESTS),
+                accessRightArg(url2, 0, 22, USER_03, MANAGE_CUSTOMERS),
+                accessRightArg(url, 0, 0, USER_03),
+                accessRightArg(url, 0, 20, USER_03, accessRights),
+                accessRightArg(url, 0, 4, USER_04),
+                accessRightArg(url, 0, 20, USER_04, accessRights),
+                accessRightArg(url, 0, 0, USER_05),
+                accessRightArg(url, 0, 20, USER_05, accessRights));
     }
 
     static Stream<URI> uriInvalidProvider() {
@@ -207,10 +203,6 @@ class TicketClientTest {
     static Stream<Arguments> uriProviderAsAdmin() {
         return loadMapFromResource(TICKETS_VALID_TEST_URL_JSON).entrySet().stream()
                 .map(entry -> createArgument(entry.getKey(), entry.getValue()));
-    }
-
-    private static Arguments createArgument(String searchUri, int expectedCount) {
-        return Arguments.of(URI.create(REQUEST_BASE_URL + searchUri), expectedCount);
     }
 
     private static Map<String, Integer> loadMapFromResource(String resource) {
@@ -459,7 +451,11 @@ class TicketClientTest {
     @ParameterizedTest()
     @MethodSource("uriProviderWithAggregationsAndAccessRights")
     void uriRequestReturnsSuccessfulResponseWithAggregations(
-            URI uri, Integer expectedCount, String userName, AccessRight... accessRights)
+            URI uri,
+            Integer pending,
+            Integer expectedCount,
+            String userName,
+            AccessRight... accessRights)
             throws ApiGatewayException {
         var response =
                 TicketSearchQuery.builder()
@@ -477,11 +473,11 @@ class TicketClientTest {
         var aggregations = response.toPagedResponse().aggregations();
 
         assertNotNull(aggregations);
-
-        aggregations.forEach(
-                (key, value) ->
-                        logger.warn("{} : {}", value.stream().mapToLong(Facet::count).sum(), key));
-        assertThat(aggregations.get(Constants.BY_USER_PENDING).size(), is(equalTo(expectedCount)));
+        var actualPending =
+                aggregations.get(Constants.BY_USER_PENDING).stream().mapToInt(Facet::count).sum();
+        assertThat(actualPending, is(equalTo(pending)));
+        var actualCount = aggregations.get(TYPE).stream().mapToInt(Facet::count).sum();
+        assertThat(actualCount, is(equalTo(expectedCount)));
     }
 
     @Test
@@ -570,6 +566,28 @@ class TicketClientTest {
     }
 
     @Test
+    void badUriRequestReturnsUnauthorized() throws UnauthorizedException {
+        var uri = URI.create(REQUEST_BASE_URL + "owner=Kir&assignee=Kir");
+
+        var mockedRequestInfoLocal = mock(RequestInfo.class);
+        when(mockedRequestInfoLocal.getUserName()).thenReturn(randomString());
+        when(mockedRequestInfoLocal.getTopLevelOrgCristinId())
+                .thenReturn(Optional.of(testOrganizationId));
+        when(mockedRequestInfoLocal.getAccessRights()).thenReturn(List.of(MANAGE_DOI));
+        assertThrows(
+                UnauthorizedException.class,
+                () ->
+                        TicketSearchQuery.builder()
+                                .fromTestQueryParameters(queryToMapEntries(uri))
+                                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                                .withRequiredParameters(SIZE, FROM)
+                                .build()
+                                .withFilter()
+                                .fromRequestInfo(mockedRequestInfoLocal)
+                                .doSearch(searchClient));
+    }
+
+    @Test
     void uriRequestReturnsUnauthorized() throws UnauthorizedException {
         AtomicReference<URI> uri = new AtomicReference<>();
         uriSortingProvider().findFirst().ifPresent(uri::set);
@@ -586,5 +604,20 @@ class TicketClientTest {
                                 .withFilter()
                                 .fromRequestInfo(mockedRequestInfoLocal)
                                 .doSearch(searchClient));
+    }
+
+    static Stream<URI> uriSortingProvider() {
+
+        return Stream.of(
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "sort=status&sortOrder=asc&sort=created_date&order=desc"),
+                URI.create(REQUEST_BASE_URL + "orderBy=status:asc,created_date:desc"),
+                URI.create(REQUEST_BASE_URL + "sort=status+asc&sort=created_date+desc"),
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "sort=created_date&sortOrder=asc&sort=status&order=desc"),
+                URI.create(REQUEST_BASE_URL + "sort=modified_date+asc&sort=type+desc"),
+                URI.create(REQUEST_BASE_URL + "sort=relevance,modified_date+asc"));
     }
 }
