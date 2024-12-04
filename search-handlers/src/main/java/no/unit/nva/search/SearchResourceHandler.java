@@ -6,6 +6,8 @@ import static no.unit.nva.search.resource.ResourceClient.defaultClient;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 
+import java.util.Map;
+import java.util.function.Supplier;
 import no.unit.nva.search.common.ContentTypeUtils;
 import no.unit.nva.search.resource.ResourceClient;
 
@@ -17,6 +19,7 @@ import nva.commons.core.JacocoGenerated;
 
 import java.net.HttpURLConnection;
 import java.util.List;
+import org.apache.http.HttpHeaders;
 
 /**
  * Handler for searching resources.
@@ -62,6 +65,11 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
                 return new SearchResourceLegacyHandler(environment, opensearchClient)
                         .processInput(input, requestInfo, context);
         }
+    }
+
+    @Override
+    protected void addAdditionalHeaders(Supplier<Map<String, String>> additionalHeaders) {
+        super.addAdditionalHeaders(() -> Map.of(HttpHeaders.VARY, HttpHeaders.ACCEPT));
     }
 
     @Override

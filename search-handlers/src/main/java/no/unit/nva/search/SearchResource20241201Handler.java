@@ -22,12 +22,8 @@ import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
-import org.apache.http.HttpHeaders;
-
 import java.net.HttpURLConnection;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 
 /**
  * Handler for searching resources.
@@ -73,11 +69,6 @@ public class SearchResource20241201Handler extends ApiGatewayHandler<Void, Strin
                 .doSearch(opensearchClient)
                 .withMutators(new SimplifiedResourceModelMutator())
                 .toString();
-    }
-
-    @Override
-    protected void addAdditionalHeaders(Supplier<Map<String, String>> additionalHeaders) {
-        super.addAdditionalHeaders(() -> Map.of(HttpHeaders.VARY, HttpHeaders.ACCEPT));
     }
 
     @Override
