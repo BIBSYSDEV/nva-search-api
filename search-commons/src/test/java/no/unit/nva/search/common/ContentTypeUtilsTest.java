@@ -1,7 +1,6 @@
 package no.unit.nva.search.common;
 
-import static no.unit.nva.search.common.ContentTypeUtils.ACCEPT_HEADER_KEY_NAME;
-
+import static org.apache.http.HttpHeaders.ACCEPT;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -22,10 +21,11 @@ class ContentTypeUtilsTest {
     @Test
     void asssertThatMimeTypeAndVersionIsExtractedWhenProvided() {
         RequestInfo requestInfo = new RequestInfo();
-        requestInfo.setHeaders(Map.of(ACCEPT_HEADER_KEY_NAME, ACCEPT_HEADER_VALUE));
+        requestInfo.setHeaders(Map.of(ACCEPT, ACCEPT_HEADER_VALUE));
 
         var version = ContentTypeUtils.extractVersionFromRequestInfo(requestInfo);
-        var mimeType = ContentTypeUtils.extractMimeTypeFromRequestInfo(requestInfo);
+        var mimeType =
+                ContentTypeUtils.extractContentTypeFromRequestInfo(requestInfo).getMimeType();
 
         assertThat(mimeType, equalTo(MIME_TYPE));
         assertThat(version, equalTo(VERSION_VALUE));
@@ -34,10 +34,11 @@ class ContentTypeUtilsTest {
     @Test
     void asssertThatMimeTypeAndVersionIsExtractedWhenProvidedAndVersionHasQuotes() {
         RequestInfo requestInfo = new RequestInfo();
-        requestInfo.setHeaders(Map.of(ACCEPT_HEADER_KEY_NAME, ACCEPT_HEADER_VALUE_WITH_QUOTES));
+        requestInfo.setHeaders(Map.of(ACCEPT, ACCEPT_HEADER_VALUE_WITH_QUOTES));
 
         var version = ContentTypeUtils.extractVersionFromRequestInfo(requestInfo);
-        var mimeType = ContentTypeUtils.extractMimeTypeFromRequestInfo(requestInfo);
+        var mimeType =
+                ContentTypeUtils.extractContentTypeFromRequestInfo(requestInfo).getMimeType();
 
         assertThat(mimeType, equalTo(MIME_TYPE));
         assertThat(version, equalTo(VERSION_VALUE));
@@ -49,7 +50,7 @@ class ContentTypeUtilsTest {
         requestInfo.setHeaders(Map.of());
 
         var version = ContentTypeUtils.extractVersionFromRequestInfo(requestInfo);
-        var mimeType = ContentTypeUtils.extractMimeTypeFromRequestInfo(requestInfo);
+        var mimeType = ContentTypeUtils.extractContentTypeFromRequestInfo(requestInfo);
 
         assertThat(mimeType, equalTo(null));
         assertThat(version, equalTo(null));

@@ -1,3 +1,5 @@
 package no.unit.nva.search.resource.response;
 
-public record Identity(String id, String type, String name) {}
+import java.net.URI;
+
+public record Identity(URI id, String name) {}

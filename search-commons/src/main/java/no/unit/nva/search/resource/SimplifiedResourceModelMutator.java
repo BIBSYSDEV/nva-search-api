@@ -21,7 +21,11 @@ import no.unit.nva.search.resource.response.ResourceSearchResponse;
 import no.unit.nva.search.resource.response.ResourceSearchResponse.Builder;
 import no.unit.nva.search.resource.response.Series;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -69,6 +73,7 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
     public static final String IDENTITY = "identity";
     public static final String SEQUENCE = "sequence";
     public static final String ROLE = "role";
+    public static final String MANIFESTATIONS = "manifestations";
     private final ObjectMapper objectMapper = dtoObjectMapper.copy();
     public static final String ENTITY_DESCRIPTION = "entityDescription";
     public static final String REFERENCE = "reference";
@@ -108,6 +113,14 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
                 attempt(() -> objectMapper.valueToTree(transformToDto(source))).orElseThrow();
     }
 
+    @NotNull
+    private static PublicationDate mutatePublicationDate(JsonNode source) {
+        return new PublicationDate(
+                source.path(ENTITY_DESCRIPTION).path(PUBLICATION_DATE).path(YEAR).textValue(),
+                source.path(ENTITY_DESCRIPTION).path(PUBLICATION_DATE).path(MONTH).textValue(),
+                source.path(ENTITY_DESCRIPTION).path(PUBLICATION_DATE).path(DAY).textValue());
+    }
+
     private ResourceSearchResponse transformToDto(JsonNode source) throws IOException {
         return new Builder()
                 .withId(source.path(ID).textValue())
@@ -121,25 +134,8 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
                 .withMainLanguageAbstract(
                         source.path(ENTITY_DESCRIPTION).path(ABSTRACT).textValue())
                 .withDescription(source.path(DESCRIPTION).textValue())
-                .withAlternativeTitles(
-                        source.path(ENTITY_DESCRIPTION).has(ALTERNATIVE_TITLES)
-                                ? jsonNodeMapToValueList(
-                                        source.path(ENTITY_DESCRIPTION).path(ALTERNATIVE_TITLES))
-                                : null)
-                .withPublicationDate(
-                        new PublicationDate(
-                                source.path(ENTITY_DESCRIPTION)
-                                        .path(PUBLICATION_DATE)
-                                        .path(YEAR)
-                                        .textValue(),
-                                source.path(ENTITY_DESCRIPTION)
-                                        .path(PUBLICATION_DATE)
-                                        .path(MONTH)
-                                        .textValue(),
-                                source.path(ENTITY_DESCRIPTION)
-                                        .path(PUBLICATION_DATE)
-                                        .path(DAY)
-                                        .textValue()))
+                .withAlternativeTitles(mutateAlternativeTitles(source))
+                .withPublicationDate(mutatePublicationDate(source))
                 .withContributorsPreview(mutateContributorsPreview(source))
                 .withContributorsCount(
                         source.path(ENTITY_DESCRIPTION).path(CONTRIBUTORS_COUNT).asInt())
@@ -149,9 +145,15 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
                 .build();
     }
 
-    private List<String> jsonNodeMapToValueList(JsonNode source) throws IOException {
-        Map<String, String> map = objectMapper.convertValue(source, Map.class);
-        return map.values().stream().collect(Collectors.toList());
+    @Nullable
+    private Map<String, String> mutateAlternativeTitles(JsonNode source) throws IOException {
+        return source.path(ENTITY_DESCRIPTION).has(ALTERNATIVE_TITLES)
+                ? jsonNodeMapToMap(source.path(ENTITY_DESCRIPTION).path(ALTERNATIVE_TITLES))
+                : null;
+    }
+
+    private Map<String, String> jsonNodeMapToMap(JsonNode source) throws IOException {
+        return objectMapper.convertValue(source, Map.class);
     }
 
     private OtherIdentifiers mutateOtherIdentifiers(JsonNode source) throws IOException {
@@ -182,15 +184,49 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
                         .filter(Objects::nonNull)
                         .collect(Collectors.toSet());
 
-        var isbnsInSource =
+        var isbnsInSourceNose =
                 source.path(ENTITY_DESCRIPTION)
                         .path(REFERENCE)
                         .path(PUBLICATION_CONTEXT)
                         .path(ISBN_LIST);
-        List<String> isbns =
-                isbnsInSource.isMissingNode()
+
+        List<String> isbnsInManifestations = new ArrayList<>();
+        var manifestations =
+                source.path(ENTITY_DESCRIPTION)
+                        .path(REFERENCE)
+                        .path(PUBLICATION_INSTANCE)
+                        .path(MANIFESTATIONS);
+
+        if (!manifestations.isMissingNode() && manifestations.isArray()) {
+            manifestations
+                    .iterator()
+                    .forEachRemaining(
+                            manifest -> {
+                                if (!manifest.get(ISBN_LIST).isMissingNode()) {
+                                    List<String> isbns =
+                                            (List<String>)
+                                                    attempt(
+                                                                    () ->
+                                                                            objectMapper
+                                                                                    .readerForListOf(
+                                                                                            String
+                                                                                                    .class)
+                                                                                    .readValue(
+                                                                                            manifest
+                                                                                                    .get(
+                                                                                                            ISBN_LIST)))
+                                                            .orElseThrow();
+                                    isbnsInManifestations.addAll(isbns);
+                                }
+                            });
+        }
+
+        List<String> isbnsInSource =
+                isbnsInSourceNose.isMissingNode()
                         ? Collections.emptyList()
-                        : objectMapper.readerForListOf(String.class).readValue(isbnsInSource);
+                        : objectMapper.readerForListOf(String.class).readValue(isbnsInSourceNose);
+
+        var isbns = Stream.concat(isbnsInSource.stream(), isbnsInManifestations.stream()).toList();
 
         var handleIdentifiers = new ArrayList<String>();
         var cristinIdentifiers = new ArrayList<String>();
@@ -218,8 +254,8 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
                 new HashSet<>(scopusIdentifiers),
                 new HashSet<>(cristinIdentifiers),
                 new HashSet<>(handleIdentifiers),
-                new HashSet<>(isbns),
-                new HashSet<>(issns));
+                new HashSet<>(issns),
+                new HashSet<>(isbns));
     }
 
     private RecordMetadata mutateRecordMetadata(JsonNode source) {
@@ -230,30 +266,28 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
 
     private PublishingDetails mutatePublishingDetails(JsonNode source) {
         return new PublishingDetails(
-                source.path(ENTITY_DESCRIPTION)
-                        .path(REFERENCE)
-                        .path(PUBLICATION_CONTEXT)
-                        .path(ID)
-                        .textValue(),
-                mutateJournalOrPublisher(source),
+                uriFromText(
+                        source.path(ENTITY_DESCRIPTION)
+                                .path(REFERENCE)
+                                .path(PUBLICATION_CONTEXT)
+                                .path(ID)
+                                .textValue()),
+                mutatePublicationContextType(source),
                 mutateSeries(source),
                 source.path(ENTITY_DESCRIPTION)
                         .path(REFERENCE)
                         .path(PUBLICATION_CONTEXT)
                         .path(NAME)
                         .textValue(),
-                source.path(ENTITY_DESCRIPTION).path(REFERENCE).path(DOI).textValue());
+                uriFromText(source.path(ENTITY_DESCRIPTION).path(REFERENCE).path(DOI).textValue()));
     }
 
-    private String mutateJournalOrPublisher(JsonNode source) {
-        return JOURNAL.equals(
-                        source.path(ENTITY_DESCRIPTION)
-                                .path(REFERENCE)
-                                .path(PUBLICATION_CONTEXT)
-                                .path(TYPE)
-                                .textValue())
-                ? JOURNAL
-                : PUBLISHER;
+    private String mutatePublicationContextType(JsonNode source) {
+        return source.path(ENTITY_DESCRIPTION)
+                .path(REFERENCE)
+                .path(PUBLICATION_CONTEXT)
+                .path(TYPE)
+                .textValue();
     }
 
     private Series mutateSeries(JsonNode source) {
@@ -275,26 +309,42 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
                 .path(CONTRIBUTORS_PREVIEW)
                 .iterator()
                 .forEachRemaining(
-                        c -> {
-                            var affiliationNode = c.path(AFFILIATIONS);
-                            var affiliation =
-                                    affiliationNode.isMissingNode()
-                                            ? null
-                                            : new Affiliation(
-                                                    affiliationNode.get(0).path(ID).textValue(),
-                                                    affiliationNode.get(0).path(TYPE).textValue());
+                        contributorNode -> {
+                            var affiliationNode = contributorNode.path(AFFILIATIONS);
+                            var affiliations = new HashSet<Affiliation>();
+                            if (!affiliationNode.isMissingNode()) {
+                                affiliationNode
+                                        .iterator()
+                                        .forEachRemaining(
+                                                aff -> {
+                                                    affiliations.add(
+                                                            new Affiliation(
+                                                                    aff.path(ID).textValue(),
+                                                                    aff.path(ID).textValue()));
+                                                });
+                            }
+
                             contributors.add(
                                     new Contributor(
-                                            affiliation,
-                                            c.path(CORRESPONDING_AUTHOR).asBoolean(),
+                                            affiliations,
+                                            contributorNode.path(CORRESPONDING_AUTHOR).asBoolean(),
                                             new Identity(
-                                                    c.path(IDENTITY).path(ID).textValue(),
-                                                    c.path(IDENTITY).path(TYPE).textValue(),
-                                                    c.path(IDENTITY).path(NAME).textValue()),
-                                            c.path(ROLE).textValue(),
-                                            c.path(SEQUENCE).asInt(),
-                                            c.path(TYPE).textValue()));
+                                                    uriFromText(
+                                                            contributorNode
+                                                                    .path(IDENTITY)
+                                                                    .path(ID)
+                                                                    .textValue()),
+                                                    contributorNode
+                                                            .path(IDENTITY)
+                                                            .path(NAME)
+                                                            .textValue()),
+                                            contributorNode.path(ROLE).textValue(),
+                                            contributorNode.path(SEQUENCE).asInt()));
                         });
         return contributors;
+    }
+
+    private URI uriFromText(String text) {
+        return Objects.isNull(text) ? null : URI.create(text);
     }
 }

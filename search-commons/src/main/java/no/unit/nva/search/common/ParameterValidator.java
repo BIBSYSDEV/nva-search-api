@@ -6,6 +6,7 @@ import static no.unit.nva.constants.Words.ALL;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.HTTPS;
 import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
+import static no.unit.nva.search.common.ContentTypeUtils.extractContentTypeFromRequestInfo;
 import static no.unit.nva.search.common.constant.Functions.decodeUTF;
 import static no.unit.nva.search.common.constant.Functions.mergeWithColonOrComma;
 
@@ -185,7 +186,8 @@ public abstract class ParameterValidator<
 
     /** Adds query and path parameters from requestInfo. */
     public ParameterValidator<K, Q> fromRequestInfo(RequestInfo requestInfo) {
-        searchQuery.setMediaType(ContentTypeUtils.extractMimeTypeFromRequestInfo(requestInfo));
+        var contentType = extractContentTypeFromRequestInfo(requestInfo);
+        searchQuery.setMediaType(isNull(contentType) ? null : contentType.getMimeType());
         var uri = URI.create(HTTPS + requestInfo.getDomainName() + requestInfo.getPath());
         searchQuery.setAccessRights(requestInfo.getAccessRights());
         searchQuery.setNvaSearchApiUri(uri);

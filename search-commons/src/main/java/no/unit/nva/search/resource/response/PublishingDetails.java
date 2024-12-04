@@ -1,3 +1,5 @@
 package no.unit.nva.search.resource.response;
 
-public record PublishingDetails(String id, String type, Series series, String name, String doi) {}
+import java.net.URI;
+
+public record PublishingDetails(URI id, String type, Series series, String name, URI doi) {}

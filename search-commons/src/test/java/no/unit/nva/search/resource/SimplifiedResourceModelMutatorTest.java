@@ -6,6 +6,7 @@ import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -70,18 +71,46 @@ class SimplifiedResourceModelMutatorTest {
 
     @Test
     void shouldMapAlternativeTitles() throws JsonProcessingException {
+        var language = randomString();
         var expectedAlternativeTitle = randomString();
         var input = new ObjectMapper().createObjectNode();
         var entityDescription = new ObjectMapper().createObjectNode();
         var alternativeTitles = new ObjectMapper().createObjectNode();
-        alternativeTitles.put("no", expectedAlternativeTitle);
+        alternativeTitles.put(language, expectedAlternativeTitle);
         entityDescription.set("alternativeTitles", alternativeTitles);
         input.set("entityDescription", entityDescription);
 
         var mutated = new SimplifiedResourceModelMutator().transform(input);
         var asDto = objectMapper.treeToValue(mutated, ResourceSearchResponse.class);
         assertThat(asDto.alternativeTitles().size(), is(equalTo(1)));
-        assertThat(asDto.alternativeTitles().get(0), is(equalTo(expectedAlternativeTitle)));
+        assertThat(asDto.alternativeTitles().get(language), is(equalTo(expectedAlternativeTitle)));
+    }
+
+    @Test
+    void shouldMapIsbnsForArtistics() throws JsonProcessingException {
+        var isbn1 = randomString();
+        var isbn2 = randomString();
+        var input = new ObjectMapper().createObjectNode();
+        var entityDescription = new ObjectMapper().createObjectNode();
+        var reference = new ObjectMapper().createObjectNode();
+        var publicationInstance = new ObjectMapper().createObjectNode();
+        var manifistations = new ObjectMapper().createArrayNode();
+        var manifistation = new ObjectMapper().createObjectNode();
+        var isbnList = new ObjectMapper().createArrayNode();
+        isbnList.add(new TextNode(isbn1));
+        isbnList.add(new TextNode(isbn2));
+        manifistation.set("isbnList", isbnList);
+        manifistations.add(manifistation);
+        publicationInstance.set("manifestations", manifistations);
+        reference.set("publicationInstance", publicationInstance);
+        entityDescription.set("reference", reference);
+        input.set("entityDescription", entityDescription);
+
+        var mutated = new SimplifiedResourceModelMutator().transform(input);
+        var asDto = objectMapper.treeToValue(mutated, ResourceSearchResponse.class);
+
+        assertThat(asDto.otherIdentifiers().isbn(), hasItem(isbn1));
+        assertThat(asDto.otherIdentifiers().isbn(), hasItem(isbn2));
     }
 
     @Test

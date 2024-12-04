@@ -3,6 +3,7 @@ package no.unit.nva.search.resource.response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
+import java.util.Map;
 
 public record ResourceSearchResponse(
         String id,
@@ -12,7 +13,7 @@ public record ResourceSearchResponse(
         String mainTitle,
         @JsonProperty("abstract") String mainLanguageAbstract,
         String description,
-        List<String> alternativeTitles,
+        Map<String, String> alternativeTitles,
         PublicationDate publicationDate,
         List<Contributor> contributorsPreview,
         int contributorsCount,
@@ -27,7 +28,7 @@ public record ResourceSearchResponse(
         private String mainTitle;
         private String mainLanguageAbstract;
         private String description;
-        private List<String> alternativeTitles;
+        private Map<String, String> alternativeTitles;
         private PublicationDate publicationDate;
         private List<Contributor> contributorsPreview;
         private int contributorsCount;
@@ -74,7 +75,7 @@ public record ResourceSearchResponse(
             return this;
         }
 
-        public Builder withAlternativeTitles(List<String> alternativeTitles) {
+        public Builder withAlternativeTitles(Map<String, String> alternativeTitles) {
             this.alternativeTitles = alternativeTitles;
             return this;
         }

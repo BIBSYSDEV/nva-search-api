@@ -2228,10 +2228,13 @@ components:
               type: string
             createdDate:
               type: string
+              format: date-time
             modifiedDate:
               type: string
+              format: date-time
             publishedDate:
               type: string
+              format: date-time
         mainTitle:
           type: string
         abstract:
@@ -2239,18 +2242,18 @@ components:
         description:
           type: string
         alternativeTitles:
-          type: array
-          items:
+          type: object
+          additionalProperties:
             type: string
         publicationDate:
           type: object
           properties:
             year:
-              type: integer
+              type: string
             month:
-              type: integer
+              type: string
             day:
-              type: integer
+              type: string
         contributorsPreview:
           type: array
           items:
@@ -2261,6 +2264,7 @@ components:
                 properties:
                   id:
                     type: string
+                    format: uri
                   type:
                     type: string
               correspondingAuthor:
@@ -2270,16 +2274,13 @@ components:
                 properties:
                   id:
                     type: string
-                  type:
-                    type: string
+                    format: uri
                   name:
                     type: string
               role:
                 type: string
               sequence:
                 type: integer
-              type:
-                type: string
         contributorsCount:
           type: integer
         publishingDetails:
@@ -2300,10 +2301,6 @@ components:
               type: string
             doi:
               type: string
-
-
-
-
 
     PublicationFull:
       type: object

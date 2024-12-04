@@ -1,9 +1,10 @@
 package no.unit.nva.search.resource.response;
 
+import java.util.Set;
+
 public record Contributor(
-        Affiliation affiliation,
+        Set<Affiliation> affiliation,
         boolean correspondingAuthor,
         Identity identity,
         String role,
-        int sequence,
-        String type) {}
+        int sequence) {}

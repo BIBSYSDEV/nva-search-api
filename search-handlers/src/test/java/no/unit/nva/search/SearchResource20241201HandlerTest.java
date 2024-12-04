@@ -68,10 +68,6 @@ class SearchResource20241201HandlerTest {
     public void shouldReturnAResponseThatCanBeMappedToModelDto() throws IOException {
         prepareRestHighLevelClientOkResponse();
         handler.handleRequest(getInputStream(), outputStream, contextMock);
-        //        var gatewayResponse =
-        //                GatewayResponse.fromOutputStream(outputStream,
-        // ResourceSearchResponse.class);
-
         var gatewayResponse = FakeGatewayResponse.of(outputStream);
 
         assertThat(gatewayResponse.statusCode(), is(equalTo(HTTP_OK)));
