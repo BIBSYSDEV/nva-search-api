@@ -43,6 +43,8 @@ public final class Constants {
     static final String ORG_AND_TYPE_OR_USER_NAME = "organizationAndAnyOfTicketTypeOrUserName";
     static final String USER_IS_NOT_ALLOWED_TO_SEARCH_FOR_TICKETS_NOT_OWNED_BY_THEMSELVES =
             "User is not allowed to search for tickets not owned by themselves";
+    static final String CANNOT_SEARCH_AS_BOTH_ASSIGNEE_AND_OWNER_AT_THE_SAME_TIME =
+            "Cannot search as both assignee and owner at the same time";
 
     public static final String BY_USER_PENDING = "byUserPending";
     private static final String FINALIZED_BY = "finalizedBy";
