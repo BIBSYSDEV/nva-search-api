@@ -87,11 +87,11 @@ class TicketClientTest {
     private static final Logger logger = LoggerFactory.getLogger(TicketClientTest.class);
     private static final String TICKETS_VALID_TEST_URL_JSON = "ticket_datasource_urls.json";
     private static final RequestInfo mockedRequestInfo = mock(RequestInfo.class);
-    public static final String USER_01 = "1412322@20754.0.0.0";
-    public static final String USER_02 = "1492596@20754.0.0.0";
+    public static final String AnetteOlli = "1412322@20754.0.0.0";
+    public static final String Kir = "1492596@20754.0.0.0";
     public static final String USER_03 = "1485369@5923.0.0.0";
     public static final String TRUE = "true";
-    public static final String CURRENT_USERNAME = USER_01;
+    public static final String CURRENT_USERNAME = AnetteOlli;
     public static final String USER_04 = "34322@20754.0.0.0";
     public static final String USER_05 = "1485369@20754.0.0.0";
     private static TicketClient searchClient;
@@ -128,22 +128,23 @@ class TicketClientTest {
         var uri = fromUri(REQUEST_BASE_URL).getUri();
         return Stream.of(
                 accessRightArg(
-                        fromUri(uri).addQueryParameter(Words.OWNER, USER_01).getUri(), 16, USER_01),
-                accessRightArg(
-                        fromUri(uri).addQueryParameter(Words.OWNER, USER_02).getUri(), 3, USER_02),
+                        fromUri(uri).addQueryParameter(Words.OWNER, AnetteOlli).getUri(),
+                        7,
+                        AnetteOlli),
+                accessRightArg(fromUri(uri).addQueryParameter(Words.OWNER, Kir).getUri(), 10, Kir),
                 accessRightArg(
                         fromUri(uri).addQueryParameter(statistics, TRUE).getUri(),
                         22,
-                        USER_02,
+                        Kir,
                         MANAGE_CUSTOMERS),
-                accessRightArg(uri, 4, USER_02, MANAGE_DOI),
-                accessRightArg(uri, 8, USER_02, SUPPORT),
-                accessRightArg(uri, 15, USER_02, MANAGE_PUBLISHING_REQUESTS),
+                accessRightArg(uri, 11, Kir, MANAGE_DOI),
+                accessRightArg(uri, 15, Kir, SUPPORT),
+                accessRightArg(uri, 15, Kir, MANAGE_PUBLISHING_REQUESTS),
                 accessRightArg(uri, 1, USER_03, MANAGE_DOI),
                 accessRightArg(uri, 6, USER_03, SUPPORT),
                 accessRightArg(uri, 13, USER_03, MANAGE_PUBLISHING_REQUESTS),
                 accessRightArg(uri, 7, USER_03, MANAGE_DOI, SUPPORT),
-                accessRightArg(uri, 20, USER_01, accessRights),
+                accessRightArg(uri, 20, AnetteOlli, accessRights),
                 accessRightArg(uri, 20, USER_03, accessRights));
     }
 
@@ -157,14 +158,14 @@ class TicketClientTest {
         final var url2 = URI.create("https://x.org/?size=0&aggregation=all&STATISTICS=true");
         final AccessRight[] accessRights = {MANAGE_DOI, SUPPORT, MANAGE_PUBLISHING_REQUESTS};
         return Stream.of(
-                accessRightArg(url, 2, USER_01),
-                accessRightArg(url, 2, USER_01, MANAGE_DOI),
-                accessRightArg(url, 2, USER_01, SUPPORT),
-                accessRightArg(url, 2, USER_01, MANAGE_PUBLISHING_REQUESTS),
-                accessRightArg(url, 0, USER_02),
-                accessRightArg(url, 0, USER_02, MANAGE_DOI),
-                accessRightArg(url, 0, USER_02, SUPPORT),
-                accessRightArg(url, 0, USER_02, MANAGE_PUBLISHING_REQUESTS),
+                accessRightArg(url, 0, AnetteOlli),
+                accessRightArg(url, 0, AnetteOlli, MANAGE_DOI),
+                accessRightArg(url, 0, AnetteOlli, SUPPORT),
+                accessRightArg(url, 1, AnetteOlli, MANAGE_PUBLISHING_REQUESTS),
+                accessRightArg(url, 0, Kir),
+                accessRightArg(url, 1, Kir, MANAGE_DOI),
+                accessRightArg(url, 0, Kir, SUPPORT),
+                accessRightArg(url, 0, Kir, MANAGE_PUBLISHING_REQUESTS),
                 accessRightArg(url2, 0, USER_03, MANAGE_CUSTOMERS),
                 accessRightArg(url, 0, USER_03),
                 accessRightArg(url, 0, USER_03, accessRights),
@@ -269,7 +270,7 @@ class TicketClientTest {
 
         assertThat(aggregations.get(TYPE).size(), is(3));
         assertThat(aggregations.get(STATUS).getFirst().count(), is(11));
-        assertThat(aggregations.get(BY_USER_PENDING.asCamelCase()).size(), is(2));
+        assertThat(aggregations.get(BY_USER_PENDING.asCamelCase()).size(), is(1));
         assertThat(aggregations.get(PUBLICATION_STATUS).size(), is(3));
 
         assertNotNull(FROM.asLowerCase());
@@ -362,7 +363,7 @@ class TicketClientTest {
                         .doSearch(searchClient)
                         .toPagedResponse();
 
-        assertEquals(9, pagedResult.hits().size());
+        assertEquals(3, pagedResult.hits().size());
     }
 
     @ParameterizedTest
