@@ -414,7 +414,11 @@ class TicketClientTest {
     @ParameterizedTest
     @MethodSource("uriAccessRights")
     void uriRequestReturnsSuccessfulResponseAsUser(
-            URI uri, Integer expectedCount, String userName, AccessRight... accessRights)
+            URI uri,
+            Integer ignoredValue,
+            Integer expectedCount,
+            String userName,
+            AccessRight... accessRights)
             throws ApiGatewayException {
 
         var accessRightList =
