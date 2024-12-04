@@ -32,6 +32,7 @@
   "ORGANIZATION_ID_NOT=20754.0.0.0": 0,
   "OWNER=1492596@20754.0.0.0": 3,
   "OWNER=Kir+Truhacev": 3,
+  "ASSIGNEE=Kir+Truhacev": 1,
   "OWNER_NOT=Kir+Truhacev": 11,
   "PUBLICATION_TYPE=MovingPicture": 16,
   "PUBLICATION_TYPE_NOT=MovingPicture": 4,
@@ -48,9 +49,9 @@
   "STATUS=New": 7,
   "STATUS=Pending": 2,
   "STATUS=New,Pending": 9,
-  "STATUS=New&ASSIGNEE=Anette+Olli": 12,
-  "STATUS=Pending&ASSIGNEE=Anette+Olli": 1,
-  "STATUS=New,Pending&ASSIGNEE=Anette+Olli": 3,
+  "STATUS=New&ASSIGNEE=1412322@20754.0.0.0": 12,
+  "STATUS=Pending&ASSIGNEE=1412322@20754.0.0.0": 1,
+  "STATUS=New,Pending&ASSIGNEE=1412322@20754.0.0.0": 3,
   "STATUS_NOT=New": 13,
   "TYPE=GeneralSupportCase": 6,
   "TYPE=UnpublishRequest": 0,
@@ -64,6 +65,7 @@
   "QUERY=Kir+Truhacev&FIELDS=STATUS,VIEWED_BY": 11,
   "BY_USER_PENDING=DoiRequest&ASSIGNEE=Anette+Olli": 0,
   "byUserPending=DoiRequest": 1,
+  "owner=Kir+Truhacev&assignee=1412322@20754.0.0.0": 6,
   "STATISTICS=TRUE": 22
 }
 
