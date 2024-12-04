@@ -27,7 +27,6 @@ import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.CONTRIBUTOR;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.NODES_EXCLUDED;
-import static no.unit.nva.search.resource.ResourceParameter.NODES_INCLUDED;
 import static no.unit.nva.search.resource.ResourceParameter.NODES_SEARCHED;
 import static no.unit.nva.search.resource.ResourceParameter.PAGE;
 import static no.unit.nva.search.resource.ResourceParameter.RESOURCE_PARAMETER_SET;
@@ -146,7 +145,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     @Override
     protected String[] include() {
-        return parameters().get(NODES_INCLUDED).split(COMMA);
+        return getIncludedFields().toArray(String[]::new);
     }
 
     @Override

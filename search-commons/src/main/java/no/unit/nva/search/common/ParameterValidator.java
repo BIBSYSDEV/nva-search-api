@@ -1,12 +1,12 @@
 package no.unit.nva.search.common;
 
-import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.constants.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.constants.ErrorMessages.validQueryParameterNamesMessage;
 import static no.unit.nva.constants.Words.ALL;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.HTTPS;
 import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
+import static no.unit.nva.search.common.ContentTypeUtils.extractContentTypeFromRequestInfo;
 import static no.unit.nva.search.common.constant.Functions.decodeUTF;
 import static no.unit.nva.search.common.constant.Functions.mergeWithColonOrComma;
 
@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
  * @param <Q> Instance of OpenSearchQuery
  * @author Stig Norland
  */
+@SuppressWarnings("PMD.GodClass")
 public abstract class ParameterValidator<
         K extends Enum<K> & ParameterKey<K>, Q extends SearchQuery<K>> {
 
@@ -185,7 +186,8 @@ public abstract class ParameterValidator<
 
     /** Adds query and path parameters from requestInfo. */
     public ParameterValidator<K, Q> fromRequestInfo(RequestInfo requestInfo) {
-        searchQuery.setMediaType(requestInfo.getHeaders().get(ACCEPT));
+        var contentType = extractContentTypeFromRequestInfo(requestInfo);
+        searchQuery.setMediaType(isNull(contentType) ? null : contentType.getMimeType());
         var uri = URI.create(HTTPS + requestInfo.getDomainName() + requestInfo.getPath());
         searchQuery.setAccessRights(requestInfo.getAccessRights());
         searchQuery.setNvaSearchApiUri(uri);
@@ -268,6 +270,11 @@ public abstract class ParameterValidator<
      */
     public final ParameterValidator<K, Q> withDockerHostUri(URI uri) {
         searchQuery.setOpenSearchUri(uri);
+        return this;
+    }
+
+    public final ParameterValidator<K, Q> withAlwaysIncludedFields(List<String> includedFields) {
+        searchQuery.setAlwaysIncludedFields(includedFields);
         return this;
     }
 
