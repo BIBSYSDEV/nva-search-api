@@ -17,6 +17,9 @@ import java.util.stream.Collectors;
  * @author Stig Norland
  */
 public class QueryFilter {
+    private static final String SUFFIX = "]";
+    private static final String PREFIX = "[";
+
     private final transient Map<String, QueryBuilder> filters = new HashMap<>();
 
     public QueryFilter() {}
@@ -27,6 +30,11 @@ public class QueryFilter {
         return boolQueryBuilder;
     }
 
+    /**
+     * Clears filter and sets new filters.
+     *
+     * @param filters QueryBuilder
+     */
     public void set(QueryBuilder... filters) {
         this.filters.clear();
         Arrays.stream(filters).forEach(this::add);
@@ -44,6 +52,6 @@ public class QueryFilter {
     public String toString() {
         return filters.values().stream()
                 .map(QueryBuilder::toString)
-                .collect(Collectors.joining(COMMA));
+                .collect(Collectors.joining(COMMA, PREFIX, SUFFIX));
     }
 }
