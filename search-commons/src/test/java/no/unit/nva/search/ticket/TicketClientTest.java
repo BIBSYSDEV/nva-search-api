@@ -131,19 +131,9 @@ class TicketClientTest {
         final var statistics = STATISTICS.asCamelCase();
         var uri = fromUri(REQUEST_BASE_URL).getUri();
         return Stream.of(
-                accessRightArg(
-                        fromUri(uri).addQueryParameter(Words.OWNER, AnetteOlli).getUri(),
-                        0,
-                        7,
-                        AnetteOlli),
-                accessRightArg(
-                        fromUri(uri).addQueryParameter(Words.OWNER, Kir).getUri(), 0, 10, Kir),
-                accessRightArg(
-                        fromUri(uri).addQueryParameter(statistics, TRUE).getUri(),
-                        0,
-                        22,
-                        Kir,
-                        MANAGE_CUSTOMERS),
+                accessRightArg(uriWithParam(uri, Words.OWNER, AnetteOlli), 0, 7, AnetteOlli),
+                accessRightArg(uriWithParam(uri, Words.OWNER, Kir), 0, 10, Kir),
+                accessRightArg(uriWithParam(uri, statistics, TRUE), 0, 22, Kir, MANAGE_CUSTOMERS),
                 accessRightArg(uri, 0, 11, Kir, MANAGE_DOI),
                 accessRightArg(uri, 0, 15, Kir, SUPPORT),
                 accessRightArg(uri, 0, 15, Kir, MANAGE_PUBLISHING_REQUESTS),
@@ -153,6 +143,10 @@ class TicketClientTest {
                 accessRightArg(uri, 0, 7, USER_03, MANAGE_DOI, SUPPORT),
                 accessRightArg(uri, 0, 20, AnetteOlli, accessRights),
                 accessRightArg(uri, 0, 20, USER_03, accessRights));
+    }
+
+    private static URI uriWithParam(URI uri, String key, String value) {
+        return fromUri(uri).addQueryParameter(key, value).getUri();
     }
 
     static Arguments accessRightArg(
@@ -167,23 +161,25 @@ class TicketClientTest {
     static Stream<Arguments> uriProviderWithAggregationsAndAccessRights() {
         final var url = URI.create("https://x.org/?size=0&aggregation=all");
         final var url2 = URI.create("https://x.org/?size=0&aggregation=all&STATISTICS=true");
+        final var pending0 = 0;
+        final var pending1 = 1;
         final AccessRight[] accessRights = {MANAGE_DOI, SUPPORT, MANAGE_PUBLISHING_REQUESTS};
         return Stream.of(
-                accessRightArg(url, 0, 7, AnetteOlli),
-                accessRightArg(url, 0, 7, AnetteOlli, MANAGE_DOI),
-                accessRightArg(url, 0, 8, AnetteOlli, SUPPORT),
-                accessRightArg(url, 1, 19, AnetteOlli, MANAGE_PUBLISHING_REQUESTS),
-                accessRightArg(url, 0, 10, Kir),
-                accessRightArg(url, 1, 11, Kir, MANAGE_DOI),
-                accessRightArg(url, 0, 15, Kir, SUPPORT),
-                accessRightArg(url, 0, 15, Kir, MANAGE_PUBLISHING_REQUESTS),
-                accessRightArg(url2, 0, 22, USER_03, MANAGE_CUSTOMERS),
-                accessRightArg(url, 0, 0, USER_03),
-                accessRightArg(url, 0, 20, USER_03, accessRights),
-                accessRightArg(url, 0, 4, USER_04),
-                accessRightArg(url, 0, 20, USER_04, accessRights),
-                accessRightArg(url, 0, 0, USER_05),
-                accessRightArg(url, 0, 20, USER_05, accessRights));
+                accessRightArg(url, pending0, 7, AnetteOlli),
+                accessRightArg(url, pending0, 7, AnetteOlli, MANAGE_DOI),
+                accessRightArg(url, pending0, 8, AnetteOlli, SUPPORT),
+                accessRightArg(url, pending1, 19, AnetteOlli, MANAGE_PUBLISHING_REQUESTS),
+                accessRightArg(url, pending0, 10, Kir),
+                accessRightArg(url, pending1, 11, Kir, MANAGE_DOI),
+                accessRightArg(url, pending0, 15, Kir, SUPPORT),
+                accessRightArg(url, pending0, 15, Kir, MANAGE_PUBLISHING_REQUESTS),
+                accessRightArg(url2, pending0, 22, USER_03, MANAGE_CUSTOMERS),
+                accessRightArg(url, pending0, 0, USER_03),
+                accessRightArg(url, pending0, 20, USER_03, accessRights),
+                accessRightArg(url, pending0, 4, USER_04),
+                accessRightArg(url, pending0, 20, USER_04, accessRights),
+                accessRightArg(url, pending0, 0, USER_05),
+                accessRightArg(url, pending0, 20, USER_05, accessRights));
     }
 
     static Stream<URI> uriInvalidProvider() {
@@ -471,12 +467,12 @@ class TicketClientTest {
                         .doSearch(searchClient);
 
         var aggregations = response.toPagedResponse().aggregations();
-
         assertNotNull(aggregations);
+
         var actualPending =
                 aggregations.get(Constants.BY_USER_PENDING).stream().mapToInt(Facet::count).sum();
-        assertThat(actualPending, is(equalTo(pending)));
         var actualCount = aggregations.get(TYPE).stream().mapToInt(Facet::count).sum();
+        assertThat(actualPending, is(equalTo(pending)));
         assertThat(actualCount, is(equalTo(expectedCount)));
     }
 
