@@ -256,21 +256,18 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
         @Override
         protected void applyRulesAfterValidation() {
             // convert page to offset if offset is not set
-            if (searchQuery.parameters().isPresent(PAGE)) {
-                if (searchQuery.parameters().isPresent(FROM)) {
-                    var page = searchQuery.parameters().get(PAGE).<Number>as().longValue();
-                    var perPage = searchQuery.parameters().get(SIZE).<Number>as().longValue();
-                    searchQuery.parameters().set(FROM, String.valueOf(page * perPage));
+            if (query.parameters().isPresent(PAGE)) {
+                if (query.parameters().isPresent(FROM)) {
+                    var page = query.parameters().get(PAGE).<Number>as().longValue();
+                    var perPage = query.parameters().get(SIZE).<Number>as().longValue();
+                    query.parameters().set(FROM, String.valueOf(page * perPage));
                 }
-                searchQuery.parameters().remove(PAGE);
+                query.parameters().remove(PAGE);
             }
-            if (searchQuery.parameters().isPresent(BY_USER_PENDING)) {
-                searchQuery
-                        .parameters()
-                        .set(
-                                TicketParameter.TYPE,
-                                searchQuery.parameters().get(BY_USER_PENDING).as());
-                searchQuery.parameters().set(STATUS, PENDING.toString());
+            if (query.parameters().isPresent(BY_USER_PENDING)) {
+                query.parameters()
+                        .set(TicketParameter.TYPE, query.parameters().get(BY_USER_PENDING).as());
+                query.parameters().set(STATUS, PENDING.toString());
             }
         }
 
@@ -300,9 +297,9 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
             switch (qpKey) {
                 case INVALID -> invalidKeys.add(key);
                 case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION ->
-                        searchQuery.parameters().set(qpKey, decodedValue);
+                        query.parameters().set(qpKey, decodedValue);
                 case NODES_SEARCHED ->
-                        searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
+                        query.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case TYPE -> mergeToKey(qpKey, toEnumStrings(TicketType::fromString, decodedValue));
