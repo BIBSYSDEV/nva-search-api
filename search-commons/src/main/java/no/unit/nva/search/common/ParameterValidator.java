@@ -48,7 +48,7 @@ public abstract class ParameterValidator<
     protected static final Logger logger = LoggerFactory.getLogger(ParameterValidator.class);
 
     protected final transient Set<String> invalidKeys = new HashSet<>(0);
-    protected final transient SearchQuery<K> searchQuery;
+    protected final transient SearchQuery<K> query;
     protected transient boolean notValidated = true;
 
     /**
@@ -59,8 +59,8 @@ public abstract class ParameterValidator<
      * .withRequiredParameters(FROM, SIZE)<br>
      * .build() </samp>
      */
-    public ParameterValidator(SearchQuery<K> searchQuery) {
-        this.searchQuery = searchQuery;
+    public ParameterValidator(SearchQuery<K> query) {
+        this.query = query;
     }
 
     /**
@@ -73,7 +73,7 @@ public abstract class ParameterValidator<
         if (notValidated) {
             validate();
         }
-        return (Q) searchQuery;
+        return (Q) query;
     }
 
     /**
@@ -83,10 +83,10 @@ public abstract class ParameterValidator<
      */
     public ParameterValidator<K, Q> validate() throws BadRequestException {
         assignDefaultValues();
-        for (var entry : searchQuery.parameters().getSearchEntries()) {
+        for (var entry : query.parameters().getSearchEntries()) {
             validatesEntrySet(entry);
         }
-        for (var entry : searchQuery.parameters().getPageEntries()) {
+        for (var entry : query.parameters().getPageEntries()) {
             validatesEntrySet(entry);
         }
         if (!requiredMissing().isEmpty()) {
@@ -147,7 +147,7 @@ public abstract class ParameterValidator<
      */
     protected void validatedSort() throws BadRequestException {
         try {
-            searchQuery.sort().asSplitStream(COMMA).forEach(this::validateSortKeyName);
+            query.sort().asSplitStream(COMMA).forEach(this::validateSortKeyName);
         } catch (IllegalArgumentException e) {
             throw new BadRequestException(e.getMessage());
         }
@@ -161,12 +161,12 @@ public abstract class ParameterValidator<
 
     protected Set<K> requiredMissing() {
         return required().stream()
-                .filter(key -> !searchQuery.parameters().isPresent(key))
+                .filter(key -> !query.parameters().isPresent(key))
                 .collect(Collectors.toSet());
     }
 
     protected Set<K> required() {
-        return searchQuery.parameters().otherRequired;
+        return query.parameters().otherRequired;
     }
 
     protected void validatesEntrySet(Map.Entry<K, String> entry) throws BadRequestException {
@@ -187,10 +187,10 @@ public abstract class ParameterValidator<
     /** Adds query and path parameters from requestInfo. */
     public ParameterValidator<K, Q> fromRequestInfo(RequestInfo requestInfo) {
         var contentType = extractContentTypeFromRequestInfo(requestInfo);
-        searchQuery.setMediaType(isNull(contentType) ? null : contentType.getMimeType());
+        query.setMediaType(isNull(contentType) ? null : contentType.getMimeType());
         var uri = URI.create(HTTPS + requestInfo.getDomainName() + requestInfo.getPath());
-        searchQuery.setAccessRights(requestInfo.getAccessRights());
-        searchQuery.setNvaSearchApiUri(uri);
+        query.setAccessRights(requestInfo.getAccessRights());
+        query.setNvaSearchApiUri(uri);
         return fromMultiValueParameters(requestInfo.getMultiValueQueryStringParameters());
     }
 
@@ -241,12 +241,12 @@ public abstract class ParameterValidator<
     @SafeVarargs
     public final ParameterValidator<K, Q> withRequiredParameters(K... requiredParameters) {
         var tmpSet = Set.of(requiredParameters);
-        searchQuery.parameters().otherRequired.addAll(tmpSet);
+        query.parameters().otherRequired.addAll(tmpSet);
         return this;
     }
 
     public final ParameterValidator<K, Q> withMediaType(String mediaType) {
-        searchQuery.setMediaType(mediaType);
+        query.setMediaType(mediaType);
         return this;
     }
 
@@ -258,7 +258,7 @@ public abstract class ParameterValidator<
      * @return builder
      */
     public ParameterValidator<K, Q> withParameter(K key, String value) {
-        searchQuery.parameters().set(key, value);
+        query.parameters().set(key, value);
         return this;
     }
 
@@ -269,29 +269,27 @@ public abstract class ParameterValidator<
      * @apiNote This is intended to be used when setting up tests.
      */
     public final ParameterValidator<K, Q> withDockerHostUri(URI uri) {
-        searchQuery.setOpenSearchUri(uri);
+        query.setOpenSearchUri(uri);
         return this;
     }
 
     public final ParameterValidator<K, Q> withAlwaysIncludedFields(List<String> includedFields) {
-        searchQuery.setAlwaysIncludedFields(includedFields);
+        query.setAlwaysIncludedFields(includedFields);
         return this;
     }
 
     public final ParameterValidator<K, Q> withAlwaysExcludedFields(List<String> excludedFields) {
-        searchQuery.setAlwaysExcludedFields(excludedFields);
+        query.setAlwaysExcludedFields(excludedFields);
         return this;
     }
 
     public final ParameterValidator<K, Q> withAlwaysExcludedFields(String... excludedFields) {
-        searchQuery.setAlwaysExcludedFields(List.of(excludedFields));
+        query.setAlwaysExcludedFields(List.of(excludedFields));
         return this;
     }
 
     protected void mergeToKey(K key, String value) {
-        searchQuery
-                .parameters()
-                .set(key, mergeWithColonOrComma(searchQuery.parameters().get(key).as(), value));
+        query.parameters().set(key, mergeWithColonOrComma(query.parameters().get(key).as(), value));
     }
 
     protected String ignoreInvalidFields(String value) {
@@ -309,7 +307,7 @@ public abstract class ParameterValidator<
     }
 
     private boolean hasSearchAfterAndSortByRelevance() {
-        return searchQuery.parameters().isPresent(searchQuery.keySearchAfter())
-                && searchQuery.sort().toString().contains(RELEVANCE_KEY_NAME);
+        return query.parameters().isPresent(query.keySearchAfter())
+                && query.sort().toString().contains(RELEVANCE_KEY_NAME);
     }
 }

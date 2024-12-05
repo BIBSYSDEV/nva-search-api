@@ -312,15 +312,14 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         @Override
         protected void applyRulesAfterValidation() {
             // convert page to offset if offset is not set
-            if (searchQuery.parameters().isPresent(PAGE)) {
-                if (searchQuery.parameters().isPresent(FROM)) {
-                    var page = searchQuery.parameters().get(PAGE).<Number>as();
-                    var perPage = searchQuery.parameters().get(SIZE).<Number>as();
-                    searchQuery
-                            .parameters()
+            if (query.parameters().isPresent(PAGE)) {
+                if (query.parameters().isPresent(FROM)) {
+                    var page = query.parameters().get(PAGE).<Number>as();
+                    var perPage = query.parameters().get(SIZE).<Number>as();
+                    query.parameters()
                             .set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
                 }
-                searchQuery.parameters().remove(PAGE);
+                query.parameters().remove(PAGE);
             }
         }
 
@@ -361,9 +360,9 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                 case CONTRIBUTOR, CONTRIBUTOR_NOT ->
                         mergeToKey(qpKey, identifierToCristinPersonId(decodedValue));
                 case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION ->
-                        searchQuery.parameters().set(qpKey, decodedValue);
+                        query.parameters().set(qpKey, decodedValue);
                 case NODES_SEARCHED ->
-                        searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
+                        query.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 default -> mergeToKey(qpKey, decodedValue);
@@ -383,7 +382,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         }
 
         private String currentHost() {
-            return HTTPS + searchQuery.getNvaSearchApiUri().getHost();
+            return HTTPS + query.getNvaSearchApiUri().getHost();
         }
 
         private String identifierToUri(String decodedValue, String uriPath) {
