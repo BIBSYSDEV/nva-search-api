@@ -84,7 +84,8 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     protected static final Logger logger = LoggerFactory.getLogger(SearchQuery.class);
     private final transient Set<AccessRight> accessRights;
     private transient MediaType mediaType;
-    private transient Set<String> excludedFields;
+    private transient Set<String> excludedFields = Set.of();
+    private transient Set<String> includedFields = Set.of("*");
 
     /**
      * Always set at runtime by ParameterValidator.fromRequestInfo(RequestInfo requestInfo); This
@@ -133,8 +134,16 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
         this.excludedFields = new HashSet<>(fieldNames);
     }
 
+    public void setAlwaysIncludedFields(List<String> fieldNames) {
+        this.includedFields = new HashSet<>(fieldNames);
+    }
+
     protected Set<String> getExcludedFields() {
         return excludedFields;
+    }
+
+    protected Set<String> getIncludedFields() {
+        return includedFields;
     }
 
     protected void setOpenSearchUri(URI openSearchUri) {

@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
  * @param <Q> Instance of OpenSearchQuery
  * @author Stig Norland
  */
+@SuppressWarnings("PMD.GodClass")
 public abstract class ParameterValidator<
         K extends Enum<K> & ParameterKey<K>, Q extends SearchQuery<K>> {
 
@@ -185,7 +186,8 @@ public abstract class ParameterValidator<
 
     /** Adds query and path parameters from requestInfo. */
     public ParameterValidator<K, Q> fromRequestInfo(RequestInfo requestInfo) {
-        query.setMediaType(requestInfo.getHeaders().get(ACCEPT));
+        var contentType = extractContentTypeFromRequestInfo(requestInfo);
+        query.setMediaType(isNull(contentType) ? null : contentType.getMimeType());
         var uri = URI.create(HTTPS + requestInfo.getDomainName() + requestInfo.getPath());
         query.setAccessRights(requestInfo.getAccessRights());
         query.setNvaSearchApiUri(uri);
@@ -268,6 +270,11 @@ public abstract class ParameterValidator<
      */
     public final ParameterValidator<K, Q> withDockerHostUri(URI uri) {
         query.setOpenSearchUri(uri);
+        return this;
+    }
+
+    public final ParameterValidator<K, Q> withAlwaysIncludedFields(List<String> includedFields) {
+        query.setAlwaysIncludedFields(includedFields);
         return this;
     }
 
