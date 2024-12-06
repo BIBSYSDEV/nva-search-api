@@ -59,8 +59,6 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
     private URI organizationId;
     private Set<AccessRight> accessRightEnumSet = EnumSet.noneOf(AccessRight.class);
 
-    //    private Set<TicketType> excludeTicketTypes;
-
     public TicketAccessFilter(TicketSearchQuery query) {
         this.query = query;
         this.query.filters().set();
@@ -113,7 +111,7 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
     @Override
     public TicketSearchQuery apply() throws UnauthorizedException {
 
-        if (searchAsSiktAdmin() && validateSiktAdmin(accessRightEnumSet)) {
+        if (isSearchingAsSiktAdmin() && validateSiktAdmin(accessRightEnumSet)) {
             return query; // See everything, NO FILTERS!!!
         }
 
@@ -125,13 +123,13 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
             throw new UnauthorizedException("User is required");
         }
 
-        if (searchSelfAsAssignee(currentUser) && searchSelfAsTicketOwner()) {
+        if (isSelfAndSearchAsAssignee(currentUser) && isSelfAndSearchAsTicketOwner()) {
             validateAssigneeAndOwner();
         }
 
         final var curatorTicketTypes = accessRightsToTicketTypes(accessRightEnumSet);
 
-        if (searchSelfAsTicketOwner() && hasNoCuratorRoles(curatorTicketTypes)) {
+        if (isSelfAndSearchAsTicketOwner() && hasNoCuratorRoles(curatorTicketTypes)) {
             validateOwner(currentUser);
         }
 
@@ -198,15 +196,15 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
 
     private QueryBuilder filterByEitherAssigneeOrOwnerIfPresent(String userName) {
         var builder = boolQuery();
-        if (searchSelfAsAssignee(userName)) {
-            builder.mustNot(haveOwnerFilter(userName));
-        } else if (searchSelfAsTicketOwner()) {
-            builder.mustNot(haveAssigneeFilter(userName));
+        if (isSelfAndSearchAsAssignee(userName)) {
+            builder.mustNot(filterByOwner(userName));
+        } else if (isSelfAndSearchAsTicketOwner()) {
+            builder.mustNot(filterByAssignee(userName));
         }
         return builder;
     }
 
-    private QueryBuilder haveAssigneeFilter(String userName) {
+    private QueryBuilder filterByAssignee(String userName) {
         return new AcrossFieldsQuery<TicketParameter>()
                 .buildQuery(ASSIGNEE, userName)
                 .findFirst()
@@ -226,12 +224,12 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
     private BoolQueryBuilder filterByUserAndTicketTypes(
             String userName, Set<TicketType> curatorTicketTypes) {
         return boolQuery()
-                .should(haveOwnerFilter(userName))
-                .should(haveTicketTypeFilter(curatorTicketTypes))
+                .should(filterByOwner(userName))
+                .should(filterByTicketTypes(curatorTicketTypes))
                 .minimumShouldMatch(1);
     }
 
-    private QueryBuilder haveOwnerFilter(String userName) {
+    private QueryBuilder filterByOwner(String userName) {
         return new AcrossFieldsQuery<TicketParameter>()
                 .buildQuery(OWNER, userName)
                 .findFirst()
@@ -239,7 +237,7 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
                 .getValue();
     }
 
-    private QueryBuilder haveTicketTypeFilter(Set<TicketType> curatorTicketTypes) {
+    private QueryBuilder filterByTicketTypes(Set<TicketType> curatorTicketTypes) {
         var ticketTypes =
                 curatorTicketTypes.stream().map(TicketType::toString).toArray(String[]::new);
         return new KeywordQuery<TicketParameter>()
@@ -258,7 +256,7 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
     }
 
     private void validateOwner(String userName) throws UnauthorizedException {
-        if (currentUserIsNotOwner(userName)) {
+        if (isCurrentUserNotOwner(userName)) {
             throw new UnauthorizedException(
                     USER_IS_NOT_ALLOWED_TO_SEARCH_FOR_TICKETS_NOT_OWNED_BY_THEMSELVES);
         }
@@ -275,20 +273,20 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
         return curatorTicketTypes.contains(TicketType.NONE);
     }
 
-    private boolean currentUserIsNotOwner(String userName) {
+    private boolean isCurrentUserNotOwner(String userName) {
         return !userName.equalsIgnoreCase(query.parameters().get(OWNER).as());
     }
 
-    private boolean searchSelfAsAssignee(String userName) {
+    private boolean isSelfAndSearchAsAssignee(String userName) {
         return query.parameters().isPresent(ASSIGNEE)
                 && query.parameters().get(ASSIGNEE).as().equals(userName);
     }
 
-    private boolean searchSelfAsTicketOwner() {
+    private boolean isSelfAndSearchAsTicketOwner() {
         return query.parameters().isPresent(OWNER);
     }
 
-    private boolean searchAsSiktAdmin() {
+    private boolean isSearchingAsSiktAdmin() {
         return query.parameters().isPresent(STATISTICS);
     }
 }
