@@ -331,6 +331,47 @@ class TicketClientTest {
     }
 
     @Test
+    void shouldReturnWhenSearchingForNewTicketsOnly()
+            throws BadRequestException, UnauthorizedException {
+        var uri = URI.create("https://x.org/?size=500&from=0&OWNER=1492596@20754.0.0.0");
+
+        var pagedResult =
+                TicketSearchQuery.builder()
+                        .fromTestQueryParameters(queryToMapEntries(uri))
+                        .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                        .build()
+                        .withFilter()
+                        .user("1492596@20754.0.0.0")
+                        .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
+                        .organization(testOrganizationId)
+                        .apply()
+                        .doSearch(searchClient)
+                        .toPagedResponse();
+
+        assertEquals(10, pagedResult.hits().size());
+    }
+
+    @Test
+    void shouldReturnWhenSearchingForAssignee() throws BadRequestException, UnauthorizedException {
+        var uri = URI.create("https://x.org/?size=500&from=0&ASSIGNEE=1492596@20754.0.0.0");
+
+        var pagedResult =
+                TicketSearchQuery.builder()
+                        .fromTestQueryParameters(queryToMapEntries(uri))
+                        .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                        .build()
+                        .withFilter()
+                        .user("1492596@20754.0.0.0")
+                        .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
+                        .organization(testOrganizationId)
+                        .apply()
+                        .doSearch(searchClient)
+                        .toPagedResponse();
+
+        assertEquals(1, pagedResult.hits().size());
+    }
+
+    @Test
     void
             shouldReturnNewAndPendingTicketsWithAssigneeWhenSearchingForTicketsWithStatusNewAndPendingAndAssignee()
                     throws BadRequestException, UnauthorizedException {
@@ -566,8 +607,32 @@ class TicketClientTest {
     }
 
     @Test
-    void badUriRequestReturnsUnauthorized() throws UnauthorizedException {
-        var uri = URI.create(REQUEST_BASE_URL + "owner=Kir&assignee=Kir");
+    void ownerEqualAssigneeReturnsUnauthorized() throws UnauthorizedException {
+        var uriBad = URI.create(REQUEST_BASE_URL + "owner=Kir+Truhacev&assignee=Kir+Truhacev");
+        //        var uriBad = URI.create(REQUEST_BASE_URL +
+        // "owner=Kir+Truhacev&assignee=Annette+Olli");
+
+        var mockedRequestInfoLocal = mock(RequestInfo.class);
+        when(mockedRequestInfoLocal.getUserName()).thenReturn("Kir Truhacev");
+        when(mockedRequestInfoLocal.getTopLevelOrgCristinId())
+                .thenReturn(Optional.of(testOrganizationId));
+        when(mockedRequestInfoLocal.getAccessRights()).thenReturn(List.of(MANAGE_DOI));
+        assertThrows(
+                UnauthorizedException.class,
+                () ->
+                        TicketSearchQuery.builder()
+                                .fromTestQueryParameters(queryToMapEntries(uriBad))
+                                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                                .withRequiredParameters(SIZE, FROM)
+                                .build()
+                                .withFilter()
+                                .fromRequestInfo(mockedRequestInfoLocal)
+                                .doSearch(searchClient));
+    }
+
+    @Test
+    void notSiktAdminReturnsUnauthorized() throws UnauthorizedException {
+        var uriBad = URI.create(REQUEST_BASE_URL + "STATISTICS=true");
 
         var mockedRequestInfoLocal = mock(RequestInfo.class);
         when(mockedRequestInfoLocal.getUserName()).thenReturn(randomString());
@@ -578,7 +643,7 @@ class TicketClientTest {
                 UnauthorizedException.class,
                 () ->
                         TicketSearchQuery.builder()
-                                .fromTestQueryParameters(queryToMapEntries(uri))
+                                .fromTestQueryParameters(queryToMapEntries(uriBad))
                                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                                 .withRequiredParameters(SIZE, FROM)
                                 .build()
@@ -619,5 +684,26 @@ class TicketClientTest {
                                 + "sort=created_date&sortOrder=asc&sort=status&order=desc"),
                 URI.create(REQUEST_BASE_URL + "sort=modified_date+asc&sort=type+desc"),
                 URI.create(REQUEST_BASE_URL + "sort=relevance,modified_date+asc"));
+    }
+
+    @Test
+    void missingUserNameReturnsUnauthorized() throws UnauthorizedException {
+        AtomicReference<URI> uri = new AtomicReference<>();
+        uriSortingProvider().findFirst().ifPresent(uri::set);
+        var mockedRequestInfoLocal = mock(RequestInfo.class);
+        when(mockedRequestInfoLocal.getAccessRights()).thenReturn(List.of());
+        when(mockedRequestInfoLocal.getTopLevelOrgCristinId())
+                .thenReturn(Optional.of(testOrganizationId));
+        when(mockedRequestInfoLocal.getCurrentCustomer()).thenReturn(null);
+        assertThrows(
+                UnauthorizedException.class,
+                () ->
+                        TicketSearchQuery.builder()
+                                .fromTestQueryParameters(queryToMapEntries(uri.get()))
+                                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                                .build()
+                                .withFilter()
+                                .fromRequestInfo(mockedRequestInfoLocal)
+                                .doSearch(searchClient));
     }
 }
