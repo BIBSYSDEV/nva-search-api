@@ -6,6 +6,7 @@ import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADA
 import static no.unit.nva.search.resource.ResourceClient.defaultClient;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
+import static no.unit.nva.search.resource.ResourceParameter.NODES_INCLUDED;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
 
@@ -60,6 +61,9 @@ public class SearchResource20241201Handler extends ApiGatewayHandler<Void, Strin
         return ResourceSearchQuery.builder()
                 .fromRequestInfo(requestInfo)
                 .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
+                .withParameter(
+                        NODES_INCLUDED,
+                        String.join(COMMA, SimplifiedResourceModelMutator.getIncludedFields()))
                 .withAlwaysIncludedFields(SimplifiedResourceModelMutator.getIncludedFields())
                 .validate()
                 .build()

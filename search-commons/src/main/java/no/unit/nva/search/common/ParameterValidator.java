@@ -1,12 +1,12 @@
 package no.unit.nva.search.common;
 
-import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.constants.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.constants.ErrorMessages.validQueryParameterNamesMessage;
 import static no.unit.nva.constants.Words.ALL;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.HTTPS;
 import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
+import static no.unit.nva.search.common.ContentTypeUtils.extractContentTypeFromRequestInfo;
 import static no.unit.nva.search.common.constant.Functions.decodeUTF;
 import static no.unit.nva.search.common.constant.Functions.mergeWithColonOrComma;
 
