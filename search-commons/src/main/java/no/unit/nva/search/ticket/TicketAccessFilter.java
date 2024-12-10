@@ -50,8 +50,8 @@ import java.util.stream.Collectors;
  *   <li>SUPPORT -> GeneralSupportCase
  *   <li>MANAGE_PUBLISHING_REQUESTS -> PublishingRequest
  *   <li>MANAGE_CUSTOMERS -> DoiRequest, GeneralSupportCase, PublishingRequest
- *   <li>is_owner -> ignore ticket type, only show tickets owned by the user
- *   <li>is_assignee -> ignore is_owner, only show tickettypes that user has access to
+ *   <li>IS_OWNER -> ignore ticket TYPE, only show tickets owned by the user
+ *   <li>IS_ASSIGNEE -> ignore OWNER, only show ticket types that user has access to
  * </ul>
  *
  * @author Stig Norland
@@ -187,24 +187,6 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
         return allowed;
     }
 
-    //    private QueryBuilder filterByEitherAssigneeOrOwnerIfPresent(String userName) {
-    //        var builder = boolQuery();
-    //        if (searchAsAssigneeAsSelf(userName)) {
-    //            builder.mustNot(filterByOwner(userName));
-    //        } else if (searchAsTicketOwner() && !isCurrentUserNotOwner(userName)) {
-    //            builder.mustNot(filterByAssignee(userName));
-    //        }
-    //        return builder;
-    //    }
-
-    //    private QueryBuilder filterByAssignee(String userName) {
-    //        return QueryBuilders.multiMatchQuery(
-    //                        userName, ASSIGNEE.searchFields().toArray(String[]::new))
-    //                .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
-    //                .operator(Operator.AND)
-    //                .queryName(FILTER_BY_ASSIGNEE);
-    //    }
-
     private QueryBuilder filterByOrganization(URI organizationId) {
         return QueryBuilders.multiMatchQuery(organizationId.toString(), ORGANIZATION_PATHS)
                 .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
@@ -279,11 +261,6 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
     private boolean isCurrentUserNotOwner(String userName) {
         return !userName.equalsIgnoreCase(query.parameters().get(OWNER).as());
     }
-
-    //    private boolean searchAsAssigneeAsSelf(String userName) {
-    //        return searchAsTicketAssignee() &&
-    // query.parameters().get(ASSIGNEE).as().equals(userName);
-    //    }
 
     private boolean searchAsTicketOwner() {
         return query.parameters().isPresent(OWNER);
