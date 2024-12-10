@@ -2257,14 +2257,16 @@ components:
           items:
             type: object
             properties:
-              affiliation:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    format: uri
-                  type:
-                    type: string
+              affiliations:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uri
+                    type:
+                      type: string
               correspondingAuthor:
                 type: boolean
               identity:
