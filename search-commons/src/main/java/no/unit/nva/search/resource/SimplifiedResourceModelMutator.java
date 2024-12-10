@@ -114,7 +114,7 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
                 path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, SEQUENCE),
                 path(ENTITY_DESCRIPTION, PUBLICATION_DATE),
                 path(ADDITIONAL_IDENTIFIERS, TYPE),
-                path(ADDITIONAL_IDENTIFIERS, NAME));
+                path(ADDITIONAL_IDENTIFIERS, VALUE));
     }
 
     @Override
