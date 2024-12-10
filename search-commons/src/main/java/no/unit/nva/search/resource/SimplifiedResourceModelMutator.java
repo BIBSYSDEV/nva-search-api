@@ -66,8 +66,6 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
     public static final String PUBLISHED_DATE = "publishedDate";
     public static final String NAME = "name";
     public static final String DOI = "doi";
-    public static final String JOURNAL = "Journal";
-    public static final String PUBLISHER = "Publisher";
     public static final String CONTRIBUTORS_PREVIEW = "contributorsPreview";
     public static final String CORRESPONDING_AUTHOR = "correspondingAuthor";
     public static final String IDENTITY = "identity";
@@ -92,18 +90,28 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
     public static List<String> getIncludedFields() {
         return List.of(
                 ID,
+                STATUS,
+                CREATED_DATE,
+                MODIFIED_DATE,
+                PUBLISHED_DATE,
                 path(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, TYPE),
                 path(ENTITY_DESCRIPTION, REFERENCE, DOI),
                 path(
                         ENTITY_DESCRIPTION,
                         REFERENCE,
                         PUBLICATION_CONTEXT), // TODO: Narrow down further?
-                path(DESCRIPTION),
+                path(ENTITY_DESCRIPTION, DESCRIPTION),
                 path(ENTITY_DESCRIPTION, MAIN_TITLE),
                 path(ENTITY_DESCRIPTION, ABSTRACT),
                 path(ENTITY_DESCRIPTION, ALTERNATIVE_TITLES),
                 path(ENTITY_DESCRIPTION, CONTRIBUTORS_COUNT),
-                path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW),
+                path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, AFFILIATIONS, ID),
+                path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, AFFILIATIONS, TYPE),
+                path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, CORRESPONDING_AUTHOR, ID),
+                path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, IDENTITY, ID),
+                path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, IDENTITY, TYPE),
+                path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, ROLE, TYPE),
+                path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, SEQUENCE),
                 path(ENTITY_DESCRIPTION, PUBLICATION_DATE));
     }
 
@@ -133,7 +141,7 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
                 .withMainTitle(source.path(ENTITY_DESCRIPTION).path(MAIN_TITLE).textValue())
                 .withMainLanguageAbstract(
                         source.path(ENTITY_DESCRIPTION).path(ABSTRACT).textValue())
-                .withDescription(source.path(DESCRIPTION).textValue())
+                .withDescription(source.path(ENTITY_DESCRIPTION).path(DESCRIPTION).textValue())
                 .withAlternativeTitles(mutateAlternativeTitles(source))
                 .withPublicationDate(mutatePublicationDate(source))
                 .withContributorsPreview(mutateContributorsPreview(source))
@@ -320,7 +328,7 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
                                                     affiliations.add(
                                                             new Affiliation(
                                                                     aff.path(ID).textValue(),
-                                                                    aff.path(ID).textValue()));
+                                                                    aff.path(TYPE).textValue()));
                                                 });
                             }
 
@@ -338,7 +346,7 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
                                                             .path(IDENTITY)
                                                             .path(NAME)
                                                             .textValue()),
-                                            contributorNode.path(ROLE).textValue(),
+                                            contributorNode.path(ROLE).path(TYPE).textValue(),
                                             contributorNode.path(SEQUENCE).asInt()));
                         });
         return contributors;

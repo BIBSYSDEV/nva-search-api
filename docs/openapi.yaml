@@ -475,9 +475,7 @@ paths:
           content:
             application/json:
               schema:
-                  oneOf:
-                    - $ref: "#/components/schemas/PagedPublicationFullSearchResponse"
-                    - $ref: "#/components/schemas/PagedPublicationSimplifiedSearchResponse"
+                $ref: "#/components/schemas/PagedPublicationSearchResponse"
         "400":
           description: Bad Request
           content:
@@ -2528,6 +2526,13 @@ components:
               $ref: '#/components/schemas/Facet'
         '@context':
           $ref: '#/components/schemas/Context'
+    PagedPublicationSearchResponse:
+      type: object
+      description: Publication search response. Can be either a full, or simplified object based on request
+      oneOf:
+        - $ref: "#/components/schemas/PagedPublicationFullSearchResponse"
+        - $ref: "#/components/schemas/PagedPublicationSimplifiedSearchResponse"
+
     PagedPublicationFullSearchResponse:
       type: object
       required:
