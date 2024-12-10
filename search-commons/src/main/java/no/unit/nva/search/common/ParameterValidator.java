@@ -1,5 +1,6 @@
 package no.unit.nva.search.common;
 
+import static no.unit.nva.constants.ErrorMessages.RELEVANCE_SEARCH_AFTER_ARE_MUTUAL_EXCLUSIVE;
 import static no.unit.nva.constants.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.constants.ErrorMessages.validQueryParameterNamesMessage;
 import static no.unit.nva.constants.Words.ALL;
@@ -14,7 +15,6 @@ import static nva.commons.core.StringUtils.EMPTY_STRING;
 
 import static java.util.Objects.isNull;
 
-import no.unit.nva.constants.ErrorMessages;
 import no.unit.nva.search.common.constant.Patterns;
 import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.enums.ValueEncoding;
@@ -99,8 +99,7 @@ public abstract class ParameterValidator<
         validatedSort();
 
         if (hasSearchAfterAndSortByRelevance()) {
-            throw new BadRequestException(
-                    ErrorMessages.RELEVANCE_SEARCH_AFTER_ARE_MUTUAL_EXCLUSIVE);
+            throw new BadRequestException(RELEVANCE_SEARCH_AFTER_ARE_MUTUAL_EXCLUSIVE);
         }
         applyRulesAfterValidation();
         notValidated = false;
