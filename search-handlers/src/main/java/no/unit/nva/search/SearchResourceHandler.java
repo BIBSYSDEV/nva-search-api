@@ -6,8 +6,6 @@ import static no.unit.nva.search.resource.ResourceClient.defaultClient;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 
-import java.util.Map;
-import java.util.function.Supplier;
 import no.unit.nva.search.common.ContentTypeUtils;
 import no.unit.nva.search.resource.ResourceClient;
 
@@ -17,9 +15,12 @@ import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
+import org.apache.http.HttpHeaders;
+
 import java.net.HttpURLConnection;
 import java.util.List;
-import org.apache.http.HttpHeaders;
+import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * Handler for searching resources.
