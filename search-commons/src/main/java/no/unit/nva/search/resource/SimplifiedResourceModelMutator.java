@@ -112,7 +112,9 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
                 path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, IDENTITY, NAME),
                 path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, ROLE, TYPE),
                 path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, SEQUENCE),
-                path(ENTITY_DESCRIPTION, PUBLICATION_DATE));
+                path(ENTITY_DESCRIPTION, PUBLICATION_DATE),
+                path(ADDITIONAL_IDENTIFIERS, TYPE),
+                path(ADDITIONAL_IDENTIFIERS, NAME));
     }
 
     @Override
@@ -243,7 +245,7 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
                 .iterator()
                 .forEachRemaining(
                         i -> {
-                            switch (i.path(SOURCE_NAME).textValue()) {
+                            switch (i.path(TYPE).textValue()) {
                                 case HANDLE_IDENTIFIER:
                                     handleIdentifiers.add(i.path(VALUE).textValue());
                                     break;
