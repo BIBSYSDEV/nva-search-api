@@ -2529,10 +2529,9 @@ components:
     PagedPublicationSearchResponse:
       type: object
       description: Publication search response. Can be either a full, or simplified object based on request
-      required:
-        oneOf:
-          - $ref: "#/components/schemas/PagedPublicationFullSearchResponse"
-          - $ref: "#/components/schemas/PagedPublicationSimplifiedSearchResponse"
+      oneOf:
+        - $ref: "#/components/schemas/PagedPublicationFullSearchResponse"
+        - $ref: "#/components/schemas/PagedPublicationSimplifiedSearchResponse"
 
     PagedPublicationFullSearchResponse:
       type: object
