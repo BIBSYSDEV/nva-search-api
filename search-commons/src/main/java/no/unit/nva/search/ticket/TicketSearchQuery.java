@@ -302,7 +302,9 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
                             .set(TYPE, query.parameters().get(BY_USER_PENDING).toString());
                 }
                 if (!query.parameters().isPresent(ASSIGNEE)) {
-                    query.parameters().set(ASSIGNEE, "meMyselfAndI");
+                    // business rule: need to set assignee to search by user pending
+                    // (value is ignored)
+                    query.parameters().set(ASSIGNEE, "👁");
                 }
             }
         }
