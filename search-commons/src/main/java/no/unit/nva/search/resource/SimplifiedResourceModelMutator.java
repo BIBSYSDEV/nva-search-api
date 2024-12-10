@@ -55,7 +55,6 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
     public static final String PRINT_ISSN = "printIssn";
     public static final String ISBN_LIST = "isbnList";
     public static final String ADDITIONAL_IDENTIFIERS = "additionalIdentifiers";
-    public static final String SOURCE_NAME = "sourceName";
     public static final String HANDLE_IDENTIFIER = "HandleIdentifier";
     public static final String VALUE = "value";
     public static final String SCOPUS_IDENTIFIER = "ScopusIdentifier";
@@ -95,6 +94,7 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
                 MODIFIED_DATE,
                 PUBLISHED_DATE,
                 path(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, TYPE),
+                path(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, MANIFESTATIONS, ISBN_LIST),
                 path(ENTITY_DESCRIPTION, REFERENCE, DOI),
                 path(
                         ENTITY_DESCRIPTION,
@@ -194,7 +194,7 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
                         .filter(Objects::nonNull)
                         .collect(Collectors.toSet());
 
-        var isbnsInSourceNose =
+        var isbnsInSourceNode =
                 source.path(ENTITY_DESCRIPTION)
                         .path(REFERENCE)
                         .path(PUBLICATION_CONTEXT)
@@ -232,9 +232,9 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
         }
 
         List<String> isbnsInSource =
-                isbnsInSourceNose.isMissingNode()
+            isbnsInSourceNode.isMissingNode()
                         ? Collections.emptyList()
-                        : objectMapper.readerForListOf(String.class).readValue(isbnsInSourceNose);
+                        : objectMapper.readerForListOf(String.class).readValue(isbnsInSourceNode);
 
         var isbns = Stream.concat(isbnsInSource.stream(), isbnsInManifestations.stream()).toList();
 
