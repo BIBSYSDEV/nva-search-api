@@ -219,8 +219,9 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
     }
 
     private QueryBuilder filterByUnPublished() {
-        return boolQuery().mustNot(filterByTicketTypes(Set.of(TicketType.UNPUBLISH_REQUEST)))
-            .queryName(FILTER_BY_UN_PUBLISHED);
+        return boolQuery()
+                .mustNot(filterByTicketTypes(Set.of(TicketType.UNPUBLISH_REQUEST)))
+                .queryName(FILTER_BY_UN_PUBLISHED);
     }
 
     private void validateOrganization() throws UnauthorizedException {
