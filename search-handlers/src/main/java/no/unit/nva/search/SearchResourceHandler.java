@@ -57,15 +57,14 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
     protected String processInput(Void input, RequestInfo requestInfo, Context context)
             throws BadRequestException {
 
-        switch (ContentTypeUtils.extractVersionFromRequestInfo(requestInfo)) {
-            case V_2024_12_01_SIMPLER_MODEL:
-                return new SearchResource20241201Handler(environment, opensearchClient)
-                        .processInput(input, requestInfo, context);
-            case null:
-            default:
-                return new SearchResourceLegacyHandler(environment, opensearchClient)
-                        .processInput(input, requestInfo, context);
-        }
+        return switch (ContentTypeUtils.extractVersionFromRequestInfo(requestInfo)) {
+            case V_2024_12_01_SIMPLER_MODEL ->
+                    new SearchResource20241201Handler(environment, opensearchClient)
+                            .processInput(input, requestInfo, context);
+            case null, default ->
+                    new SearchResourceLegacyHandler(environment, opensearchClient)
+                            .processInput(input, requestInfo, context);
+        };
     }
 
     @Override

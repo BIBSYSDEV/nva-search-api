@@ -5,6 +5,7 @@ import static no.unit.nva.constants.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.constants.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.constants.ErrorMessages.TOO_MANY_ARGUMENTS;
 import static no.unit.nva.constants.Words.COMMA;
+import static no.unit.nva.constants.Words.KEYWORD_FALSE;
 import static no.unit.nva.constants.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.constants.Words.NONE;
 import static no.unit.nva.constants.Words.POST_FILTER;
@@ -15,12 +16,12 @@ import static no.unit.nva.search.common.constant.Functions.toEnumStrings;
 import static no.unit.nva.search.common.constant.Functions.trimSpace;
 import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search.ticket.Constants.ORGANIZATION_ID_KEYWORD;
+import static no.unit.nva.search.ticket.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search.ticket.Constants.UNHANDLED_KEY;
 import static no.unit.nva.search.ticket.Constants.facetTicketsPaths;
 import static no.unit.nva.search.ticket.Constants.getTicketsAggregations;
 import static no.unit.nva.search.ticket.TicketParameter.AGGREGATION;
 import static no.unit.nva.search.ticket.TicketParameter.ASSIGNEE;
-import static no.unit.nva.search.ticket.TicketParameter.ASSIGNEE_NOT;
 import static no.unit.nva.search.ticket.TicketParameter.BY_USER_PENDING;
 import static no.unit.nva.search.ticket.TicketParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search.ticket.TicketParameter.FROM;
@@ -33,12 +34,14 @@ import static no.unit.nva.search.ticket.TicketParameter.SEARCH_AFTER;
 import static no.unit.nva.search.ticket.TicketParameter.SIZE;
 import static no.unit.nva.search.ticket.TicketParameter.SORT;
 import static no.unit.nva.search.ticket.TicketParameter.STATUS;
-import static no.unit.nva.search.ticket.TicketParameter.STATUS_NOT;
 import static no.unit.nva.search.ticket.TicketParameter.TICKET_PARAMETER_SET;
+import static no.unit.nva.search.ticket.TicketParameter.TYPE;
 import static no.unit.nva.search.ticket.TicketStatus.NEW;
 import static no.unit.nva.search.ticket.TicketStatus.PENDING;
 
 import static nva.commons.core.paths.UriWrapper.fromUri;
+
+import static org.opensearch.index.query.QueryBuilders.multiMatchQuery;
 
 import no.unit.nva.search.common.AsType;
 import no.unit.nva.search.common.ParameterValidator;
@@ -51,8 +54,11 @@ import no.unit.nva.search.common.enums.SortKey;
 import nva.commons.core.JacocoGenerated;
 
 import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.MultiMatchQueryBuilder;
+import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.TermQueryBuilder;
+import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.sort.SortOrder;
 
@@ -80,28 +86,43 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
         accessFilter = new TicketAccessFilter(this);
     }
 
-    /**
-     * Add a (default) filter to the query that will never match any document.
-     *
-     * <p>This whitelist the Query from any forgetful developer (me)
-     *
-     * <p>i.e.In order to return any results, withFilter* must be set
-     */
-    private void applyImpossibleWhiteListFilters() {
-        var randomUri = URI.create("https://www.example.com/" + UUID.randomUUID());
-        final var filterId =
-                new TermQueryBuilder(ORGANIZATION_ID_KEYWORD, randomUri)
-                        .queryName(ORGANIZATION_ID.asCamelCase() + POST_FILTER);
-        filters().set(filterId);
-    }
-
     public static TicketParameterValidator builder() {
         return new TicketParameterValidator();
     }
 
     @Override
+    protected TicketParameter keyAggregation() {
+        return AGGREGATION;
+    }
+
+    @Override
     protected TicketParameter keyFields() {
         return NODES_SEARCHED;
+    }
+
+    @Override
+    protected TicketParameter keySearchAfter() {
+        return SEARCH_AFTER;
+    }
+
+    @Override
+    protected TicketParameter toKey(String keyName) {
+        return TicketParameter.keyFromString(keyName);
+    }
+
+    @Override
+    protected SortKey toSortKey(String sortName) {
+        return TicketSort.fromSortKey(sortName);
+    }
+
+    @Override
+    protected AsType<TicketParameter> from() {
+        return parameters().get(FROM);
+    }
+
+    @Override
+    protected AsType<TicketParameter> size() {
+        return parameters().get(SIZE);
     }
 
     @Override
@@ -120,23 +141,13 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
     }
 
     @Override
-    protected TicketParameter keyAggregation() {
-        return AGGREGATION;
+    public URI openSearchUri() {
+        return fromUri(infrastructureApiUri).addChild(TICKETS, SEARCH).getUri();
     }
 
     @Override
-    protected TicketParameter keySearchAfter() {
-        return SEARCH_AFTER;
-    }
-
-    @Override
-    protected TicketParameter toKey(String keyName) {
-        return TicketParameter.keyFromString(keyName);
-    }
-
-    @Override
-    protected SortKey toSortKey(String sortName) {
-        return TicketSort.fromSortKey(sortName);
+    protected Map<String, String> facetPaths() {
+        return facetTicketsPaths;
     }
 
     @Override
@@ -156,56 +167,61 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
         };
     }
 
-    @Override
-    protected AsType<TicketParameter> from() {
-        return parameters().get(FROM);
-    }
-
-    @Override
-    protected AsType<TicketParameter> size() {
-        return parameters().get(SIZE);
-    }
-
-    @Override
-    protected Map<String, String> facetPaths() {
-        return facetTicketsPaths;
-    }
-
     private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByStatus(
             TicketParameter key) {
         // we cannot query status New here, it is done together with assignee.
-        return hasAssigneeAndOnlyStatusNew()
+        return hasAssigneeAndStatusNew()
                 ? Stream.empty()
                 : new KeywordQuery<TicketParameter>()
                         .buildQuery(key, parameters().get(key).toString());
     }
 
-    private boolean hasAssigneeAndOnlyStatusNew() {
-        return (parameters().get(STATUS).equalsIgnoreCase(NEW)
-                        || parameters().get(STATUS_NOT).equalsIgnoreCase(NEW))
-                && (parameters().isPresent(ASSIGNEE) || parameters().isPresent(ASSIGNEE_NOT));
+    public TicketAccessFilter withFilter() {
+        return accessFilter;
     }
 
-    public Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByAssignee() {
-        var searchByUserName =
-                // override assignee if <user pending> is used
+    private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByAssignee() {
+        var searchByUserName = // override assignee if <user pending> is used
                 parameters().isPresent(BY_USER_PENDING)
                         ? accessFilter.getCurrentUser()
                         : parameters().get(ASSIGNEE).toString();
 
-        var builtQuery =
-                new AcrossFieldsQuery<TicketParameter>().buildQuery(ASSIGNEE, searchByUserName);
+        var returnedQuery =
+                new BoolQueryBuilder().minimumShouldMatch(1).queryName("builderStreamByAssignee");
 
         if (hasStatusNew()) { // we'll query assignee and status New here....
-            var queryBuilder = (BoolQueryBuilder) builtQuery.findFirst().orElseThrow().getValue();
-            queryBuilder.should(new TermQueryBuilder("status.keyword", NEW.toString()));
-            return Functions.queryToEntry(ASSIGNEE, queryBuilder);
+            returnedQuery.should(new TermQueryBuilder(STATUS_KEYWORD, NEW.toString()));
         }
-        return builtQuery;
+        var assigneeWithStatus = new BoolQueryBuilder().must(assigneeQuery(searchByUserName));
+        if (hasMoreThanOneStatus()) {
+            assigneeWithStatus.must(new TermsQueryBuilder(STATUS_KEYWORD, statusWithoutNew()));
+        }
+
+        returnedQuery.should(assigneeWithStatus);
+
+        return Functions.queryToEntry(ASSIGNEE, returnedQuery);
     }
 
-    private boolean hasStatusNew() {
-        return parameters().get(STATUS).contains(NEW) || parameters().get(STATUS_NOT).contains(NEW);
+    private boolean hasMoreThanOneStatus() {
+        return parameters().get(STATUS).asSplitStream(COMMA).count() > 1;
+    }
+
+    private String[] statusWithoutNew() {
+        return parameters()
+                .get(STATUS)
+                .asSplitStream(COMMA)
+                .filter(s -> !NEW.toString().equals(s))
+                .toArray(String[]::new);
+    }
+
+    private MultiMatchQueryBuilder assigneeQuery(String searchByUserName) {
+        return multiMatchQuery(
+                        searchByUserName,
+                        ASSIGNEE.searchFields(KEYWORD_FALSE).toArray(String[]::new))
+                .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
+                .autoGenerateSynonymsPhraseQuery(false)
+                .fuzzyTranspositions(false)
+                .operator(Operator.AND);
     }
 
     private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByOrganization(
@@ -220,13 +236,27 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
         }
     }
 
-    @Override
-    public URI openSearchUri() {
-        return fromUri(infrastructureApiUri).addChild(TICKETS, SEARCH).getUri();
+    private boolean hasStatusNew() {
+        return parameters().get(STATUS).contains(NEW);
     }
 
-    public TicketAccessFilter withFilter() {
-        return accessFilter;
+    private boolean hasAssigneeAndStatusNew() {
+        return hasStatusNew() && parameters().isPresent(ASSIGNEE);
+    }
+
+    /**
+     * Add a (default) filter to the query that will never match any document.
+     *
+     * <p>This whitelist the Query from any forgetful developer (me)
+     *
+     * <p>i.e.In order to return any results, withFilter* must be set
+     */
+    private void applyImpossibleWhiteListFilters() {
+        var randomUri = URI.create("https://www.example.com/" + UUID.randomUUID());
+        final var filterId =
+                new TermQueryBuilder(ORGANIZATION_ID_KEYWORD, randomUri)
+                        .queryName(ORGANIZATION_ID.asCamelCase() + POST_FILTER);
+        filters().set(filterId);
     }
 
     public static class TicketParameterValidator
@@ -265,20 +295,21 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
                 query.parameters().remove(PAGE);
             }
             if (query.parameters().isPresent(BY_USER_PENDING)) {
-                query.parameters()
-                        .set(TicketParameter.TYPE, query.parameters().get(BY_USER_PENDING).as());
                 query.parameters().set(STATUS, PENDING.toString());
+
+                if (!query.parameters().get(BY_USER_PENDING).asBoolean()) {
+                    query.parameters()
+                            .set(TYPE, query.parameters().get(BY_USER_PENDING).toString());
+                }
+                if (!query.parameters().isPresent(ASSIGNEE)) {
+                    query.parameters().set(ASSIGNEE, "meMyselfAndI");
+                }
             }
         }
 
         @Override
         protected Collection<String> validKeys() {
             return TICKET_PARAMETER_SET.stream().map(Enum::name).toList();
-        }
-
-        @Override
-        protected boolean isKeyValid(String keyName) {
-            return TicketParameter.keyFromString(keyName) != TicketParameter.INVALID;
         }
 
         @Override
@@ -312,6 +343,11 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
                         mergeToKey(qpKey, toEnumStrings(TicketStatus::fromString, decodedValue));
                 default -> mergeToKey(qpKey, decodedValue);
             }
+        }
+
+        @Override
+        protected boolean isKeyValid(String keyName) {
+            return TicketParameter.keyFromString(keyName) != TicketParameter.INVALID;
         }
     }
 }

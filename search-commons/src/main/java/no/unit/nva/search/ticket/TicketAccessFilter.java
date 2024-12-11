@@ -1,13 +1,18 @@
 package no.unit.nva.search.ticket;
 
 import static no.unit.nva.search.ticket.Constants.CANNOT_SEARCH_AS_BOTH_ASSIGNEE_AND_OWNER_AT_THE_SAME_TIME;
-import static no.unit.nva.search.ticket.Constants.ORG_AND_TYPE_OR_USER_NAME;
+import static no.unit.nva.search.ticket.Constants.FILTER_BY_ORGANIZATION;
+import static no.unit.nva.search.ticket.Constants.FILTER_BY_OWNER;
+import static no.unit.nva.search.ticket.Constants.FILTER_BY_TICKET_TYPES;
+import static no.unit.nva.search.ticket.Constants.FILTER_BY_USER_AND_TICKET_TYPES;
+import static no.unit.nva.search.ticket.Constants.ORGANIZATION_IS_REQUIRED;
+import static no.unit.nva.search.ticket.Constants.ORGANIZATION_PATHS;
+import static no.unit.nva.search.ticket.Constants.TYPE_KEYWORD;
 import static no.unit.nva.search.ticket.Constants.USER_IS_NOT_ALLOWED_TO_SEARCH_FOR_TICKETS_NOT_OWNED_BY_THEMSELVES;
+import static no.unit.nva.search.ticket.Constants.USER_IS_REQUIRED;
 import static no.unit.nva.search.ticket.TicketParameter.ASSIGNEE;
-import static no.unit.nva.search.ticket.TicketParameter.ORGANIZATION_ID;
 import static no.unit.nva.search.ticket.TicketParameter.OWNER;
 import static no.unit.nva.search.ticket.TicketParameter.STATISTICS;
-import static no.unit.nva.search.ticket.TicketParameter.TYPE;
 
 import static nva.commons.apigateway.AccessRight.MANAGE_CUSTOMERS;
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
@@ -17,8 +22,6 @@ import static org.opensearch.index.query.QueryBuilders.boolQuery;
 
 import static java.util.Objects.isNull;
 
-import no.unit.nva.search.common.builder.AcrossFieldsQuery;
-import no.unit.nva.search.common.builder.KeywordQuery;
 import no.unit.nva.search.common.records.FilterBuilder;
 
 import nva.commons.apigateway.AccessRight;
@@ -26,7 +29,11 @@ import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 
 import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.MultiMatchQueryBuilder;
+import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.index.query.TermsQueryBuilder;
 
 import java.net.URI;
 import java.util.EnumSet;
@@ -43,8 +50,8 @@ import java.util.stream.Collectors;
  *   <li>SUPPORT -> GeneralSupportCase
  *   <li>MANAGE_PUBLISHING_REQUESTS -> PublishingRequest
  *   <li>MANAGE_CUSTOMERS -> DoiRequest, GeneralSupportCase, PublishingRequest
- *   <li>is_owner -> ignore ticket type, only show tickets owned by the user
- *   <li>is_assignee -> ignore is_owner, only show tickettypes that user has access to
+ *   <li>IS_OWNER -> ignore ticket TYPE, only show tickets owned by the user
+ *   <li>IS_ASSIGNEE -> ignore OWNER, only show ticket types that user has access to
  * </ul>
  *
  * @author Stig Norland
@@ -64,12 +71,16 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
         this.query.filters().set();
     }
 
+    public String getCurrentUser() {
+        return currentUser;
+    }
+
     /**
      * Filter on access rights.
      *
      * @param accessRights access rights
      * @return TicketQuery (builder pattern)
-     * @apiNote ONLY SET THIS MANUALLY IN TESTS
+     * @apiNote ONLY USE IN TESTS, in handlers use: {@link #fromRequestInfo(RequestInfo)}
      */
     public TicketAccessFilter accessRights(AccessRight... accessRights) {
         return accessRights(List.of(accessRights));
@@ -82,8 +93,27 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
         return this;
     }
 
-    public String getCurrentUser() {
-        return currentUser;
+    /**
+     * Filter on owner (user).
+     *
+     * @param userName current user
+     * @return TicketQuery (builder pattern)
+     * @apiNote ONLY USE IN TESTS, in handlers use: {@link #fromRequestInfo(RequestInfo)}
+     */
+    public TicketAccessFilter user(String userName) {
+        this.currentUser = userName;
+        return this;
+    }
+
+    /**
+     * Filter on organization.
+     *
+     * @param organization organization id
+     * @apiNote ONLY USE IN TESTS, in handlers use: {@link #fromRequestInfo(RequestInfo)}
+     */
+    public TicketAccessFilter organization(URI organization) {
+        this.organizationId = organization;
+        return this;
     }
 
     /**
@@ -111,61 +141,24 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
     @Override
     public TicketSearchQuery apply() throws UnauthorizedException {
 
-        if (isSearchingAsSiktAdmin() && validateSiktAdmin(accessRightEnumSet)) {
+        if (searchAsSiktAdmin() && validateSiktAdmin(accessRightEnumSet)) {
             return query; // See everything, NO FILTERS!!!
         }
 
-        if (isNull(organizationId)) {
-            throw new UnauthorizedException("Organization is required");
-        }
-
-        if (isNull(currentUser)) {
-            throw new UnauthorizedException("User is required");
-        }
-
-        if (isSelfAndSearchAsAssignee(currentUser) && isSelfAndSearchAsTicketOwner()) {
-            validateAssigneeAndOwner();
-        }
-
+        validateOrganization();
+        validateUser();
         final var curatorTicketTypes = accessRightsToTicketTypes(accessRightEnumSet);
 
-        if (isSelfAndSearchAsTicketOwner() && hasNoCuratorRoles(curatorTicketTypes)) {
+        if (hasNoCuratorRoles(curatorTicketTypes) && searchAsTicketOwner()) {
             validateOwner(currentUser);
         }
+        if (searchAsTicketAssignee() && searchAsTicketOwner()) {
+            validateAssigneeAndOwnerParameters();
+        }
 
-        this.query
-                .filters()
-                .add(
-                        boolQuery()
-                                .must(filterByOrganization(organizationId.toString()))
-                                .must(filterByUserAndTicketTypes(currentUser, curatorTicketTypes))
-                                .must(filterByEitherAssigneeOrOwnerIfPresent(currentUser))
-                                .queryName(ORG_AND_TYPE_OR_USER_NAME));
+        this.query.filters().add(filterByOrganization(organizationId));
+        this.query.filters().add(filterByUserAndTicketTypes(currentUser, curatorTicketTypes));
         return query;
-    }
-
-    /**
-     * Filter on owner (user).
-     *
-     * @param userName current user
-     * @return TicketQuery (builder pattern)
-     * @apiNote ONLY SET THIS MANUALLY IN TESTS
-     */
-    public TicketAccessFilter user(String userName) {
-        this.currentUser = userName;
-        return this;
-    }
-
-    /**
-     * Filter on organization.
-     *
-     * @param organization organization id
-     * @return TicketQuery (builder pattern)
-     * @apiNote ONLY SET THIS MANUALLY IN TESTS
-     */
-    public TicketAccessFilter organization(URI organization) {
-        this.organizationId = organization;
-        return this;
     }
 
     /**
@@ -194,31 +187,11 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
         return allowed;
     }
 
-    private QueryBuilder filterByEitherAssigneeOrOwnerIfPresent(String userName) {
-        var builder = boolQuery();
-        if (isSelfAndSearchAsAssignee(userName)) {
-            builder.mustNot(filterByOwner(userName));
-        } else if (isSelfAndSearchAsTicketOwner()) {
-            builder.mustNot(filterByAssignee(userName));
-        }
-        return builder;
-    }
-
-    private QueryBuilder filterByAssignee(String userName) {
-        return new AcrossFieldsQuery<TicketParameter>()
-                .buildQuery(ASSIGNEE, userName)
-                .findFirst()
-                .orElseThrow()
-                .getValue();
-    }
-
-    private QueryBuilder filterByOrganization(String organizationId) {
-        return new AcrossFieldsQuery<TicketParameter>()
-                .buildQuery(ORGANIZATION_ID, organizationId)
-                .findFirst()
-                .orElseThrow()
-                .getValue()
-                .queryName(ORGANIZATION_ID.asCamelCase());
+    private QueryBuilder filterByOrganization(URI organizationId) {
+        return QueryBuilders.multiMatchQuery(organizationId.toString(), ORGANIZATION_PATHS)
+                .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
+                .operator(Operator.AND)
+                .queryName(FILTER_BY_ORGANIZATION);
     }
 
     private BoolQueryBuilder filterByUserAndTicketTypes(
@@ -226,25 +199,47 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
         return boolQuery()
                 .should(filterByOwner(userName))
                 .should(filterByTicketTypes(curatorTicketTypes))
-                .minimumShouldMatch(1);
+                .minimumShouldMatch(1)
+                .queryName(FILTER_BY_USER_AND_TICKET_TYPES);
     }
 
     private QueryBuilder filterByOwner(String userName) {
-        return new AcrossFieldsQuery<TicketParameter>()
-                .buildQuery(OWNER, userName)
-                .findFirst()
-                .orElseThrow()
-                .getValue();
+        return QueryBuilders.multiMatchQuery(userName, OWNER.searchFields().toArray(String[]::new))
+                .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
+                .operator(Operator.AND)
+                .queryName(FILTER_BY_OWNER);
     }
 
     private QueryBuilder filterByTicketTypes(Set<TicketType> curatorTicketTypes) {
         var ticketTypes =
                 curatorTicketTypes.stream().map(TicketType::toString).toArray(String[]::new);
-        return new KeywordQuery<TicketParameter>()
-                .buildQuery(TYPE, ticketTypes)
-                .findFirst()
-                .orElseThrow()
-                .getValue();
+        return new TermsQueryBuilder(TYPE_KEYWORD, ticketTypes).queryName(FILTER_BY_TICKET_TYPES);
+    }
+
+    private void validateOrganization() throws UnauthorizedException {
+        if (isNull(organizationId)) {
+            throw new UnauthorizedException(ORGANIZATION_IS_REQUIRED);
+        }
+    }
+
+    private void validateOwner(String userName) throws UnauthorizedException {
+        if (isCurrentUserNotOwner(userName)) {
+            throw new UnauthorizedException(
+                    USER_IS_NOT_ALLOWED_TO_SEARCH_FOR_TICKETS_NOT_OWNED_BY_THEMSELVES);
+        }
+    }
+
+    private void validateAssigneeAndOwnerParameters() throws UnauthorizedException {
+        if (query.parameters().get(OWNER).as().equals(query.parameters().get(ASSIGNEE).as())) {
+            throw new UnauthorizedException(
+                    CANNOT_SEARCH_AS_BOTH_ASSIGNEE_AND_OWNER_AT_THE_SAME_TIME);
+        }
+    }
+
+    private void validateUser() throws UnauthorizedException {
+        if (isNull(currentUser)) {
+            throw new UnauthorizedException(USER_IS_REQUIRED);
+        }
     }
 
     private boolean validateSiktAdmin(Set<AccessRight> accessRights) throws UnauthorizedException {
@@ -255,18 +250,8 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
         return true;
     }
 
-    private void validateOwner(String userName) throws UnauthorizedException {
-        if (isCurrentUserNotOwner(userName)) {
-            throw new UnauthorizedException(
-                    USER_IS_NOT_ALLOWED_TO_SEARCH_FOR_TICKETS_NOT_OWNED_BY_THEMSELVES);
-        }
-    }
-
-    private void validateAssigneeAndOwner() throws UnauthorizedException {
-        if (query.parameters().get(OWNER).as().equals(query.parameters().get(ASSIGNEE).as())) {
-            throw new UnauthorizedException(
-                    CANNOT_SEARCH_AS_BOTH_ASSIGNEE_AND_OWNER_AT_THE_SAME_TIME);
-        }
+    private boolean searchAsTicketAssignee() {
+        return query.parameters().isPresent(ASSIGNEE);
     }
 
     private boolean hasNoCuratorRoles(Set<TicketType> curatorTicketTypes) {
@@ -277,16 +262,11 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
         return !userName.equalsIgnoreCase(query.parameters().get(OWNER).as());
     }
 
-    private boolean isSelfAndSearchAsAssignee(String userName) {
-        return query.parameters().isPresent(ASSIGNEE)
-                && query.parameters().get(ASSIGNEE).as().equals(userName);
-    }
-
-    private boolean isSelfAndSearchAsTicketOwner() {
+    private boolean searchAsTicketOwner() {
         return query.parameters().isPresent(OWNER);
     }
 
-    private boolean isSearchingAsSiktAdmin() {
+    private boolean searchAsSiktAdmin() {
         return query.parameters().isPresent(STATISTICS);
     }
 }

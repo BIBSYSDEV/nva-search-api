@@ -377,7 +377,7 @@ class TicketClientTest {
                     throws BadRequestException, UnauthorizedException {
         var uri =
                 URI.create(
-                        "https://x.org/?status=New,Pending&assignee=1412322@20754.0.0.0&size=10&from=0");
+                        "https://x.org/?status=New,Pending&assignee=1412322@20754.0.0.0&size=20&from=0");
 
         var pagedResult =
                 TicketSearchQuery.builder()
@@ -392,7 +392,7 @@ class TicketClientTest {
                         .doSearch(searchClient)
                         .toPagedResponse();
 
-        assertEquals(3, pagedResult.hits().size());
+        assertEquals(8, pagedResult.hits().size());
     }
 
     @ParameterizedTest

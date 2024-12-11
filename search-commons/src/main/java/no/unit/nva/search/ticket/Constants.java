@@ -40,59 +40,64 @@ import java.util.Map;
  */
 public final class Constants {
 
-    static final String ORG_AND_TYPE_OR_USER_NAME = "organizationAndAnyOfTicketTypeOrUserName";
-    static final String USER_IS_NOT_ALLOWED_TO_SEARCH_FOR_TICKETS_NOT_OWNED_BY_THEMSELVES =
-            "User is not allowed to search for tickets not owned by themselves";
+    private static final String FINALIZED_BY = "finalizedBy";
+
+    static final String BY_USER_PENDING = "byUserPending";
     static final String CANNOT_SEARCH_AS_BOTH_ASSIGNEE_AND_OWNER_AT_THE_SAME_TIME =
             "Cannot search as both assignee and owner at the same time";
+    static final String FILTER_BY_ORGANIZATION = "filterByOrganization";
+    static final String FILTER_BY_OWNER = "filterByOwner";
+    static final String FILTER_BY_TICKET_TYPES = "filterByTicketTypes";
+    static final String FILTER_BY_USER_AND_TICKET_TYPES = "filterByUserAndTicketTypes";
+    static final String ORGANIZATION_IS_REQUIRED = "Organization is required";
+    static final String USER_IS_NOT_ALLOWED_TO_SEARCH_FOR_TICKETS_NOT_OWNED_BY_THEMSELVES =
+            "User is not allowed to search for tickets not owned by themselves";
+    static final String USER_IS_REQUIRED = "User is required";
 
-    public static final String BY_USER_PENDING = "byUserPending";
-    private static final String FINALIZED_BY = "finalizedBy";
-    public static final Map<String, String> facetTicketsPaths =
+    static final Map<String, String> facetTicketsPaths =
             Map.of(
                     BY_USER_PENDING, "/withAppliedFilter/byUserPending/status/type",
                     STATUS, "/withAppliedFilter/status",
                     TYPE, "/withAppliedFilter/type",
                     PUBLICATION_STATUS, "/withAppliedFilter/publicationStatus");
-    public static final String ASSIGNEE = "assignee";
-    public static final String ASSIGNEE_FIELDS =
+    static final String ASSIGNEE = "assignee";
+    static final String ASSIGNEE_FIELDS =
             multipleFields(
                     jsonPath(ASSIGNEE, FIRST_NAME, KEYWORD),
                     jsonPath(ASSIGNEE, LAST_NAME, KEYWORD),
                     jsonPath(ASSIGNEE, USERNAME, KEYWORD));
-    public static final String CUSTOMER_ID_KEYWORD = CUSTOMER_ID + DOT + KEYWORD;
-    public static final String FINALIZED_BY_FIELDS =
+    static final String CUSTOMER_ID_KEYWORD = CUSTOMER_ID + DOT + KEYWORD;
+    static final String FINALIZED_BY_FIELDS =
             multipleFields(
                     jsonPath(FINALIZED_BY, USERNAME, KEYWORD),
                     jsonPath(FINALIZED_BY, FIRST_NAME, KEYWORD),
                     jsonPath(FINALIZED_BY, LAST_NAME, KEYWORD));
-    public static final String ID_KEYWORD = ID + DOT + KEYWORD;
-    public static final String MESSAGE_FIELDS =
+    static final String ID_KEYWORD = ID + DOT + KEYWORD;
+    static final String MESSAGE_FIELDS =
             jsonPath(MESSAGES, "text", KEYWORD) + PIPE + jsonPath(MESSAGES, STATUS, KEYWORD);
-    public static final String ORGANIZATION_IDENTIFIER_KEYWORD =
+    static final String ORGANIZATION_IDENTIFIER_KEYWORD =
             ORGANIZATION + DOT + IDENTIFIER + DOT + KEYWORD;
-    public static final String ORGANIZATION_ID_KEYWORD = ORGANIZATION + DOT + ID_KEYWORD;
-    public static final String ORGANIZATION_PATHS = ORGANIZATION + DOT + ASTERISK;
-    public static final String OWNER_USERNAME = OWNER + DOT + USERNAME + DOT + KEYWORD;
-    public static final String OWNER_FIELDS =
+    static final String ORGANIZATION_ID_KEYWORD = ORGANIZATION + DOT + ID_KEYWORD;
+    static final String ORGANIZATION_PATHS = ORGANIZATION + DOT + ASTERISK;
+    static final String OWNER_USERNAME = OWNER + DOT + USERNAME + DOT + KEYWORD;
+    static final String OWNER_FIELDS =
             multipleFields(
                     OWNER_USERNAME,
                     jsonPath(OWNER, FIRST_NAME, KEYWORD),
                     jsonPath(OWNER, LAST_NAME, KEYWORD));
-    public static final String OWNER_KEYWORD = OWNER + DOT + KEYWORD;
-    public static final String PUBLICATION_ID_OR_IDENTIFIER_KEYWORD =
+    static final String OWNER_KEYWORD = OWNER + DOT + KEYWORD;
+    static final String PUBLICATION_ID_OR_IDENTIFIER_KEYWORD =
             jsonPath(PUBLICATION, ID, KEYWORD) + PIPE + jsonPath(PUBLICATION, IDENTIFIER, KEYWORD);
-    public static final String PUBLICATION_INSTANCE_KEYWORD =
+    static final String PUBLICATION_INSTANCE_KEYWORD =
             jsonPath(PUBLICATION, PUBLICATION_INSTANCE, TYPE, KEYWORD);
-    public static final String PUBLICATION_MAIN_TITLE_KEYWORD =
-            jsonPath(PUBLICATION, MAIN_TITLE, KEYWORD);
-    public static final String PUBLICATION_MODIFIED_DATE = PUBLICATION + DOT + MODIFIED_DATE;
-    public static final String PUBLICATION_OWNER_KEYWORD = PUBLICATION + DOT + OWNER_KEYWORD;
-    public static final String STATUS_KEYWORD = STATUS + DOT + KEYWORD;
-    public static final String PUBLICATION_STATUS_KEYWORD = PUBLICATION + DOT + STATUS_KEYWORD;
-    public static final String TYPE_KEYWORD = TYPE + DOT + KEYWORD;
-    public static final String UNHANDLED_KEY = "unhandled key -> ";
-    public static final String VIEWED_BY_FIELDS =
+    static final String PUBLICATION_MAIN_TITLE_KEYWORD = jsonPath(PUBLICATION, MAIN_TITLE, KEYWORD);
+    static final String PUBLICATION_MODIFIED_DATE = PUBLICATION + DOT + MODIFIED_DATE;
+    static final String PUBLICATION_OWNER_KEYWORD = PUBLICATION + DOT + OWNER_KEYWORD;
+    static final String STATUS_KEYWORD = STATUS + DOT + KEYWORD;
+    static final String PUBLICATION_STATUS_KEYWORD = PUBLICATION + DOT + STATUS_KEYWORD;
+    static final String TYPE_KEYWORD = TYPE + DOT + KEYWORD;
+    static final String UNHANDLED_KEY = "unhandled key -> ";
+    static final String VIEWED_BY_FIELDS =
             multipleFields(
                     jsonPath(VIEWED_BY, USERNAME, KEYWORD),
                     jsonPath(VIEWED_BY, FIRST_NAME, KEYWORD),
