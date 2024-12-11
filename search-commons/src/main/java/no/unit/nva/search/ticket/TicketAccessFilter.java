@@ -158,8 +158,10 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
 
         this.query.filters().add(filterByOrganization(organizationId));
         this.query.filters().add(filterByUserAndTicketTypes(currentUser, curatorTicketTypes));
+        this.query.filters().add(filterByUnPublished());
         return query;
     }
+
 
     /**
      * Apply business rules to determine which ticket types are allowed.
@@ -215,6 +217,12 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
                 curatorTicketTypes.stream().map(TicketType::toString).toArray(String[]::new);
         return new TermsQueryBuilder(TYPE_KEYWORD, ticketTypes).queryName(FILTER_BY_TICKET_TYPES);
     }
+
+    private QueryBuilder filterByUnPublished() {
+        return boolQuery().mustNot(filterByTicketTypes(Set.of(TicketType.UNPUBLISH_REQUEST)));
+    }
+
+
 
     private void validateOrganization() throws UnauthorizedException {
         if (isNull(organizationId)) {
