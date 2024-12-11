@@ -154,17 +154,17 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     protected Stream<Entry<K, QueryBuilder>> builderStreamDefaultQuery(K key) {
         final var value = parameters().get(key).toString();
         return switch (key.fieldType()) {
-            case DATE, NUMBER -> new RangeQuery<K>().buildQuery(key, value);
-            case KEYWORD -> new KeywordQuery<K>().buildQuery(key, value);
             case FUZZY_KEYWORD -> new FuzzyKeywordQuery<K>().buildQuery(key, value);
+            case KEYWORD -> new KeywordQuery<K>().buildQuery(key, value);
             case TEXT -> new TextQuery<K>().buildQuery(key, value);
-            case FREE_TEXT -> Functions.queryToEntry(key, builderSearchAllQuery(key));
+            case FLAG -> Stream.empty();
+            case CUSTOM -> builderCustomQueryStream(key);
+            case NUMBER, DATE -> new RangeQuery<K>().buildQuery(key, value);
             case ACROSS_FIELDS -> new AcrossFieldsQuery<K>().buildQuery(key, value);
             case EXISTS -> new ExistsQuery<K>().buildQuery(key, value);
+            case FREE_TEXT -> Functions.queryToEntry(key, builderSearchAllQuery(key));
             case HAS_PARTS -> new HasPartsQuery<K>().buildQuery(key, value);
             case PART_OF -> new PartOfQuery<K>().buildQuery(key, value);
-            case CUSTOM -> builderCustomQueryStream(key);
-            case FLAG -> Stream.empty();
             default -> throw new RuntimeException(ErrorMessages.HANDLER_NOT_DEFINED + key.name());
         };
     }

@@ -82,8 +82,8 @@ import java.util.stream.Stream;
 public enum TicketParameter implements ParameterKey<TicketParameter> {
     INVALID(ParameterKind.INVALID),
     // Parameters used for filtering
-    ASSIGNEE(CUSTOM, ANY_OF, ASSIGNEE_FIELDS),
-    ASSIGNEE_NOT(ACROSS_FIELDS, NOT_ANY_OF, ASSIGNEE_FIELDS),
+    ASSIGNEE(CUSTOM, ALL_OF, ASSIGNEE_FIELDS),
+    ASSIGNEE_NOT(ACROSS_FIELDS, NOT_ALL_OF, ASSIGNEE_FIELDS),
     BY_USER_PENDING(FLAG),
     CREATED_DATE(DATE, BETWEEN, Words.CREATED_DATE),
     CUSTOMER_ID(FUZZY_KEYWORD, ANY_OF, CUSTOMER_ID_KEYWORD),
