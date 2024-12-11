@@ -4,6 +4,7 @@ import static no.unit.nva.search.ticket.Constants.CANNOT_SEARCH_AS_BOTH_ASSIGNEE
 import static no.unit.nva.search.ticket.Constants.FILTER_BY_ORGANIZATION;
 import static no.unit.nva.search.ticket.Constants.FILTER_BY_OWNER;
 import static no.unit.nva.search.ticket.Constants.FILTER_BY_TICKET_TYPES;
+import static no.unit.nva.search.ticket.Constants.FILTER_BY_UN_PUBLISHED;
 import static no.unit.nva.search.ticket.Constants.FILTER_BY_USER_AND_TICKET_TYPES;
 import static no.unit.nva.search.ticket.Constants.ORGANIZATION_IS_REQUIRED;
 import static no.unit.nva.search.ticket.Constants.ORGANIZATION_PATHS;
@@ -162,7 +163,6 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
         return query;
     }
 
-
     /**
      * Apply business rules to determine which ticket types are allowed.
      *
@@ -219,10 +219,9 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
     }
 
     private QueryBuilder filterByUnPublished() {
-        return boolQuery().mustNot(filterByTicketTypes(Set.of(TicketType.UNPUBLISH_REQUEST)));
+        return boolQuery().mustNot(filterByTicketTypes(Set.of(TicketType.UNPUBLISH_REQUEST)))
+            .queryName(FILTER_BY_UN_PUBLISHED);
     }
-
-
 
     private void validateOrganization() throws UnauthorizedException {
         if (isNull(organizationId)) {
