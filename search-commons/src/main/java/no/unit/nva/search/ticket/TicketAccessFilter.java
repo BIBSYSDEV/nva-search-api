@@ -4,6 +4,7 @@ import static no.unit.nva.search.ticket.Constants.CANNOT_SEARCH_AS_BOTH_ASSIGNEE
 import static no.unit.nva.search.ticket.Constants.FILTER_BY_ORGANIZATION;
 import static no.unit.nva.search.ticket.Constants.FILTER_BY_OWNER;
 import static no.unit.nva.search.ticket.Constants.FILTER_BY_TICKET_TYPES;
+import static no.unit.nva.search.ticket.Constants.FILTER_BY_UN_PUBLISHED;
 import static no.unit.nva.search.ticket.Constants.FILTER_BY_USER_AND_TICKET_TYPES;
 import static no.unit.nva.search.ticket.Constants.ORGANIZATION_IS_REQUIRED;
 import static no.unit.nva.search.ticket.Constants.ORGANIZATION_PATHS;
@@ -158,6 +159,7 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
 
         this.query.filters().add(filterByOrganization(organizationId));
         this.query.filters().add(filterByUserAndTicketTypes(currentUser, curatorTicketTypes));
+        this.query.filters().add(filterByUnPublished());
         return query;
     }
 
@@ -214,6 +216,12 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
         var ticketTypes =
                 curatorTicketTypes.stream().map(TicketType::toString).toArray(String[]::new);
         return new TermsQueryBuilder(TYPE_KEYWORD, ticketTypes).queryName(FILTER_BY_TICKET_TYPES);
+    }
+
+    private QueryBuilder filterByUnPublished() {
+        return boolQuery()
+                .mustNot(filterByTicketTypes(Set.of(TicketType.UNPUBLISH_REQUEST)))
+                .queryName(FILTER_BY_UN_PUBLISHED);
     }
 
     private void validateOrganization() throws UnauthorizedException {

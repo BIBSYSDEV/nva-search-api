@@ -102,6 +102,7 @@ public final class Constants {
                     jsonPath(VIEWED_BY, USERNAME, KEYWORD),
                     jsonPath(VIEWED_BY, FIRST_NAME, KEYWORD),
                     jsonPath(VIEWED_BY, LAST_NAME, KEYWORD));
+    static final String FILTER_BY_UN_PUBLISHED = "filterByUnPublished";
 
     @JacocoGenerated
     public Constants() {}

@@ -35,7 +35,6 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -100,11 +99,6 @@ public final class Functions {
     public static FilterAggregationBuilder filterBranchBuilder(
             String name, String filter, String... paths) {
         return AggregationBuilders.filter(name, QueryBuilders.termQuery(jsonPath(paths), filter));
-    }
-
-    public static FilterAggregationBuilder filterTermsBranchBuilder(
-            String name, List<String> filters, String... paths) {
-        return AggregationBuilders.filter(name, QueryBuilders.termsQuery(jsonPath(paths), filters));
     }
 
     public static String mergeWithColonOrComma(String oldValue, String newValue) {
