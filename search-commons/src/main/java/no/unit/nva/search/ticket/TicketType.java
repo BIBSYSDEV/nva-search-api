@@ -7,7 +7,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
- * TicketType is an enum for sorting tickets.
+ * TicketType is an enum for categorizing Tickets into ->
+ * <li>DoiRequest
+ * <li>GeneralSupportCase
+ * <li>PublishingRequest
  *
  * @author Stig Norland
  */

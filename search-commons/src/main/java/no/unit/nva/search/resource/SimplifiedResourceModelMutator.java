@@ -55,7 +55,6 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
     public static final String PRINT_ISSN = "printIssn";
     public static final String ISBN_LIST = "isbnList";
     public static final String ADDITIONAL_IDENTIFIERS = "additionalIdentifiers";
-    public static final String SOURCE_NAME = "sourceName";
     public static final String HANDLE_IDENTIFIER = "HandleIdentifier";
     public static final String VALUE = "value";
     public static final String SCOPUS_IDENTIFIER = "ScopusIdentifier";
@@ -69,6 +68,7 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
     public static final String CONTRIBUTORS_PREVIEW = "contributorsPreview";
     public static final String CORRESPONDING_AUTHOR = "correspondingAuthor";
     public static final String IDENTITY = "identity";
+    public static final String ORCID_ID = "orcId";
     public static final String SEQUENCE = "sequence";
     public static final String ROLE = "role";
     public static final String MANIFESTATIONS = "manifestations";
@@ -95,6 +95,12 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
                 MODIFIED_DATE,
                 PUBLISHED_DATE,
                 path(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, TYPE),
+                path(
+                        ENTITY_DESCRIPTION,
+                        REFERENCE,
+                        PUBLICATION_INSTANCE,
+                        MANIFESTATIONS,
+                        ISBN_LIST),
                 path(ENTITY_DESCRIPTION, REFERENCE, DOI),
                 path(
                         ENTITY_DESCRIPTION,
@@ -107,12 +113,15 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
                 path(ENTITY_DESCRIPTION, CONTRIBUTORS_COUNT),
                 path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, AFFILIATIONS, ID),
                 path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, AFFILIATIONS, TYPE),
-                path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, CORRESPONDING_AUTHOR, ID),
+                path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, CORRESPONDING_AUTHOR),
                 path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, IDENTITY, ID),
                 path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, IDENTITY, NAME),
+                path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, IDENTITY, ORCID_ID),
                 path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, ROLE, TYPE),
                 path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, SEQUENCE),
-                path(ENTITY_DESCRIPTION, PUBLICATION_DATE));
+                path(ENTITY_DESCRIPTION, PUBLICATION_DATE),
+                path(ADDITIONAL_IDENTIFIERS, TYPE),
+                path(ADDITIONAL_IDENTIFIERS, VALUE));
     }
 
     @Override
@@ -192,7 +201,7 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
                         .filter(Objects::nonNull)
                         .collect(Collectors.toSet());
 
-        var isbnsInSourceNose =
+        var isbnsInSourceNode =
                 source.path(ENTITY_DESCRIPTION)
                         .path(REFERENCE)
                         .path(PUBLICATION_CONTEXT)
@@ -230,9 +239,9 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
         }
 
         List<String> isbnsInSource =
-                isbnsInSourceNose.isMissingNode()
+                isbnsInSourceNode.isMissingNode()
                         ? Collections.emptyList()
-                        : objectMapper.readerForListOf(String.class).readValue(isbnsInSourceNose);
+                        : objectMapper.readerForListOf(String.class).readValue(isbnsInSourceNode);
 
         var isbns = Stream.concat(isbnsInSource.stream(), isbnsInManifestations.stream()).toList();
 
@@ -243,7 +252,7 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
                 .iterator()
                 .forEachRemaining(
                         i -> {
-                            switch (i.path(SOURCE_NAME).textValue()) {
+                            switch (i.path(TYPE).textValue()) {
                                 case HANDLE_IDENTIFIER:
                                     handleIdentifiers.add(i.path(VALUE).textValue());
                                     break;
@@ -345,7 +354,12 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
                                                     contributorNode
                                                             .path(IDENTITY)
                                                             .path(NAME)
-                                                            .textValue()),
+                                                            .textValue(),
+                                                    uriFromText(
+                                                            contributorNode
+                                                                    .path(IDENTITY)
+                                                                    .path(ORCID_ID)
+                                                                    .textValue())),
                                             contributorNode.path(ROLE).path(TYPE).textValue(),
                                             contributorNode.path(SEQUENCE).asInt()));
                         });
