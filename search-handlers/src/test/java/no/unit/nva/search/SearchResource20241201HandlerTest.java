@@ -33,6 +33,7 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.Map;
 
@@ -83,7 +84,10 @@ class SearchResource20241201HandlerTest {
 
         assertThat(
                 firstHitDto.id(),
-                is(equalTo("http://localhost/publication/f367b260-c15e-4d0f-b197-e1dc0e9eb0e8")));
+                is(
+                        equalTo(
+                                URI.create(
+                                        "http://localhost/publication/f367b260-c15e-4d0f-b197-e1dc0e9eb0e8"))));
     }
 
     private InputStream getInputStream() throws JsonProcessingException {

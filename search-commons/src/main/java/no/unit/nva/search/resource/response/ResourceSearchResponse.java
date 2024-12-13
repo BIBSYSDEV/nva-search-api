@@ -2,11 +2,13 @@ package no.unit.nva.search.resource.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
 public record ResourceSearchResponse(
-        String id,
+        URI id,
+        String identifier,
         String type,
         OtherIdentifiers otherIdentifiers,
         RecordMetadata recordMetadata,
@@ -21,7 +23,8 @@ public record ResourceSearchResponse(
 
     public static final class Builder {
 
-        private String id;
+        private URI id;
+        private String identifier;
         private String type;
         private OtherIdentifiers otherIdentifiers;
         private RecordMetadata recordMetadata;
@@ -40,8 +43,13 @@ public record ResourceSearchResponse(
             return new Builder();
         }
 
-        public Builder withId(String id) {
+        public Builder withId(URI id) {
             this.id = id;
+            return this;
+        }
+
+        public Builder withIdentifier(String identifier) {
+            this.identifier = identifier;
             return this;
         }
 
@@ -103,6 +111,7 @@ public record ResourceSearchResponse(
         public ResourceSearchResponse build() {
             return new ResourceSearchResponse(
                     id,
+                    identifier,
                     type,
                     otherIdentifiers,
                     recordMetadata,
