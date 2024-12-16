@@ -262,7 +262,7 @@ Resources:
   SearchResourcesFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Description: Lambda for searching Resources
+      Description: Search for Resources
       CodeUri: search-handlers
       Handler: no.unit.nva.search.SearchResourceHandler::handleRequest
       AutoPublishAlias: live
@@ -287,7 +287,7 @@ Resources:
   ExportResourcesFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Description: Lambda for searching Resources
+      Description: Export of search results in Resources
       CodeUri: search-handlers
       Handler: no.unit.nva.search.ExportResourceHandler::handleRequest
       Timeout: 180
@@ -311,7 +311,7 @@ Resources:
   SearchResourcesAuthorizedFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Description: Lambda for searching Resources
+      Description: Search for Resources, authorized.
       CodeUri: search-handlers
       Handler: no.unit.nva.search.SearchResourceAuthHandler::handleRequest
       AutoPublishAlias: live

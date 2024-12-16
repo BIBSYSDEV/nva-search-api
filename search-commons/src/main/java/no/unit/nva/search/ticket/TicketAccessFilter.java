@@ -76,6 +76,10 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
         return currentUser;
     }
 
+    public Set<TicketType> getAccessRightAsTicketTypes() {
+        return accessRightsToTicketTypes(accessRightEnumSet);
+    }
+
     /**
      * Filter on access rights.
      *
