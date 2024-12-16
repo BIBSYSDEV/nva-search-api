@@ -39,6 +39,7 @@ import java.util.stream.Stream;
 public class SimplifiedResourceModelMutator implements JsonNodeMutator {
 
     public static final String ID = "id";
+    public static final String IDENTIFIER = "identifier";
     public static final String AFFILIATIONS = "affiliations";
     public static final String PUBLICATION_INSTANCE = "publicationInstance";
     public static final String TYPE = "type";
@@ -90,6 +91,7 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
     public static List<String> getIncludedFields() {
         return List.of(
                 ID,
+                IDENTIFIER,
                 STATUS,
                 CREATED_DATE,
                 MODIFIED_DATE,
@@ -140,7 +142,8 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
 
     private ResourceSearchResponse transformToDto(JsonNode source) throws IOException {
         return new Builder()
-                .withId(source.path(ID).textValue())
+                .withId(uriFromText(source.path(ID).textValue()))
+                .withIdentifier(source.path(IDENTIFIER).textValue())
                 .withType(
                         source.path(ENTITY_DESCRIPTION)
                                 .path(REFERENCE)
