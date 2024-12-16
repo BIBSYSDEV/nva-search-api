@@ -125,7 +125,7 @@ public final class Constants {
     }
 
     private static QueryBuilder filterByAssignee(String userName) {
-        return QueryBuilders.multiMatchQuery(userName, ASSIGNEE_FIELDS)
+        return QueryBuilders.multiMatchQuery(userName, "assignee.*")
                 .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
                 .operator(Operator.AND)
                 .queryName("filterByAssignee");
