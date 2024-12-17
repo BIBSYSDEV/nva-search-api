@@ -3,14 +3,18 @@ package no.unit.nva.search.common;
 import static org.apache.http.HttpHeaders.ACCEPT;
 
 import nva.commons.apigateway.RequestInfo;
+import nva.commons.core.JacocoGenerated;
 
 import org.apache.http.entity.ContentType;
 
 import java.util.Optional;
 
-public class ContentTypeUtils {
+public final class ContentTypeUtils {
 
     public static final String VERSION = "version";
+
+    @JacocoGenerated
+    private ContentTypeUtils() {}
 
     /** Extract the version field value if present from a header or else null. */
     private static String extractVersion(String headerValue) {
