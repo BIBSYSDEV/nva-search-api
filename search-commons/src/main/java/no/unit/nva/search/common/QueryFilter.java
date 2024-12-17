@@ -44,8 +44,9 @@ public class QueryFilter {
         return !filters.isEmpty();
     }
 
-    public void add(QueryBuilder builder) {
+    public QueryFilter add(QueryBuilder builder) {
         this.filters.put(builder.queryName(), builder);
+        return this;
     }
 
     @Override
