@@ -63,8 +63,8 @@ import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -154,11 +154,10 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
     @Override
     protected List<AggregationBuilder> builderAggregations() {
         var denySet =
-                Arrays.stream(TicketType.values())
-                        .filter(item -> !accessFilter.getAccessRightAsTicketTypes().contains(item))
+                EnumSet.complementOf(EnumSet.copyOf(accessFilter.getAccessRightAsTicketTypes()))
+                        .stream()
                         .map(Enum::toString)
                         .toArray(String[]::new);
-
         return getTicketsAggregations(accessFilter.getCurrentUser(), denySet);
     }
 

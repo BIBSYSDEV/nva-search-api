@@ -50,7 +50,7 @@ public final class Constants {
 
     private static final String FINALIZED_BY = "finalizedBy";
 
-    static final String ASSIGNEE_TILDE = "assignee.*";
+    static final String ASSIGNEE_ASTERISK = "assignee.*";
     static final String BY_USER_PENDING = "byUserPending";
     static final String CANNOT_SEARCH_AS_BOTH_ASSIGNEE_AND_OWNER_AT_THE_SAME_TIME =
             "Cannot search as both assignee and owner at the same time";
@@ -128,7 +128,7 @@ public final class Constants {
     }
 
     private static QueryBuilder filterByAssignee(String userName) {
-        return QueryBuilders.multiMatchQuery(userName, ASSIGNEE_TILDE)
+        return QueryBuilders.multiMatchQuery(userName, ASSIGNEE_ASTERISK)
                 .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
                 .operator(Operator.AND)
                 .queryName(FILTER_BY_ASSIGNEE);
