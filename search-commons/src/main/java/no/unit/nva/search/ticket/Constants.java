@@ -50,9 +50,12 @@ public final class Constants {
 
     private static final String FINALIZED_BY = "finalizedBy";
 
+    static final String ASSIGNEE_TILDE = "assignee.*";
     static final String BY_USER_PENDING = "byUserPending";
     static final String CANNOT_SEARCH_AS_BOTH_ASSIGNEE_AND_OWNER_AT_THE_SAME_TIME =
             "Cannot search as both assignee and owner at the same time";
+    static final String FILTER = "filter";
+    static final String FILTER_BY_ASSIGNEE = "filterByAssignee";
     static final String FILTER_BY_ORGANIZATION = "filterByOrganization";
     static final String FILTER_BY_OWNER = "filterByOwner";
     static final String FILTER_BY_TICKET_TYPES = "filterByTicketTypes";
@@ -125,10 +128,10 @@ public final class Constants {
     }
 
     private static QueryBuilder filterByAssignee(String userName) {
-        return QueryBuilders.multiMatchQuery(userName, "assignee.*")
+        return QueryBuilders.multiMatchQuery(userName, ASSIGNEE_TILDE)
                 .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
                 .operator(Operator.AND)
-                .queryName("filterByAssignee");
+                .queryName(FILTER_BY_ASSIGNEE);
     }
 
     private static AggregationBuilder notificationsAsCurator(
@@ -139,7 +142,7 @@ public final class Constants {
                         .mustNot(new TermsQueryBuilder(TYPE_KEYWORD, deniedTypes))
                         .must(new TermsQueryBuilder(STATUS_KEYWORD, pending))
                         .must(filterByAssignee(username))
-                        .queryName(BY_USER_PENDING + "filter");
+                        .queryName(BY_USER_PENDING + FILTER);
 
         return filterBranchBuilder(BY_USER_PENDING, queryFilter)
                 .subAggregation(branchBuilder(TYPE, TYPE_KEYWORD));
