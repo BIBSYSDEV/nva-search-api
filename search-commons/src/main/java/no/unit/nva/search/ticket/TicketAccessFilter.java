@@ -32,7 +32,6 @@ import nva.commons.apigateway.exceptions.UnauthorizedException;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.Operator;
-import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermsQueryBuilder;
 
@@ -74,6 +73,10 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
 
     public String getCurrentUser() {
         return currentUser;
+    }
+
+    public Set<TicketType> getAccessRightAsTicketTypes() {
+        return accessRightsToTicketTypes(accessRightEnumSet);
     }
 
     /**
@@ -157,9 +160,11 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
             validateAssigneeAndOwnerParameters();
         }
 
-        this.query.filters().add(filterByOrganization(organizationId));
-        this.query.filters().add(filterByUserAndTicketTypes(currentUser, curatorTicketTypes));
-        this.query.filters().add(filterByUnPublished());
+        this.query
+                .filters()
+                .add(filterByOrganization(organizationId))
+                .add(filterByUserAndTicketTypes(currentUser, curatorTicketTypes))
+                .add(filterByDeniedUnpublishRequest());
         return query;
     }
 
@@ -189,7 +194,7 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
         return allowed;
     }
 
-    private QueryBuilder filterByOrganization(URI organizationId) {
+    private MultiMatchQueryBuilder filterByOrganization(URI organizationId) {
         return QueryBuilders.multiMatchQuery(organizationId.toString(), ORGANIZATION_PATHS)
                 .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
                 .operator(Operator.AND)
@@ -205,20 +210,20 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
                 .queryName(FILTER_BY_USER_AND_TICKET_TYPES);
     }
 
-    private QueryBuilder filterByOwner(String userName) {
+    private MultiMatchQueryBuilder filterByOwner(String userName) {
         return QueryBuilders.multiMatchQuery(userName, OWNER.searchFields().toArray(String[]::new))
                 .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
                 .operator(Operator.AND)
                 .queryName(FILTER_BY_OWNER);
     }
 
-    private QueryBuilder filterByTicketTypes(Set<TicketType> curatorTicketTypes) {
+    private TermsQueryBuilder filterByTicketTypes(Set<TicketType> curatorTicketTypes) {
         var ticketTypes =
                 curatorTicketTypes.stream().map(TicketType::toString).toArray(String[]::new);
         return new TermsQueryBuilder(TYPE_KEYWORD, ticketTypes).queryName(FILTER_BY_TICKET_TYPES);
     }
 
-    private QueryBuilder filterByUnPublished() {
+    private BoolQueryBuilder filterByDeniedUnpublishRequest() {
         return boolQuery()
                 .mustNot(filterByTicketTypes(Set.of(TicketType.UNPUBLISH_REQUEST)))
                 .queryName(FILTER_BY_UN_PUBLISHED);

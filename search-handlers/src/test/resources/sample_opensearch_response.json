@@ -24,6 +24,23 @@
           "id": "http://localhost/publication/f367b260-c15e-4d0f-b197-e1dc0e9eb0e8",
           "identifier": "f367b260-c15e-4d0f-b197-e1dc0e9eb0e8",
           "doi": "https://doi.org/10.1016/j.is.2016.09.004",
+          "additionalIdentifiers": [
+            {
+              "sourceName": "brage@ffi",
+              "type": "HandleIdentifier",
+              "value": "https://hdl.handle.net/20.500.12242/2287"
+            },
+            {
+              "sourceName": "cristin@hibo",
+              "type": "ScopusIdentifier",
+              "value": "2-s2.0-84949324400"
+            },
+            {
+              "sourceName": "cristin@hibo",
+              "type": "CristinIdentifier",
+              "value": "1133971"
+            }
+          ],
           "entityDescription": {
             "contributorsPreview": [
               {
@@ -39,7 +56,12 @@
               {
                 "name": "Nørvåg, Kjetil"
               }
-            ]
+            ],
+            "reference": {
+              "publicationContext": {
+                "onlineIssn": "0167-9236"
+              }
+            }
           },
           "title": "Exploratory product search using top-k join queries",
           "description": "the description",
@@ -80,7 +102,14 @@
               {
                 "name": "Nørvåg, Kjetil"
               }
-            ]
+            ],
+            "reference": {
+              "publicationContext": {
+                "series": {
+                  "printIssn": "0167-9236"
+                }
+              }
+            }
           },
           "title": "Exploratory product search using top-k join queries",
           "description": "the description",

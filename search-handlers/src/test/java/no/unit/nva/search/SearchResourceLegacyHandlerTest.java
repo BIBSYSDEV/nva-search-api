@@ -271,8 +271,6 @@ class SearchResourceLegacyHandlerTest {
         var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
 
         when(mockedSearchClient.doSearch(any())).thenReturn(body);
-        //        var searchResponse = createSearchResponseWithHits(json);
-        //        when(restHighLevelClientMock.search(any(), any())).thenReturn(searchResponse);
     }
 
     private void prepareRestHighLevelClientOkResponse() throws IOException {
