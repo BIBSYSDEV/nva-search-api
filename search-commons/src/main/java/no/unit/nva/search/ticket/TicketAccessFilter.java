@@ -177,7 +177,7 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
      *   <li>manage_publishing_requests -> PUBLISHING_REQUEST
      * </ul>
      */
-    private EnumSet<TicketType> accessRightsToTicketTypes(Set<AccessRight> accessRights) {
+    private Set<TicketType> accessRightsToTicketTypes(Set<AccessRight> accessRights) {
         var allowed = EnumSet.noneOf(TicketType.class);
         if (accessRights.contains(MANAGE_DOI)) {
             allowed.add(TicketType.DOI_REQUEST);
