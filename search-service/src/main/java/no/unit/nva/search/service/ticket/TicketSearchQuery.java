@@ -63,6 +63,7 @@ import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -152,7 +153,12 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
 
     @Override
     protected List<AggregationBuilder> builderAggregations() {
-        return getTicketsAggregations(accessFilter.getCurrentUser());
+        var denySet =
+                Arrays.stream(TicketType.values())
+                        .filter(item -> !accessFilter.getAccessRightAsTicketTypes().contains(item))
+                        .map(Enum::toString)
+                        .toArray(String[]::new);
+        return getTicketsAggregations(accessFilter.getCurrentUser(), denySet);
     }
 
     @JacocoGenerated // default value shouldn't happen, (developer have forgotten to handle a key)
@@ -302,7 +308,9 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
                             .set(TYPE, query.parameters().get(BY_USER_PENDING).toString());
                 }
                 if (!query.parameters().isPresent(ASSIGNEE)) {
-                    query.parameters().set(ASSIGNEE, "meMyselfAndI");
+                    // business rule: need to set assignee to search by user pending
+                    // (value is ignored)
+                    query.parameters().set(ASSIGNEE, "👁");
                 }
             }
         }

@@ -89,6 +89,11 @@ public final class Functions {
         return AggregationBuilders.filter(name, QueryBuilders.termQuery(jsonPath(paths), filter));
     }
 
+    public static FilterAggregationBuilder filterBranchBuilder(
+            String name, QueryBuilder queryBuilder) {
+        return AggregationBuilders.filter(name, queryBuilder);
+    }
+
     public static String mergeWithColonOrComma(String oldValue, String newValue) {
         if (nonNull(oldValue)) {
             var delimiter = newValue.matches(PATTERN_IS_ASC_DESC_VALUE) ? Words.COLON : Words.COMMA;

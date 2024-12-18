@@ -26,12 +26,20 @@ import static no.unit.nva.search.model.constant.Words.TYPE;
 import static no.unit.nva.search.model.constant.Words.USERNAME;
 import static no.unit.nva.search.model.constant.Words.VIEWED_BY;
 
+import static org.opensearch.index.query.QueryBuilders.boolQuery;
+
 import nva.commons.core.JacocoGenerated;
 
+import org.opensearch.index.query.MultiMatchQueryBuilder;
+import org.opensearch.index.query.Operator;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Constants for the ticket search.
@@ -42,12 +50,16 @@ public final class Constants {
 
     private static final String FINALIZED_BY = "finalizedBy";
 
+    static final String ASSIGNEE_ASTERISK = "assignee.*";
     static final String BY_USER_PENDING = "byUserPending";
     static final String CANNOT_SEARCH_AS_BOTH_ASSIGNEE_AND_OWNER_AT_THE_SAME_TIME =
             "Cannot search as both assignee and owner at the same time";
+    static final String FILTER = "filter";
+    static final String FILTER_BY_ASSIGNEE = "filterByAssignee";
     static final String FILTER_BY_ORGANIZATION = "filterByOrganization";
     static final String FILTER_BY_OWNER = "filterByOwner";
     static final String FILTER_BY_TICKET_TYPES = "filterByTicketTypes";
+    static final String FILTER_BY_UN_PUBLISHED = "filterByUnPublished";
     static final String FILTER_BY_USER_AND_TICKET_TYPES = "filterByUserAndTicketTypes";
     static final String ORGANIZATION_IS_REQUIRED = "Organization is required";
     static final String USER_IS_NOT_ALLOWED_TO_SEARCH_FOR_TICKETS_NOT_OWNED_BY_THEMSELVES =
@@ -56,7 +68,7 @@ public final class Constants {
 
     static final Map<String, String> facetTicketsPaths =
             Map.of(
-                    BY_USER_PENDING, "/withAppliedFilter/byUserPending/status/type",
+                    BY_USER_PENDING, "/withAppliedFilter/byUserPending/type",
                     STATUS, "/withAppliedFilter/status",
                     TYPE, "/withAppliedFilter/type",
                     PUBLICATION_STATUS, "/withAppliedFilter/publicationStatus");
@@ -102,23 +114,37 @@ public final class Constants {
                     jsonPath(VIEWED_BY, USERNAME, KEYWORD),
                     jsonPath(VIEWED_BY, FIRST_NAME, KEYWORD),
                     jsonPath(VIEWED_BY, LAST_NAME, KEYWORD));
-    static final String FILTER_BY_UN_PUBLISHED = "filterByUnPublished";
 
     @JacocoGenerated
     public Constants() {}
 
-    public static List<AggregationBuilder> getTicketsAggregations(String username) {
+    public static List<AggregationBuilder> getTicketsAggregations(
+            String username, String... deniedTypes) {
         return List.of(
                 branchBuilder(STATUS, STATUS_KEYWORD),
                 branchBuilder(TYPE, TYPE_KEYWORD),
                 branchBuilder(PUBLICATION_STATUS, PUBLICATION_STATUS_KEYWORD),
-                notificationsByUser(username));
+                notificationsAsCurator(username, Set.of(deniedTypes)));
     }
 
-    private static AggregationBuilder notificationsByUser(String username) {
-        return filterBranchBuilder(BY_USER_PENDING, username, ASSIGNEE, USERNAME, KEYWORD)
-                .subAggregation(
-                        filterBranchBuilder(STATUS, TicketStatus.PENDING.toString(), STATUS_KEYWORD)
-                                .subAggregation(branchBuilder(TYPE, TYPE_KEYWORD)));
+    private static QueryBuilder filterByAssignee(String userName) {
+        return QueryBuilders.multiMatchQuery(userName, ASSIGNEE_ASTERISK)
+                .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
+                .operator(Operator.AND)
+                .queryName(FILTER_BY_ASSIGNEE);
+    }
+
+    private static AggregationBuilder notificationsAsCurator(
+            String username, Set<String> deniedTypes) {
+        var pending = TicketStatus.PENDING.toString();
+        var queryFilter =
+                boolQuery()
+                        .mustNot(new TermsQueryBuilder(TYPE_KEYWORD, deniedTypes))
+                        .must(new TermsQueryBuilder(STATUS_KEYWORD, pending))
+                        .must(filterByAssignee(username))
+                        .queryName(BY_USER_PENDING + FILTER);
+
+        return filterBranchBuilder(BY_USER_PENDING, queryFilter)
+                .subAggregation(branchBuilder(TYPE, TYPE_KEYWORD));
     }
 }
