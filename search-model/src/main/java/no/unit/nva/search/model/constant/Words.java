@@ -46,6 +46,7 @@ public final class Words {
     public static final String CRISTIN_AS_TYPE = "Cristin";
     public static final String CURATING_INSTITUTIONS = "curatingInstitutions";
     public static final String CUSTOMER_ID = "customerId";
+    public static final String DAY = "day";
     public static final String DOI = "doi";
     public static final String DOIREQUESTS_INDEX = "doirequests";
     public static final String DOT = ".";
@@ -82,6 +83,7 @@ public final class Words {
     public static final String MESSAGES_INDEX = "messages";
     public static final String META_INFO = "metaInfo";
     public static final String MODIFIED_DATE = "modifiedDate";
+    public static final String MONTH = "month";
     public static final String NAME = "name";
     public static final String NO = "NO";
     public static final String NONE = "none";

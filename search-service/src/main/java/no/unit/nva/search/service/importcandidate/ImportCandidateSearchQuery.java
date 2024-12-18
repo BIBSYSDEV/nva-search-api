@@ -1,38 +1,48 @@
-package no.unit.nva.search.service.importcandidate;
+package no.unit.nva.search.importcandidate;
 
-import static no.unit.nva.search.service.importcandidate.Constants.FACET_IMPORT_CANDIDATE_PATHS;
-import static no.unit.nva.search.service.importcandidate.Constants.IMPORT_CANDIDATES_AGGREGATIONS;
-import static no.unit.nva.search.service.importcandidate.Constants.IMPORT_CANDIDATES_INDEX_NAME;
-import static no.unit.nva.search.service.importcandidate.Constants.selectByLicense;
-import static no.unit.nva.search.model.constant.Defaults.DEFAULT_OFFSET;
-import static no.unit.nva.search.model.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
-import static no.unit.nva.search.model.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
-import static no.unit.nva.search.model.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
-import static no.unit.nva.search.model.constant.Functions.jsonPath;
-import static no.unit.nva.search.model.constant.Functions.trimSpace;
-import static no.unit.nva.search.model.constant.Patterns.COLON_OR_SPACE;
-import static no.unit.nva.search.model.constant.Words.ADDITIONAL_IDENTIFIERS;
-import static no.unit.nva.search.model.constant.Words.COMMA;
-import static no.unit.nva.search.model.constant.Words.CRISTIN_AS_TYPE;
-import static no.unit.nva.search.model.constant.Words.KEYWORD;
-import static no.unit.nva.search.model.constant.Words.NAME_AND_SORT_LENGTH;
-import static no.unit.nva.search.model.constant.Words.NONE;
-import static no.unit.nva.search.model.constant.Words.RELEVANCE_KEY_NAME;
-import static no.unit.nva.search.model.constant.Words.SCOPUS_AS_TYPE;
-import static no.unit.nva.search.model.constant.Words.SEARCH;
-import static no.unit.nva.search.model.constant.Words.SOURCE_NAME;
-import static no.unit.nva.search.model.constant.Words.VALUE;
+import static no.unit.nva.constants.Defaults.DEFAULT_OFFSET;
+import static no.unit.nva.constants.Defaults.DEFAULT_VALUE_PER_PAGE;
+import static no.unit.nva.constants.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.constants.ErrorMessages.TOO_MANY_ARGUMENTS;
+import static no.unit.nva.constants.Words.ADDITIONAL_IDENTIFIERS;
+import static no.unit.nva.constants.Words.COMMA;
+import static no.unit.nva.constants.Words.CRISTIN_AS_TYPE;
+import static no.unit.nva.constants.Words.KEYWORD;
+import static no.unit.nva.constants.Words.NAME_AND_SORT_LENGTH;
+import static no.unit.nva.constants.Words.NONE;
+import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
+import static no.unit.nva.constants.Words.SCOPUS_AS_TYPE;
+import static no.unit.nva.constants.Words.SEARCH;
+import static no.unit.nva.constants.Words.SOURCE_NAME;
+import static no.unit.nva.constants.Words.VALUE;
+import static no.unit.nva.search.common.constant.Functions.jsonPath;
+import static no.unit.nva.search.common.constant.Functions.trimSpace;
+import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
+import static no.unit.nva.search.importcandidate.Constants.FACET_IMPORT_CANDIDATE_PATHS;
+import static no.unit.nva.search.importcandidate.Constants.IMPORT_CANDIDATES_AGGREGATIONS;
+import static no.unit.nva.search.importcandidate.Constants.IMPORT_CANDIDATES_INDEX_NAME;
+import static no.unit.nva.search.importcandidate.Constants.selectByLicense;
+import static no.unit.nva.search.importcandidate.ImportCandidateParameter.AGGREGATION;
+import static no.unit.nva.search.importcandidate.ImportCandidateParameter.FROM;
+import static no.unit.nva.search.importcandidate.ImportCandidateParameter.IMPORT_CANDIDATE_PARAMETER_SET;
+import static no.unit.nva.search.importcandidate.ImportCandidateParameter.NODES_EXCLUDED;
+import static no.unit.nva.search.importcandidate.ImportCandidateParameter.NODES_INCLUDED;
+import static no.unit.nva.search.importcandidate.ImportCandidateParameter.NODES_SEARCHED;
+import static no.unit.nva.search.importcandidate.ImportCandidateParameter.PAGE;
+import static no.unit.nva.search.importcandidate.ImportCandidateParameter.SEARCH_AFTER;
+import static no.unit.nva.search.importcandidate.ImportCandidateParameter.SIZE;
+import static no.unit.nva.search.importcandidate.ImportCandidateParameter.SORT;
 
 import static nva.commons.core.paths.UriWrapper.fromUri;
 
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
 import static org.opensearch.index.query.QueryBuilders.termQuery;
 
-import no.unit.nva.search.model.AsType;
-import no.unit.nva.search.model.ParameterValidator;
-import no.unit.nva.search.model.SearchQuery;
-import no.unit.nva.search.model.constant.Functions;
-import no.unit.nva.search.model.enums.SortKey;
+import no.unit.nva.search.common.AsType;
+import no.unit.nva.search.common.ParameterValidator;
+import no.unit.nva.search.common.SearchQuery;
+import no.unit.nva.search.common.constant.Functions;
+import no.unit.nva.search.common.enums.SortKey;
 
 import nva.commons.core.JacocoGenerated;
 
@@ -66,17 +76,17 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
 
     @Override
     protected ImportCandidateParameter keyAggregation() {
-        return ImportCandidateParameter.AGGREGATION;
+        return AGGREGATION;
     }
 
     @Override
     protected ImportCandidateParameter keyFields() {
-        return ImportCandidateParameter.NODES_SEARCHED;
+        return NODES_SEARCHED;
     }
 
     @Override
     protected ImportCandidateParameter keySearchAfter() {
-        return ImportCandidateParameter.SEARCH_AFTER;
+        return SEARCH_AFTER;
     }
 
     @Override
@@ -91,27 +101,27 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
 
     @Override
     protected AsType<ImportCandidateParameter> from() {
-        return parameters().get(ImportCandidateParameter.FROM);
+        return parameters().get(FROM);
     }
 
     @Override
     protected AsType<ImportCandidateParameter> size() {
-        return parameters().get(ImportCandidateParameter.SIZE);
+        return parameters().get(SIZE);
     }
 
     @Override
     public AsType<ImportCandidateParameter> sort() {
-        return parameters().get(ImportCandidateParameter.SORT);
+        return parameters().get(SORT);
     }
 
     @Override
     protected String[] exclude() {
-        return parameters().get(ImportCandidateParameter.NODES_EXCLUDED).split(COMMA);
+        return parameters().get(NODES_EXCLUDED).split(COMMA);
     }
 
     @Override
     protected String[] include() {
-        return parameters().get(ImportCandidateParameter.NODES_INCLUDED).split(COMMA);
+        return parameters().get(NODES_INCLUDED).split(COMMA);
     }
 
     @Override
@@ -149,15 +159,14 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
         var query =
                 QueryBuilders.nestedQuery(
                         ADDITIONAL_IDENTIFIERS,
-                        QueryBuilders.boolQuery()
+                        boolQuery()
                                 .must(
-                                        QueryBuilders.termQuery(
-                                                Functions.jsonPath(
-                                                    ADDITIONAL_IDENTIFIERS, VALUE, KEYWORD),
+                                        termQuery(
+                                                jsonPath(ADDITIONAL_IDENTIFIERS, VALUE, KEYWORD),
                                                 value))
                                 .must(
-                                        QueryBuilders.termQuery(
-                                                Functions.jsonPath(
+                                        termQuery(
+                                                jsonPath(
                                                         ADDITIONAL_IDENTIFIERS,
                                                         SOURCE_NAME,
                                                         KEYWORD),
@@ -186,10 +195,10 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
                     .forEach(
                             key -> {
                                 switch (key) {
-                                    case ImportCandidateParameter.FROM -> setValue(key.name(), DEFAULT_OFFSET);
-                                    case ImportCandidateParameter.SIZE -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
-                                    case ImportCandidateParameter.SORT -> setValue(key.name(), RELEVANCE_KEY_NAME);
-                                    case ImportCandidateParameter.AGGREGATION -> setValue(key.name(), NONE);
+                                    case FROM -> setValue(key.name(), DEFAULT_OFFSET);
+                                    case SIZE -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
+                                    case SORT -> setValue(key.name(), RELEVANCE_KEY_NAME);
+                                    case AGGREGATION -> setValue(key.name(), NONE);
                                     default -> {
                                         /* do nothing */
                                     }
@@ -201,21 +210,20 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
         @Override
         protected void applyRulesAfterValidation() {
             // convert page to offset if offset is not set
-            if (searchQuery.parameters().isPresent(ImportCandidateParameter.PAGE)) {
-                if (searchQuery.parameters().isPresent(ImportCandidateParameter.FROM)) {
-                    var page = searchQuery.parameters().get(ImportCandidateParameter.PAGE).<Number>as();
-                    var perPage = searchQuery.parameters().get(ImportCandidateParameter.SIZE).<Number>as();
-                    searchQuery
-                            .parameters()
-                            .set(ImportCandidateParameter.FROM, String.valueOf(page.longValue() * perPage.longValue()));
+            if (query.parameters().isPresent(PAGE)) {
+                if (query.parameters().isPresent(FROM)) {
+                    var page = query.parameters().get(PAGE).<Number>as();
+                    var perPage = query.parameters().get(SIZE).<Number>as();
+                    query.parameters()
+                            .set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
                 }
-                searchQuery.parameters().remove(ImportCandidateParameter.PAGE);
+                query.parameters().remove(PAGE);
             }
         }
 
         @Override
         protected Collection<String> validKeys() {
-            return ImportCandidateParameter.IMPORT_CANDIDATE_PARAMETER_SET.stream()
+            return IMPORT_CANDIDATE_PARAMETER_SET.stream()
                     .map(ImportCandidateParameter::asLowerCase)
                     .toList();
         }
@@ -242,11 +250,11 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
 
             switch (qpKey) {
                 case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION ->
-                        searchQuery.parameters().set(qpKey, decodedValue);
+                        query.parameters().set(qpKey, decodedValue);
                 case NODES_SEARCHED ->
-                        searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
-                case SORT -> mergeToKey(ImportCandidateParameter.SORT, Functions.trimSpace(decodedValue));
-                case SORT_ORDER -> mergeToKey(ImportCandidateParameter.SORT, decodedValue);
+                        query.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
+                case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
+                case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case INVALID -> invalidKeys.add(key);
                 default -> mergeToKey(qpKey, decodedValue);
             }

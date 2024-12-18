@@ -15,20 +15,20 @@ public enum ParameterKind {
      * Ignored parameters are not processed by standard or custom handling. Normally used together
      * with other parameters in custom handlers or paging.
      */
+    FUZZY_KEYWORD,
+    KEYWORD,
+    TEXT,
     FLAG,
-    BOOLEAN,
+    CUSTOM,
     NUMBER,
     DATE,
+    ACROSS_FIELDS,
+    BOOLEAN,
     EXISTS,
+    FREE_TEXT,
     HAS_PARTS,
     PART_OF,
-    KEYWORD,
-    FUZZY_KEYWORD,
-    TEXT,
-    FREE_TEXT,
-    ACROSS_FIELDS,
-    SORT_KEY,
-    CUSTOM;
+    SORT_KEY;
 
     public String asCamelCase() {
         return CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);

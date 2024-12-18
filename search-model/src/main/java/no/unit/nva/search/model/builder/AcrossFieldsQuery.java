@@ -36,6 +36,7 @@ public class AcrossFieldsQuery<K extends Enum<K> & ParameterKey<K>> extends Abst
                                 BoolQueryBuilder::new,
                                 BoolQueryBuilder::should,
                                 BoolQueryBuilder::should)
+                        .minimumShouldMatch(1)
                         .queryName(ANY_VALUE + key.asCamelCase()));
     }
 

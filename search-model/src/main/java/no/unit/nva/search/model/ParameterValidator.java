@@ -1,21 +1,26 @@
-package no.unit.nva.search.model;
+package no.unit.nva.search.common;
 
-import static no.unit.nva.search.model.constant.ErrorMessages.RELEVANCE_SEARCH_AFTER_ARE_MUTUAL_EXCLUSIVE;
-import static no.unit.nva.search.model.constant.ErrorMessages.requiredMissingMessage;
-import static no.unit.nva.search.model.constant.ErrorMessages.validQueryParameterNamesMessage;
+import static no.unit.nva.constants.ErrorMessages.RELEVANCE_SEARCH_AFTER_ARE_MUTUAL_EXCLUSIVE;
+import static no.unit.nva.constants.ErrorMessages.requiredMissingMessage;
+import static no.unit.nva.constants.ErrorMessages.validQueryParameterNamesMessage;
+import static no.unit.nva.constants.Words.ALL;
+import static no.unit.nva.constants.Words.COMMA;
+import static no.unit.nva.constants.Words.HTTPS;
+import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
+import static no.unit.nva.search.common.ContentTypeUtils.extractContentTypeFromRequestInfo;
+import static no.unit.nva.search.common.constant.Functions.decodeUTF;
+import static no.unit.nva.search.common.constant.Functions.mergeWithColonOrComma;
+
+import static nva.commons.core.StringUtils.EMPTY_STRING;
 
 import static java.util.Objects.isNull;
 
-import no.unit.nva.auth.uriretriever.UriRetriever;
-import no.unit.nva.search.model.constant.Functions;
-import no.unit.nva.search.model.constant.Patterns;
-import no.unit.nva.search.model.constant.Words;
-import no.unit.nva.search.model.enums.ParameterKey;
-import no.unit.nva.search.model.enums.ValueEncoding;
+import no.unit.nva.search.common.constant.Patterns;
+import no.unit.nva.search.common.enums.ParameterKey;
+import no.unit.nva.search.common.enums.ValueEncoding;
 
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
-import nva.commons.core.StringUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,13 +41,14 @@ import java.util.stream.Collectors;
  * @param <Q> Instance of OpenSearchQuery
  * @author Stig Norland
  */
+@SuppressWarnings("PMD.GodClass")
 public abstract class ParameterValidator<
         K extends Enum<K> & ParameterKey<K>, Q extends SearchQuery<K>> {
 
     protected static final Logger logger = LoggerFactory.getLogger(ParameterValidator.class);
 
     protected final transient Set<String> invalidKeys = new HashSet<>(0);
-    protected final transient SearchQuery<K> searchQuery;
+    protected final transient SearchQuery<K> query;
     protected transient boolean notValidated = true;
 
     /**
@@ -53,8 +59,8 @@ public abstract class ParameterValidator<
      * .withRequiredParameters(FROM, SIZE)<br>
      * .build() </samp>
      */
-    public ParameterValidator(SearchQuery<K> searchQuery) {
-        this.searchQuery = searchQuery;
+    public ParameterValidator(SearchQuery<K> query) {
+        this.query = query;
     }
 
     /**
@@ -67,7 +73,7 @@ public abstract class ParameterValidator<
         if (notValidated) {
             validate();
         }
-        return (Q) searchQuery;
+        return (Q) query;
     }
 
     /**
@@ -77,10 +83,10 @@ public abstract class ParameterValidator<
      */
     public ParameterValidator<K, Q> validate() throws BadRequestException {
         assignDefaultValues();
-        for (var entry : searchQuery.parameters().getSearchEntries()) {
+        for (var entry : query.parameters().getSearchEntries()) {
             validatesEntrySet(entry);
         }
-        for (var entry : searchQuery.parameters().getPageEntries()) {
+        for (var entry : query.parameters().getPageEntries()) {
             validatesEntrySet(entry);
         }
         if (!requiredMissing().isEmpty()) {
@@ -140,7 +146,7 @@ public abstract class ParameterValidator<
      */
     protected void validatedSort() throws BadRequestException {
         try {
-            searchQuery.sort().asSplitStream(Words.COMMA).forEach(this::validateSortKeyName);
+            query.sort().asSplitStream(COMMA).forEach(this::validateSortKeyName);
         } catch (IllegalArgumentException e) {
             throw new BadRequestException(e.getMessage());
         }
@@ -154,12 +160,12 @@ public abstract class ParameterValidator<
 
     protected Set<K> requiredMissing() {
         return required().stream()
-                .filter(key -> !searchQuery.parameters().isPresent(key))
+                .filter(key -> !query.parameters().isPresent(key))
                 .collect(Collectors.toSet());
     }
 
     protected Set<K> required() {
-        return searchQuery.parameters().otherRequired;
+        return query.parameters().otherRequired;
     }
 
     protected void validatesEntrySet(Map.Entry<K, String> entry) throws BadRequestException {
@@ -173,16 +179,17 @@ public abstract class ParameterValidator<
     }
 
     protected String getDecodedValue(ParameterKey<K> qpKey, String value) {
-        return (qpKey.valueEncoding() == ValueEncoding.NONE ? value : Functions.decodeUTF(value))
-                .replaceAll(Patterns.PATTERN_IS_NON_PRINTABLE_CHARACTERS, StringUtils.EMPTY_STRING);
+        return (qpKey.valueEncoding() == ValueEncoding.NONE ? value : decodeUTF(value))
+                .replaceAll(Patterns.PATTERN_IS_NON_PRINTABLE_CHARACTERS, EMPTY_STRING);
     }
 
     /** Adds query and path parameters from requestInfo. */
     public ParameterValidator<K, Q> fromRequestInfo(RequestInfo requestInfo) {
-        searchQuery.setMediaType(requestInfo.getHeaders().get(UriRetriever.ACCEPT));
-        var uri = URI.create(Words.HTTPS + requestInfo.getDomainName() + requestInfo.getPath());
-        searchQuery.setAccessRights(requestInfo.getAccessRights());
-        searchQuery.setNvaSearchApiUri(uri);
+        var contentType = extractContentTypeFromRequestInfo(requestInfo);
+        query.setMediaType(isNull(contentType) ? null : contentType.getMimeType());
+        var uri = URI.create(HTTPS + requestInfo.getDomainName() + requestInfo.getPath());
+        query.setAccessRights(requestInfo.getAccessRights());
+        query.setNvaSearchApiUri(uri);
         return fromMultiValueParameters(requestInfo.getMultiValueQueryStringParameters());
     }
 
@@ -233,12 +240,12 @@ public abstract class ParameterValidator<
     @SafeVarargs
     public final ParameterValidator<K, Q> withRequiredParameters(K... requiredParameters) {
         var tmpSet = Set.of(requiredParameters);
-        searchQuery.parameters().otherRequired.addAll(tmpSet);
+        query.parameters().otherRequired.addAll(tmpSet);
         return this;
     }
 
     public final ParameterValidator<K, Q> withMediaType(String mediaType) {
-        searchQuery.setMediaType(mediaType);
+        query.setMediaType(mediaType);
         return this;
     }
 
@@ -250,7 +257,7 @@ public abstract class ParameterValidator<
      * @return builder
      */
     public ParameterValidator<K, Q> withParameter(K key, String value) {
-        searchQuery.parameters().set(key, value);
+        query.parameters().set(key, value);
         return this;
     }
 
@@ -261,45 +268,45 @@ public abstract class ParameterValidator<
      * @apiNote This is intended to be used when setting up tests.
      */
     public final ParameterValidator<K, Q> withDockerHostUri(URI uri) {
-        searchQuery.setOpenSearchUri(uri);
+        query.setOpenSearchUri(uri);
+        return this;
+    }
+
+    public final ParameterValidator<K, Q> withAlwaysIncludedFields(List<String> includedFields) {
+        query.setAlwaysIncludedFields(includedFields);
         return this;
     }
 
     public final ParameterValidator<K, Q> withAlwaysExcludedFields(List<String> excludedFields) {
-        searchQuery.setAlwaysExcludedFields(excludedFields);
+        query.setAlwaysExcludedFields(excludedFields);
         return this;
     }
 
     public final ParameterValidator<K, Q> withAlwaysExcludedFields(String... excludedFields) {
-        searchQuery.setAlwaysExcludedFields(List.of(excludedFields));
+        query.setAlwaysExcludedFields(List.of(excludedFields));
         return this;
     }
 
     protected void mergeToKey(K key, String value) {
-        searchQuery
-                .parameters()
-                .set(
-                        key,
-                        Functions.mergeWithColonOrComma(
-                                searchQuery.parameters().get(key).as(), value));
+        query.parameters().set(key, mergeWithColonOrComma(query.parameters().get(key).as(), value));
     }
 
     protected String ignoreInvalidFields(String value) {
-        return Words.ALL.equalsIgnoreCase(value) || isNull(value)
-                ? Words.ALL
-                : Arrays.stream(value.split(Words.COMMA))
+        return ALL.equalsIgnoreCase(value) || isNull(value)
+                ? ALL
+                : Arrays.stream(value.split(COMMA))
                         .filter(this::isKeyValid) // ignoring invalid keys
-                        .collect(Collectors.joining(Words.COMMA));
+                        .collect(Collectors.joining(COMMA));
     }
 
     protected boolean invalidQueryParameter(K key, String value) {
         return isNull(value)
-                || Arrays.stream(value.split(Words.COMMA))
+                || Arrays.stream(value.split(COMMA))
                         .noneMatch(singleValue -> singleValue.matches(key.valuePattern()));
     }
 
     private boolean hasSearchAfterAndSortByRelevance() {
-        return searchQuery.parameters().isPresent(searchQuery.keySearchAfter())
-                && searchQuery.sort().toString().contains(Words.RELEVANCE_KEY_NAME);
+        return query.parameters().isPresent(query.keySearchAfter())
+                && query.sort().toString().contains(RELEVANCE_KEY_NAME);
     }
 }

@@ -1,21 +1,20 @@
-package no.unit.nva.search.model;
+package no.unit.nva.search.common;
 
 import static com.google.common.net.MediaType.CSV_UTF_8;
 import static com.google.common.net.MediaType.JSON_UTF_8;
-import static no.unit.nva.search.model.constant.Defaults.DEFAULT_SORT_ORDER;
-import static no.unit.nva.search.model.constant.Defaults.ZERO_RESULTS_AGGREGATION_ONLY;
-import static no.unit.nva.search.model.constant.ErrorMessages.HANDLER_NOT_DEFINED;
-import static no.unit.nva.search.model.constant.Functions.queryToEntry;
-import static no.unit.nva.search.model.constant.Patterns.COLON_OR_SPACE;
-import static no.unit.nva.search.model.constant.Words.ALL;
-import static no.unit.nva.search.model.constant.Words.ASTERISK;
-import static no.unit.nva.search.model.constant.Words.COMMA;
-import static no.unit.nva.search.model.constant.Words.KEYWORD_FALSE;
-import static no.unit.nva.search.model.constant.Words.POST_FILTER;
-import static no.unit.nva.search.model.constant.Words.RELEVANCE_KEY_NAME;
-import static no.unit.nva.search.model.constant.Words.SORT_LAST;
-import static no.unit.nva.search.model.enums.FieldOperator.NOT_ALL_OF;
-import static no.unit.nva.search.model.enums.FieldOperator.NOT_ANY_OF;
+
+import static no.unit.nva.constants.Defaults.DEFAULT_SORT_ORDER;
+import static no.unit.nva.constants.Defaults.ZERO_RESULTS_AGGREGATION_ONLY;
+import static no.unit.nva.constants.Words.ALL;
+import static no.unit.nva.constants.Words.ASTERISK;
+import static no.unit.nva.constants.Words.COMMA;
+import static no.unit.nva.constants.Words.KEYWORD_FALSE;
+import static no.unit.nva.constants.Words.POST_FILTER;
+import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
+import static no.unit.nva.constants.Words.SORT_LAST;
+import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
+import static no.unit.nva.search.common.enums.FieldOperator.NOT_ALL_OF;
+import static no.unit.nva.search.common.enums.FieldOperator.NOT_ANY_OF;
 
 import static nva.commons.core.attempt.Try.attempt;
 
@@ -23,20 +22,22 @@ import static java.util.Objects.nonNull;
 
 import com.google.common.net.MediaType;
 
-import no.unit.nva.search.model.builder.AcrossFieldsQuery;
-import no.unit.nva.search.model.builder.ExistsQuery;
-import no.unit.nva.search.model.builder.FuzzyKeywordQuery;
-import no.unit.nva.search.model.builder.HasPartsQuery;
-import no.unit.nva.search.model.builder.KeywordQuery;
-import no.unit.nva.search.model.builder.PartOfQuery;
-import no.unit.nva.search.model.builder.RangeQuery;
-import no.unit.nva.search.model.builder.TextQuery;
-import no.unit.nva.search.model.constant.Words;
-import no.unit.nva.search.model.enums.ParameterKey;
-import no.unit.nva.search.model.enums.SortKey;
-import no.unit.nva.search.model.records.HttpResponseFormatter;
-import no.unit.nva.search.model.records.QueryContentWrapper;
-import no.unit.nva.search.model.records.SwsResponse;
+import no.unit.nva.constants.ErrorMessages;
+import no.unit.nva.constants.Words;
+import no.unit.nva.search.common.builder.AcrossFieldsQuery;
+import no.unit.nva.search.common.builder.ExistsQuery;
+import no.unit.nva.search.common.builder.FuzzyKeywordQuery;
+import no.unit.nva.search.common.builder.HasPartsQuery;
+import no.unit.nva.search.common.builder.KeywordQuery;
+import no.unit.nva.search.common.builder.PartOfQuery;
+import no.unit.nva.search.common.builder.RangeQuery;
+import no.unit.nva.search.common.builder.TextQuery;
+import no.unit.nva.search.common.constant.Functions;
+import no.unit.nva.search.common.enums.ParameterKey;
+import no.unit.nva.search.common.enums.SortKey;
+import no.unit.nva.search.common.records.HttpResponseFormatter;
+import no.unit.nva.search.common.records.QueryContentWrapper;
+import no.unit.nva.search.common.records.SwsResponse;
 
 import nva.commons.apigateway.AccessRight;
 import nva.commons.core.JacocoGenerated;
@@ -83,7 +84,8 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     protected static final Logger logger = LoggerFactory.getLogger(SearchQuery.class);
     private final transient Set<AccessRight> accessRights;
     private transient MediaType mediaType;
-    private transient Set<String> excludedFields;
+    private transient Set<String> excludedFields = Set.of();
+    private transient Set<String> includedFields = Set.of("*");
 
     /**
      * Always set at runtime by ParameterValidator.fromRequestInfo(RequestInfo requestInfo); This
@@ -132,8 +134,16 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
         this.excludedFields = new HashSet<>(fieldNames);
     }
 
+    public void setAlwaysIncludedFields(List<String> fieldNames) {
+        this.includedFields = new HashSet<>(fieldNames);
+    }
+
     protected Set<String> getExcludedFields() {
         return excludedFields;
+    }
+
+    protected Set<String> getIncludedFields() {
+        return includedFields;
     }
 
     protected void setOpenSearchUri(URI openSearchUri) {
@@ -144,18 +154,18 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     protected Stream<Entry<K, QueryBuilder>> builderStreamDefaultQuery(K key) {
         final var value = parameters().get(key).toString();
         return switch (key.fieldType()) {
-            case DATE, NUMBER -> new RangeQuery<K>().buildQuery(key, value);
-            case KEYWORD -> new KeywordQuery<K>().buildQuery(key, value);
             case FUZZY_KEYWORD -> new FuzzyKeywordQuery<K>().buildQuery(key, value);
+            case KEYWORD -> new KeywordQuery<K>().buildQuery(key, value);
             case TEXT -> new TextQuery<K>().buildQuery(key, value);
-            case FREE_TEXT -> queryToEntry(key, builderSearchAllQuery(key));
+            case FLAG -> Stream.empty();
+            case CUSTOM -> builderCustomQueryStream(key);
+            case NUMBER, DATE -> new RangeQuery<K>().buildQuery(key, value);
             case ACROSS_FIELDS -> new AcrossFieldsQuery<K>().buildQuery(key, value);
             case EXISTS -> new ExistsQuery<K>().buildQuery(key, value);
+            case FREE_TEXT -> Functions.queryToEntry(key, builderSearchAllQuery(key));
             case HAS_PARTS -> new HasPartsQuery<K>().buildQuery(key, value);
             case PART_OF -> new PartOfQuery<K>().buildQuery(key, value);
-            case CUSTOM -> builderCustomQueryStream(key);
-            case FLAG -> Stream.empty();
-            default -> throw new RuntimeException(HANDLER_NOT_DEFINED + key.name());
+            default -> throw new RuntimeException(ErrorMessages.HANDLER_NOT_DEFINED + key.name());
         };
     }
 

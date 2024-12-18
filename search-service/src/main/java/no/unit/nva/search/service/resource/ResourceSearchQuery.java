@@ -1,40 +1,39 @@
-package no.unit.nva.search.service.resource;
+package no.unit.nva.search.resource;
 
-import static no.unit.nva.search.model.constant.Defaults.DEFAULT_OFFSET;
-import static no.unit.nva.search.model.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
-import static no.unit.nva.search.model.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
-import static no.unit.nva.search.model.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
-import static no.unit.nva.search.model.constant.Functions.trimSpace;
-import static no.unit.nva.search.model.constant.Patterns.COLON_OR_SPACE;
-import static no.unit.nva.search.model.constant.Words.COMMA;
-import static no.unit.nva.search.model.constant.Words.CRISTIN_AS_TYPE;
-import static no.unit.nva.search.model.constant.Words.HTTPS;
-import static no.unit.nva.search.model.constant.Words.IDENTIFIER;
-import static no.unit.nva.search.model.constant.Words.NAME_AND_SORT_LENGTH;
-import static no.unit.nva.search.model.constant.Words.NONE;
-import static no.unit.nva.search.model.constant.Words.PI;
-import static no.unit.nva.search.model.constant.Words.SCOPUS_AS_TYPE;
-import static no.unit.nva.search.model.constant.Words.STATUS;
-import static no.unit.nva.search.service.resource.Constants.CRISTIN_ORGANIZATION_PATH;
-import static no.unit.nva.search.service.resource.Constants.CRISTIN_PERSON_PATH;
-import static no.unit.nva.search.service.resource.Constants.DEFAULT_RESOURCE_SORT_FIELDS;
-import static no.unit.nva.search.service.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
-import static no.unit.nva.search.service.resource.Constants.IDENTIFIER_KEYWORD;
-import static no.unit.nva.search.service.resource.Constants.RESOURCES_AGGREGATIONS;
-import static no.unit.nva.search.service.resource.Constants.STATUS_KEYWORD;
-import static no.unit.nva.search.service.resource.Constants.facetResourcePaths;
-import static no.unit.nva.search.service.resource.ResourceParameter.AGGREGATION;
-import static no.unit.nva.search.service.resource.ResourceParameter.CONTRIBUTOR;
-import static no.unit.nva.search.service.resource.ResourceParameter.FROM;
-import static no.unit.nva.search.service.resource.ResourceParameter.NODES_EXCLUDED;
-import static no.unit.nva.search.service.resource.ResourceParameter.NODES_INCLUDED;
-import static no.unit.nva.search.service.resource.ResourceParameter.NODES_SEARCHED;
-import static no.unit.nva.search.service.resource.ResourceParameter.PAGE;
-import static no.unit.nva.search.service.resource.ResourceParameter.RESOURCE_PARAMETER_SET;
-import static no.unit.nva.search.service.resource.ResourceParameter.SEARCH_AFTER;
-import static no.unit.nva.search.service.resource.ResourceParameter.SIZE;
-import static no.unit.nva.search.service.resource.ResourceParameter.SORT;
-import static no.unit.nva.search.service.resource.ResourceSort.INVALID;
+import static no.unit.nva.constants.Defaults.DEFAULT_OFFSET;
+import static no.unit.nva.constants.Defaults.DEFAULT_VALUE_PER_PAGE;
+import static no.unit.nva.constants.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.constants.ErrorMessages.TOO_MANY_ARGUMENTS;
+import static no.unit.nva.constants.Words.COMMA;
+import static no.unit.nva.constants.Words.CRISTIN_AS_TYPE;
+import static no.unit.nva.constants.Words.HTTPS;
+import static no.unit.nva.constants.Words.IDENTIFIER;
+import static no.unit.nva.constants.Words.NAME_AND_SORT_LENGTH;
+import static no.unit.nva.constants.Words.NONE;
+import static no.unit.nva.constants.Words.PI;
+import static no.unit.nva.constants.Words.SCOPUS_AS_TYPE;
+import static no.unit.nva.constants.Words.STATUS;
+import static no.unit.nva.search.common.constant.Functions.trimSpace;
+import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
+import static no.unit.nva.search.resource.Constants.CRISTIN_ORGANIZATION_PATH;
+import static no.unit.nva.search.resource.Constants.CRISTIN_PERSON_PATH;
+import static no.unit.nva.search.resource.Constants.DEFAULT_RESOURCE_SORT_FIELDS;
+import static no.unit.nva.search.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
+import static no.unit.nva.search.resource.Constants.IDENTIFIER_KEYWORD;
+import static no.unit.nva.search.resource.Constants.RESOURCES_AGGREGATIONS;
+import static no.unit.nva.search.resource.Constants.STATUS_KEYWORD;
+import static no.unit.nva.search.resource.Constants.facetResourcePaths;
+import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
+import static no.unit.nva.search.resource.ResourceParameter.CONTRIBUTOR;
+import static no.unit.nva.search.resource.ResourceParameter.FROM;
+import static no.unit.nva.search.resource.ResourceParameter.NODES_EXCLUDED;
+import static no.unit.nva.search.resource.ResourceParameter.NODES_SEARCHED;
+import static no.unit.nva.search.resource.ResourceParameter.PAGE;
+import static no.unit.nva.search.resource.ResourceParameter.RESOURCE_PARAMETER_SET;
+import static no.unit.nva.search.resource.ResourceParameter.SEARCH_AFTER;
+import static no.unit.nva.search.resource.ResourceParameter.SIZE;
+import static no.unit.nva.search.resource.ResourceParameter.SORT;
+import static no.unit.nva.search.resource.ResourceSort.INVALID;
 
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
@@ -43,14 +42,14 @@ import static org.opensearch.index.query.QueryBuilders.matchQuery;
 
 import static java.lang.String.format;
 
-import no.unit.nva.search.model.AsType;
-import no.unit.nva.search.model.OpenSearchClient;
-import no.unit.nva.search.model.ParameterValidator;
-import no.unit.nva.search.model.Query;
-import no.unit.nva.search.model.SearchQuery;
-import no.unit.nva.search.model.constant.Words;
-import no.unit.nva.search.model.enums.SortKey;
-import no.unit.nva.search.model.records.HttpResponseFormatter;
+import no.unit.nva.constants.Words;
+import no.unit.nva.search.common.AsType;
+import no.unit.nva.search.common.OpenSearchClient;
+import no.unit.nva.search.common.ParameterValidator;
+import no.unit.nva.search.common.Query;
+import no.unit.nva.search.common.SearchQuery;
+import no.unit.nva.search.common.enums.SortKey;
+import no.unit.nva.search.common.records.HttpResponseFormatter;
 
 import nva.commons.core.JacocoGenerated;
 
@@ -146,7 +145,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     @Override
     protected String[] include() {
-        return parameters().get(NODES_INCLUDED).split(COMMA);
+        return getIncludedFields().toArray(String[]::new);
     }
 
     @Override
@@ -313,15 +312,14 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         @Override
         protected void applyRulesAfterValidation() {
             // convert page to offset if offset is not set
-            if (searchQuery.parameters().isPresent(PAGE)) {
-                if (searchQuery.parameters().isPresent(FROM)) {
-                    var page = searchQuery.parameters().get(PAGE).<Number>as();
-                    var perPage = searchQuery.parameters().get(SIZE).<Number>as();
-                    searchQuery
-                            .parameters()
+            if (query.parameters().isPresent(PAGE)) {
+                if (query.parameters().isPresent(FROM)) {
+                    var page = query.parameters().get(PAGE).<Number>as();
+                    var perPage = query.parameters().get(SIZE).<Number>as();
+                    query.parameters()
                             .set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
                 }
-                searchQuery.parameters().remove(PAGE);
+                query.parameters().remove(PAGE);
             }
         }
 
@@ -362,9 +360,9 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                 case CONTRIBUTOR, CONTRIBUTOR_NOT ->
                         mergeToKey(qpKey, identifierToCristinPersonId(decodedValue));
                 case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION ->
-                        searchQuery.parameters().set(qpKey, decodedValue);
+                        query.parameters().set(qpKey, decodedValue);
                 case NODES_SEARCHED ->
-                        searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
+                        query.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 default -> mergeToKey(qpKey, decodedValue);
@@ -384,7 +382,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         }
 
         private String currentHost() {
-            return HTTPS + searchQuery.getNvaSearchApiUri().getHost();
+            return HTTPS + query.getNvaSearchApiUri().getHost();
         }
 
         private String identifierToUri(String decodedValue, String uriPath) {

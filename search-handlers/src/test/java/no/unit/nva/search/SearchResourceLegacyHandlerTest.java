@@ -52,7 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-class SearchResourceHandlerTest {
+class SearchResourceLegacyHandlerTest {
 
     public static final String SAMPLE_PATH = "search";
     public static final String SAMPLE_DOMAIN_NAME = "localhost";
@@ -60,7 +60,7 @@ class SearchResourceHandlerTest {
     public static final String SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON =
             "sample_opensearch_response.json";
     public static final String EMPTY_OPENSEARCH_RESPONSE_JSON = "empty_opensearch_response.json";
-    private SearchResourceHandler handler;
+    private SearchResourceLegacyHandler handler;
     private Context contextMock;
     private ByteArrayOutputStream outputStream;
     private ResourceClient mockedSearchClient;
@@ -92,7 +92,7 @@ class SearchResourceHandlerTest {
     void setUp() {
 
         mockedSearchClient = mock(ResourceClient.class);
-        handler = new SearchResourceHandler(new Environment(), mockedSearchClient);
+        handler = new SearchResourceLegacyHandler(new Environment(), mockedSearchClient);
         contextMock = mock(Context.class);
         outputStream = new ByteArrayOutputStream();
     }
