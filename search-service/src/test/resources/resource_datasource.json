@@ -20,7 +20,6 @@
     "entityDescription": {
       "type": "EntityDescription",
       "alternativeAbstracts": {},
-      "contributorsCount" : 1,
       "contributors": [
         {
           "type": "Contributor",
@@ -479,7 +478,6 @@
           "sequence": 2
         }
       ],
-      "contributorsCount": 2,
       "language": "http://lexvo.org/id/iso639-3/eng",
       "mainTitle": "Digital Library Idé in a Collaborative Context: Romania and Norway 2003-2012",
       "publicationDate": {
@@ -677,7 +675,6 @@
           "sequence": 1
         }
       ],
-      "contributorsCount": 1,
       "mainTitle": "Kjetils Idé tickét têst",
       "abstract": "ønsker deg av hjerte ære berømmelse. Har du en ide om hva du skal gjøre med Kjærringen og eller konå",
       "language": "http://lexvo.org/id/iso639-3/nor",
@@ -1059,7 +1056,6 @@
           "sequence": 1
         }
       ],
-      "contributorsCount": 1,
       "language": "http://lexvo.org/id/iso639-3/eng",
       "mainTitle": "A Simple Model for the Ide  Variability of Release Area Size",
       "publicationDate": {
@@ -1208,7 +1204,6 @@
           "sequence": 1
         }
       ],
-      "contributorsCount": 1,
       "language": "http://lexvo.org/id/iso639-3/eng",
       "mainTitle": "Idé Outline of a Simple Model of Mixed Snow Avalanches",
       "publicationDate": {
@@ -1345,8 +1340,7 @@
           "sequence": 1
         }
       ],
-      "contributorsCount": 1,
-      "language": "http://lexvo.org/id/iso639-3/eng",
+     "language": "http://lexvo.org/id/iso639-3/eng",
       "mainTitle": "«Ide APALI» – Avalanche Probability Along Linear Infrastructure",
       "publicationDate": {
         "type": "PublicationDate",
@@ -1699,7 +1693,6 @@
           "sequence": 10
         }
       ],
-      "contributorsCount": 10,
       "language": "http://lexvo.org/id/iso639-3/eng",
       "mainTitle": "Annual Report 2020",
       "publicationDate": {
@@ -1989,7 +1982,6 @@
           "sequence": 7
         }
       ],
-      "contributorsCount": 8,
       "language": "http://lexvo.org/id/iso639-3/nor",
       "mainTitle": "Annual Report 2021",
       "publicationDate": {
@@ -3498,7 +3490,6 @@
           "sequence": 4
         }
       ],
-      "contributorsCount": 7,
       "language": "http://lexvo.org/id/iso639-3/eng",
       "mainTitle": "Research Plan 2020–2022",
       "publicationDate": {
@@ -4344,7 +4335,6 @@
           "sequence": 2
         }
       ],
-      "contributorsCount": 4,
       "language": "http://lexvo.org/id/iso639-3/eng",
       "mainTitle": "Time series modelling: applications for groundwater control in urban tunnelling",
       "publicationDate": {
@@ -4751,7 +4741,6 @@
           "sequence": 3
         }
       ],
-      "contributorsCount": 3,
       "language": "http://lexvo.org/id/iso639-3/eng",
       "mainTitle": "The Solution: Business Ethics! But what was the problem?",
       "publicationDate": {

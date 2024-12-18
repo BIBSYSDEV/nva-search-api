@@ -11,8 +11,8 @@ import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_NON_EMPTY;
 import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_NUMBER;
 import static no.unit.nva.search.model.constant.Words.DOT;
+import static no.unit.nva.search.model.constant.Words.KEYWORD;
 import static no.unit.nva.search.model.enums.ParameterKind.CUSTOM;
-import static no.unit.nva.search.model.enums.ParameterKind.KEYWORD;
 
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 
@@ -76,7 +76,7 @@ public interface ParameterKey<K extends Enum<K> & ParameterKey<K>> {
     }
 
     static boolean isNotKeyword(ParameterKind parameterKind, boolean... isKeyWord) {
-        var result = !(parameterKind.equals(KEYWORD) || parameterKind.equals(CUSTOM));
+        var result = !(parameterKind.equals(ParameterKind.KEYWORD) || parameterKind.equals(CUSTOM));
         return isKeyWord.length == 1 ? !isKeyWord[0] : result;
     }
 

@@ -1,4 +1,4 @@
-package no.unit.nva.search;
+package no.unit.nva.search.service;
 
 import static no.unit.nva.search.model.constant.Words.COMMA;
 import static no.unit.nva.search.model.constant.Words.SPACE;
