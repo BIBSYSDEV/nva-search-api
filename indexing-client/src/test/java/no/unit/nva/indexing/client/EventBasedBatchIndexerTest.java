@@ -1,8 +1,8 @@
-package no.unit.nva.indexingclient;
+package no.unit.nva.indexing.client;
 
 import static no.unit.nva.LogAppender.getAppender;
 import static no.unit.nva.LogAppender.logToString;
-import static no.unit.nva.indexingclient.Constants.NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE;
+import static no.unit.nva.indexing.client.Constants.NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE;
 import static no.unit.nva.search.model.constant.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;

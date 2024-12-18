@@ -1,4 +1,4 @@
-package no.unit.nva.indexingclient;
+package no.unit.nva.indexing.client;
 
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.s3.ListingResult;

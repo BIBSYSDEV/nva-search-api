@@ -1,9 +1,9 @@
-package no.unit.nva.indexingclient.keybatch;
+package no.unit.nva.indexing.client.keybatch;
 
-import static no.unit.nva.indexingclient.Constants.EVENT_BUS;
-import static no.unit.nva.indexingclient.Constants.MANDATORY_UNUSED_SUBTOPIC;
-import static no.unit.nva.indexingclient.Constants.TOPIC;
-import static no.unit.nva.indexingclient.Constants.defaultS3Client;
+import static no.unit.nva.indexing.client.Constants.EVENT_BUS;
+import static no.unit.nva.indexing.client.Constants.MANDATORY_UNUSED_SUBTOPIC;
+import static no.unit.nva.indexing.client.Constants.TOPIC;
+import static no.unit.nva.indexing.client.Constants.defaultS3Client;
 import static no.unit.nva.search.model.constant.Defaults.ENVIRONMENT;
 import static no.unit.nva.search.model.constant.Words.RESOURCES;
 
@@ -14,7 +14,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 
 import no.unit.nva.events.handlers.EventHandler;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
-import no.unit.nva.indexingclient.EventBasedBatchIndexer;
+import no.unit.nva.indexing.client.EventBasedBatchIndexer;
 
 import nva.commons.core.JacocoGenerated;
 

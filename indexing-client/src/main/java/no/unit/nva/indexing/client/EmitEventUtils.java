@@ -1,7 +1,7 @@
-package no.unit.nva.indexingclient;
+package no.unit.nva.indexing.client;
 
-import static no.unit.nva.indexingclient.Constants.BATCH_INDEX_EVENT_BUS_NAME;
-import static no.unit.nva.indexingclient.Constants.MANDATORY_UNUSED_SUBTOPIC;
+import static no.unit.nva.indexing.client.Constants.BATCH_INDEX_EVENT_BUS_NAME;
+import static no.unit.nva.indexing.client.Constants.MANDATORY_UNUSED_SUBTOPIC;
 
 import com.amazonaws.services.lambda.runtime.Context;
 

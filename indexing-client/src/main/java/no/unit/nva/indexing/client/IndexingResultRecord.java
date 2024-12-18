@@ -1,4 +1,4 @@
-package no.unit.nva.indexingclient;
+package no.unit.nva.indexing.client;
 
 import java.util.List;
 

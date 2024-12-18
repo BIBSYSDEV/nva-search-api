@@ -1,6 +1,6 @@
-package no.unit.nva.indexingclient;
+package no.unit.nva.indexing.client;
 
-import static no.unit.nva.indexingclient.TestConstants.RESOURCE_INDEX_NAME;
+import static no.unit.nva.indexing.client.TestConstants.RESOURCE_INDEX_NAME;
 
 import static org.mockito.Mockito.mock;
 

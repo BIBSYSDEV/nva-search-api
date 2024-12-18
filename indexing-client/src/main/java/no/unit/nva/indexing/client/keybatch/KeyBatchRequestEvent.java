@@ -1,4 +1,4 @@
-package no.unit.nva.indexingclient.keybatch;
+package no.unit.nva.indexing.client.keybatch;
 
 import no.unit.nva.commons.json.JsonSerializable;
 import no.unit.nva.events.models.EventBody;

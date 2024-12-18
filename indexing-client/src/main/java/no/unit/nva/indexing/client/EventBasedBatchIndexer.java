@@ -1,11 +1,11 @@
-package no.unit.nva.indexingclient;
+package no.unit.nva.indexing.client;
 
-import static no.unit.nva.indexingclient.Constants.NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE;
-import static no.unit.nva.indexingclient.Constants.RECURSION_ENABLED;
-import static no.unit.nva.indexingclient.Constants.defaultEsClient;
-import static no.unit.nva.indexingclient.Constants.defaultEventBridgeClient;
-import static no.unit.nva.indexingclient.Constants.defaultS3Client;
-import static no.unit.nva.indexingclient.EmitEventUtils.emitEvent;
+import static no.unit.nva.indexing.client.Constants.NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE;
+import static no.unit.nva.indexing.client.Constants.RECURSION_ENABLED;
+import static no.unit.nva.indexing.client.Constants.defaultEsClient;
+import static no.unit.nva.indexing.client.Constants.defaultEventBridgeClient;
+import static no.unit.nva.indexing.client.Constants.defaultS3Client;
+import static no.unit.nva.indexing.client.EmitEventUtils.emitEvent;
 
 import com.amazonaws.services.lambda.runtime.Context;
 
