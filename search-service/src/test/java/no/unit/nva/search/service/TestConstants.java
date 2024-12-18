@@ -1,4 +1,4 @@
-package no.unit.nva.common;
+package no.unit.nva.search.service;
 
 import nva.commons.core.JacocoGenerated;
 

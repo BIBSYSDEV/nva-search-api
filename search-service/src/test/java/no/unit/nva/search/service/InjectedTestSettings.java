@@ -1,4 +1,4 @@
-package no.unit.nva.common;
+package no.unit.nva.search.service;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;

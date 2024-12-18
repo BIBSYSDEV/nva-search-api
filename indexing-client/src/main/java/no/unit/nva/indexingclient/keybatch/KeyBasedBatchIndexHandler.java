@@ -16,9 +16,9 @@ import com.amazonaws.services.lambda.runtime.Context;
 import no.unit.nva.events.handlers.EventHandler;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
 import no.unit.nva.indexingclient.AggregationsValidator;
+import no.unit.nva.s3.S3Driver;
 import no.unit.nva.search.model.IndexingClient;
 import no.unit.nva.search.model.records.IndexDocument;
-import no.unit.nva.s3.S3Driver;
 
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.Failure;
@@ -123,16 +123,16 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
         if (batchResponse.isTruncated()) {
             sendEvent(
                     constructRequestEntry(
-                            batchResponse.contents().get(0).key(), context, location));
+                            batchResponse.contents().getFirst().key(), context, location));
         }
 
-        var batchKey = batchResponse.contents().get(0).key();
+        var batchKey = batchResponse.contents().getFirst().key();
         var content = extractContent(batchKey);
         var indexDocuments = mapToIndexDocuments(content);
 
         sendDocumentsToIndexInBatches(indexDocuments);
 
-        logger.info(LAST_CONSUMED_BATCH, batchResponse.contents().get(0));
+        logger.info(LAST_CONSUMED_BATCH, batchResponse.contents().getFirst());
         return null;
     }
 

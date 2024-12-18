@@ -26,10 +26,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import no.unit.nva.events.models.AwsEventBridgeEvent;
 import no.unit.nva.identifiers.SortableIdentifier;
+import no.unit.nva.s3.S3Driver;
 import no.unit.nva.search.model.IndexingClient;
 import no.unit.nva.search.model.records.EventConsumptionAttributes;
 import no.unit.nva.search.model.records.IndexDocument;
-import no.unit.nva.s3.S3Driver;
 import no.unit.nva.stubs.FakeS3Client;
 
 import nva.commons.core.SingletonCollector;

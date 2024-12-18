@@ -25,9 +25,9 @@ import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexing.testutils.FakeIndexingClient;
+import no.unit.nva.s3.S3Driver;
 import no.unit.nva.search.model.records.EventConsumptionAttributes;
 import no.unit.nva.search.model.records.IndexDocument;
-import no.unit.nva.s3.S3Driver;
 import no.unit.nva.stubs.FakeS3Client;
 
 import nva.commons.core.attempt.Try;
@@ -96,7 +96,7 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
                         eventBridgeClient,
                         numberOfFilesPerEvent);
         var filesFailingToBeIndexed = randomFilesInSingleEvent(s3Driver, numberOfFilesPerEvent);
-        var importLocation = filesFailingToBeIndexed.get(0).getHost().toString();
+        var importLocation = filesFailingToBeIndexed.getFirst().getHost().toString();
         var request = new ImportDataRequestEvent(importLocation);
         indexer.handleRequest(eventStream(request), outputStream, CONTEXT);
 

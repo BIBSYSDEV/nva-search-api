@@ -1,14 +1,15 @@
-package no.unit.nva.common;
+package no.unit.nva.search.service;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.model.constant.Words.IDENTIFIER;
 import static no.unit.nva.search.model.constant.Words.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.search.model.constant.Words.RESOURCES;
 import static no.unit.nva.search.model.constant.Words.TICKETS;
+
 import static nva.commons.core.attempt.Try.attempt;
+import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 
 import static java.util.Objects.nonNull;
-import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -34,7 +35,8 @@ import java.util.Map;
 @Testcontainers
 public class Containers {
 
-    public static final OpensearchContainer container = new OpensearchContainer(TestConstants.OPEN_SEARCH_IMAGE);
+    public static final OpensearchContainer container =
+            new OpensearchContainer(TestConstants.OPEN_SEARCH_IMAGE);
     public static final String IMPORT_CANDIDATE_MAPPING_DEV_JSON =
             "import_candidate_mappings_dev.json";
     private static final Logger logger = LoggerFactory.getLogger(Containers.class);
