@@ -7,10 +7,13 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 import no.unit.nva.search.model.records.PagedSearch;
 
+import nva.commons.core.JacocoGenerated;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
+@JacocoGenerated
 @SuppressWarnings("PMD.ShortMethodName")
 public record FakeGatewayResponse<T>(T body, int statusCode, Map<String, String> headers) {
 

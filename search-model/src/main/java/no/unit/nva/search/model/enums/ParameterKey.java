@@ -10,9 +10,9 @@ import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_NON_EMPTY;
 import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_NUMBER;
-
 import static no.unit.nva.search.model.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search.model.enums.ParameterKind.KEYWORD;
+
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 
 import static java.util.Objects.nonNull;

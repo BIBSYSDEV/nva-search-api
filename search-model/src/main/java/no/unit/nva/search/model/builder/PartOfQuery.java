@@ -5,6 +5,7 @@ import static no.unit.nva.search.model.constant.Words.HAS_PARTS;
 
 import no.unit.nva.search.model.enums.ParameterKey;
 
+import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.join.query.HasParentQueryBuilder;
 
@@ -19,6 +20,7 @@ import java.util.stream.Stream;
  */
 public class PartOfQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBuilder<K> {
 
+    @JacocoGenerated
     @Override
     Stream<Map.Entry<K, QueryBuilder>> buildMatchAnyValueQuery(K key, String... values) {
         return buildHasParent(key, values).flatMap(builder -> queryToEntry(key, builder));

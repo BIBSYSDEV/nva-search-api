@@ -83,16 +83,6 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
     }
 
     /**
-     * EqualsIgnoreCase.
-     *
-     * @param o Object with toString()
-     * @return equalsIgnoreCase of objects toString()
-     */
-    public boolean equalsIgnoreCase(Object o) {
-        return nonNull(value) && value.equalsIgnoreCase(o.toString());
-    }
-
-    /**
      * Split.
      *
      * @param delimiter regex to split on

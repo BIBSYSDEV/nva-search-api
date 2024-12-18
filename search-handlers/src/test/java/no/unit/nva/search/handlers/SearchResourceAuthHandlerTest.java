@@ -1,4 +1,4 @@
-package no.unit.nva.search;
+package no.unit.nva.search.handlers;
 
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.search.model.constant.Defaults.objectMapperWithEmpty;
@@ -23,6 +23,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import no.unit.nva.search.FakeGatewayResponse;
 import no.unit.nva.search.model.records.SwsResponse;
 import no.unit.nva.search.service.resource.ResourceClient;
 import no.unit.nva.testutils.HandlerRequestBuilder;

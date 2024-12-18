@@ -1,4 +1,4 @@
-package no.unit.nva.search;
+package no.unit.nva.search.handlers;
 
 import static no.unit.nva.search.model.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
 import static no.unit.nva.search.service.importcandidate.ImportCandidateClient.defaultClient;

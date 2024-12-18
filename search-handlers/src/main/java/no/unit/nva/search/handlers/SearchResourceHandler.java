@@ -1,20 +1,13 @@
-package no.unit.nva.search;
+package no.unit.nva.search.handlers;
 
 import static no.unit.nva.search.model.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
-import static no.unit.nva.search.model.enums.PublicationStatus.PUBLISHED;
-import static no.unit.nva.search.model.enums.PublicationStatus.PUBLISHED_METADATA;
 import static no.unit.nva.search.service.resource.ResourceClient.defaultClient;
-import static no.unit.nva.search.service.resource.ResourceParameter.AGGREGATION;
-import static no.unit.nva.search.service.resource.ResourceParameter.FROM;
-import static no.unit.nva.search.service.resource.ResourceParameter.SIZE;
-import static no.unit.nva.search.service.resource.ResourceParameter.SORT;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 
+import no.unit.nva.search.model.ContentTypeUtils;
 import no.unit.nva.search.service.resource.ResourceClient;
-import no.unit.nva.search.service.resource.ResourceSearchQuery;
-import no.unit.nva.search.service.resource.SimplifiedResourceModelMutator;
 
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
@@ -22,24 +15,30 @@ import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
+import org.apache.http.HttpHeaders;
+
 import java.net.HttpURLConnection;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * Handler for searching resources.
  *
  * <p>Searches for resources in the OpenSearch index.
  */
-public class SearchResource20241201Handler extends ApiGatewayHandler<Void, String> {
+public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
 
     private final ResourceClient opensearchClient;
 
+    private static final String V_2024_12_01_SIMPLER_MODEL = "2024-12-01";
+
     @JacocoGenerated
-    public SearchResource20241201Handler() {
+    public SearchResourceHandler() {
         this(new Environment(), defaultClient());
     }
 
-    public SearchResource20241201Handler(Environment environment, ResourceClient resourceClient) {
+    public SearchResourceHandler(Environment environment, ResourceClient resourceClient) {
         super(Void.class, environment);
         this.opensearchClient = resourceClient;
     }
@@ -57,18 +56,21 @@ public class SearchResource20241201Handler extends ApiGatewayHandler<Void, Strin
     @Override
     protected String processInput(Void input, RequestInfo requestInfo, Context context)
             throws BadRequestException {
-        return ResourceSearchQuery.builder()
-                .fromRequestInfo(requestInfo)
-                .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
-                .withAlwaysIncludedFields(SimplifiedResourceModelMutator.getIncludedFields())
-                .validate()
-                .build()
-                .withFilter()
-                .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
-                .apply()
-                .doSearch(opensearchClient)
-                .withMutators(new SimplifiedResourceModelMutator())
-                .toString();
+
+        return switch (ContentTypeUtils.extractVersionFromRequestInfo(requestInfo)) {
+            case V_2024_12_01_SIMPLER_MODEL ->
+                    new SearchResource20241201Handler(environment, opensearchClient)
+                            .processInput(input, requestInfo, context);
+            case null, default ->
+                    new SearchResourceLegacyHandler(environment, opensearchClient)
+                            .processInput(input, requestInfo, context);
+        };
+    }
+
+    @JacocoGenerated
+    @Override
+    protected void addAdditionalHeaders(Supplier<Map<String, String>> additionalHeaders) {
+        super.addAdditionalHeaders(() -> Map.of(HttpHeaders.VARY, HttpHeaders.ACCEPT));
     }
 
     @Override

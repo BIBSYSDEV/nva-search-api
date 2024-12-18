@@ -22,11 +22,10 @@ dependencies {
 
     implementation libs.aws.sdk2.s3 //TODO: Temporary until refactor to commons
     implementation libs.aws.sdk2.urlconnection //TODO: Temporary until refactor to commons
-    testImplementation libs.opensearch.rest.highlevel.client
     implementation libs.com.auth0.jwt
-
     implementation libs.problem
 
+    testImplementation libs.opensearch.rest.highlevel.client
     testImplementation libs.bundles.logging
     testImplementation libs.bundles.testing
     testImplementation project(':search-testing')

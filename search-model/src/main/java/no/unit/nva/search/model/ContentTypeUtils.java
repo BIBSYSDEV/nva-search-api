@@ -3,12 +3,16 @@ package no.unit.nva.search.model;
 import static org.apache.http.HttpHeaders.ACCEPT;
 
 import nva.commons.apigateway.RequestInfo;
+import nva.commons.core.JacocoGenerated;
 
 import org.apache.http.entity.ContentType;
 
 import java.util.Optional;
 
 public class ContentTypeUtils {
+
+    @JacocoGenerated
+    private ContentTypeUtils() {}
 
     public static final String VERSION = "version";
 

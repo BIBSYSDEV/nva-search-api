@@ -1,4 +1,4 @@
-package no.unit.nva.search;
+package no.unit.nva.search.handlers;
 
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.search.model.constant.Defaults.objectMapperWithEmpty;
@@ -30,6 +30,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import no.unit.nva.indexing.testutils.FakeSearchResponse;
+import no.unit.nva.search.FakeGatewayResponse;
 import no.unit.nva.search.model.constant.Words;
 import no.unit.nva.search.model.csv.ExportCsv;
 import no.unit.nva.search.model.records.SwsResponse;

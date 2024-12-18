@@ -7,6 +7,8 @@ import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 
 import static java.util.Objects.nonNull;
 
+import nva.commons.core.JacocoGenerated;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpHeaders;
@@ -20,6 +22,7 @@ import java.util.concurrent.CompletableFuture;
 
 import javax.net.ssl.SSLSession;
 
+@JacocoGenerated
 public class MockedHttpResponse {
 
     public static CompletableFuture<HttpResponse<Object>> mockedFutureHttpResponse(Path path) {
@@ -44,21 +47,25 @@ public class MockedHttpResponse {
 
     public static HttpResponse<Object> mockedHttpResponse(String body, int statusCode) {
         return new HttpResponse<>() {
+            @JacocoGenerated
             @Override
             public int statusCode() {
                 return statusCode;
             }
 
+            @JacocoGenerated
             @Override
             public HttpRequest request() {
                 return null;
             }
 
+            @JacocoGenerated
             @Override
             public Optional<HttpResponse<Object>> previousResponse() {
                 return Optional.empty();
             }
 
+            @JacocoGenerated
             @Override
             public HttpHeaders headers() {
                 return HttpHeaders.of(
@@ -66,21 +73,25 @@ public class MockedHttpResponse {
                         (s, s2) -> true);
             }
 
+            @JacocoGenerated
             @Override
             public String body() {
                 return body;
             }
 
+            @JacocoGenerated
             @Override
             public Optional<SSLSession> sslSession() {
                 return Optional.empty();
             }
 
+            @JacocoGenerated
             @Override
             public URI uri() {
                 return null;
             }
 
+            @JacocoGenerated
             @Override
             public HttpClient.Version version() {
                 return null;

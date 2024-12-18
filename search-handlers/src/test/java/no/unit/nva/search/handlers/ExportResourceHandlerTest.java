@@ -1,4 +1,4 @@
-package no.unit.nva.search;
+package no.unit.nva.search.handlers;
 
 import static no.unit.nva.search.model.constant.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.search.model.constant.Words.COMMA;
