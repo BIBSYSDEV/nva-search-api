@@ -109,7 +109,7 @@ public class GenerateKeyBatchesHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     private static String getLastEvaluatedKey(List<String> keys) {
-        return keys.get(keys.size() - 1);
+        return keys.getLast();
     }
 
     @JacocoGenerated
