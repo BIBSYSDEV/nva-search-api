@@ -18,7 +18,6 @@ import static no.unit.nva.search.model.constant.Words.CONTRIBUTORS;
 import static no.unit.nva.search.model.constant.Words.CONTRIBUTOR_ORGANIZATIONS;
 import static no.unit.nva.search.model.constant.Words.COURSE;
 import static no.unit.nva.search.model.constant.Words.DOI;
-import static no.unit.nva.search.model.constant.Words.DOT;
 import static no.unit.nva.search.model.constant.Words.ENGLISH_CODE;
 import static no.unit.nva.search.model.constant.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.search.model.constant.Words.FILES;
@@ -45,7 +44,6 @@ import static no.unit.nva.search.model.constant.Words.ORC_ID;
 import static no.unit.nva.search.model.constant.Words.OWNER;
 import static no.unit.nva.search.model.constant.Words.OWNER_AFFILIATION;
 import static no.unit.nva.search.model.constant.Words.PAGES;
-import static no.unit.nva.search.model.constant.Words.PIPE;
 import static no.unit.nva.search.model.constant.Words.PRINT_ISSN;
 import static no.unit.nva.search.model.constant.Words.PUBLICATION_CONTEXT;
 import static no.unit.nva.search.model.constant.Words.PUBLICATION_DATE;
@@ -162,9 +160,7 @@ public final class Constants {
             jsonPath(ENTITY_DESCRIPTION, PUBLICATION_DATE, YEAR);
     public static final String REFERENCE_DOI_KEYWORD =
             multipleFields(
-                    jsonPath(
-                        ENTITY_DESCRIPTION, REFERENCE, DOI, KEYWORD), jsonPath(
-                    DOI, KEYWORD));
+                    jsonPath(ENTITY_DESCRIPTION, REFERENCE, DOI, KEYWORD), jsonPath(DOI, KEYWORD));
     public static final String ASSOCIATED_ARTIFACTS_LABELS =
             jsonPath(ASSOCIATED_ARTIFACTS, LICENSE, LABELS);
     public static final String ASSOCIATED_ARTIFACTS_LICENSE =
@@ -210,8 +206,7 @@ public final class Constants {
     public static final String FUNDINGS_SOURCE_LABELS = jsonPath(FUNDINGS, SOURCE, LABELS);
     public static final String HANDLE_KEYWORD =
             multipleFields(
-                    jsonPath(
-                        HANDLE, KEYWORD), jsonPath("additionalIdentifiers", VALUE, KEYWORD));
+                    jsonPath(HANDLE, KEYWORD), jsonPath("additionalIdentifiers", VALUE, KEYWORD));
     public static final String RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD =
             jsonPath(RESOURCE_OWNER, OWNER_AFFILIATION, KEYWORD);
     public static final String RESOURCE_OWNER_OWNER_KEYWORD =

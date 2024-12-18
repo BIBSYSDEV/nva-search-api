@@ -23,7 +23,9 @@ import java.util.function.BinaryOperator;
  * @author Stig Norland
  */
 public class ImportCandidateClient
-        extends OpenSearchClient<SwsResponse, ImportCandidateSearchQuery> {
+        extends OpenSearchClient<
+                SwsResponse,
+                no.unit.nva.search.service.importcandidate.ImportCandidateSearchQuery> {
 
     public ImportCandidateClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
         super(client, cachedJwtProvider);

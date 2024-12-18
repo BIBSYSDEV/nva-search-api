@@ -1,7 +1,6 @@
 package no.unit.nva.search.service.ticket;
 
 import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_PIPE;
-import static no.unit.nva.search.model.constant.Words.CHAR_UNDERSCORE;
 import static no.unit.nva.search.service.ticket.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search.service.ticket.Constants.TYPE_KEYWORD;
 

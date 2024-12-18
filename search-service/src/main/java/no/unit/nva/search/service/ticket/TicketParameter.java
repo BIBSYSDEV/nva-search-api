@@ -11,18 +11,6 @@ import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_SEARCH_ALL_K
 import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_SIZE_KEY;
 import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_SORT_KEY;
 import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_SORT_ORDER_KEY;
-import static no.unit.nva.search.model.constant.Words.CHAR_UNDERSCORE;
-import static no.unit.nva.search.model.constant.Words.COLON;
-import static no.unit.nva.search.model.constant.Words.PHI;
-import static no.unit.nva.search.model.constant.Words.PIPE;
-import static no.unit.nva.search.model.constant.Words.Q;
-import static no.unit.nva.search.model.constant.Words.UNDERSCORE;
-import static no.unit.nva.search.model.enums.FieldOperator.ALL_OF;
-import static no.unit.nva.search.model.enums.FieldOperator.ANY_OF;
-import static no.unit.nva.search.model.enums.FieldOperator.BETWEEN;
-import static no.unit.nva.search.model.enums.FieldOperator.NA;
-import static no.unit.nva.search.model.enums.FieldOperator.NOT_ALL_OF;
-import static no.unit.nva.search.model.enums.FieldOperator.NOT_ANY_OF;
 import static no.unit.nva.search.model.enums.ParameterKind.ACROSS_FIELDS;
 import static no.unit.nva.search.model.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search.model.enums.ParameterKind.DATE;
@@ -90,7 +78,9 @@ public enum TicketParameter implements ParameterKey<TicketParameter> {
     CUSTOMER_ID(FUZZY_KEYWORD, FieldOperator.ANY_OF, CUSTOMER_ID_KEYWORD),
     CUSTOMER_ID_NOT(FUZZY_KEYWORD, FieldOperator.NOT_ANY_OF, CUSTOMER_ID_KEYWORD),
     EXCLUDE_SUBUNITS(
-            FLAG, FieldOperator.ANY_OF, ORGANIZATION_ID_KEYWORD + Words.PIPE + ORGANIZATION_IDENTIFIER_KEYWORD),
+            FLAG,
+            FieldOperator.ANY_OF,
+            ORGANIZATION_ID_KEYWORD + Words.PIPE + ORGANIZATION_IDENTIFIER_KEYWORD),
     FINALIZED_BY(ACROSS_FIELDS, FieldOperator.ALL_OF, FINALIZED_BY_FIELDS),
     FINALIZED_BY_NOT(ACROSS_FIELDS, FieldOperator.NOT_ALL_OF, FINALIZED_BY_FIELDS),
     ID(FUZZY_KEYWORD, FieldOperator.ANY_OF, ID_KEYWORD),
@@ -98,12 +88,14 @@ public enum TicketParameter implements ParameterKey<TicketParameter> {
     MESSAGES(TEXT, FieldOperator.ALL_OF, MESSAGE_FIELDS),
     MESSAGES_NOT(TEXT, FieldOperator.NOT_ALL_OF, MESSAGE_FIELDS),
     MODIFIED_DATE(DATE, FieldOperator.BETWEEN, Words.MODIFIED_DATE),
-    ORGANIZATION_ID(CUSTOM, FieldOperator.ANY_OF, ORGANIZATION_PATHS, PATTERN_IS_ORGANIZATION, null, null),
+    ORGANIZATION_ID(
+            CUSTOM, FieldOperator.ANY_OF, ORGANIZATION_PATHS, PATTERN_IS_ORGANIZATION, null, null),
     ORGANIZATION_ID_NOT(CUSTOM, FieldOperator.NOT_ANY_OF, ORGANIZATION_PATHS),
     OWNER(ACROSS_FIELDS, FieldOperator.ANY_OF, OWNER_FIELDS),
     OWNER_NOT(ACROSS_FIELDS, FieldOperator.NOT_ANY_OF, OWNER_FIELDS),
     PUBLICATION_ID(FUZZY_KEYWORD, FieldOperator.ANY_OF, PUBLICATION_ID_OR_IDENTIFIER_KEYWORD),
-    PUBLICATION_ID_NOT(FUZZY_KEYWORD, FieldOperator.NOT_ANY_OF, PUBLICATION_ID_OR_IDENTIFIER_KEYWORD),
+    PUBLICATION_ID_NOT(
+            FUZZY_KEYWORD, FieldOperator.NOT_ANY_OF, PUBLICATION_ID_OR_IDENTIFIER_KEYWORD),
     PUBLICATION_MODIFIED_DATE(DATE, FieldOperator.BETWEEN, Constants.PUBLICATION_MODIFIED_DATE),
     PUBLICATION_OWNER(FUZZY_KEYWORD, FieldOperator.ANY_OF, PUBLICATION_OWNER_KEYWORD),
     PUBLICATION_OWNER_NOT(FUZZY_KEYWORD, FieldOperator.NOT_ANY_OF, PUBLICATION_OWNER_KEYWORD),
@@ -133,7 +125,12 @@ public enum TicketParameter implements ParameterKey<TicketParameter> {
     SEARCH_AFTER(FLAG),
     SORT(SORT_KEY, null, null, PATTERN_IS_SORT_KEY, null, null),
     SORT_ORDER(
-        FLAG, FieldOperator.ALL_OF, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE, null),
+            FLAG,
+            FieldOperator.ALL_OF,
+            null,
+            PATTERN_IS_SORT_ORDER_KEY,
+            PATTERN_IS_ASC_DESC_VALUE,
+            null),
     ;
 
     public static final int IGNORE_PARAMETER_INDEX = 0;

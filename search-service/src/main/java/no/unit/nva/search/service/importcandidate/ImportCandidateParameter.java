@@ -1,15 +1,5 @@
 package no.unit.nva.search.service.importcandidate;
 
-import static no.unit.nva.search.service.importcandidate.Constants.ADDITIONAL_IDENTIFIERS_KEYWORD;
-import static no.unit.nva.search.service.importcandidate.Constants.COLLABORATION_TYPE_KEYWORD;
-import static no.unit.nva.search.service.importcandidate.Constants.FILES_STATUS_PATH;
-import static no.unit.nva.search.service.importcandidate.Constants.ID_KEYWORD;
-import static no.unit.nva.search.service.importcandidate.Constants.IMPORT_STATUS_PATH;
-import static no.unit.nva.search.service.importcandidate.Constants.MODIFIED_DATE_PATH;
-import static no.unit.nva.search.service.importcandidate.Constants.ORGANIZATIONS_PATH;
-import static no.unit.nva.search.service.importcandidate.Constants.PUBLICATION_INSTANCE_TYPE;
-import static no.unit.nva.search.service.importcandidate.Constants.PUBLICATION_YEAR_KEYWORD;
-import static no.unit.nva.search.service.importcandidate.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search.model.constant.ErrorMessages.NOT_IMPLEMENTED_FOR;
 import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_FIELDS_SEARCHED;
@@ -21,24 +11,16 @@ import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_SEARCH_ALL_K
 import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_SIZE_KEY;
 import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_SORT_KEY;
 import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_SORT_ORDER_KEY;
-import static no.unit.nva.search.model.constant.Words.CHAR_UNDERSCORE;
-import static no.unit.nva.search.model.constant.Words.COLON;
-import static no.unit.nva.search.model.constant.Words.Q;
-import static no.unit.nva.search.model.constant.Words.UNDERSCORE;
-import static no.unit.nva.search.model.enums.FieldOperator.ALL_OF;
-import static no.unit.nva.search.model.enums.FieldOperator.ANY_OF;
-import static no.unit.nva.search.model.enums.FieldOperator.BETWEEN;
-import static no.unit.nva.search.model.enums.FieldOperator.NA;
-import static no.unit.nva.search.model.enums.FieldOperator.NOT_ALL_OF;
-import static no.unit.nva.search.model.enums.ParameterKind.CUSTOM;
-import static no.unit.nva.search.model.enums.ParameterKind.DATE;
-import static no.unit.nva.search.model.enums.ParameterKind.FLAG;
-import static no.unit.nva.search.model.enums.ParameterKind.FREE_TEXT;
-import static no.unit.nva.search.model.enums.ParameterKind.FUZZY_KEYWORD;
-import static no.unit.nva.search.model.enums.ParameterKind.KEYWORD;
-import static no.unit.nva.search.model.enums.ParameterKind.NUMBER;
-import static no.unit.nva.search.model.enums.ParameterKind.SORT_KEY;
-import static no.unit.nva.search.model.enums.ParameterKind.TEXT;
+import static no.unit.nva.search.service.importcandidate.Constants.ADDITIONAL_IDENTIFIERS_KEYWORD;
+import static no.unit.nva.search.service.importcandidate.Constants.COLLABORATION_TYPE_KEYWORD;
+import static no.unit.nva.search.service.importcandidate.Constants.FILES_STATUS_PATH;
+import static no.unit.nva.search.service.importcandidate.Constants.ID_KEYWORD;
+import static no.unit.nva.search.service.importcandidate.Constants.IMPORT_STATUS_PATH;
+import static no.unit.nva.search.service.importcandidate.Constants.MODIFIED_DATE_PATH;
+import static no.unit.nva.search.service.importcandidate.Constants.ORGANIZATIONS_PATH;
+import static no.unit.nva.search.service.importcandidate.Constants.PUBLICATION_INSTANCE_TYPE;
+import static no.unit.nva.search.service.importcandidate.Constants.PUBLICATION_YEAR_KEYWORD;
+import static no.unit.nva.search.service.importcandidate.Constants.PUBLISHER_ID_KEYWORD;
 
 import static java.util.Objects.nonNull;
 
@@ -71,15 +53,25 @@ import java.util.stream.Stream;
 @SuppressWarnings({"PMD.ExcessivePublicCount"})
 public enum ImportCandidateParameter implements ParameterKey<ImportCandidateParameter> {
     INVALID(ParameterKind.INVALID),
-    ADDITIONAL_IDENTIFIERS(ParameterKind.FUZZY_KEYWORD, FieldOperator.ANY_OF, ADDITIONAL_IDENTIFIERS_KEYWORD),
-    ADDITIONAL_IDENTIFIERS_NOT(ParameterKind.KEYWORD, FieldOperator.NOT_ALL_OF, ADDITIONAL_IDENTIFIERS_KEYWORD),
+    ADDITIONAL_IDENTIFIERS(
+            ParameterKind.FUZZY_KEYWORD, FieldOperator.ANY_OF, ADDITIONAL_IDENTIFIERS_KEYWORD),
+    ADDITIONAL_IDENTIFIERS_NOT(
+            ParameterKind.KEYWORD, FieldOperator.NOT_ALL_OF, ADDITIONAL_IDENTIFIERS_KEYWORD),
     CATEGORY(ParameterKind.FUZZY_KEYWORD, FieldOperator.ANY_OF, PUBLICATION_INSTANCE_TYPE),
     CATEGORY_NOT(ParameterKind.KEYWORD, FieldOperator.NOT_ALL_OF, PUBLICATION_INSTANCE_TYPE),
     CREATED_DATE(ParameterKind.DATE, FieldOperator.BETWEEN, Words.CREATED_DATE),
-    CONTRIBUTOR(ParameterKind.FUZZY_KEYWORD, FieldOperator.ALL_OF, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
-    CONTRIBUTOR_NOT(ParameterKind.FUZZY_KEYWORD, FieldOperator.NOT_ALL_OF, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
-    COLLABORATION_TYPE(ParameterKind.FUZZY_KEYWORD, FieldOperator.ANY_OF, COLLABORATION_TYPE_KEYWORD),
-    COLLABORATION_TYPE_NOT(ParameterKind.KEYWORD, FieldOperator.NOT_ALL_OF, COLLABORATION_TYPE_KEYWORD),
+    CONTRIBUTOR(
+            ParameterKind.FUZZY_KEYWORD,
+            FieldOperator.ALL_OF,
+            Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
+    CONTRIBUTOR_NOT(
+            ParameterKind.FUZZY_KEYWORD,
+            FieldOperator.NOT_ALL_OF,
+            Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
+    COLLABORATION_TYPE(
+            ParameterKind.FUZZY_KEYWORD, FieldOperator.ANY_OF, COLLABORATION_TYPE_KEYWORD),
+    COLLABORATION_TYPE_NOT(
+            ParameterKind.KEYWORD, FieldOperator.NOT_ALL_OF, COLLABORATION_TYPE_KEYWORD),
     CRISTIN_IDENTIFIER(ParameterKind.CUSTOM),
     DOI(ParameterKind.FUZZY_KEYWORD, FieldOperator.ANY_OF, Constants.DOI_KEYWORD),
     DOI_NOT(ParameterKind.TEXT, FieldOperator.NOT_ALL_OF, Constants.DOI_KEYWORD),
@@ -89,12 +81,17 @@ public enum ImportCandidateParameter implements ParameterKey<ImportCandidatePara
     IMPORT_STATUS(ParameterKind.FUZZY_KEYWORD, FieldOperator.ANY_OF, IMPORT_STATUS_PATH),
     IMPORT_STATUS_NOT(ParameterKind.FUZZY_KEYWORD, FieldOperator.NOT_ALL_OF, IMPORT_STATUS_PATH),
     LICENSE(
-        ParameterKind.CUSTOM, FieldOperator.ALL_OF, no.unit.nva.search.service.resource.Constants.ASSOCIATED_ARTIFACTS_LICENSE),
+            ParameterKind.CUSTOM,
+            FieldOperator.ALL_OF,
+            no.unit.nva.search.service.resource.Constants.ASSOCIATED_ARTIFACTS_LICENSE),
     MODIFIED_DATE(ParameterKind.DATE, FieldOperator.BETWEEN, MODIFIED_DATE_PATH),
     LICENSE_NOT(
-        ParameterKind.CUSTOM, FieldOperator.NOT_ALL_OF, no.unit.nva.search.service.resource.Constants.ASSOCIATED_ARTIFACTS_LICENSE),
+            ParameterKind.CUSTOM,
+            FieldOperator.NOT_ALL_OF,
+            no.unit.nva.search.service.resource.Constants.ASSOCIATED_ARTIFACTS_LICENSE),
     PUBLICATION_YEAR(ParameterKind.NUMBER, FieldOperator.BETWEEN, PUBLICATION_YEAR_KEYWORD),
-    PUBLICATION_YEAR_BEFORE(ParameterKind.NUMBER, FieldOperator.LESS_THAN, PUBLICATION_YEAR_KEYWORD),
+    PUBLICATION_YEAR_BEFORE(
+            ParameterKind.NUMBER, FieldOperator.LESS_THAN, PUBLICATION_YEAR_KEYWORD),
     PUBLICATION_YEAR_SINCE(
             ParameterKind.NUMBER, FieldOperator.GREATER_THAN_OR_EQUAL_TO, PUBLICATION_YEAR_KEYWORD),
     PUBLISHER(ParameterKind.KEYWORD, FieldOperator.ALL_OF, PUBLISHER_ID_KEYWORD),
@@ -107,7 +104,13 @@ public enum ImportCandidateParameter implements ParameterKey<ImportCandidatePara
     TYPE(ParameterKind.FUZZY_KEYWORD, FieldOperator.ANY_OF, PUBLICATION_INSTANCE_TYPE),
     TYPE_NOT(ParameterKind.KEYWORD, FieldOperator.NOT_ALL_OF, PUBLICATION_INSTANCE_TYPE),
     // Query parameters passed to SWS/Opensearch
-    SEARCH_ALL(ParameterKind.FREE_TEXT, FieldOperator.ALL_OF, Words.Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
+    SEARCH_ALL(
+            ParameterKind.FREE_TEXT,
+            FieldOperator.ALL_OF,
+            Words.Q,
+            PATTERN_IS_SEARCH_ALL_KEY,
+            null,
+            null),
     // Pagination parameters
     NODES_SEARCHED(ParameterKind.FLAG, null, null, PATTERN_IS_FIELDS_SEARCHED, null, null),
     NODES_INCLUDED(ParameterKind.FLAG),
@@ -119,7 +122,12 @@ public enum ImportCandidateParameter implements ParameterKey<ImportCandidatePara
     SEARCH_AFTER(ParameterKind.FLAG),
     SORT(ParameterKind.SORT_KEY, null, null, PATTERN_IS_SORT_KEY, null, null),
     SORT_ORDER(
-        ParameterKind.FLAG, FieldOperator.ALL_OF, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE, null),
+            ParameterKind.FLAG,
+            FieldOperator.ALL_OF,
+            null,
+            PATTERN_IS_SORT_ORDER_KEY,
+            PATTERN_IS_ASC_DESC_VALUE,
+            null),
     ;
 
     public static final int IGNORE_PARAMETER_INDEX = 0;

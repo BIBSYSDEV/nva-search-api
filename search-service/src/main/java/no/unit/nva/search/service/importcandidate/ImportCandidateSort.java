@@ -1,7 +1,6 @@
 package no.unit.nva.search.service.importcandidate;
 
 import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_PIPE;
-import static no.unit.nva.search.model.constant.Words.CHAR_UNDERSCORE;
 
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 

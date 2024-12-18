@@ -86,7 +86,8 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceS
 
     private HttpRequest createRequest(String contributorId) {
         var personId = URLEncoder.encode(contributorId, Charset.defaultCharset());
-        userSettingUri = URI.create(HTTPS + readApiHost() + Constants.PERSON_PREFERENCES + personId);
+        userSettingUri =
+                URI.create(HTTPS + readApiHost() + Constants.PERSON_PREFERENCES + personId);
         return HttpRequest.newBuilder(userSettingUri)
                 .headers(
                         ACCEPT, MediaType.JSON_UTF_8.toString(),

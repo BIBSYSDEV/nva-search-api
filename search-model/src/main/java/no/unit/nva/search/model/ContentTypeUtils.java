@@ -1,4 +1,4 @@
-package no.unit.nva.search.common;
+package no.unit.nva.search.model;
 
 import static org.apache.http.HttpHeaders.ACCEPT;
 

@@ -1,4 +1,4 @@
-package no.unit.nva.search.resource.response;
+package no.unit.nva.search.service.resource.response;
 
 import java.net.URI;
 

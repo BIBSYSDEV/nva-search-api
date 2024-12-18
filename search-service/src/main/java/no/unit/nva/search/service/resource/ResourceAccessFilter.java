@@ -4,9 +4,6 @@ import static no.unit.nva.search.model.constant.Words.CURATING_INSTITUTIONS;
 import static no.unit.nva.search.model.constant.Words.DOT;
 import static no.unit.nva.search.model.constant.Words.KEYWORD;
 import static no.unit.nva.search.model.constant.Words.STATUS;
-import static no.unit.nva.search.model.enums.PublicationStatus.PUBLISHED;
-import static no.unit.nva.search.model.enums.PublicationStatus.PUBLISHED_METADATA;
-import static no.unit.nva.search.model.enums.PublicationStatus.UNPUBLISHED;
 import static no.unit.nva.search.service.resource.ResourceParameter.STATISTICS;
 
 import static nva.commons.apigateway.AccessRight.MANAGE_CUSTOMERS;
@@ -82,7 +79,8 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
                         .filter(this::isStatusAllowed)
                         .map(PublicationStatus::toString)
                         .toArray(String[]::new);
-        final var filter = new TermsQueryBuilder(Constants.STATUS_KEYWORD, values).queryName(STATUS);
+        final var filter =
+                new TermsQueryBuilder(Constants.STATUS_KEYWORD, values).queryName(STATUS);
         this.searchQuery.filters().add(filter);
         return this;
     }

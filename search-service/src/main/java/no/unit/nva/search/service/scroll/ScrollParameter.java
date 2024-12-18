@@ -6,7 +6,6 @@ import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search.model.constant.Words.CHAR_UNDERSCORE;
 import static no.unit.nva.search.model.constant.Words.COLON;
 import static no.unit.nva.search.model.constant.Words.UNDERSCORE;
-import static no.unit.nva.search.model.enums.FieldOperator.NA;
 
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 

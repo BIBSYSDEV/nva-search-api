@@ -2,6 +2,7 @@ package no.unit.nva.search.service.resource;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import no.unit.nva.search.model.records.JsonNodeMutator;
 
 public class ContributorCopyMutator implements JsonNodeMutator {

@@ -1,21 +1,21 @@
 package no.unit.nva.search;
 
-import static no.unit.nva.constants.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
-import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
-import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
-import static no.unit.nva.search.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
-import static no.unit.nva.search.resource.ResourceClient.defaultClient;
-import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
-import static no.unit.nva.search.resource.ResourceParameter.FROM;
-import static no.unit.nva.search.resource.ResourceParameter.SIZE;
-import static no.unit.nva.search.resource.ResourceParameter.SORT;
+import static no.unit.nva.search.model.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
+import static no.unit.nva.search.model.enums.PublicationStatus.PUBLISHED;
+import static no.unit.nva.search.model.enums.PublicationStatus.PUBLISHED_METADATA;
+import static no.unit.nva.search.service.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
+import static no.unit.nva.search.service.resource.ResourceClient.defaultClient;
+import static no.unit.nva.search.service.resource.ResourceParameter.AGGREGATION;
+import static no.unit.nva.search.service.resource.ResourceParameter.FROM;
+import static no.unit.nva.search.service.resource.ResourceParameter.SIZE;
+import static no.unit.nva.search.service.resource.ResourceParameter.SORT;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 
-import no.unit.nva.search.resource.ContributorCopyMutator;
-import no.unit.nva.search.resource.ResourceClient;
-import no.unit.nva.search.resource.ResourceSearchQuery;
+import no.unit.nva.search.service.resource.ContributorCopyMutator;
+import no.unit.nva.search.service.resource.ResourceClient;
+import no.unit.nva.search.service.resource.ResourceSearchQuery;
 
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;

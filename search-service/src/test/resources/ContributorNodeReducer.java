@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
 import no.unit.nva.search.model.records.JsonNodeMutator;
-import no.unit.nva.search.resource.Constants;
+import no.unit.nva.search.service.resource.Constants;
 import nva.commons.core.ioutils.IoUtils;
 import org.junit.jupiter.api.Test;
 

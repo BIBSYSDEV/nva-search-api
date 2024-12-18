@@ -1,13 +1,13 @@
 package no.unit.nva.search;
 
-import static no.unit.nva.constants.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
-import static no.unit.nva.search.resource.ResourceClient.defaultClient;
+import static no.unit.nva.search.model.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
+import static no.unit.nva.search.service.resource.ResourceClient.defaultClient;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 
-import no.unit.nva.search.common.ContentTypeUtils;
-import no.unit.nva.search.resource.ResourceClient;
+import no.unit.nva.search.model.ContentTypeUtils;
+import no.unit.nva.search.service.resource.ResourceClient;
 
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;

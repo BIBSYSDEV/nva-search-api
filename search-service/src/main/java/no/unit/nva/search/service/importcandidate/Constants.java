@@ -19,7 +19,6 @@ import static no.unit.nva.search.model.constant.Words.NAME;
 import static no.unit.nva.search.model.constant.Words.PIPE;
 import static no.unit.nva.search.model.constant.Words.TOP_LEVEL_ORGANIZATION;
 import static no.unit.nva.search.model.constant.Words.TYPE;
-import static no.unit.nva.search.model.constant.Words.PIPE;
 
 import nva.commons.core.JacocoGenerated;
 

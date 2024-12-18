@@ -1,19 +1,19 @@
-package no.unit.nva.search.ticket;
+package no.unit.nva.search.service.ticket;
 
-import static no.unit.nva.search.ticket.Constants.CANNOT_SEARCH_AS_BOTH_ASSIGNEE_AND_OWNER_AT_THE_SAME_TIME;
-import static no.unit.nva.search.ticket.Constants.FILTER_BY_ORGANIZATION;
-import static no.unit.nva.search.ticket.Constants.FILTER_BY_OWNER;
-import static no.unit.nva.search.ticket.Constants.FILTER_BY_TICKET_TYPES;
-import static no.unit.nva.search.ticket.Constants.FILTER_BY_UN_PUBLISHED;
-import static no.unit.nva.search.ticket.Constants.FILTER_BY_USER_AND_TICKET_TYPES;
-import static no.unit.nva.search.ticket.Constants.ORGANIZATION_IS_REQUIRED;
-import static no.unit.nva.search.ticket.Constants.ORGANIZATION_PATHS;
-import static no.unit.nva.search.ticket.Constants.TYPE_KEYWORD;
-import static no.unit.nva.search.ticket.Constants.USER_IS_NOT_ALLOWED_TO_SEARCH_FOR_TICKETS_NOT_OWNED_BY_THEMSELVES;
-import static no.unit.nva.search.ticket.Constants.USER_IS_REQUIRED;
-import static no.unit.nva.search.ticket.TicketParameter.ASSIGNEE;
-import static no.unit.nva.search.ticket.TicketParameter.OWNER;
-import static no.unit.nva.search.ticket.TicketParameter.STATISTICS;
+import static no.unit.nva.search.service.ticket.Constants.CANNOT_SEARCH_AS_BOTH_ASSIGNEE_AND_OWNER_AT_THE_SAME_TIME;
+import static no.unit.nva.search.service.ticket.Constants.FILTER_BY_ORGANIZATION;
+import static no.unit.nva.search.service.ticket.Constants.FILTER_BY_OWNER;
+import static no.unit.nva.search.service.ticket.Constants.FILTER_BY_TICKET_TYPES;
+import static no.unit.nva.search.service.ticket.Constants.FILTER_BY_UN_PUBLISHED;
+import static no.unit.nva.search.service.ticket.Constants.FILTER_BY_USER_AND_TICKET_TYPES;
+import static no.unit.nva.search.service.ticket.Constants.ORGANIZATION_IS_REQUIRED;
+import static no.unit.nva.search.service.ticket.Constants.ORGANIZATION_PATHS;
+import static no.unit.nva.search.service.ticket.Constants.TYPE_KEYWORD;
+import static no.unit.nva.search.service.ticket.Constants.USER_IS_NOT_ALLOWED_TO_SEARCH_FOR_TICKETS_NOT_OWNED_BY_THEMSELVES;
+import static no.unit.nva.search.service.ticket.Constants.USER_IS_REQUIRED;
+import static no.unit.nva.search.service.ticket.TicketParameter.ASSIGNEE;
+import static no.unit.nva.search.service.ticket.TicketParameter.OWNER;
+import static no.unit.nva.search.service.ticket.TicketParameter.STATISTICS;
 
 import static nva.commons.apigateway.AccessRight.MANAGE_CUSTOMERS;
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
@@ -23,7 +23,7 @@ import static org.opensearch.index.query.QueryBuilders.boolQuery;
 
 import static java.util.Objects.isNull;
 
-import no.unit.nva.search.common.records.FilterBuilder;
+import no.unit.nva.search.model.records.FilterBuilder;
 
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;

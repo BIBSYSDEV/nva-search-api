@@ -9,6 +9,7 @@ import static no.unit.nva.search.model.constant.Words.CONSUMPTION_ATTRIBUTES;
 import static no.unit.nva.search.model.constant.Words.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.search.model.constant.Words.RESOURCES;
 import static no.unit.nva.search.model.constant.Words.TICKETS;
+
 import static nva.commons.core.attempt.Try.attempt;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

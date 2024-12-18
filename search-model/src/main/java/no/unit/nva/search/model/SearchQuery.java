@@ -1,20 +1,20 @@
-package no.unit.nva.search.common;
+package no.unit.nva.search.model;
 
 import static com.google.common.net.MediaType.CSV_UTF_8;
 import static com.google.common.net.MediaType.JSON_UTF_8;
 
-import static no.unit.nva.constants.Defaults.DEFAULT_SORT_ORDER;
-import static no.unit.nva.constants.Defaults.ZERO_RESULTS_AGGREGATION_ONLY;
-import static no.unit.nva.constants.Words.ALL;
-import static no.unit.nva.constants.Words.ASTERISK;
-import static no.unit.nva.constants.Words.COMMA;
-import static no.unit.nva.constants.Words.KEYWORD_FALSE;
-import static no.unit.nva.constants.Words.POST_FILTER;
-import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
-import static no.unit.nva.constants.Words.SORT_LAST;
-import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
-import static no.unit.nva.search.common.enums.FieldOperator.NOT_ALL_OF;
-import static no.unit.nva.search.common.enums.FieldOperator.NOT_ANY_OF;
+import static no.unit.nva.search.model.constant.Defaults.DEFAULT_SORT_ORDER;
+import static no.unit.nva.search.model.constant.Defaults.ZERO_RESULTS_AGGREGATION_ONLY;
+import static no.unit.nva.search.model.constant.Patterns.COLON_OR_SPACE;
+import static no.unit.nva.search.model.constant.Words.ALL;
+import static no.unit.nva.search.model.constant.Words.ASTERISK;
+import static no.unit.nva.search.model.constant.Words.COMMA;
+import static no.unit.nva.search.model.constant.Words.KEYWORD_FALSE;
+import static no.unit.nva.search.model.constant.Words.POST_FILTER;
+import static no.unit.nva.search.model.constant.Words.RELEVANCE_KEY_NAME;
+import static no.unit.nva.search.model.constant.Words.SORT_LAST;
+import static no.unit.nva.search.model.enums.FieldOperator.NOT_ALL_OF;
+import static no.unit.nva.search.model.enums.FieldOperator.NOT_ANY_OF;
 
 import static nva.commons.core.attempt.Try.attempt;
 
@@ -22,22 +22,22 @@ import static java.util.Objects.nonNull;
 
 import com.google.common.net.MediaType;
 
-import no.unit.nva.constants.ErrorMessages;
-import no.unit.nva.constants.Words;
-import no.unit.nva.search.common.builder.AcrossFieldsQuery;
-import no.unit.nva.search.common.builder.ExistsQuery;
-import no.unit.nva.search.common.builder.FuzzyKeywordQuery;
-import no.unit.nva.search.common.builder.HasPartsQuery;
-import no.unit.nva.search.common.builder.KeywordQuery;
-import no.unit.nva.search.common.builder.PartOfQuery;
-import no.unit.nva.search.common.builder.RangeQuery;
-import no.unit.nva.search.common.builder.TextQuery;
-import no.unit.nva.search.common.constant.Functions;
-import no.unit.nva.search.common.enums.ParameterKey;
-import no.unit.nva.search.common.enums.SortKey;
-import no.unit.nva.search.common.records.HttpResponseFormatter;
-import no.unit.nva.search.common.records.QueryContentWrapper;
-import no.unit.nva.search.common.records.SwsResponse;
+import no.unit.nva.search.model.builder.AcrossFieldsQuery;
+import no.unit.nva.search.model.builder.ExistsQuery;
+import no.unit.nva.search.model.builder.FuzzyKeywordQuery;
+import no.unit.nva.search.model.builder.HasPartsQuery;
+import no.unit.nva.search.model.builder.KeywordQuery;
+import no.unit.nva.search.model.builder.PartOfQuery;
+import no.unit.nva.search.model.builder.RangeQuery;
+import no.unit.nva.search.model.builder.TextQuery;
+import no.unit.nva.search.model.constant.ErrorMessages;
+import no.unit.nva.search.model.constant.Functions;
+import no.unit.nva.search.model.constant.Words;
+import no.unit.nva.search.model.enums.ParameterKey;
+import no.unit.nva.search.model.enums.SortKey;
+import no.unit.nva.search.model.records.HttpResponseFormatter;
+import no.unit.nva.search.model.records.QueryContentWrapper;
+import no.unit.nva.search.model.records.SwsResponse;
 
 import nva.commons.apigateway.AccessRight;
 import nva.commons.core.JacocoGenerated;

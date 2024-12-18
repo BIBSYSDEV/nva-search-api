@@ -1,4 +1,4 @@
-package no.unit.nva.search.resource;
+package no.unit.nva.search.service.resource;
 
 import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 
@@ -9,17 +9,17 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import no.unit.nva.search.common.records.JsonNodeMutator;
-import no.unit.nva.search.resource.response.Affiliation;
-import no.unit.nva.search.resource.response.Contributor;
-import no.unit.nva.search.resource.response.Identity;
-import no.unit.nva.search.resource.response.OtherIdentifiers;
-import no.unit.nva.search.resource.response.PublicationDate;
-import no.unit.nva.search.resource.response.PublishingDetails;
-import no.unit.nva.search.resource.response.RecordMetadata;
-import no.unit.nva.search.resource.response.ResourceSearchResponse;
-import no.unit.nva.search.resource.response.ResourceSearchResponse.Builder;
-import no.unit.nva.search.resource.response.Series;
+import no.unit.nva.search.model.records.JsonNodeMutator;
+import no.unit.nva.search.service.resource.response.Affiliation;
+import no.unit.nva.search.service.resource.response.Contributor;
+import no.unit.nva.search.service.resource.response.Identity;
+import no.unit.nva.search.service.resource.response.OtherIdentifiers;
+import no.unit.nva.search.service.resource.response.PublicationDate;
+import no.unit.nva.search.service.resource.response.PublishingDetails;
+import no.unit.nva.search.service.resource.response.RecordMetadata;
+import no.unit.nva.search.service.resource.response.ResourceSearchResponse;
+import no.unit.nva.search.service.resource.response.ResourceSearchResponse.Builder;
+import no.unit.nva.search.service.resource.response.Series;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +27,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -85,7 +84,7 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
     }
 
     public static String path(String... path) {
-        return Arrays.stream(path).collect(Collectors.joining("."));
+        return String.join(".", path);
     }
 
     public static List<String> getIncludedFields() {
@@ -172,7 +171,7 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
                 : null;
     }
 
-    private Map<String, String> jsonNodeMapToMap(JsonNode source) throws IOException {
+    private Map<String, String> jsonNodeMapToMap(JsonNode source) {
         return objectMapper.convertValue(source, Map.class);
     }
 

@@ -1,7 +1,7 @@
 package no.unit.nva.search;
 
-import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
-import static no.unit.nva.search.resource.ResourceParameter.SEARCH_ALL;
+import static no.unit.nva.search.model.constant.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.search.service.resource.ResourceParameter.SEARCH_ALL;
 
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 
@@ -19,10 +19,9 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import no.unit.nva.search.common.FakeGatewayResponse;
-import no.unit.nva.search.common.records.SwsResponse;
-import no.unit.nva.search.resource.ResourceClient;
-import no.unit.nva.search.resource.response.ResourceSearchResponse;
+import no.unit.nva.search.model.records.SwsResponse;
+import no.unit.nva.search.service.resource.ResourceClient;
+import no.unit.nva.search.service.resource.response.ResourceSearchResponse;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 
 import nva.commons.core.Environment;
@@ -57,14 +56,6 @@ class SearchResource20241201HandlerTest {
         outputStream = new ByteArrayOutputStream();
     }
 
-    private void prepareRestHighLevelClientOkResponse() throws IOException {
-        var jsonResponse =
-                stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
-        var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
-
-        when(mockedSearchClient.doSearch(any())).thenReturn(body);
-    }
-
     @Test
     public void shouldReturnAResponseThatCanBeMappedToModelDto() throws IOException {
         prepareRestHighLevelClientOkResponse();
@@ -88,6 +79,14 @@ class SearchResource20241201HandlerTest {
                         equalTo(
                                 URI.create(
                                         "http://localhost/publication/f367b260-c15e-4d0f-b197-e1dc0e9eb0e8"))));
+    }
+
+    private void prepareRestHighLevelClientOkResponse() throws IOException {
+        var jsonResponse =
+                stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
+        var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
+
+        when(mockedSearchClient.doSearch(any())).thenReturn(body);
     }
 
     private InputStream getInputStream() throws JsonProcessingException {

@@ -1,10 +1,10 @@
 package no.unit.nva.search;
 
+import static no.unit.nva.search.model.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
 import static no.unit.nva.search.service.importcandidate.ImportCandidateClient.defaultClient;
 import static no.unit.nva.search.service.importcandidate.ImportCandidateParameter.AGGREGATION;
 import static no.unit.nva.search.service.importcandidate.ImportCandidateParameter.FROM;
 import static no.unit.nva.search.service.importcandidate.ImportCandidateParameter.SIZE;
-import static no.unit.nva.search.model.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;

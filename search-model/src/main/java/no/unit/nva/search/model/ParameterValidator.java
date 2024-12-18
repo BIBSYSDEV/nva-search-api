@@ -1,23 +1,23 @@
-package no.unit.nva.search.common;
+package no.unit.nva.search.model;
 
-import static no.unit.nva.constants.ErrorMessages.RELEVANCE_SEARCH_AFTER_ARE_MUTUAL_EXCLUSIVE;
-import static no.unit.nva.constants.ErrorMessages.requiredMissingMessage;
-import static no.unit.nva.constants.ErrorMessages.validQueryParameterNamesMessage;
-import static no.unit.nva.constants.Words.ALL;
-import static no.unit.nva.constants.Words.COMMA;
-import static no.unit.nva.constants.Words.HTTPS;
-import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
-import static no.unit.nva.search.common.ContentTypeUtils.extractContentTypeFromRequestInfo;
-import static no.unit.nva.search.common.constant.Functions.decodeUTF;
-import static no.unit.nva.search.common.constant.Functions.mergeWithColonOrComma;
+import static no.unit.nva.search.model.ContentTypeUtils.extractContentTypeFromRequestInfo;
+import static no.unit.nva.search.model.constant.ErrorMessages.RELEVANCE_SEARCH_AFTER_ARE_MUTUAL_EXCLUSIVE;
+import static no.unit.nva.search.model.constant.ErrorMessages.requiredMissingMessage;
+import static no.unit.nva.search.model.constant.ErrorMessages.validQueryParameterNamesMessage;
+import static no.unit.nva.search.model.constant.Functions.decodeUTF;
+import static no.unit.nva.search.model.constant.Functions.mergeWithColonOrComma;
+import static no.unit.nva.search.model.constant.Words.ALL;
+import static no.unit.nva.search.model.constant.Words.COMMA;
+import static no.unit.nva.search.model.constant.Words.HTTPS;
+import static no.unit.nva.search.model.constant.Words.RELEVANCE_KEY_NAME;
 
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 
 import static java.util.Objects.isNull;
 
-import no.unit.nva.search.common.constant.Patterns;
-import no.unit.nva.search.common.enums.ParameterKey;
-import no.unit.nva.search.common.enums.ValueEncoding;
+import no.unit.nva.search.model.constant.Patterns;
+import no.unit.nva.search.model.enums.ParameterKey;
+import no.unit.nva.search.model.enums.ValueEncoding;
 
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
