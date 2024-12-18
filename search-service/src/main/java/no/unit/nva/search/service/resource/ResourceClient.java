@@ -77,7 +77,7 @@ public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceSearch
     protected FunctionWithException<SwsResponse, SwsResponse, RuntimeException>
             logAndReturnResult() {
         return result -> {
-            OpenSearchClient.logger.info(buildLogInfo(result));
+            logger.info(buildLogInfo(result));
             return result;
         };
     }

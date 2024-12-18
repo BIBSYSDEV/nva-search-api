@@ -75,7 +75,7 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceS
     protected FunctionWithException<UserSettings, UserSettings, RuntimeException>
             logAndReturnResult() {
         return result -> {
-            OpenSearchClient.logger.info(new UserSettingLog(userSettingUri, result).toJsonString());
+            logger.info(new UserSettingLog(userSettingUri, result).toJsonString());
             return result;
         };
     }

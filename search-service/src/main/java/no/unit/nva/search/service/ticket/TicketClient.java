@@ -50,7 +50,7 @@ public class TicketClient extends OpenSearchClient<SwsResponse, TicketSearchQuer
     protected FunctionWithException<SwsResponse, SwsResponse, RuntimeException>
             logAndReturnResult() {
         return result -> {
-            OpenSearchClient.logger.info(buildLogInfo(result));
+            logger.info(buildLogInfo(result));
             return result;
         };
     }

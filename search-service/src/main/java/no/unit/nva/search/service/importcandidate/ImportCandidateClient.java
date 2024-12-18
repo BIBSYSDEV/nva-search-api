@@ -2,6 +2,7 @@ package no.unit.nva.search.service.importcandidate;
 
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
 import static no.unit.nva.search.model.jwt.Tools.getCachedJwtProvider;
+import static no.unit.nva.search.model.records.SwsResponse.SwsResponseBuilder.swsResponseBuilder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -25,7 +26,7 @@ import java.util.function.BinaryOperator;
 public class ImportCandidateClient
         extends OpenSearchClient<
                 SwsResponse,
-                no.unit.nva.search.service.importcandidate.ImportCandidateSearchQuery> {
+                ImportCandidateSearchQuery> {
 
     public ImportCandidateClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
         super(client, cachedJwtProvider);
@@ -46,14 +47,14 @@ public class ImportCandidateClient
     @Override
     protected BinaryOperator<SwsResponse> responseAccumulator() {
         return (a, b) ->
-                SwsResponse.SwsResponseBuilder.swsResponseBuilder().merge(a).merge(b).build();
+                swsResponseBuilder().merge(a).merge(b).build();
     }
 
     @Override
     protected FunctionWithException<SwsResponse, SwsResponse, RuntimeException>
             logAndReturnResult() {
         return result -> {
-            OpenSearchClient.logger.info(buildLogInfo(result));
+            logger.info(buildLogInfo(result));
             return result;
         };
     }
