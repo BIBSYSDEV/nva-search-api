@@ -10,10 +10,9 @@ import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_NON_EMPTY;
 import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_NUMBER;
-import static no.unit.nva.search.model.constant.Words.DOT;
-import static no.unit.nva.search.model.constant.Words.KEYWORD;
-import static no.unit.nva.search.model.enums.ParameterKind.CUSTOM;
 
+import static no.unit.nva.search.model.enums.ParameterKind.CUSTOM;
+import static no.unit.nva.search.model.enums.ParameterKind.KEYWORD;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 
 import static java.util.Objects.nonNull;
@@ -30,6 +29,8 @@ import java.util.stream.Stream;
  *     define the parameters that can be used in the query.
  */
 public interface ParameterKey<K extends Enum<K> & ParameterKey<K>> {
+    String DOT_KEYWORD = ".keyword";
+
     static Predicate<ParameterKey<?>> equalTo(String name) {
         return key -> name.matches(key.fieldPattern());
     }
@@ -71,12 +72,12 @@ public interface ParameterKey<K extends Enum<K> & ParameterKey<K>> {
     static Function<String, String> trimKeyword(ParameterKind parameterKind, boolean... isKeyWord) {
         return field ->
                 isNotKeyword(parameterKind, isKeyWord)
-                        ? field.trim().replace(DOT + KEYWORD, EMPTY_STRING)
+                        ? field.trim().replace(DOT_KEYWORD, EMPTY_STRING)
                         : field.trim();
     }
 
     static boolean isNotKeyword(ParameterKind parameterKind, boolean... isKeyWord) {
-        var result = !(parameterKind.equals(ParameterKind.KEYWORD) || parameterKind.equals(CUSTOM));
+        var result = !(parameterKind.equals(KEYWORD) || parameterKind.equals(CUSTOM));
         return isKeyWord.length == 1 ? !isKeyWord[0] : result;
     }
 
