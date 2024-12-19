@@ -6,6 +6,7 @@ import static no.unit.nva.search.model.constant.Words.HAS_PARTS;
 import no.unit.nva.search.model.enums.ParameterKey;
 
 import nva.commons.core.JacocoGenerated;
+
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.join.query.HasParentQueryBuilder;
 

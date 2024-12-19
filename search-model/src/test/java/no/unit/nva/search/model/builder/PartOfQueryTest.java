@@ -1,6 +1,6 @@
 package no.unit.nva.search.model.builder;
 
-//class PartOfQueryTest {
+// class PartOfQueryTest {
 //
 //        enum FakeParameter implements ParameterKey {
 //            CONTRIBUTORS_OF_CHILD
@@ -14,4 +14,4 @@ package no.unit.nva.search.model.builder;
 //                    partOfQuery.buildMatchAnyValueQuery(
 //                        FakeParameter.CONTRIBUTORS_OF_CHILD, "ewsrdf"));
 //        }
-//}
+// }

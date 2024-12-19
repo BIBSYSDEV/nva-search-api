@@ -24,9 +24,7 @@ import java.util.function.BinaryOperator;
  * @author Stig Norland
  */
 public class ImportCandidateClient
-        extends OpenSearchClient<
-                SwsResponse,
-                ImportCandidateSearchQuery> {
+        extends OpenSearchClient<SwsResponse, ImportCandidateSearchQuery> {
 
     public ImportCandidateClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
         super(client, cachedJwtProvider);
@@ -46,8 +44,7 @@ public class ImportCandidateClient
 
     @Override
     protected BinaryOperator<SwsResponse> responseAccumulator() {
-        return (a, b) ->
-                swsResponseBuilder().merge(a).merge(b).build();
+        return (a, b) -> swsResponseBuilder().merge(a).merge(b).build();
     }
 
     @Override
