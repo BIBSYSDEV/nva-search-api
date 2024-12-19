@@ -1,0 +1,2 @@
+# File: META-INF/services/org.junit.platform.launcher.TestExecutionListener
+no.unit.nva.search.service.InjectedTestSettings

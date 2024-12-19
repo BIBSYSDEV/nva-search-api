@@ -1,10 +1,10 @@
 package no.unit.nva.indexing.handlers;
 
-import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
-import static no.unit.nva.constants.ErrorMessages.MISSING_IDENTIFIER_IN_RESOURCE;
-import static no.unit.nva.constants.ErrorMessages.MISSING_INDEX_NAME_IN_RESOURCE;
-import static no.unit.nva.constants.Words.RESOURCES;
-import static no.unit.nva.constants.Words.TICKETS;
+import static no.unit.nva.search.model.constant.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.search.model.constant.ErrorMessages.MISSING_IDENTIFIER_IN_RESOURCE;
+import static no.unit.nva.search.model.constant.ErrorMessages.MISSING_INDEX_NAME_IN_RESOURCE;
+import static no.unit.nva.search.model.constant.Words.RESOURCES;
+import static no.unit.nva.search.model.constant.Words.TICKETS;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 
@@ -29,9 +29,9 @@ import no.unit.nva.events.models.EventReference;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexing.testutils.FakeIndexingClient;
 import no.unit.nva.indexing.testutils.FakeSqsClient;
-import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
-import no.unit.nva.indexingclient.models.IndexDocument;
 import no.unit.nva.s3.S3Driver;
+import no.unit.nva.search.model.records.EventConsumptionAttributes;
+import no.unit.nva.search.model.records.IndexDocument;
 import no.unit.nva.stubs.FakeS3Client;
 import no.unit.nva.testutils.RandomDataGenerator;
 
@@ -113,7 +113,7 @@ public class IndexResourceHandlerTest {
         var input = createEventBridgeEvent(resourceLocation);
         indexResourceHandler.handleRequest(input, output, context);
 
-        var deliveredMessage = sqsClient.getDeliveredMessages().get(0);
+        var deliveredMessage = sqsClient.getDeliveredMessages().getFirst();
 
         assertThat(
                 deliveredMessage.messageAttributes().get("id").stringValue(), is(notNullValue()));
@@ -131,7 +131,7 @@ public class IndexResourceHandlerTest {
         var input = createEventBridgeEvent(resourceLocation);
         indexResourceHandler.handleRequest(input, output, context);
 
-        var deliveredMessage = sqsClient.getDeliveredMessages().get(0);
+        var deliveredMessage = sqsClient.getDeliveredMessages().getFirst();
 
         assertThat(
                 deliveredMessage.messageAttributes().get("id").stringValue(), is(notNullValue()));

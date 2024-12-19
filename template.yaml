@@ -237,7 +237,7 @@ Resources:
     Properties:
       Description: Lambda for searching Tickets
       CodeUri: search-handlers
-      Handler: no.unit.nva.search.SearchTicketAuthHandler::handleRequest
+      Handler: no.unit.nva.search.handler.SearchTicketAuthHandler::handleRequest
       AutoPublishAlias: live
       DeploymentPreference:
         Enabled: true
@@ -264,7 +264,7 @@ Resources:
     Properties:
       Description: Lambda for searching Resources
       CodeUri: search-handlers
-      Handler: no.unit.nva.search.SearchResourceHandler::handleRequest
+      Handler: no.unit.nva.search.handler.SearchResourceHandler::handleRequest
       AutoPublishAlias: live
       DeploymentPreference:
         Enabled: true
@@ -289,7 +289,7 @@ Resources:
     Properties:
       Description: Lambda for searching Resources
       CodeUri: search-handlers
-      Handler: no.unit.nva.search.ExportResourceHandler::handleRequest
+      Handler: no.unit.nva.search.handler.ExportResourceHandler::handleRequest
       Timeout: 180
       AutoPublishAlias: live
       DeploymentPreference:
@@ -313,7 +313,7 @@ Resources:
     Properties:
       Description: Lambda for searching Resources
       CodeUri: search-handlers
-      Handler: no.unit.nva.search.SearchResourceAuthHandler::handleRequest
+      Handler: no.unit.nva.search.handler.SearchResourceAuthHandler::handleRequest
       AutoPublishAlias: live
       DeploymentPreference:
         Enabled: true
@@ -339,7 +339,7 @@ Resources:
     Properties:
       Description: Lambda for searching Import Candidates
       CodeUri: search-handlers
-      Handler: no.unit.nva.search.SearchImportCandidateAuthHandler::handleRequest
+      Handler: no.unit.nva.search.handler.SearchImportCandidateAuthHandler::handleRequest
       AutoPublishAlias: live
       DeploymentPreference:
         Enabled: true
@@ -583,7 +583,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: batch-index
-      Handler: no.unit.nva.indexingclient.EventBasedBatchIndexer::handleRequest
+      Handler: no.unit.nva.indexing.client.EventBasedBatchIndexer::handleRequest
       MemorySize: 1024
       Timeout: 900
       Role: !GetAtt SearchHandlerRole.Arn
@@ -604,7 +604,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: batch-index
-      Handler: no.unit.nva.indexingclient.StartBatchIndexingHandler::handleRequest
+      Handler: no.unit.nva.indexing.client.StartBatchIndexingHandler::handleRequest
       MemorySize: 1024
       Timeout: 900
       Role: !GetAtt SearchHandlerRole.Arn
@@ -618,7 +618,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: batch-index
-      Handler: no.unit.nva.indexingclient.keybatch.GenerateKeyBatchesHandler::handleRequest
+      Handler: no.unit.nva.indexing.client.keybatch.GenerateKeyBatchesHandler::handleRequest
       MemorySize: 1024
       Timeout: 900
       Role: !GetAtt SearchHandlerRole.Arn
@@ -642,7 +642,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: batch-index
-      Handler: no.unit.nva.indexingclient.keybatch.KeyBasedBatchIndexHandler::handleRequest
+      Handler: no.unit.nva.indexing.client.keybatch.KeyBasedBatchIndexHandler::handleRequest
       MemorySize: 1024
       Timeout: 900
       Role: !GetAtt SearchHandlerRole.Arn

@@ -16,7 +16,7 @@ import static org.mockito.Mockito.when;
 
 import com.amazonaws.services.lambda.runtime.Context;
 
-import no.unit.nva.indexingclient.IndexingClient;
+import no.unit.nva.search.model.IndexingClient;
 
 import org.apache.logging.log4j.core.test.appender.ListAppender;
 import org.junit.jupiter.api.BeforeAll;

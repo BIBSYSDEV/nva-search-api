@@ -2,7 +2,7 @@ package no.unit.nva.indexing.handlers;
 
 import static no.unit.nva.LogAppender.getAppender;
 import static no.unit.nva.LogAppender.logToString;
-import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.search.model.constant.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 
 import static nva.commons.core.attempt.Try.attempt;
@@ -22,8 +22,8 @@ import no.unit.nva.events.models.AwsEventBridgeEvent;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexing.model.DeleteImportCandidateEvent;
 import no.unit.nva.indexing.testutils.FakeIndexingClient;
-import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
-import no.unit.nva.indexingclient.models.IndexDocument;
+import no.unit.nva.search.model.records.EventConsumptionAttributes;
+import no.unit.nva.search.model.records.IndexDocument;
 
 import org.apache.logging.log4j.core.test.appender.ListAppender;
 import org.junit.jupiter.api.BeforeAll;

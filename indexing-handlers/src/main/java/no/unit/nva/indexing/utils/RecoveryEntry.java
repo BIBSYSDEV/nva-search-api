@@ -1,7 +1,7 @@
 package no.unit.nva.indexing.utils;
 
-import no.unit.nva.indexingclient.models.IndexDocument;
-import no.unit.nva.indexingclient.models.QueueClient;
+import no.unit.nva.search.model.records.IndexDocument;
+import no.unit.nva.search.model.records.QueueClient;
 
 import nva.commons.core.Environment;
 

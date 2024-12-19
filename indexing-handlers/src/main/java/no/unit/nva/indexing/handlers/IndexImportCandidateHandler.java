@@ -8,9 +8,9 @@ import no.unit.nva.events.handlers.DestinationsEventBridgeEventHandler;
 import no.unit.nva.events.models.AwsEventBridgeDetail;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
 import no.unit.nva.events.models.EventReference;
-import no.unit.nva.indexingclient.IndexingClient;
-import no.unit.nva.indexingclient.models.IndexDocument;
 import no.unit.nva.s3.S3Driver;
+import no.unit.nva.search.model.IndexingClient;
+import no.unit.nva.search.model.records.IndexDocument;
 
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;

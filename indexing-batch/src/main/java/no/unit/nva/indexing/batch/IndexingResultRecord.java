@@ -1,0 +1,7 @@
+package no.unit.nva.indexing.batch;
+
+import java.util.List;
+
+public record IndexingResultRecord<T>(
+        List<T> failedResults, String nextStartMarker, boolean truncated)
+        implements IndexingResult<T> {}

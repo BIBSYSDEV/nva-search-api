@@ -1,0 +1,5164 @@
+[
+  {
+    "type": "Publication",
+    "publicationContextUris": [
+      "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2023"
+    ],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39",
+    "filesStatus": "noFiles",
+    "associatedArtifacts": [
+      {
+        "type": "NullAssociatedArtifact"
+      }
+    ],
+    "createdDate": "2023-11-06T08:46:26.204053625Z",
+    "contributorOrganizations": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0"
+    ],
+    "entityDescription": {
+      "type": "EntityDescription",
+      "alternativeAbstracts": {},
+      "contributors": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
+              "type": "Organization",
+              "countryCode": "IQ",
+              "labels": {
+                "nn": "Al-Iraqia University",
+                "nb": "Al-Iraqia University",
+                "en": "Al-Iraqia University"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.1.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Avdeling for kunde og kommunikasjon",
+                "nb": "Avdeling for kunde og kommunikasjon",
+                "en": "The Customer and Communication Department"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "en": "Norwegian Defence University College",
+                "nb": "Forsvarets høgskole"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136254",
+            "type": "Identity",
+            "name": "Kjetil Møkkelgjerd",
+            "orcId": "https://sandbox.orcid.org/0000-0003-4147-3499",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        }
+      ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
+              "type": "Organization",
+              "countryCode": "IQ",
+              "labels": {
+                "nn": "Al-Iraqia University",
+                "nb": "Al-Iraqia University",
+                "en": "Al-Iraqia University"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.1.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Avdeling for kunde og kommunikasjon",
+                "nb": "Avdeling for kunde og kommunikasjon",
+                "en": "The Customer and Communication Department"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "en": "Norwegian Defence University College",
+                "nb": "Forsvarets høgskole"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136254",
+            "type": "Identity",
+            "name": "Kjetil Møkkelgjerd",
+            "orcId": "https://sandbox.orcid.org/0000-0003-4147-3499",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        }
+      ],
+      "contributorsCount": 1,
+      "mainTitle": "Kjetils ticket test",
+      "language": "http://lexvo.org/id/iso639-3/nor",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "day": "6",
+        "month": "11",
+        "year": "2023"
+      },
+      "reference": {
+        "type": "Reference",
+        "doi": "https://doi.org/10.1371/journal.pone.0047887",
+        "publicationContext": {
+          "type": "Report",
+          "isbnList": [
+            "9788202535032"
+          ],
+          "publisher": {
+            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2023",
+            "identifier": "944351B3-DC14-4F62-9939-7A2793D6F0B1",
+            "type": "Publisher",
+            "isbnPrefix": "978-91-27",
+            "name": "Natur och kultur -deleted",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalForlagInfo?pid=944351B3-DC14-4F62-9939-7A2793D6F0B1",
+            "scientificValue": "LevelTwo",
+            "valid": true
+          },
+          "series": {
+            "type": "Series",
+            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/series/B24919B5-5DC4-4787-8D84-7922852we373/2024",
+            "identifier": "B24919B5-5DC4-4787-8D84-7922852we373",
+            "name": "Some series nr2",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/nvakanal?pid=B24919B5-5DC4-4787-8D84-7922852we373",
+            "scientificValue": "Unassigned"
+          }
+        },
+        "publicationInstance": {
+          "type": "ReportResearch",
+          "pages": {
+            "type": "MonographPages",
+            "illustrated": false
+          }
+        }
+      }
+    },
+    "identifier": "018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39",
+    "modelVersion": "0.20.54",
+    "modifiedDate": "2023-11-06T08:48:11.943422687Z",
+    "nviType": "NonNviCandidate",
+    "projects": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/project/1433422",
+        "type": "ResearchProject",
+        "name": "Utvikling av eplekaken"
+      }
+    ],
+    "publishedDate": "2023-11-06T08:48:11.936406187Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "1136254@20754.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    },
+    "status": "DELETED",
+    "topLevelOrganizations": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "hasPart": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.1.0.0",
+            "type": "Organization",
+            "acronym": "UA",
+            "labels": {
+              "nn": "Divisjon for utdanning og administrasjon",
+              "nb": "Divisjon utdanning og administrasjon",
+              "en": "The Education and Administration Division"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+            "type": "Organization",
+            "acronym": "FK",
+            "labels": {
+              "nn": "Divisjon for forskings- og kunnskapsressursar",
+              "nb": "Divisjon forsknings- og kunnskapsressurser",
+              "en": "The Research and Education Resources Division"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.4.0.0",
+            "type": "Organization",
+            "acronym": "ORG",
+            "labels": {
+              "nn": "Avdeling for organisasjonsutvikling",
+              "nb": "Avdeling for organisasjonsutvikling",
+              "en": "The Organisational Development Department"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
+            "type": "Organization",
+            "acronym": "KUNDE",
+            "countryCode": "NO",
+            "labels": {
+              "nn": "Avdeling for kunde og kommunikasjon",
+              "nb": "Avdeling for kunde og kommunikasjon",
+              "en": "The Customer and Communication Department"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.5.0.0",
+            "type": "Organization",
+            "acronym": "VIRK",
+            "labels": {
+              "nn": "Avdeling for verksemdstyring",
+              "nb": "Avdeling for virksomhetsstyring",
+              "en": "The Corporate Governance Department"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.3.0.0",
+            "type": "Organization",
+            "acronym": "DI",
+            "labels": {
+              "nn": "Divisjon for data og infrastruktur",
+              "nb": "Divisjon data og infrastruktur",
+              "en": "The Organisational Development Department"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          }
+        ],
+        "labels": {
+          "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+          "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
+        "type": "Organization",
+        "countryCode": "IQ",
+        "labels": {
+          "nb": "Al-Iraqia Universitet",
+          "nn": "Universitet i Irak",
+          "en": "Al-Iraqia University"
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "hasPart": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.4.0.0",
+            "type": "Organization",
+            "acronym": "KS",
+            "labels": {
+              "nb": "Krigsskolen (KS)"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.7.0.0",
+            "type": "Organization",
+            "acronym": "IFF",
+            "labels": {
+              "nb": "Institutt for forsvarsstudier"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.5.0.0",
+            "type": "Organization",
+            "acronym": "FIH",
+            "labels": {
+              "nb": "Cyberingeniørskolen"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.2.0.0",
+            "type": "Organization",
+            "acronym": "LKSK",
+            "labels": {
+              "nb": "Luftkrigsskolen (LKSK)"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.8.0.0",
+            "type": "Organization",
+            "acronym": "FSK",
+            "labels": {
+              "nb": "Institutt for militær ledelse og operasjoner"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.9.0.0",
+            "type": "Organization",
+            "acronym": "BEFAL",
+            "labels": {
+              "nb": "Befalsskolen",
+              "en": "Officer Candidate School"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.3.0.0",
+            "type": "Organization",
+            "acronym": "SKSK",
+            "labels": {
+              "nb": "Sjøkrigsskolen (SKSK)"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+            }
+          }
+        ],
+        "labels": {
+          "nb": "Forsvarets høgskole",
+          "en": "Norwegian Defence University College"
+        }
+      }
+    ],
+    "joinField": {
+      "name": "hasParts"
+    }
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "handle": "https://hdl.handle.net/1956/7948",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018c7c03c7cd-2e2ce462-4428-4169-a959-cdde629fe139",
+    "identifier": "018c7c03c7cd-2e2ce462-4428-4169-a959-cdde629fe139",
+    "filesStatus": "noFiles",
+    "associatedArtifacts": [
+      {
+        "type": "NullAssociatedArtifact"
+      }
+    ],
+    "createdDate": "2023-12-18T08:21:11.463306145Z",
+    "contributorOrganizations": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    ],
+    "curatingInstitutions": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0"
+    ],
+    "entityDescription": {
+      "type": "EntityDescription",
+      "abstract": "In this paper, the authors report on collaboration between two universities from 2003 and beyond. The collaborations have been carried out in four main spheres: in the area of Staff training programmes, in the area of Development and research in information literacy, in the area of Developing Models of Digital Repositories and also in the domain of Research in Library Leadership. This cooperation started in 2003 when the authors worked on developing the first Leonardo da Vinci program in the field of continued education, and is still ongoing. The collaborations have been funded by different national and international funding agencies, as well as from the institutions of the authors.",
+      "alternativeAbstracts": {},
+      "contributorsCount" : 2,
+      "contributors": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "verificationStatus": "NotVerified",
+            "type": "Identity",
+            "name": "Angela Repanovici"
+          },
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Institutt for historiske og klassiske studier",
+                "en": "Department of Historical and Classical Studies"
+              }
+            }
+          ],
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Ane Landøy"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        }
+      ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "verificationStatus": "NotVerified",
+            "type": "Identity",
+            "name": "Angela Repanovici"
+          },
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Institutt for historiske og klassiske studier",
+                "en": "Department of Historical and Classical Studies"
+              }
+            }
+          ],
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Ane Landøy"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        }
+      ],
+      "language": "http://lexvo.org/id/iso639-3/eng",
+      "mainTitle": "Digital Library Idé in a Collaborative Context: Romania and Norway 2003-2012",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "year": "2014"
+      },
+      "reference": {
+        "type": "Reference",
+        "doi": "https://doi.org/10.4018/978-1-4666-4365-9.ch021",
+        "publicationContext": {
+          "type": "Anthology"
+        },
+        "publicationInstance": {
+          "type": "NonFictionChapter",
+          "pages": {
+            "type": "Range"
+          }
+        }
+      }
+    },
+    "modelVersion": "0.20.78",
+    "modifiedDate": "2023-12-18T08:21:11.463306145Z",
+    "publishedDate": "2023-12-18T08:21:11.463306145Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/a228aba6-932b-4f53-b2de-31ad8daf9f8d",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "bora@184.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0"
+    },
+    "rightsHolder": "Copyright 2014, IGI Global",
+    "status": "PUBLISHED",
+    "scientificIndex": {
+      "id": "https://api.dev.nva.aws.unit.no/scientific-index/period/2019",
+      "type": "ScientificIndex",
+      "status": "Reported",
+      "year": "2019"
+    },
+    "joinField": {
+      "name": "hasParts"
+    }
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [
+      "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2023"
+    ],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39",
+    "scientificIndex": {
+      "id": "https://api.dev.nva.aws.unit.no/scientific-index/period/2019",
+      "type": "ScientificIndex",
+      "status": "Reported",
+      "year": "2020"
+    },
+    "filesStatus": "noFiles",
+    "associatedArtifacts": [
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "6fde746e-c986-487c-8be5-91d873eee19d",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "Monitoring Mold growth and VOC Emissions from Wood Wool Insulations.pdf",
+        "publishedDate": "2024-04-25T09:45:11.388072848Z",
+        "publisherVersion": "PublishedVersion",
+        "rightsRetentionStrategy": {
+          "type": "NullRightsRetentionStrategy",
+          "configuredType": "Unknown"
+        },
+        "size": 896980,
+        "uploadDetails": {
+          "type": "UploadDetails",
+          "uploadedBy": "sintef@7401.0.0.0",
+          "uploadedDate": "2024-04-25T09:45:11.129728225Z"
+        },
+        "visibleForNonOwner": true
+      }
+    ],
+    "createdDate": "2023-11-06T08:46:26.204053625Z",
+    "contributorOrganizations": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.1.0"
+    ],
+    "curatingInstitutions": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0"
+    ],
+    "entityDescription": {
+      "type": "EntityDescription",
+      "alternativeAbstracts": {},
+      "contributorsCount" : 1,
+      "contributors": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
+              "type": "Organization",
+              "countryCode": "IQ",
+              "labels": {
+                "nn": "Al-Iraqia University",
+                "nb": "Al-Iraqia University",
+                "en": "Al-Iraqia University"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.1.1",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Avdeling for kunde og kommunikasjon",
+                "nb": "Avdeling for kunde og kommunikasjon",
+                "en": "The Customer and Communication Department"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "en": "Norwegian Defence University College",
+                "nb": "Forsvarets høgskole"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/113",
+            "type": "Identity",
+            "name": "Kjetil Møkkelgjerd",
+            "orcId": "https://sandbox.orcid.org/0000-0003-4147-3499",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        }
+      ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
+              "type": "Organization",
+              "countryCode": "IQ",
+              "labels": {
+                "nn": "Al-Iraqia University",
+                "nb": "Al-Iraqia University",
+                "en": "Al-Iraqia University"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.1.1",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Avdeling for kunde og kommunikasjon",
+                "nb": "Avdeling for kunde og kommunikasjon",
+                "en": "The Customer and Communication Department"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "en": "Norwegian Defence University College",
+                "nb": "Forsvarets høgskole"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/113",
+            "type": "Identity",
+            "name": "Kjetil Møkkelgjerd",
+            "orcId": "https://sandbox.orcid.org/0000-0003-4147-3499",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        }
+      ],
+      "mainTitle": "Kjetils Idé tickét têst",
+      "abstract": "ønsker deg av hjerte ære berømmelse. Har du en ide om hva du skal gjøre med Kjærringen og eller konå",
+      "language": "http://lexvo.org/id/iso639-3/nor",
+      "publicationDate": {
+        "type": "Date",
+        "day": "6",
+        "month": "11",
+        "year": "2023"
+      },
+      "reference": {
+        "type": "Reference",
+        "doi": "https://doi.org/10.1371/journal.pone.0047887",
+        "publicationContext": {
+          "type": "Report",
+          "isbnList": [
+            "9788202535032"
+          ],
+          "publisher": {
+            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2022",
+            "identifier": "944351B3-DC14-4F62-9939-7A2793D6F0B1",
+            "type": "Publisher",
+            "isbnPrefix": "978-91-27",
+            "name": "Natur och kultur",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalForlagInfo?pid=944351B3-DC14-4F62-9939-7A2793D6F0B1",
+            "scientificValue": "LevelOne",
+            "valid": true
+          },
+          "series": {
+            "type": "Series",
+            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/series/B24919B5-5DC4-4787-8D84-7922852we373/2024",
+            "identifier": "B24919B5-5DC4-4787-8D84-7922852we373",
+            "name": "Some series nr2",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/nvakanal?pid=B24919B5-5DC4-4787-8D84-7922852we373",
+            "scientificValue": "Unassigned"
+          }
+        },
+        "publicationInstance": {
+          "type": "ReportResearch",
+          "pages": {
+            "type": "MonographPages",
+            "illustrated": false,
+            "pages": "[123]"
+          }
+        }
+      }
+    },
+    "identifier": "018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39",
+    "modelVersion": "0.20.54",
+    "modifiedDate": "2023-11-06T08:48:11.943422687Z",
+    "nviType": "NonNviCandidate",
+    "projects": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/project/1433422",
+        "type": "ResearchProject",
+        "name": "Utvikling av eplekaken"
+      }
+    ],
+    "publishedDate": "2023-11-06T08:48:11.936406187Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "1136254@20754.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    },
+    "status": "PUBLISHED",
+    "topLevelOrganizations": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "hasPart": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.1.0.0",
+            "type": "Organization",
+            "acronym": "UA",
+            "labels": {
+              "nn": "Divisjon for utdanning og administrasjon",
+              "nb": "Divisjon utdanning og administrasjon",
+              "en": "The Education and Administration Division"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+            "type": "Organization",
+            "acronym": "FK",
+            "labels": {
+              "nn": "Divisjon for forskings- og kunnskapsressursar",
+              "nb": "Divisjon forsknings- og kunnskapsressurser",
+              "en": "The Research and Education Resources Division"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.4.0.0",
+            "type": "Organization",
+            "acronym": "ORG",
+            "labels": {
+              "nn": "Avdeling for organisasjonsutvikling",
+              "nb": "Avdeling for organisasjonsutvikling",
+              "en": "The Organisational Development Department"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
+            "type": "Organization",
+            "acronym": "KUNDE",
+            "countryCode": "NO",
+            "labels": {
+              "nn": "Avdeling for kunde og kommunikasjon",
+              "nb": "Avdeling for kunde og kommunikasjon",
+              "en": "The Customer and Communication Department"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.5.0.0",
+            "type": "Organization",
+            "acronym": "VIRK",
+            "labels": {
+              "nn": "Avdeling for verksemdstyring",
+              "nb": "Avdeling for virksomhetsstyring",
+              "en": "The Corporate Governance Department"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.3.0.0",
+            "type": "Organization",
+            "acronym": "DI",
+            "labels": {
+              "nn": "Divisjon for data og infrastruktur",
+              "nb": "Divisjon data og infrastruktur",
+              "en": "The Organisational Development Department"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          }
+        ],
+        "labels": {
+          "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+          "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
+        "type": "Organization",
+        "countryCode": "IQ",
+        "labels": {
+          "nb": "Al-Iraqia Universitet",
+          "nn": "Universitet i Irak",
+          "en": "Al-Iraqia University"
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "hasPart": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.4.0.0",
+            "type": "Organization",
+            "acronym": "KS",
+            "labels": {
+              "nb": "Krigsskolen (KS)"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.7.0.0",
+            "type": "Organization",
+            "acronym": "IFF",
+            "labels": {
+              "nb": "Institutt for forsvarsstudier"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.5.0.0",
+            "type": "Organization",
+            "acronym": "FIH",
+            "labels": {
+              "nb": "Cyberingeniørskolen"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.2.0.0",
+            "type": "Organization",
+            "acronym": "LKSK",
+            "labels": {
+              "nb": "Luftkrigsskolen (LKSK)"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.8.0.0",
+            "type": "Organization",
+            "acronym": "FSK",
+            "labels": {
+              "nb": "Institutt for militær ledelse og operasjoner"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.9.0.0",
+            "type": "Organization",
+            "acronym": "BEFAL",
+            "labels": {
+              "nb": "Befalsskolen",
+              "en": "Officer Candidate School"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.3.0.0",
+            "type": "Organization",
+            "acronym": "SKSK",
+            "labels": {
+              "nb": "Sjøkrigsskolen (SKSK)"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+            }
+          }
+        ],
+        "labels": {
+          "nb": "Forsvarets høgskole",
+          "en": "Norwegian Defence University College"
+        }
+      }
+    ],
+    "joinField": {
+      "name": "hasParts"
+    }
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642",
+    "scientificIndex": {
+      "id": "https://api.dev.nva.aws.unit.no/scientific-index/period/2019",
+      "type": "ScientificIndex",
+      "status": "Reported",
+      "year": "2023"
+    },
+    "filesStatus": "hasPublicFiles",
+    "associatedArtifacts": [
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "98893bfd-82d3-44d8-af10-9d1097c9510e",
+        "license": {
+          "type": "License",
+          "value": "https://rightsstatements.org/page/inc/1.0",
+          "name": "RS-INC",
+          "labels": {
+            "en": "Rights Statements - In copyright",
+            "nb": "Rights Statements - Utgivers betingelser"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "20200017-03-TN_Release_area_variability.pdf",
+        "publishedDate": "2023-10-31T11:25:43.223366513Z",
+        "publisherVersion": "PublishedVersion",
+        "rightsRetentionStrategy": {
+          "type": "NullRightsRetentionStrategy",
+          "configuredType": "Unknown"
+        },
+        "size": 1382306,
+        "uploadDetails": {
+          "type": "UploadDetails",
+          "uploadedBy": "sintef@7401.0.0.0",
+          "uploadedDate": "2024-04-25T09:19:44.179869660Z"
+        },
+        "visibleForNonOwner": true
+      },
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "98893bfd-82d3-44d8-af10-9d1097r23449",
+        "license": {
+          "type": "License",
+          "value": "https://rightsstatements.org/page/inc/1.0",
+          "name": "RS-INC",
+          "labels": {
+            "en": "Rights Statements - In copyright",
+            "nb": "Rights Statements - Utgivers betingelser"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "20200017-03-TN_Release_area_variability.pdf",
+        "publishedDate": "2023-10-31T11:25:43.223366513Z",
+        "publisherAuthority": false,
+        "size": 699309,
+        "visibleForNonOwner": true
+      },
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "98893bfd-82d3-44d8-af10-9d1097r2342342",
+        "license": {
+          "type": "License",
+          "value": "https://rightsstatements.org/page/inc/1.0",
+          "name": "RS-INC",
+          "labels": {
+            "en": "Rights Statements - In copyright",
+            "nb": "Rights Statements - Utgivers betingelser"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "20200017-03-TN_Release_area_variability.pdf",
+        "publishedDate": "2023-10-31T11:25:43.223366513Z",
+        "publisherAuthority": false,
+        "size": 699309,
+        "visibleForNonOwner": true
+      }
+    ],
+    "createdDate": "2023-09-29T12:14:46Z",
+    "entityDescription": {
+      "type": "EntityDescription",
+      "abstract": "The hazard mapping tool NAKSIN estimates the release probability of potential release areas (PRAs) by testing a stability criterion based on the infinite-slope approximation with a large sample of synthetic weather situations. The release area is thus assumed to comprise the entire PRA, which is unrealistic for avalanches with return periods shorter than 100–300 y. To remedy this, a stability criterion is proposed that accounts for stabilizing forces across the slab perimeter and so is sensitive to the slab extent. The criterion is applied to a sequence of subareas of the PRA with increasing minimum slope angle to find the subarea with maximum release probability. The method is described and formulated mathematically. Also, tools for coding it are suggested but implementation in NAKSIN and testing are left for future work.",
+      "alternativeAbstracts": {},
+      "contributorsCount" : 1,
+      "contributors": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/11111",
+            "type": "Identity",
+            "name": "Dieter Issler"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        }
+      ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/11111",
+            "type": "Identity",
+            "name": "Dieter Issler"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        }
+      ],
+      "language": "http://lexvo.org/id/iso639-3/eng",
+      "mainTitle": "A Simple Model for the Ide  Variability of Release Area Size",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "day": "24",
+        "month": "08",
+        "year": "2023"
+      },
+      "reference": {
+        "type": "Reference",
+        "doi": "https://doi.org/10.1371/journal.pone.0047855",
+        "publicationContext": {
+          "type": "Report",
+          "publisher": {
+            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2023",
+            "identifier": "944351B3-DC14-4F62-9939-7A2793D6F0B1",
+            "type": "Publisher",
+            "isbnPrefix": "978-91-27",
+            "name": "Natur och kultur",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalForlagInfo?pid=944351B3-DC14-4F62-9939-7A2793D6F0B1",
+            "scientificValue": "LevelOne",
+            "valid": true
+          },
+          "series": {
+            "type": "UnconfirmedSeries",
+            "title": "NGI-Rapport"
+          },
+          "seriesNumber": "20200017‐03‐TN"
+        },
+        "publicationInstance": {
+          "type": "ReportResearch",
+          "pages": {
+            "type": "MonographPages",
+            "illustrated": false,
+            "pages": "18"
+          }
+        }
+      },
+      "tags": [
+        "Avalanche-RnD",
+        "Slope Stability",
+        "Snøskred-FoU",
+        "NAKSIN",
+        "Release probability",
+        "Avalanche release",
+        "Release area size",
+        "Snow avalanches"
+      ]
+    },
+    "handle": "https://hdl.handle.net/11250/3093139",
+    "identifier": "018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642",
+    "modelVersion": "0.20.54",
+    "nviType": "NonNviCandidate",
+    "projects": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/project/14334631",
+        "type": "ResearchProject",
+        "name": "Utvikling av eplekaken"
+      }
+    ],
+    "publishedDate": "2023-09-29T12:14:46Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/f415cb81-ac56-4244-b31b-25e43dc3027e",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "ngi@7452.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
+    },
+    "status": "PUBLISHED",
+    "joinField": {
+      "name": "hasParts"
+    }
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018b8581b2d1-b46eec8b-01c0-409f-b609-1f1f3ad6fa4a",
+    "doi": "https://doi.org/10.1371/journal.pone.1234567",
+    "scientificIndex": {
+      "id": "https://api.dev.nva.aws.unit.no/scientific-index/period/2019",
+      "type": "ScientificIndex",
+      "status": "Reported",
+      "year": "2011"
+    },
+    "filesStatus": "hasPublicFiles",
+    "associatedArtifacts": [
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": true,
+        "identifier": "82c86bd2-f6d1-408f-b315-19e6258e3fd9",
+        "license": {
+          "type": "License",
+          "value": "https://rightsstatements.org/page/inc/1.0",
+          "name": "RS-INC",
+          "labels": {
+            "en": "Rights Statements - In copyright",
+            "nb": "Rights Statements - Utgivers betingelser"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "20200017-10-TN_Outline_PSA_model.pdf",
+        "publishedDate": "2023-10-31T11:32:31.569492596Z",
+        "publisherAuthority": false,
+        "size": 605173,
+        "visibleForNonOwner": true
+      }
+    ],
+    "createdDate": "2023-09-29T12:11:12Z",
+    "curatingInstitutions": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0"
+    ],
+    "entityDescription": {
+      "type": "EntityDescription",
+      "abstract": "This Note discusses a quasi-three-dimensional model of mixed snow avalanches that could replace the code MoT-Voellmy in NAKSIN. As a starting point, the two-layer model by Eglit is slightly simplified and extended from a profile line to a general topography in three-dimensional space. Possible modifications of the closures proposed by Eglit are discussed. For rapid development, it is suggested to base the new code either on MoT-Voellmy or possibly on the code development system ExaHyPE.",
+      "alternativeAbstracts": {},
+      "contributorsCount" : 1,
+      "contributors": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/11111",
+            "type": "Identity",
+            "name": "Dieter Issler"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        }
+      ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/11111",
+            "type": "Identity",
+            "name": "Dieter Issler"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        }
+      ],
+      "language": "http://lexvo.org/id/iso639-3/eng",
+      "mainTitle": "Idé Outline of a Simple Model of Mixed Snow Avalanches",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "day": "24",
+        "month": "08",
+        "year": "2023"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "type": "Report",
+          "publisher": {
+            "type": "UnconfirmedPublisher",
+            "name": "NGI – Norges Geotekniske institutt",
+            "valid": true
+          },
+          "series": {
+            "type": "UnconfirmedSeries",
+            "title": "NGI-Rapport"
+          },
+          "seriesNumber": "20200017‐10‐TN"
+        },
+        "publicationInstance": {
+          "type": "ReportResearch",
+          "pages": {
+            "type": "MonographPages",
+            "illustrated": false,
+            "pages": "19"
+          }
+        }
+      },
+      "tags": [
+        "Snow avalanches",
+        "Numerical Modeling",
+        "Avalanche-RnD",
+        "Entrainment functions",
+        "Mixed snow avalanches",
+        "Eglit model",
+        "Snøskred-FoU"
+      ]
+    },
+    "handle": "https://hdl.handle.net/11250/3093134",
+    "identifier": "018b8581b2d1-b46eec8b-01c0-409f-b609-1f1f3ad6fa4a",
+    "modelVersion": "0.20.54",
+    "nviType": "NonNviCandidate",
+    "projects": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/project/14334631",
+        "type": "ResearchProject",
+        "name": "Utvikling av eplekaken"
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/project/14334813",
+        "type": "ResearchProject",
+        "name": "Utvikling av osteloffen"
+      }
+    ],
+    "publishedDate": "2023-09-29T12:11:12Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/f415cb81-ac56-4244-b31b-25e43dc3027e",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "ngi@7452.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
+    },
+    "status": "PUBLISHED_METADATA",
+    "joinField": {
+      "name": "hasParts"
+    }
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018b8579f0ad-db0bd29b-ad7c-4068-afa3-f300a1af61ef",
+    "filesStatus": "hasPublicFiles",
+    "associatedArtifacts": [
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "679555f3-8cae-40e2-bd95-80eb56fc8adb",
+        "license": {
+          "type": "License",
+          "value": "https://rightsstatements.org/page/inc/1.0",
+          "name": "RS-INC",
+          "labels": {
+            "en": "Rights Statements - In copyright",
+            "nb": "Rights Statements - Utgivers betingelser"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "20200431-01-TN.APALI_concept.pdf",
+        "publishedDate": "2023-10-31T11:24:03.117194851Z",
+        "publisherAuthority": false,
+        "size": 519969,
+        "visibleForNonOwner": true
+      }
+    ],
+    "createdDate": "2023-09-29T12:07:34Z",
+    "entityDescription": {
+      "type": "EntityDescription",
+      "abstract": "To secure linear infrastructure in the most cost-efficient manner, hazard hot-spots need to be known not only with regard to the intensity of possible events but also their probability. Traditional hazard mapping methods rely on analysis of historical records—which are often missing or scarce—or on experts’ subjective judgment. Either approach is timeconsuming and expensive. The hazard mapping system NAKSIN for snow avalanches contains a module for estimating avalanche release probability automatically using topographical, weather and forest data and calculates avalanche run-out for one target return period. This Note outlines how NAKSIN can be modified to produce maps of avalanche hit probability and optionally probability distribution functions of impact pressure and/or flow velocity. While the needed modifications are easy to implement, the NAKSIN module for release probability requires improvements to produce more reliable estimates in areas with continental climate.",
+      "alternativeAbstracts": {},
+      "contributorsCount" : 1,
+      "contributors": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/11111",
+            "type": "Identity",
+            "name": "Dieter Issler"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        }
+      ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/11111",
+            "type": "Identity",
+            "name": "Dieter Issler"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        }
+      ],
+     "language": "http://lexvo.org/id/iso639-3/eng",
+      "mainTitle": "«Ide APALI» – Avalanche Probability Along Linear Infrastructure",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "day": "28",
+        "month": "09",
+        "year": "2023"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "type": "Report",
+          "publisher": {
+            "type": "UnconfirmedPublisher",
+            "name": "NGI – Norges Geotekniske institutt",
+            "valid": true
+          },
+          "series": {
+            "type": "UnconfirmedSeries",
+            "title": "NGI-Rapport"
+          },
+          "seriesNumber": "20200431‐01‐TN"
+        },
+        "publicationInstance": {
+          "type": "ReportResearch",
+          "pages": {
+            "type": "MonographPages",
+            "illustrated": false,
+            "pages": "12"
+          }
+        }
+      },
+      "tags": [
+        "Avalanche-RnD",
+        "Snøskred-FoU"
+      ]
+    },
+    "handle": "https://hdl.handle.net/11250/3093129",
+    "identifier": "018b8579f0ad-db0bd29b-ad7c-4068-afa3-f300a1af61ef",
+    "modelVersion": "0.20.54",
+    "nviType": "NonNviCandidate",
+    "publishedDate": "2023-09-29T12:07:34Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/f415cb81-ac56-4244-b31b-25e43dc3027e",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "ngi@7452.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
+    },
+    "status": "PUBLISHED",
+    "joinField": {
+      "name": "hasParts"
+    }
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018b858395d7-02aaf128-dc44-457e-b471-675a952e8cff",
+    "filesStatus": "hasPublicFiles",
+    "associatedArtifacts": [
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "d42613f9-c721-4368-a346-c1886c5073c6",
+        "license": {
+          "type": "License",
+          "value": "https://rightsstatements.org/page/inc/1.0",
+          "name": "RS-INC",
+          "labels": {
+            "en": "Rights Statements - In copyright",
+            "nb": "Rights Statements - Utgivers betingelser"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "20200017-02-R.pdf",
+        "publishedDate": "2023-10-31T11:34:35.223834762Z",
+        "publisherAuthority": false,
+        "size": 3325931,
+        "visibleForNonOwner": true
+      },
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "98893bfd-82d3-44d8-3323-9d1097r23449",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by-nc-nd/4.0",
+          "name": "CC-NC-ND",
+          "labels": {
+            "en": "Creative Commons - Attribution-NonCommercial-NoDerivs",
+            "nb": "Creative Commons - Navngivelse-IkkeKommersiell-IngenBearbeidelser"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "20200017-03-TN_Release_area_variability.pdf",
+        "publishedDate": "2023-10-31T11:25:43.223366513Z",
+        "publisherAuthority": false,
+        "size": 699309,
+        "visibleForNonOwner": true
+      }
+    ],
+    "createdDate": "2023-09-29T12:04:08Z",
+    "entityDescription": {
+      "type": "EntityDescription",
+      "abstract": "During the first year of the project period 2020-2022 of NGIs research project on Snow avalanches, Applied Avalanche Research in Norway (AARN), work was conducted in all three work packages (WP 1 – Avalanche formation and release, WP 2 – Avalanche dynamics, WP 3 – Avalanche interaction) and several cross-package topics. In addition, several significant upgrades were made to the research infrastructure at Fonnbu and Ryggfonn. During 2020, the results of the research activities have been published in peer-reviewed journals, summarised in technical notes, and presented online at national and international conferences and seminars. AARN personnel have been actively engaged in educational outreach activities, including as lecturers and student supervisors.",
+      "alternativeAbstracts": {},
+      "contributorsCount" : 10,
+      "contributors": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Kate Robinson"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Zhongqiang Liu"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Dieter Issler"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Ulrik Domaas"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 4
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Christian Jaedicke"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 5
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Sean Salazar"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 6
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Regula Frauenfelder"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 7
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Graham Gilbert"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 8
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Peter Gauer"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 9
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Henrik Langeland"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 10
+        }
+      ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Kate Robinson"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Zhongqiang Liu"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Dieter Issler"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Ulrik Domaas"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 4
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Christian Jaedicke"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 5
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Sean Salazar"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 6
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Regula Frauenfelder"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 7
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Graham Gilbert"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 8
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Peter Gauer"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 9
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Henrik Langeland"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 10
+        }
+      ],
+      "language": "http://lexvo.org/id/iso639-3/eng",
+      "mainTitle": "Annual Report 2020",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "day": "19",
+        "month": "03",
+        "year": "2021"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "type": "Report",
+          "publisher": {
+            "type": "UnconfirmedPublisher",
+            "name": "NGI – Norges Geotekniske institutt",
+            "valid": true
+          },
+          "series": {
+            "type": "UnconfirmedSeries",
+            "title": "NGI-Rapport"
+          },
+          "seriesNumber": "20200017-02-R"
+        },
+        "publicationInstance": {
+          "type": "ReportResearch",
+          "pages": {
+            "type": "MonographPages",
+            "illustrated": false,
+            "pages": "26"
+          }
+        }
+      },
+      "tags": [
+        "Avalanche-RnD",
+        "Snøskred-FoU"
+      ]
+    },
+    "handle": "https://hdl.handle.net/11250/3093125",
+    "identifier": "018b858395d7-02aaf128-dc44-457e-b471-675a952e8cff",
+    "modelVersion": "0.20.54",
+    "nviType": "NonNviCandidate",
+    "publishedDate": "2023-09-29T12:04:08Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/f415cb81-ac56-4244-b31b-25e43dc3027e",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "ngi@7452.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
+    },
+    "status": "PUBLISHED",
+    "joinField": {
+      "name": "hasParts"
+    },
+    "subjects": [
+      "https://nva.unit.no/hrcs/activity/hrcs_ra_4_2",
+      "https://nva.unit.no/hrcs/category/hrcs_hc_01blo"
+    ]
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018b857af565-f63a53df-6c4f-4051-8686-8547f45ef726",
+    "filesStatus": "hasPublicFiles",
+    "associatedArtifacts": [
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "ae0539fe-0d67-4854-80bc-b2e906b55ee1",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by-nc-nd/4.0",
+          "name": "CC-NC-ND",
+          "labels": {
+            "en": "Creative Commons - Attribution-NonCommercial-NoDerivs",
+            "nb": "Creative Commons - Navngivelse-IkkeKommersiell-IngenBearbeidelser"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "20200017-03-R.pdf",
+        "publishedDate": "2023-10-31T11:25:09.861695292Z",
+        "publisherAuthority": false,
+        "size": 5659255,
+        "visibleForNonOwner": true
+      }
+    ],
+    "createdDate": "2023-09-29T12:00:47Z",
+    "entityDescription": {
+      "type": "EntityDescription",
+      "abstract": "During the second year of the project period 2020-2022 of NGIs research project on snow avalanches, Applied Avalanche Research in Norway (AARN), work was conducted in all three work packages (WP 1 – Avalanche formation and release, WP 2 – Avalanche dynamics, WP 3 – Avalanche interaction) and several cross-package topics. The successful avalanche experiment in April 2021 has given us valuable insight into the dynamics of a large avalanche event and showed that the Ryggfonn test site produces the avalanches that are needed for the AARN research. During 2021, the results of the research activities have been published in peer-reviewed journals, summarised in technical notes, and presented online at national and international conferences and seminars. AARN personnel have been actively engaged in educational outreach activities, including as lecturers and student supervisors.",
+      "alternativeAbstracts": {},
+      "contributorsCount" : 8,
+      "contributors": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Christian Jaedicke"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 4
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Sean Salazar"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 5
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Dieter Issler"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Regula Frauenfelder"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 6
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Peter Gauer"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 8
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Kate Robinson"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Zhongqiang Liu"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Graham Gilbert"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 7
+        }
+      ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Christian Jaedicke"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 4
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Sean Salazar"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 5
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Dieter Issler"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Regula Frauenfelder"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 6
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Peter Gauer"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 8
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Kate Robinson"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Zhongqiang Liu"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Graham Gilbert"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 7
+        }
+      ],
+      "language": "http://lexvo.org/id/iso639-3/nor",
+      "mainTitle": "Annual Report 2021",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "day": "08",
+        "month": "04",
+        "year": "2022"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "type": "Report",
+          "publisher": {
+            "type": "UnconfirmedPublisher",
+            "name": "NGI – Norges Geotekniske institutt",
+            "valid": true
+          },
+          "series": {
+            "type": "UnconfirmedSeries",
+            "title": "NGI-Rapport"
+          },
+          "seriesNumber": "20200017-03-R"
+        },
+        "publicationInstance": {
+          "type": "ReportResearch",
+          "pages": {
+            "type": "MonographPages",
+            "illustrated": false,
+            "pages": "38"
+          }
+        }
+      },
+      "tags": [
+        "Avalanche-RnD",
+        "Snøskred-FoU"
+      ]
+    },
+    "handle": "https://hdl.handle.net/11250/3093123",
+    "identifier": "018b857af565-f63a53df-6c4f-4051-8686-8547f45ef726",
+    "modelVersion": "0.20.54",
+    "nviType": "NonNviCandidate",
+    "publishedDate": "2023-09-29T12:00:47Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/f415cb81-ac56-4244-b31b-25e43dc3027e",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "ngi@7452.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
+    },
+    "status": "PUBLISHED",
+    "joinField": {
+      "name": "hasParts"
+    }
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [
+      "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/F20577B8-0947-481B-96D4-F5DE9ECF7C5F/2023"
+    ],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018c443840f1-b14a5947-2eae-4d67-9d95-c2e591059942",
+    "associatedArtifacts": [
+      {
+        "type": "UnpublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "3daa758e-1787-4c1e-979a-dae0944ce326",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
+        "mimeType": "image/jpeg",
+        "name": "osteloffosteloffosteloffosteloffosteloffosteloffosteloffosteloffosteloffosteloffosteloffosteloffosteloff.jpg",
+        "publisherAuthority": false,
+        "rightsRetentionStrategy": {
+          "type": "NullRightsRetentionStrategy"
+        },
+        "size": 4656,
+        "visibleForNonOwner": false
+      },
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "92636ec8-d7f6-4a56-850e-cea1cebf4e31",
+        "license": {
+          "type": "License",
+          "value": "https://rightsstatements.org/page/inc/1.0",
+          "name": "RS-INC",
+          "labels": {
+            "nb": "Rights Statements - Utgivers betingelser",
+            "en": "Rights Statements - In copyright"
+          }
+        },
+        "mimeType": "image/jpeg",
+        "name": "osteloff.jpg",
+        "publishedDate": "2023-12-07T12:22:20.796870348Z",
+        "publisherAuthority": false,
+        "rightsRetentionStrategy": {
+          "type": "NullRightsRetentionStrategy"
+        },
+        "size": 4656,
+        "visibleForNonOwner": true
+      }
+    ],
+    "contributorOrganizations": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20202.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/1990.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/1615.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/217.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/209.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/7501.0.0.0"
+    ],
+    "createdDate": "2023-12-07T12:19:46.545708225Z",
+    "entityDescription": {
+      "type": "EntityDescription",
+      "alternativeAbstracts": {},
+      "contributorsCount" : 11,
+      "contributors": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
+              "type": "Organization",
+              "countryCode": "IQ",
+              "labels": {
+                "nn": "Al-Iraqia University",
+                "nb": "Al-Iraqia University",
+                "en": "Al-Iraqia University"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Avdeling for kunde og kommunikasjon",
+                "nb": "Avdeling for kunde og kommunikasjon",
+                "en": "The Customer and Communication Department"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Forsvarets høgskole",
+                "en": "Norwegian Defence University College"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136254",
+            "type": "Identity",
+            "name": "Kjetil Møkkelgjerd",
+            "orcId": "https://sandbox.orcid.org/0000-0003-4147-3499",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/209.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Høgskolen i Innlandet",
+                "en": "Inland Norway University of Applied Sciences"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136918",
+            "type": "Identity",
+            "name": "Isar Kristoffer Buzza",
+            "orcId": "https://sandbox.orcid.org/0000-0003-4999-4483",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Supervisor"
+          },
+          "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Avdeling for kunde og kommunikasjon",
+                "nb": "Avdeling for kunde og kommunikasjon",
+                "en": "The Customer and Communication Department"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/7501.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "RURALIS – Institutt for rural- og regionalforskning",
+                "en": "RURALIS – Institute for Rural and Regional Research"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1990.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Diakonhjemmet sykehus",
+                "en": "Diakonhjemmet Hospital"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1128464",
+            "type": "Identity",
+            "name": "Terje Hellesvik",
+            "orcId": "https://sandbox.orcid.org/0000-0002-8617-3281",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/39463",
+            "type": "Identity",
+            "name": "Siri Coldevin Vikan",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 4
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/217.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Universitetet i Stavanger",
+                "en": "University of Stavanger"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Noregs teknisk-naturvitskaplege universitet",
+                "nb": "Norges teknisk-naturvitenskapelige universitet",
+                "en": "Norwegian University of Science and Technology"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Universitetet i Oslo",
+                "en": "University of Oslo"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/997998",
+            "type": "Identity",
+            "name": "Mona Ullah",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 5
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1615.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Høyskolen Kristiania",
+                "en": "Kristiania University College"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136806",
+            "type": "Identity",
+            "name": "Ketil Aasarød",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 6
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20202.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Unit – Direktoratet for IKT og fellestenester i høgare utdanning og forsking",
+                "nb": "Unit – Direktoratet for IKT og fellestjenester i høyere utdanning og forskning",
+                "en": "Unit – The Norwegian Directorate for ICT and Joint Services in Higher Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1306838",
+            "type": "Identity",
+            "name": "Anette Olli Siiri",
+            "orcId": "https://sandbox.orcid.org/0009-0004-4447-9305",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 7
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/217.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Universitetet i Stavanger",
+                "en": "University of Stavanger"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/42557",
+            "type": "Identity",
+            "name": "Jan E. Garshol",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 8
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20202.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Unit – Direktoratet for IKT og fellestenester i høgare utdanning og forsking",
+                "nb": "Unit – Direktoratet for IKT og fellestjenester i høyere utdanning og forskning",
+                "en": "Unit – The Norwegian Directorate for ICT and Joint Services in Higher Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/854279",
+            "type": "Identity",
+            "name": "Tor Arne Torgersen",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 9
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/860951",
+            "type": "Identity",
+            "name": "Stig Norland",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 10
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Noregs teknisk-naturvitskaplege universitet",
+                "nb": "Norges teknisk-naturvitenskapelige universitet",
+                "en": "Norwegian University of Science and Technology"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/34322",
+            "type": "Identity",
+            "name": "Torbjørn Kvåle",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 11
+        }
+      ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
+              "type": "Organization",
+              "countryCode": "IQ",
+              "labels": {
+                "nn": "Al-Iraqia University",
+                "nb": "Al-Iraqia University",
+                "en": "Al-Iraqia University"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Avdeling for kunde og kommunikasjon",
+                "nb": "Avdeling for kunde og kommunikasjon",
+                "en": "The Customer and Communication Department"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Forsvarets høgskole",
+                "en": "Norwegian Defence University College"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136254",
+            "type": "Identity",
+            "name": "Kjetil Møkkelgjerd",
+            "orcId": "https://sandbox.orcid.org/0000-0003-4147-3499",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/209.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Høgskolen i Innlandet",
+                "en": "Inland Norway University of Applied Sciences"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136918",
+            "type": "Identity",
+            "name": "Isar Kristoffer Buzza",
+            "orcId": "https://sandbox.orcid.org/0000-0003-4999-4483",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Supervisor"
+          },
+          "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Avdeling for kunde og kommunikasjon",
+                "nb": "Avdeling for kunde og kommunikasjon",
+                "en": "The Customer and Communication Department"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/7501.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "RURALIS – Institutt for rural- og regionalforskning",
+                "en": "RURALIS – Institute for Rural and Regional Research"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1990.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Diakonhjemmet sykehus",
+                "en": "Diakonhjemmet Hospital"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1128464",
+            "type": "Identity",
+            "name": "Terje Hellesvik",
+            "orcId": "https://sandbox.orcid.org/0000-0002-8617-3281",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/39463",
+            "type": "Identity",
+            "name": "Siri Coldevin Vikan",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 4
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/217.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Universitetet i Stavanger",
+                "en": "University of Stavanger"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Noregs teknisk-naturvitskaplege universitet",
+                "nb": "Norges teknisk-naturvitenskapelige universitet",
+                "en": "Norwegian University of Science and Technology"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Universitetet i Oslo",
+                "en": "University of Oslo"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/997998",
+            "type": "Identity",
+            "name": "Mona Ullah",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 5
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1615.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Høyskolen Kristiania",
+                "en": "Kristiania University College"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136806",
+            "type": "Identity",
+            "name": "Ketil Aasarød",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 6
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20202.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Unit – Direktoratet for IKT og fellestenester i høgare utdanning og forsking",
+                "nb": "Unit – Direktoratet for IKT og fellestjenester i høyere utdanning og forskning",
+                "en": "Unit – The Norwegian Directorate for ICT and Joint Services in Higher Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1306838",
+            "type": "Identity",
+            "name": "Anette Olli Siiri",
+            "orcId": "https://sandbox.orcid.org/0009-0004-4447-9305",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 7
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/217.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Universitetet i Stavanger",
+                "en": "University of Stavanger"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/42557",
+            "type": "Identity",
+            "name": "Jan E. Garshol",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 8
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20202.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Unit – Direktoratet for IKT og fellestenester i høgare utdanning og forsking",
+                "nb": "Unit – Direktoratet for IKT og fellestjenester i høyere utdanning og forskning",
+                "en": "Unit – The Norwegian Directorate for ICT and Joint Services in Higher Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/854279",
+            "type": "Identity",
+            "name": "Tor Arne Torgersen",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 9
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/860951",
+            "type": "Identity",
+            "name": "Stig Norland",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 10
+        }
+      ],
+      "contibutorsCount": 11,
+      "mainTitle": "Kjetils masteroppgave",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "day": "7",
+        "month": "12",
+        "year": "2023"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "type": "Degree",
+          "publisher": {
+            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/F20577B8-0947-481B-96D4-F5DE9ECF7C5F/2023",
+            "identifier": "F20577B8-0947-481B-96D4-F5DE9ECF7C5F",
+            "type": "Publisher",
+            "name": "Asian Federation of Natural Language Processing",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalForlagInfo?pid=F20577B8-0947-481B-96D4-F5DE9ECF7C5F",
+            "scientificValue": "LevelOne",
+            "valid": true
+          },
+          "series": {
+            "type": "UnconfirmedSeries"
+          }
+        },
+        "publicationInstance": {
+          "type": "DegreeMaster",
+          "pages": {
+            "type": "MonographPages",
+            "illustrated": false
+          }
+        }
+      }
+    },
+    "identifier": "018c443840f1-b14a5947-2eae-4d67-9d95-c2e591059942",
+    "modelVersion": "0.21.6",
+    "modifiedDate": "2024-02-14T09:22:15.437415797Z",
+    "publishedDate": "2023-12-07T12:22:21.050134463Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "1136254@20754.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    },
+    "status": "PUBLISHED",
+    "topLevelOrganizations": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/7501.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "labels": {
+          "nb": "RURALIS – Institutt for rural- og regionalforskning",
+          "en": "RURALIS – Institute for Rural and Regional Research"
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "labels": {
+          "nn": "Noregs teknisk-naturvitskaplege universitet",
+          "nb": "Norges teknisk-naturvitenskapelige universitet",
+          "en": "Norwegian University of Science and Technology"
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
+        "type": "Organization",
+        "countryCode": "IQ",
+        "labels": {
+          "nn": "Al-Iraqia University",
+          "nb": "Al-Iraqia University",
+          "en": "Al-Iraqia University"
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "hasPart": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
+            "type": "Organization",
+            "countryCode": "NO",
+            "labels": {
+              "nn": "Avdeling for kunde og kommunikasjon",
+              "nb": "Avdeling for kunde og kommunikasjon",
+              "en": "The Customer and Communication Department"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+            "type": "Organization",
+            "countryCode": "NO",
+            "labels": {
+              "nn": "Divisjon for forskings- og kunnskapsressursar",
+              "nb": "Divisjon forsknings- og kunnskapsressurser",
+              "en": "The Research and Education Resources Division"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          }
+        ],
+        "labels": {
+          "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+          "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "labels": {
+          "nb": "Universitetet i Oslo",
+          "en": "University of Oslo"
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20202.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "labels": {
+          "nn": "Unit – Direktoratet for IKT og fellestenester i høgare utdanning og forsking",
+          "nb": "Unit – Direktoratet for IKT og fellestjenester i høyere utdanning og forskning",
+          "en": "Unit – The Norwegian Directorate for ICT and Joint Services in Higher Education and Research"
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1990.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "labels": {
+          "nb": "Diakonhjemmet sykehus",
+          "en": "Diakonhjemmet Hospital"
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1615.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "labels": {
+          "nb": "Høyskolen Kristiania",
+          "en": "Kristiania University College"
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/217.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "labels": {
+          "nb": "Universitetet i Stavanger",
+          "en": "University of Stavanger"
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "labels": {
+          "nb": "Forsvarets høgskole",
+          "en": "Norwegian Defence University College"
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/209.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "labels": {
+          "nb": "Høgskolen i Innlandet",
+          "en": "Inland Norway University of Applied Sciences"
+        }
+      }
+    ],
+    "filesStatus": "hasPublicFiles",
+    "joinField": {
+      "name": "hasParts"
+    }
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018b857a85ae-110bf68d-c0f7-42b5-b635-b154ed6208dd",
+    "filesStatus": "hasPublicFiles",
+    "associatedArtifacts": [
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "1a3203fc-3d7d-4e21-8fab-fc2d58dfc878",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "20200017-09-TN.pdf",
+        "publishedDate": "2023-10-31T11:24:41.262439430Z",
+        "publisherAuthority": false,
+        "size": 2355368,
+        "visibleForNonOwner": true
+      },
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "98893bfd-82d3-44d8-af10-32233",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "20200017-03-TN_Release_area_variability.pdf",
+        "publishedDate": "2023-10-31T11:25:43.223366513Z",
+        "publisherAuthority": false,
+        "size": 699309,
+        "visibleForNonOwner": false
+      }
+    ],
+    "createdDate": "2023-09-29T11:53:36Z",
+    "entityDescription": {
+      "type": "EntityDescription",
+      "abstract": "The Norwegian building code regulates the societal acceptable risk from avalanches for three building classes (S1, S1, and S3). The corresponding highest allowed nominal annual probabilities of avalanches reaching the building for these classes are set as 1/100, 1/1000 and 1/5000 respectively (TEK17, 2017). That is, avalanches should not reach a building, or the accompanying outdoor area and cause (considerable) damage more often than the building class permits. These hazard classes are used for delineation of avalanche hazard zones for land use planning (TEK17, 2017). For the assessment of the quantitative risk of avalanches reaching existing settlements only limited methods are available. Thus, historical observations can be of special importance, as they may be direct indicators for the real hazard in the area of interest. To a certain degree, they can also provide an indication of a possible change of hazard over time due to environmental changes. However, historical observations are affected by inherent uncertainties and many questions remain open. Here, we aim to combine results from several work packages to develop a more consistent method of using historical observations that may help improve quantitative hazard assessments and evaluation of the uncertainties involved.",
+      "alternativeAbstracts": {},
+      "contributorsCount" : 1,
+      "contributors": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Peter Gauer"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        }
+      ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Peter Gauer"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        }
+      ],
+      "contibutorsCount": 1,
+      "language": "http://lexvo.org/id/iso639-3/eng",
+      "mainTitle": "CPT 3 – Quantitative risk assessment: Remarks on the uncertainty in the delimitation of hazard zones based on historical observations",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "day": "22",
+        "month": "03",
+        "year": "2022"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "type": "Report",
+          "publisher": {
+            "type": "UnconfirmedPublisher",
+            "name": "NGI – Norges Geotekniske institutt",
+            "valid": true
+          },
+          "series": {
+            "type": "UnconfirmedSeries",
+            "title": "NGI-Rapport"
+          },
+          "seriesNumber": "20200017-09-TN"
+        },
+        "publicationInstance": {
+          "type": "ReportResearch",
+          "pages": {
+            "type": "MonographPages",
+            "illustrated": false,
+            "pages": "18"
+          }
+        }
+      },
+      "tags": [
+        "Runout Distances",
+        "Snow avalanches",
+        "Avalanche-RnD",
+        "Norwegian avalanche grant",
+        "Hazard maps",
+        "Uncertainty",
+        "Frequency",
+        "Snøskred-FoU",
+        "Return Period"
+      ]
+    },
+    "handle": "https://hdl.handle.net/11250/3093118",
+    "identifier": "018b857a85ae-110bf68d-c0f7-42b5-b635-b154ed6208dd",
+    "modelVersion": "0.20.54",
+    "nviType": "NonNviCandidate",
+    "publishedDate": "2023-09-29T11:53:36Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/f415cb81-ac56-4244-b31b-25e43dc3027e",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "ngi@7452.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
+    },
+    "status": "PUBLISHED",
+    "joinField": {
+      "name": "hasParts"
+    }
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018b857b89d9-b5053ac9-fe14-4ea9-9922-8130b306b720",
+    "filesStatus": "hasPublicFiles",
+    "associatedArtifacts": [
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "197afe52-704e-4b56-b3e1-ff6e0fc6b73e",
+        "license": {
+          "type": "License",
+          "value": "https://rightsstatements.org/page/inc/1.0",
+          "name": "RS-INC",
+          "labels": {
+            "en": "Rights Statements - In copyright",
+            "nb": "Rights Statements - Utgivers betingelser"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "20200017-01-R.pdf",
+        "publishedDate": "2023-10-31T11:25:47.865702950Z",
+        "publisherAuthority": false,
+        "size": 1234363,
+        "visibleForNonOwner": true
+      }
+    ],
+    "createdDate": "2023-09-29T11:49:09Z",
+    "contributorOrganizations": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    ],
+    "entityDescription": {
+      "type": "EntityDescription",
+      "abstract": "Snow avalanches are a significant natural hazard and common phenomenon in Norway. Each year, avalanches result in fatalities, evacuations, and interruptions or damage to infrastructure networks such as roads, railways, and electrical transmission lines. Persistent avalanche hazard in steep terrain is a major factor considered during land-use planning and development. During the snow season, daily or weekly variations in the avalanche danger identified in regional and applied bulletins influence the operation of transportation networks. Applied research on avalanches and their societal impacts has been conducted at the Norwegian Geotechnical Institute (NGI) since 1973. This research has been funded in part by an annual grant from the Norwegian parliament, administered by the Norwegian Water Resources and Energy Directorate (NVE – Norges vassdrags- og energi-direktorat). Recent research activities have improved our understanding of avalanche formation, movement, and impacts. Enhanced knowledge of the individual processes leading to avalanche initiation, avalanche dynamics, and avalanche impacts has been applied to developing tools to help predict avalanche occurrence, runout distance, and impact pressures. While much has been accomplished within the avalanche research community in recent years, many key questions remain. This project plan: (1) presents the research goals for the 2020-2022 period, (2) outlines the projects organization – including potential for external collaboration, and (3) presents the work-package structure and specific research tasks to be undertaken by the applied avalanche research group at NGI over the next three years.",
+      "alternativeAbstracts": {},
+      "contributorsCount" : 7,
+      "contributors": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20202.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Unit – Direktoratet for IKT og fellestenester i høgare utdanning og forsking",
+                "nb": "Unit – Direktoratet for IKT og fellestjenester i høyere utdanning og forskning",
+                "en": "Unit – The Norwegian Directorate for ICT and Joint Services in Higher Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1306838",
+            "type": "Identity",
+            "name": "Anette Olli Siiri",
+            "orcId": "https://sandbox.orcid.org/0009-0004-4447-9305",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 7
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Regula Frauenfelder",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 5
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Kjersti Gisnås",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Peter Gauer",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 6
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Dieter Issler",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Christian Jaedicke",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Sean Salazar"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 4
+        }
+      ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20202.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Unit – Direktoratet for IKT og fellestenester i høgare utdanning og forsking",
+                "nb": "Unit – Direktoratet for IKT og fellestjenester i høyere utdanning og forskning",
+                "en": "Unit – The Norwegian Directorate for ICT and Joint Services in Higher Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1306838",
+            "type": "Identity",
+            "name": "Anette Olli Siiri",
+            "orcId": "https://sandbox.orcid.org/0009-0004-4447-9305",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 7
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Regula Frauenfelder",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 5
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Kjersti Gisnås",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Peter Gauer",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 6
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Dieter Issler",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Christian Jaedicke",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Sean Salazar"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 4
+        }
+      ],
+      "language": "http://lexvo.org/id/iso639-3/eng",
+      "mainTitle": "Research Plan 2020–2022",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "day": "23",
+        "month": "04",
+        "year": "2020"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "type": "Report",
+          "publisher": {
+            "type": "UnconfirmedPublisher",
+            "name": "NGI – Norges Geotekniske institutt",
+            "valid": true
+          },
+          "series": {
+            "type": "UnconfirmedSeries",
+            "title": "NGI-Rapport"
+          },
+          "seriesNumber": "20200017-01-R"
+        },
+        "publicationInstance": {
+          "type": "ReportResearch",
+          "pages": {
+            "type": "MonographPages",
+            "illustrated": false,
+            "pages": "25"
+          }
+        }
+      },
+      "tags": [
+        "Research plan",
+        "Snow avalanches",
+        "Avalanche-RnD",
+        "Snøskred-FoU"
+      ]
+    },
+    "handle": "https://hdl.handle.net/11250/3093114",
+    "identifier": "018b857b89d9-b5053ac9-fe14-4ea9-9922-8130b306b720",
+    "modelVersion": "0.20.54",
+    "nviType": "NonNviCandidate",
+    "publishedDate": "2023-09-29T11:49:09Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/f415cb81-ac56-4244-b31b-25e43dc3027e",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "ngi@7452.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
+    },
+    "status": "PUBLISHED",
+    "joinField": {
+      "name": "hasParts"
+    }
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018b857b28b5-25e3138f-5914-44e3-b322-5ed790a97f36",
+    "filesStatus": "hasPublicFiles",
+    "associatedArtifacts": [
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "7752c3c4-cf86-4dff-8ce8-d4f61c935ca0",
+        "license": {
+          "type": "License",
+          "value": "https://rightsstatements.org/page/inc/1.0",
+          "name": "RS-INC",
+          "labels": {
+            "en": "Rights Statements - In copyright",
+            "nb": "Rights Statements - Utgivers betingelser"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "20200017-05-TN.pdf",
+        "publishedDate": "2023-10-31T11:25:22.997593612Z",
+        "publisherAuthority": false,
+        "size": 5148309,
+        "visibleForNonOwner": true
+      }
+    ],
+    "createdDate": "2023-09-29T11:40:07Z",
+    "entityDescription": {
+      "type": "EntityDescription",
+      "abstract": "NGI is operating the avalanche test site at Ryggfonn in Stryn municipality, Vestland county, western Norway (61.969°N, 7.275°E) since early 1980s. In addition to the field work and data collection in frame work of WP2, necessary repairs and updating of the data acquisition system at the Ryggfonn avalanche test site were carried out under this task. This is to ensure that the site is ready for the winter season 2020/2021.",
+      "alternativeAbstracts": {},
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Peter Gauer",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Henrik Langeland",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        }
+      ],
+      "contributors": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Peter Gauer",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Henrik Langeland",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        }
+      ],
+      "contributorsCount": 2,
+      "language": "http://lexvo.org/id/iso639-3/eng",
+      "mainTitle": "WP 2 – Full-scale experiments at Ryggfonn Ryggfonn avalanche observations 2019/2020",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "day": "22",
+        "month": "03",
+        "year": "2021"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "type": "Report",
+          "publisher": {
+            "type": "UnconfirmedPublisher",
+            "name": "NGI – Norges Geotekniske institutt",
+            "valid": true
+          },
+          "series": {
+            "type": "UnconfirmedSeries",
+            "title": "NGI-Rapport"
+          },
+          "seriesNumber": "20200017-05-TN"
+        },
+        "publicationInstance": {
+          "type": "ReportResearch",
+          "pages": {
+            "type": "MonographPages",
+            "illustrated": false,
+            "pages": "21"
+          }
+        }
+      },
+      "tags": [
+        "Avalanche-RnD",
+        "Norwegian avalanche grant",
+        "Snøskred-FoU"
+      ]
+    },
+    "handle": "https://hdl.handle.net/11250/3093107",
+    "identifier": "018b857b28b5-25e3138f-5914-44e3-b322-5ed790a97f36",
+    "modelVersion": "0.20.54",
+    "nviType": "NonNviCandidate",
+    "publishedDate": "2023-09-29T11:40:07Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/f415cb81-ac56-4244-b31b-25e43dc3027e",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "ngi@7452.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
+    },
+    "status": "PUBLISHED",
+    "joinField": {
+      "name": "hasParts"
+    }
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018b857d48b0-cbcc81bf-0feb-4058-bf0a-8254b02b4cbd",
+    "filesStatus": "hasPublicFiles",
+    "additionalIdentifiers": [
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "Cristin",
+        "value": "123455"
+      },
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "Scopus",
+        "value": "someId"
+      }
+    ],
+    "associatedArtifacts": [
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "ecee2024-7d86-4f5b-b642-2f464c18ad13",
+        "license": {
+          "type": "License",
+          "value": "https://rightsstatements.org/page/inc/1.0",
+          "name": "RS-INC",
+          "labels": {
+            "en": "Rights Statements - In copyright",
+            "nb": "Rights Statements - Utgivers betingelser"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "s00603-023-03585-9.pdf",
+        "publishedDate": "2023-10-31T11:27:42.251599563Z",
+        "publisherAuthority": true,
+        "size": 2892259,
+        "visibleForNonOwner": true
+      }
+    ],
+    "createdDate": "2023-10-20T21:17:59Z",
+    "entityDescription": {
+      "type": "EntityDescription",
+      "alternativeAbstracts": {},
+      "alternativeTitles": {
+        "en": "Validity of the NTNU Prediction Model for D&B Tunnelling"
+      },
+      "contributorsCount" : 4,
+      "contributors": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Sondre Gjengedal",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Pål Drevland Jakobsen",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Amund Bruland",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Eivind Grøv"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 4
+        }
+      ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Sondre Gjengedal",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Pål Drevland Jakobsen",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Amund Bruland",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Eivind Grøv"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 4
+        }
+      ],
+      "language": "http://lexvo.org/id/iso639-3/eng",
+      "mainTitle": "Validity of the NTNU Prediction Model for D&B Tunnelling",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "year": "2023"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "type": "UnconfirmedJournal",
+          "printIssn": "0723-2632",
+          "title": "Rock Mechanics and Rock Engineering"
+        },
+        "publicationInstance": {
+          "type": "AcademicArticle",
+          "pages": {
+            "type": "Range"
+          }
+        }
+      }
+    },
+    "contributorsCount": 4,
+    "handle": "https://hdl.handle.net/11250/3097894",
+    "identifier": "018b857d48b0-cbcc81bf-0feb-4058-bf0a-8254b02b4cbd",
+    "modelVersion": "0.20.54",
+    "nviType": "NonNviCandidate",
+    "publishedDate": "2023-10-20T21:17:59Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/f415cb81-ac56-4244-b31b-25e43dc3027e",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "ngi@7452.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
+    },
+    "status": "PUBLISHED",
+    "joinField": {
+      "name": "hasParts"
+    }
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018ba39a451a-7cd6f672-40e2-4c53-b0c5-501be59a8f0b",
+    "filesStatus": "hasPublicFiles",
+    "additionalIdentifiers": [
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "Cristin",
+        "value": "someId"
+      },
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "Scopus",
+        "value": "123455"
+      }
+    ],
+    "associatedArtifacts": [
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "52eeff6b-796b-49e9-b536-0b3e07c2f065",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "2023_Conway-Moore_CoCreate+policy+ideas.pdf",
+        "publishedDate": "2023-11-06T07:47:58.358558928Z",
+        "publisherAuthority": false,
+        "size": 546287,
+        "visibleForNonOwner": true
+      }
+    ],
+    "createdDate": "2023-09-29T15:19:31Z",
+    "entityDescription": {
+      "type": "EntityDescription",
+      "abstract": "Summary Despite growing recognition of the importance of applying a systems lens to action on obesity, there has only been limited analysis of the extent to which this lens has actually been applied. The CO‐CREATE project used a youth‐led participatory action research approach to generate policy ideas towards the reduction of adolescent overweight and obesity across Europe. In order to assess the extent to which these youth‐generated policy ideas take a systems approach, we analyzed them using the Intervention Level Framework (ILF). The ILF ascribes actions to one of five system levels, from Structural Elements , the least engaged with system change, up to Paradigm , which is the system's deepest held beliefs and thus the most difficult level at which to intervene. Of the 106 policy ideas generated by young people during the CO‐CREATE project, 91 (86%) were categorized at the level of Structural Elements . This emphasis on operational rather than systems level responses echoes findings from a previous study on obesity strategies. Analyzing the distribution of systems level responses using the ILF has the potential to support more effective action on obesity by allowing identification of opportunities to strengthen systems level responses overall.\n",
+      "alternativeAbstracts": {},
+      "alternativeTitles": {
+        "en": "ENEngelskEnglishCo-creating obesity prevention policies with youth: Policy ideas generated through the CO-CREATE project"
+      },
+      "language": "http://lexvo.org/id/iso639-3/eng",
+      "mainTitle": "Co-creating obesity prevention policies with youth: Policy ideas generated through the CO-CREATE project",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "year": "2023"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "type": "UnconfirmedJournal"
+        },
+        "publicationInstance": {
+          "type": "AcademicArticle",
+          "pages": {
+            "type": "Range"
+          }
+        }
+      }
+    },
+    "handle": "https://hdl.handle.net/10852/105383",
+    "identifier": "018ba39a451a-7cd6f672-40e2-4c53-b0c5-501be59a8f0b",
+    "modelVersion": "0.20.54",
+    "nviType": "NonNviCandidate",
+    "publishedDate": "2023-09-29T15:19:31Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/8db4a8bd-3db5-420b-a2e4-fc17a489aa6d",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "uio@185.90.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0"
+    },
+    "status": "PUBLISHED",
+    "joinField": {
+      "name": "hasParts"
+    }
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018ba39a40f9-2c909b04-6380-4af3-9b7f-c1a447fba075",
+    "filesStatus": "hasPublicFiles",
+    "additionalIdentifiers": [
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "Cristin",
+        "value": "2179545"
+      }
+    ],
+    "associatedArtifacts": [
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "744dc95f-19c6-4bf6-a1f7-94d81ce615f3",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "2023_Aguiar_CoCreate+mental+wellbeing.pdf",
+        "publishedDate": "2023-11-06T07:47:57.300374215Z",
+        "publisherAuthority": false,
+        "size": 1406575,
+        "visibleForNonOwner": true
+      }
+    ],
+    "createdDate": "2023-09-29T15:18:43Z",
+    "entityDescription": {
+      "type": "EntityDescription",
+      "abstract": "Summary Both obesity and poor mental wellbeing have a high prevalence in European youth. Adolescents in six countries identified mental wellbeing factors as main drivers of youth obesity through systems mapping. This study sought to (1) explore the dynamics of the interplay between poor mental wellbeing, energy balance‐related behaviors, and adolescent overweight and obesity prevalence and (2) test the effect of intervention point scenarios to reduce adolescent obesity. Drawing on the youth‐generated systems maps and a literature synthesis, we built a simulation model that represents the links from major feedback pathways for poor mental wellbeing to changes in dietary, physical activity, and sleep behaviors. The model was calibrated using survey data from Norway, expert input, and literature and shows a good fit between simulated behavior and available statistical data. The simulations indicate that adolescent mental wellbeing is harmed by socio‐cultural pressures and stressors, which trigger reinforcing feedback mechanisms related to emotional/binge eating, lack of motivation to engage in physical activity, and sleep difficulty. Targeting a combination of intervention points that support a 25% reduction of pressure on body image and psychosocial stress showed potentially favorable effects on mental wellbeing—doubling on average for boys and girls and decreasing obesity prevalence by over 4%.\n",
+      "alternativeAbstracts": {},
+      "alternativeTitles": {
+        "en": "ENEngelskEnglishUnderstanding the dynamics emerging from the interplay among poor mental wellbeing, energy balance-related behaviors, and obesity prevalence in adolescents: A simulation-based study"
+      },
+      "language": "http://lexvo.org/id/iso639-3/eng",
+      "mainTitle": "Understanding the dynamics emerging from the interplay among poor mental wellbeing, energy balance-related behaviors, and obesity prevalence in adolescents: A simulation-based study",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "year": "2023"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "type": "UnconfirmedJournal"
+        },
+        "publicationInstance": {
+          "type": "AcademicArticle",
+          "pages": {
+            "type": "Range"
+          }
+        }
+      }
+    },
+    "handle": "https://hdl.handle.net/10852/105382",
+    "identifier": "018ba39a40f9-2c909b04-6380-4af3-9b7f-c1a447fba075",
+    "modelVersion": "0.20.54",
+    "nviType": "NonNviCandidate",
+    "publishedDate": "2023-09-29T15:18:43Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/8db4a8bd-3db5-420b-a2e4-fc17a489aa6d",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "uio@185.90.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0"
+    },
+    "status": "PUBLISHED",
+    "joinField": {
+      "name": "hasParts"
+    }
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018ba39c10de-cad0ae46-6d06-4c28-a1d2-ae0f46235a3a",
+    "filesStatus": "hasPublicFiles",
+    "additionalIdentifiers": [
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "Cristin",
+        "value": "2179523"
+      }
+    ],
+    "associatedArtifacts": [
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "e4b822fc-349f-429e-b9c9-cc3187c205e3",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "2023_Aguiar_SD+simulation+models+on+overweight+and+obesity.pdf",
+        "publishedDate": "2023-11-06T07:49:56.053770685Z",
+        "publisherAuthority": false,
+        "size": 483531,
+        "visibleForNonOwner": true
+      }
+    ],
+    "createdDate": "2023-09-29T15:17:49Z",
+    "entityDescription": {
+      "type": "EntityDescription",
+      "abstract": "Summary It has increasingly been recognized that developing successful obesity prevention policies and interventions requires understanding of the complex mechanisms driving the obesity pandemic and that models could be useful tools for simulating policies. This paper reviews system dynamics simulation models of mechanisms driving childhood overweight and obesity and/or testing of preventive interventions. A systematic literature search was conducted in six databases from inception to January 2023 using terms related to overweight/obesity, children, and system dynamics. Study descriptives, mechanisms, and where to intervene (the leverage points), as well as quality assessments of the simulation models were extracted by two researchers into a predetermined template and narratively synthesized. Seventeen papers describing 15 models were included. Models describing the mechanisms ranged from only intrapersonal factors to models cutting across multiple levels of the ecological model, but mechanisms across levels were lacking. The majority of interventions tested in the simulation models were changes to existing model parameters with less emphasis on models that alter system structure. In conclusion, existing models included mechanisms driving youth obesity at multiple levels of the ecological model. This is useful for developing an integrated simulation model combining mechanisms at multiple levels and allowing for testing fundamental system changes.\n",
+      "alternativeAbstracts": {},
+      "alternativeTitles": {
+        "en": "ENEngelskEnglishSystem dynamics simulation models on overweight and obesity in children and adolescents: A systematic review"
+      },
+      "language": "http://lexvo.org/id/iso639-3/eng",
+      "mainTitle": "System dynamics simulation models on overweight and obesity in children and adolescents: A systematic review",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "year": "2023"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "type": "UnconfirmedJournal"
+        },
+        "publicationInstance": {
+          "type": "AcademicArticle",
+          "pages": {
+            "type": "Range"
+          }
+        }
+      }
+    },
+    "handle": "https://hdl.handle.net/10852/105381",
+    "identifier": "018ba39c10de-cad0ae46-6d06-4c28-a1d2-ae0f46235a3a",
+    "modelVersion": "0.20.54",
+    "nviType": "NonNviCandidate",
+    "publishedDate": "2023-09-29T15:17:49Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/8db4a8bd-3db5-420b-a2e4-fc17a489aa6d",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "uio@185.90.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0"
+    },
+    "status": "PUBLISHED",
+    "joinField": {
+      "name": "hasParts"
+    }
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018b857fbe4e-2d1e7fb3-5e9f-4149-8606-62164ff2e61c",
+    "filesStatus": "hasPublicFiles",
+    "additionalIdentifiers": [
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "Cristin",
+        "value": "2178703"
+      }
+    ],
+    "associatedArtifacts": [
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "c0d766f6-982a-490c-9ff9-d8175e77478d",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "Stein_Langford_Kahlstr%C3%B6m%282023%29.pdf",
+        "publishedDate": "2023-10-31T11:30:23.434987647Z",
+        "publisherAuthority": true,
+        "size": 3194143,
+        "visibleForNonOwner": true
+      }
+    ],
+    "createdDate": "2023-09-26T05:51:17Z",
+    "contributorOrganizations": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    ],
+    "entityDescription": {
+      "type": "EntityDescription",
+      "abstract": "Time series modelling: applications for groundwater control in urban tunnelling\nWater ingress to tunnels may result in pore pressure drawdown and consolidation settlements in areas above tunnels founded on soft soil deposits, potentially causing damage to buildings and infrastructure. To limit pore pressure drawdown, requirements are set on water ingress to bedrock tunnels. To meet these requirements, pre-excavation grouting is often performed to reduce the hydraulic conductivity of the rock mass surrounding the tunnel. Real-time pore pressure monitoring may be used to document pore pressure drawdown during construction. However, the effect of tunnel water ingress can be difficult to distinguish from natural pore pressure fluctuations. This paper presents a tunnel case in Oslo, Norway, where time series modelling was applied to local pore pressure data using the transfer function model framework. The input to the models was daily meteorological data considering precipitation and evapotranspiration, and the output was simulated pore pressure levels with impulse response functions. The models were optimised with data from before tunnel excavation, and simulations were run during the tunnel excavation period. Simulated pore pressure levels were compared with observed pore pressure levels to assess tunnelling-induced drawdown. Model uncertainty ranges were used to produce upper, lower, and best estimates of the drawdown. The findings show that time series modelling with transfer function models may be used in tunnel projects to continuously assess the impact on the local groundwater environment, for better evaluation of the pre-grouting performance, and for quantifying both the temporary and long-term drawdown with increased accuracy.\n",
+      "alternativeAbstracts": {},
+      "alternativeTitles": {
+        "en": "Time series modelling: applications for groundwater control in urban tunnelling"
+      },
+      "contributorsCount" : 4,
+      "contributors": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20202.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Unit – Direktoratet for IKT og fellestenester i høgare utdanning og forsking",
+                "nb": "Unit – Direktoratet for IKT og fellestjenester i høyere utdanning og forskning",
+                "en": "Unit – The Norwegian Directorate for ICT and Joint Services in Higher Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1306838",
+            "type": "Identity",
+            "name": "Anette Olli Siiri",
+            "orcId": "https://sandbox.orcid.org/0009-0004-4447-9305",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 7
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Mats Johan Kahlström",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Eivind Stein",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Jenny Langford",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        }
+      ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20202.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Unit – Direktoratet for IKT og fellestenester i høgare utdanning og forsking",
+                "nb": "Unit – Direktoratet for IKT og fellestjenester i høyere utdanning og forskning",
+                "en": "Unit – The Norwegian Directorate for ICT and Joint Services in Higher Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1306838",
+            "type": "Identity",
+            "name": "Anette Olli Siiri",
+            "orcId": "https://sandbox.orcid.org/0009-0004-4447-9305",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 7
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Mats Johan Kahlström",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Eivind Stein",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Jenny Langford",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        }
+      ],
+      "language": "http://lexvo.org/id/iso639-3/eng",
+      "mainTitle": "Time series modelling: applications for groundwater control in urban tunnelling",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "year": "2023"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "type": "UnconfirmedJournal",
+          "printIssn": "1435-9529",
+          "title": "Bulletin of Engineering Geology and the Environment"
+        },
+        "publicationInstance": {
+          "type": "AcademicArticle",
+          "pages": {
+            "type": "Range"
+          },
+          "volume": "82"
+        }
+      }
+    },
+    "handle": "https://hdl.handle.net/11250/3091888",
+    "identifier": "018b857fbe4e-2d1e7fb3-5e9f-4149-8606-62164ff2e61c",
+    "modelVersion": "0.20.54",
+    "nviType": "NonNviCandidate",
+    "publishedDate": "2023-09-26T05:51:17Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/f415cb81-ac56-4244-b31b-25e43dc3027e",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "ngi@7452.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
+    },
+    "status": "PUBLISHED",
+    "joinField": {
+      "name": "hasParts"
+    }
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018ba39a3a43-092f5bfa-4def-4b5d-af78-1c48cf4bd0fc",
+    "additionalIdentifiers": [
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "Cristin",
+        "value": "2133164"
+      }
+    ],
+    "filesStatus": "hasPublicFiles",
+    "associatedArtifacts": [
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "a01ac781-2b66-4885-800d-de27cbde85c7",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "Linking+brain+maturation+and+puberty+during+early+adolescence+using+longitudinal+brain+age+prediction+in+the+ABCD+cohort.pdf",
+        "publishedDate": "2023-11-06T07:47:55.582942300Z",
+        "publisherAuthority": false,
+        "size": 2159271,
+        "visibleForNonOwner": true
+      }
+    ],
+    "createdDate": "2023-09-21T15:46:41Z",
+    "entityDescription": {
+      "type": "EntityDescription",
+      "abstract": "The temporal characteristics of adolescent neurodevelopment are shaped by a complex interplay of genetic, biological, and environmental factors. Using a large longitudinal dataset of children aged 9–13 from the Adolescent Brain Cognitive Development (ABCD) study we tested the associations between pubertal status and brain maturation. Brain maturation was assessed using brain age prediction based on convolutional neural networks and minimally processed T1-weighted structural MRI data. Brain age prediction provided highly accurate and reliable estimates of individual age, with an overall mean absolute error of 0.7 and 1.4 years at the two timepoints respectively, and an intraclass correlation of 0.65. Linear mixed effects (LME) models accounting for age and sex showed that on average, a one unit increase in pubertal maturational level was associated with a 2.22 months higher brain age across time points (β = 0.10, p < .001). Moreover, annualized change in pubertal development was weakly related to the rate of change in brain age (β = .047, p = 0.04). These results demonstrate a link between sexual development and brain maturation in early adolescence, and provides a basis for further investigations of the complex sociobiological impacts of puberty on life outcomes.\n",
+      "alternativeAbstracts": {},
+      "alternativeTitles": {
+        "en": "ENEngelskEnglishLinking brain maturation and puberty during early adolescence using longitudinal brain age prediction in the ABCD cohort"
+      },
+      "language": "http://lexvo.org/id/iso639-3/eng",
+      "mainTitle": "Linking brain maturation and puberty during early adolescence using longitudinal brain age prediction in the ABCD cohort",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "year": "2023"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "type": "Degree",
+          "course": {
+            "type": "UnconfirmedCourse",
+            "code": "FYS5960"
+          }
+        },
+        "publicationInstance": {
+          "type": "AcademicArticle",
+          "pages": {
+            "type": "Range"
+          }
+        }
+      }
+    },
+    "handle": "https://hdl.handle.net/10852/105188",
+    "identifier": "018ba39a3a43-092f5bfa-4def-4b5d-af78-1c48cf4bd0fc",
+    "modelVersion": "0.20.54",
+    "nviType": "NonNviCandidate",
+    "publishedDate": "2023-09-21T15:46:41Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/8db4a8bd-3db5-420b-a2e4-fc17a489aa6d",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "uio@185.90.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0"
+    },
+    "status": "PUBLISHED",
+    "joinField": {
+      "name": "hasParts"
+    }
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018ba39aafd4-92dd290a-7c0e-4f37-98e7-a61a8d4e9a58",
+    "additionalIdentifiers": [
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "Cristin",
+        "value": "2130654"
+      }
+    ],
+    "filesStatus": "hasPublicFiles",
+    "associatedArtifacts": [
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "35be206e-1884-4b0e-827e-e0c2991137b0",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "Risk+of+recurrent+cardiovascular+events+in+coronary+artery+disease+patients+with+Type+D+personality.pdf",
+        "publishedDate": "2023-11-06T07:48:25.679851978Z",
+        "publisherAuthority": false,
+        "size": 1011761,
+        "visibleForNonOwner": true
+      }
+    ],
+    "createdDate": "2023-09-21T15:45:17Z",
+    "entityDescription": {
+      "type": "EntityDescription",
+      "abstract": "Introduction Data on the association between Type D personality, its traits negative affectivity (NA) and social inhibition (SI), and risk of major adverse cardiac events (MACE) in coronary outpatients is sparse. Furthermore, the associations between Type D subgroups and cardiovascular risk factors are largely unknown.Methods We investigated i) Type D personality, NA and SI and risk of recurrent MACE, and ii) the relationship between Type D subgroups and risk factors in a coronary population. This prospective cohort study included 1083 patients` median 16 months after a myocardial infarction and/or a revascularization procedure who were followed-up for 4.2 (SD 0.4) years. Type D personality was assessed by DS14. Anxiety and depression, statin adherence, and risk factors were assessed by patients’ self-report and a clinical examination with blood samples. MACE, defined as cardiovascular death, myocardial infarction, revascularization, stroke or heart failure, were obtained from hospital records from index event to end of study lasting 5.7 years. Data were analyzed by Cox proportional hazard regression.Results In all, 352 MACE occurred in 230 patients after average 4.2 years follow-up. Higher NA score was associated with MACE after adjustment for age, risk factors and comorbidity (HR 1.02 per unit increase, 95% CI 1.00-1.05), whereas we found a weaker, not statistically significant estimated effect of higher SI score. After additional adjustment for symptoms of anxiety and depression, we found a weaker, not statistically significant association between NA and MACE (HR 1.01 per unit increase, 95% CI 0.98-1.05). Low statin adherence and smoking were more prevalent in the Type D and high NA group.Discussion Our results indicate that the NA trait is related to worse prognosis in outpatients with coronary artery disease.\n",
+      "alternativeAbstracts": {},
+      "alternativeTitles": {
+        "en": "ENEngelskEnglishRisk of recurrent cardiovascular events in coronary artery disease patients with Type D personality"
+      },
+      "language": "http://lexvo.org/id/iso639-3/eng",
+      "mainTitle": "Risk of recurrent cardiovascular events in coronary artery disease patients with Type D personality",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "year": "2023"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "type": "Journal",
+          "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/C3C22B36-26AC-4503-A7AD-719380D0E3E2/2024",
+          "identifier": "C3C22B36-26AC-4503-A7AD-719380D0E3E2",
+          "name": "Annales des Sciences Naturelles-Zoologie et Biologie Animale",
+          "onlineIssn": "1879-1840",
+          "printIssn": "0003-4339",
+          "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalTidsskriftInfo?pid=C3C22B36-26AC-4503-A7AD-719380D0E3E2",
+          "scientificValue": "LevelTwo"
+        },
+        "publicationInstance": {
+          "type": "AcademicArticle",
+          "pages": {
+            "type": "Range"
+          }
+        }
+      }
+    },
+    "handle": "https://hdl.handle.net/10852/105187",
+    "identifier": "018ba39aafd4-92dd290a-7c0e-4f37-98e7-a61a8d4e9a58",
+    "modelVersion": "0.20.54",
+    "nviType": "NonNviCandidate",
+    "publishedDate": "2023-09-21T15:45:17Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/8db4a8bd-3db5-420b-a2e4-fc17a489aa6d",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "uio@185.90.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0"
+    },
+    "status": "PUBLISHED",
+    "joinField": {
+      "name": "hasParts"
+    }
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018ba39ab1a3-7c09e399-53b4-432a-ae89-adcb4a7a8a1f",
+    "additionalIdentifiers": [
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "Cristin",
+        "value": "2139688"
+      }
+    ],
+    "filesStatus": "hasPublicFiles",
+    "associatedArtifacts": [
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "d3e2bc70-d6f3-4403-946d-56e4735bc5fa",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "Egeland-Eriksen_et_al_International+Journal+of+Hydrogen+Energy_2023.pdf",
+        "publishedDate": "2023-11-06T07:48:26.143738738Z",
+        "publisherAuthority": false,
+        "size": 2993341,
+        "visibleForNonOwner": true
+      }
+    ],
+    "createdDate": "2023-09-21T15:37:31Z",
+    "entityDescription": {
+      "type": "EntityDescription",
+      "abstract": "This work presents simulation results from a system where offshore wind power is used to produce hydrogen via electrolysis. Real-world data from a 2.3 MW floating offshore wind turbine and electricity price data from Nord Pool were used as input to a novel electrolyzer model. Data from five 31-day periods were combined with six system designs, and hydrogen production, system efficiency, and production cost were estimated. A comparison of the overall system performance shows that the hydrogen production and cost can vary by up to a factor of three between the cases. This illustrates the uncertainty related to the hydrogen production and profitability of these systems. The highest hydrogen production achieved in a 31-day period was 17 242 kg using a 1.852 MW electrolyzer (i.e., utilization factor of approximately 68%), the lowest hydrogen production cost was 4.53 $/kg H2, and the system efficiency was in the range 56.1–56.9% in all cases.\n",
+      "alternativeAbstracts": {},
+      "alternativeTitles": {
+        "en": "ENEngelskEnglishSimulating offshore hydrogen production via PEM electrolysis using real power production data from a 2.3 MW floating offshore wind turbine"
+      },
+      "language": "http://lexvo.org/id/iso639-3/eng",
+      "mainTitle": "Simulating offshore hydrogen production via PEM electrolysis using real power production data from a 2.3 MW floating offshore wind turbine",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "year": "2023"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/6EF23D04-C5BB-4024-8802-F4B3AB75BAE1/2024",
+          "identifier": "6EF23D04-C5BB-4024-8802-F4B3AB75BAE1",
+          "type": "Journal",
+          "name": "Acta Naturae",
+          "printIssn": "2075-8251",
+          "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/nvakanal?pid=6EF23D04-C5BB-4024-8802-F4B3AB75BAE1",
+          "scientificValue": "Unassigned"
+        },
+        "publicationInstance": {
+          "type": "AcademicArticle",
+          "pages": {
+            "type": "Range"
+          }
+        }
+      }
+    },
+    "handle": "https://hdl.handle.net/10852/105181",
+    "identifier": "018ba39ab1a3-7c09e399-53b4-432a-ae89-adcb4a7a8a1f",
+    "modelVersion": "0.20.54",
+    "nviType": "NonNviCandidate",
+    "publishedDate": "2023-09-21T15:37:31Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/8db4a8bd-3db5-420b-a2e4-fc17a489aa6d",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "uio@185.90.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0"
+    },
+    "status": "PUBLISHED",
+    "joinField": {
+      "name": "hasParts"
+    }
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/0190554a46d9-41780102-675d-43ba-81df-17168d78fa22",
+    "additionalIdentifiers": [
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "Cristin",
+        "value": "853343"
+      },
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "FORSKDOK",
+        "value": "r07008912"
+      }
+    ],
+    "createdDate": "2007-02-12T00:00:00Z",
+    "entityDescription": {
+      "type": "EntityDescription",
+      "abstract": "(Abstract): This chapter's point of departure is that business problems too often are approached in a very narrow manner, due to what we call the inclination of techno-centrism. It involves that we may ignore solutions that are better and more sustainable in the long run. Three additional dimensions for formulation and resolution of complex business-related decision problems are explore, and we argue that these are necessary as complements to the technical dimension - (1) the systemic dimension, (2) the social dimension and (3) the existential dimension. We argue that ethical reflection may create more awareness around these problems and as a consequence be part of the solution. Finally, we present the outline of a new course in business ethics that aims to counterbalance the techno-centricity in contemporary business education, and hopefully this may be seen as a new direction for business ethics along the lines of student-centricity and positive psychology, which may improve the education of business students.",
+      "alternativeAbstracts": {},
+      "contributorsCount" : 3,
+      "contributors": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/326210",
+            "type": "Identity",
+            "name": "Knut Johannessen Ims",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/326249",
+            "type": "Identity",
+            "name": "Lars Jacob Tynes Pedersen",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Søren Wenstøp",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        }
+      ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/326210",
+            "type": "Identity",
+            "name": "Knut Johannessen Ims",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/326249",
+            "type": "Identity",
+            "name": "Lars Jacob Tynes Pedersen",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Søren Wenstøp",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        }
+      ],
+      "language": "http://lexvo.org/id/iso639-3/eng",
+      "mainTitle": "The Solution: Business Ethics! But what was the problem?",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "year": "2006"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "id": "https://api.dev.nva.aws.unit.no/publication/01905518408c-dba987f7-0d84-4519-a625-89605672afc8",
+          "type": "Anthology",
+          "entityDescription": {
+            "type": "EntityDescription",
+            "mainTitle": "Information technology, decision making and learning in a business management context: A Festschrift in honour of Anna Mette Fuglseth",
+            "reference": {
+              "type": "Reference",
+              "publicationContext": {
+                "type": "Book",
+                "publisher": {
+                  "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/D0CC505A-1A53-4AA1-B6C9-D886FE2E6351/2006",
+                  "type": "Publisher",
+                  "identifier": "D0CC505A-1A53-4AA1-B6C9-D886FE2E6351",
+                  "isbnPrefix": "978-82-450",
+                  "name": "Fagbokforlaget",
+                  "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalForlagInfo?pid=D0CC505A-1A53-4AA1-B6C9-D886FE2E6351",
+                  "scientificValue": "LevelOne",
+                  "valid": true,
+                  "year": "2006"
+                },
+                "revision": "Revised"
+              }
+            }
+          }
+        },
+        "publicationInstance": {
+          "type": "AcademicChapter",
+          "pages": {
+            "type": "Range",
+            "begin": "248",
+            "end": "248"
+          }
+        }
+      },
+      "tags": [
+        "Formulation",
+        "Ethics",
+        "Etikk",
+        "Formulering",
+        "Education"
+      ]
+    },
+    "fundings": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/verified-funding/nfr/296896",
+        "type": "ConfirmedFunding",
+        "activeFrom": "2018-01-01T00:00:00Z",
+        "activeTo": "2019-01-01T00:00:00Z",
+        "identifier": "296896",
+        "source": {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/funding-sources/NFR",
+          "type": "FundingSource",
+          "identifier": "NFR",
+          "labels": {
+            "nb": "Norges forskningsråd",
+            "en": "Research Council of Norway (RCN)"
+          }
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/verified-funding/nfr/318142",
+        "type": "ConfirmedFunding",
+        "activeFrom": "2020-01-01T00:00:00Z",
+        "activeTo": "2022-01-01T00:00:00Z",
+        "identifier": "318142",
+        "source": {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/funding-sources/NFR",
+          "type": "FundingSource",
+          "identifier": "NFR",
+          "labels": {
+            "nb": "Norges forskningsråd",
+            "en": "Research Council of Norway (RCN)"
+          }
+        }
+      }
+    ],
+    "identifier": "0190554a46d9-41780102-675d-43ba-81df-17168d78fa22",
+    "importDetail": [
+      {
+        "type": "ImportDetail",
+        "importDate": "2024-06-26T16:04:09.561875833Z",
+        "importSource": {
+          "type": "ImportSource"
+        }
+      },
+      {
+        "type": "ImportDetail",
+        "importDate": "2024-07-09T15:08:45.424688625Z",
+        "importSource": {
+          "type": "ImportSource"
+        }
+      }
+    ],
+    "modelVersion": "0.23.2",
+    "modifiedDate": "2024-07-09T15:08:45.432451513Z",
+    "publishedDate": "2007-02-12T00:00:00Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "nhh@191.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/191.0.0.0"
+    },
+    "status": "PUBLISHED",
+    "filesStatus": "noFiles",
+    "joinField": {
+      "name": "partOf",
+      "parent": "01905518408c-dba987f7-0d84-4519-a625-89605672afc8"
+    }
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/0190554a2562-a0d9dff1-8c80-48cd-95ab-add9c3c5f0fb",
+    "additionalIdentifiers": [
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "FORSKDOK",
+        "value": "r07009756"
+      },
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "Cristin",
+        "value": "853486"
+      }
+    ],
+    "createdDate": "2007-02-16T00:00:00Z",
+    "entityDescription": {
+      "type": "EntityDescription",
+      "alternativeAbstracts": {},
+      "contributorsCount" : 6,
+      "contributors": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/326320",
+            "type": "Identity",
+            "name": "Mette Bjørndal",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/26698",
+            "type": "Identity",
+            "name": "Kurt Jörnsten",
+            "verificationStatus": "UnVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/26698",
+            "type": "Identity",
+            "name": "Kurt Jörnsten3",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/26698",
+            "type": "Identity",
+            "name": "Kurt Jörnsten4",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 4
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/26698",
+            "type": "Identity",
+            "name": "Kurt Jörnsten5",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 5
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20202.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Unit – Direktoratet for IKT og fellestenester i høgare utdanning og forsking",
+                "nb": "Unit – Direktoratet for IKT og fellestjenester i høyere utdanning og forskning",
+                "en": "Unit – The Norwegian Directorate for ICT and Joint Services in Higher Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Mette Unknown",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 6
+        }
+      ],
+      "language": "http://lexvo.org/id/iso639-3/nob",
+      "mainTitle": "An electricity market bidding game How do students construct bids in a stylized electricity market?",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "year": "2006"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "id": "https://api.dev.nva.aws.unit.no/publication/01905518408c-dba987f7-0d84-4519-a625-89605672afc8",
+          "type": "Anthology",
+          "entityDescription": {
+            "type": "EntityDescription",
+            "mainTitle": "Information technology, decision making and learning in a business management context: A Festschrift in honour of Anna Mette Fuglseth",
+            "reference": {
+              "type": "Reference",
+              "publicationContext": {
+                "type": "Book",
+                "publisher": {
+                  "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/D0CC505A-1A53-4AA1-B6C9-D886FE2E6351/2006",
+                  "type": "Publisher",
+                  "identifier": "D0CC505A-1A53-4AA1-B6C9-D886FE2E6351",
+                  "isbnPrefix": "978-82-450",
+                  "name": "Fagbokforlaget",
+                  "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalForlagInfo?pid=D0CC505A-1A53-4AA1-B6C9-D886FE2E6351",
+                  "scientificValue": "LevelOne",
+                  "valid": true,
+                  "year": "2006"
+                },
+                "revision": "Revised"
+              }
+            }
+          }
+        },
+        "publicationInstance": {
+          "type": "AcademicChapter",
+          "pages": {
+            "type": "Range",
+            "begin": "159",
+            "end": "174"
+          }
+        }
+      }
+    },
+    "identifier": "0190554a2562-a0d9dff1-8c80-48cd-95ab-add9c3c5f0fb",
+    "importDetail": [
+      {
+        "type": "ImportDetail",
+        "importDate": "2024-06-26T16:04:00.994429274Z",
+        "importSource": {
+          "type": "ImportSource"
+        }
+      },
+      {
+        "type": "ImportDetail",
+        "importDate": "2024-07-09T14:57:22.757725669Z",
+        "importSource": {
+          "type": "ImportSource"
+        }
+      }
+    ],
+    "modelVersion": "0.23.2",
+    "modifiedDate": "2024-07-09T14:57:22.765008163Z",
+    "publishedDate": "2007-02-16T00:00:00Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "nhh@191.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/191.0.0.0"
+    },
+    "status": "PUBLISHED",
+    "filesStatus": "noFiles",
+    "joinField": {
+      "name": "partOf",
+      "parent": "01905518408c-dba987f7-0d84-4519-a625-89605672afc8"
+    }
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [
+      "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/D0CC505A-1A53-4AA1-B6C9-D886FE2E6351/2006"
+    ],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/01905518408c-dba987f7-0d84-4519-a625-89605672afc8",
+    "additionalIdentifiers": [
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "Cristin",
+        "value": "856324"
+      },
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "FORSKDOK",
+        "value": "r07008912"
+      }
+    ],
+    "createdDate": "2007-02-12T00:00:00Z",
+    "entityDescription": {
+      "type": "EntityDescription",
+      "abstract": "(Abstract): This chapter's point of departure is that business problems too often are approached in a very narrow manner, due to what we call the inclination of techno-centrism. It involves that we may ignore solutions that are better and more sustainable in the long run. Three additional dimensions for formulation and resolution of complex business-related decision problems are explore, and we argue that these are necessary as complements to the technical dimension - (1) the systemic dimension, (2) the social dimension and (3) the existential dimension. We argue that ethical reflection may create more awareness around these problems and as a consequence be part of the solution. Finally, we present the outline of a new course in business ethics that aims to counterbalance the techno-centricity in contemporary business education, and hopefully this may be seen as a new direction for business ethics along the lines of student-centricity and positive psychology, which may improve the education of business students.",
+      "alternativeAbstracts": {},
+      "language": "http://lexvo.org/id/iso639-3/eng",
+      "mainTitle": "Information technology, decision making and learning in a business management context: A Festschrift in honour of Anna Mette Fuglseth",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "year": "2006"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "type": "Book",
+          "publisher": {
+            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/D0CC505A-1A53-4AA1-B6C9-D886FE2E6351/2006",
+            "type": "Publisher",
+            "identifier": "D0CC505A-1A53-4AA1-B6C9-D886FE2E6351",
+            "isbnPrefix": "978-82-450",
+            "name": "Fagbokforlaget",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalForlagInfo?pid=D0CC505A-1A53-4AA1-B6C9-D886FE2E6351",
+            "scientificValue": "LevelOne",
+            "valid": true,
+            "year": "2006"
+          },
+          "revision": "Revised"
+        },
+        "publicationInstance": {
+          "type": "BookAnthology",
+          "pages": {
+            "type": "MonographPages",
+            "illustrated": false,
+            "pages": "248"
+          }
+        }
+      }
+    },
+    "identifier": "01905518408c-dba987f7-0d84-4519-a625-89605672afc8",
+    "importDetail": [
+      {
+        "type": "ImportDetail",
+        "importDate": "2024-06-26T15:09:31.148029832Z",
+        "importSource": {
+          "type": "ImportSource"
+        }
+      },
+      {
+        "type": "ImportDetail",
+        "importDate": "2024-07-09T15:24:25.113593379Z",
+        "importSource": {
+          "type": "ImportSource"
+        }
+      }
+    ],
+    "modelVersion": "0.23.2",
+    "modifiedDate": "2024-07-09T15:24:25.121670819Z",
+    "publishedDate": "2007-02-12T00:00:00Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "nhh@191.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/191.0.0.0"
+    },
+    "status": "PUBLISHED",
+    "filesStatus": "noFiles",
+    "joinField": {
+      "name": "hasParts",
+      "parent": null
+    }
+  }
+]
