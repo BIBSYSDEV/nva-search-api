@@ -80,7 +80,7 @@ import java.util.stream.Stream;
 @Testcontainers
 class TicketClientTest {
 
-    public static final String REQUEST_BASE_URL = "https://x.org/?size=22&aggregation=all&";
+    public static final String URL = "https://x.org/?size=22&aggregation=all&";
     public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 4;
     public static final URI testOrganizationId =
             URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0");
@@ -123,13 +123,13 @@ class TicketClientTest {
     }
 
     private static Arguments createArgument(String searchUri, int expectedCount) {
-        return Arguments.of(URI.create(REQUEST_BASE_URL + searchUri), expectedCount);
+        return Arguments.of(URI.create(URL + searchUri), expectedCount);
     }
 
     static Stream<Arguments> uriAccessRights() {
         final AccessRight[] accessRights = {MANAGE_DOI, SUPPORT, MANAGE_PUBLISHING_REQUESTS};
         final var statistics = STATISTICS.asCamelCase();
-        var uri = fromUri(REQUEST_BASE_URL).getUri();
+        var uri = fromUri(URL).getUri();
         return Stream.of(
                 accessRightArg(uriWithParam(uri, Words.OWNER, AnetteOlli), 0, 7, AnetteOlli),
                 accessRightArg(uriWithParam(uri, Words.OWNER, Kir), 0, 9, Kir),
@@ -184,16 +184,16 @@ class TicketClientTest {
 
     static Stream<URI> uriInvalidProvider() {
         return Stream.of(
-                URI.create(REQUEST_BASE_URL + "feilName=epler"),
-                URI.create(REQUEST_BASE_URL + "query=epler&fields=feilName"),
-                URI.create(REQUEST_BASE_URL + "CREATED_DATE=epler"),
-                URI.create(REQUEST_BASE_URL + "sort=CATEGORY:DEdd"),
-                URI.create(REQUEST_BASE_URL + "sort=CATEGORdfgY:desc"),
-                URI.create(REQUEST_BASE_URL + "sort=CATEGORY"),
-                URI.create(REQUEST_BASE_URL + "sort=CATEGORY:asc:DEdd"),
-                URI.create(REQUEST_BASE_URL + "categories=hello+world&lang=en"),
-                URI.create(REQUEST_BASE_URL + "tittles=hello+world&modified_before=2019-01-01"),
-                URI.create(REQUEST_BASE_URL + "useers=hello+world&lang=en"));
+                URI.create(URL + "feilName=epler"),
+                URI.create(URL + "query=epler&fields=feilName"),
+                URI.create(URL + "CREATED_DATE=epler"),
+                URI.create(URL + "sort=CATEGORY:DEdd"),
+                URI.create(URL + "sort=CATEGORdfgY:desc"),
+                URI.create(URL + "sort=CATEGORY"),
+                URI.create(URL + "sort=CATEGORY:asc:DEdd"),
+                URI.create(URL + "categories=hello+world&lang=en"),
+                URI.create(URL + "tittles=hello+world&modified_before=2019-01-01"),
+                URI.create(URL + "useers=hello+world&lang=en"));
     }
 
     static Stream<Arguments> uriProviderAsAdmin() {
@@ -235,7 +235,7 @@ class TicketClientTest {
     @Test
     void shouldCheckFacets() throws BadRequestException, UnauthorizedException {
         var hostAddress = URI.create(container.getHttpHostAddress());
-        var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.name() + EQUAL + ALL);
+        var uri1 = URI.create(URL + AGGREGATION.name() + EQUAL + ALL);
         var response1 =
                 TicketSearchQuery.builder()
                         .fromTestQueryParameters(queryToMapEntries(uri1))
@@ -608,10 +608,7 @@ class TicketClientTest {
 
     @Test
     void ownerEqualAssigneeReturnsUnauthorized() throws UnauthorizedException {
-        var uriBad = URI.create(REQUEST_BASE_URL + "owner=Kir+Truhacev&assignee=Kir+Truhacev");
-        //        var uriBad = URI.create(REQUEST_BASE_URL +
-        // "owner=Kir+Truhacev&assignee=Annette+Olli");
-
+        var uriBad = URI.create(URL + "owner=Kir+Truhacev&assignee=Kir+Truhacev");
         var mockedRequestInfoLocal = mock(RequestInfo.class);
         when(mockedRequestInfoLocal.getUserName()).thenReturn("Kir Truhacev");
         when(mockedRequestInfoLocal.getTopLevelOrgCristinId())
@@ -632,7 +629,7 @@ class TicketClientTest {
 
     @Test
     void notSiktAdminReturnsUnauthorized() throws UnauthorizedException {
-        var uriBad = URI.create(REQUEST_BASE_URL + "STATISTICS=true");
+        var uriBad = URI.create(URL + "STATISTICS=true");
 
         var mockedRequestInfoLocal = mock(RequestInfo.class);
         when(mockedRequestInfoLocal.getUserName()).thenReturn(randomString());
@@ -674,16 +671,12 @@ class TicketClientTest {
     static Stream<URI> uriSortingProvider() {
 
         return Stream.of(
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "sort=status&sortOrder=asc&sort=created_date&order=desc"),
-                URI.create(REQUEST_BASE_URL + "orderBy=status:asc,created_date:desc"),
-                URI.create(REQUEST_BASE_URL + "sort=status+asc&sort=created_date+desc"),
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "sort=created_date&sortOrder=asc&sort=status&order=desc"),
-                URI.create(REQUEST_BASE_URL + "sort=modified_date+asc&sort=type+desc"),
-                URI.create(REQUEST_BASE_URL + "sort=relevance,modified_date+asc"));
+                URI.create(URL + "sort=status&sortOrder=asc&sort=created_date&order=desc"),
+                URI.create(URL + "orderBy=status:asc,created_date:desc"),
+                URI.create(URL + "sort=status+asc&sort=created_date+desc"),
+                URI.create(URL + "sort=created_date&sortOrder=asc&sort=status&order=desc"),
+                URI.create(URL + "sort=modified_date+asc&sort=type+desc"),
+                URI.create(URL + "sort=relevance,modified_date+asc"));
     }
 
     @Test

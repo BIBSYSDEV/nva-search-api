@@ -18,7 +18,6 @@ import no.unit.nva.search.service.resource.response.PublicationDate;
 import no.unit.nva.search.service.resource.response.PublishingDetails;
 import no.unit.nva.search.service.resource.response.RecordMetadata;
 import no.unit.nva.search.service.resource.response.ResourceSearchResponse;
-import no.unit.nva.search.service.resource.response.ResourceSearchResponse.Builder;
 import no.unit.nva.search.service.resource.response.Series;
 
 import org.jetbrains.annotations.NotNull;
@@ -165,7 +164,7 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
     }
 
     @Nullable
-    private Map<String, String> mutateAlternativeTitles(JsonNode source) throws IOException {
+    private Map<String, String> mutateAlternativeTitles(JsonNode source) {
         return source.path(ENTITY_DESCRIPTION).has(ALTERNATIVE_TITLES)
                 ? jsonNodeMapToMap(source.path(ENTITY_DESCRIPTION).path(ALTERNATIVE_TITLES))
                 : null;
@@ -323,7 +322,7 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
     }
 
     private List<Contributor> mutateContributorsPreview(JsonNode source) {
-        var contributors = new ArrayList();
+        var contributors = new ArrayList<Contributor>();
         source.path(ENTITY_DESCRIPTION)
                 .path(CONTRIBUTORS_PREVIEW)
                 .iterator()
@@ -335,12 +334,12 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
                                 affiliationNode
                                         .iterator()
                                         .forEachRemaining(
-                                                aff -> {
-                                                    affiliations.add(
-                                                            new Affiliation(
-                                                                    aff.path(ID).textValue(),
-                                                                    aff.path(TYPE).textValue()));
-                                                });
+                                                aff ->
+                                                        affiliations.add(
+                                                                new Affiliation(
+                                                                        aff.path(ID).textValue(),
+                                                                        aff.path(TYPE)
+                                                                                .textValue())));
                             }
 
                             contributors.add(
