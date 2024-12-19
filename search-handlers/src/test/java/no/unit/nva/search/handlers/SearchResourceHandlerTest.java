@@ -61,6 +61,11 @@ class SearchResourceHandlerTest {
     }
 
     @Test
+    void shouldReturnMapSupplier() {
+        assertNotNull(handler.getMapSupplier().get());
+    }
+
+    @Test
     void shouldReturnContentIn20241201Format() throws IOException {
         prepareRestHighLevelClientOkResponse();
         handler.handleRequest(

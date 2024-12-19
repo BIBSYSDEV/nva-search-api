@@ -21,6 +21,10 @@ public record ResourceSearchResponse(
         int contributorsCount,
         PublishingDetails publishingDetails) {
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static final class Builder {
 
         private URI id;
@@ -38,10 +42,6 @@ public record ResourceSearchResponse(
         private PublishingDetails publishingDetails;
 
         public Builder() {}
-
-        public static Builder aResourceSearchResponse() {
-            return new Builder();
-        }
 
         public Builder withId(URI id) {
             this.id = id;

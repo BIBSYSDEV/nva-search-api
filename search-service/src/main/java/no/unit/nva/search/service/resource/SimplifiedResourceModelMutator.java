@@ -140,7 +140,7 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
     }
 
     private ResourceSearchResponse transformToDto(JsonNode source) throws IOException {
-        return new Builder()
+        return ResourceSearchResponse.builder()
                 .withId(uriFromText(source.path(ID).textValue()))
                 .withIdentifier(source.path(IDENTIFIER).textValue())
                 .withType(

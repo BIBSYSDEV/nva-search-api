@@ -67,10 +67,14 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
         };
     }
 
-    @JacocoGenerated
     @Override
+    @JacocoGenerated
     protected void addAdditionalHeaders(Supplier<Map<String, String>> additionalHeaders) {
-        super.addAdditionalHeaders(() -> Map.of(HttpHeaders.VARY, HttpHeaders.ACCEPT));
+        super.addAdditionalHeaders(getMapSupplier());
+    }
+
+    protected Supplier<Map<String, String>> getMapSupplier() {
+        return () -> Map.of(HttpHeaders.VARY, HttpHeaders.ACCEPT);
     }
 
     @Override
