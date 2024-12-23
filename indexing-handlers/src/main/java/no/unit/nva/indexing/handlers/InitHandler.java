@@ -4,6 +4,7 @@ import static no.unit.nva.constants.Words.DOIREQUESTS_INDEX;
 import static no.unit.nva.constants.Words.MESSAGES_INDEX;
 import static no.unit.nva.constants.Words.PUBLISHING_REQUESTS_INDEX;
 import static no.unit.nva.constants.Words.RESOURCES;
+import static no.unit.nva.constants.Words.RESOURCES_20241201;
 import static no.unit.nva.constants.Words.TICKETS;
 import static no.unit.nva.indexingclient.IndexingClient.defaultIndexingClient;
 
@@ -34,11 +35,19 @@ public class InitHandler implements RequestHandler<Object, String> {
             IoUtils.stringFromResources(Path.of("ticket_mappings.json"));
     private static final String RESOURCE_MAPPINGS =
             IoUtils.stringFromResources(Path.of("resource_mappings.json"));
+    private static final String RESOURCE_20241201_MAPPINGS =
+            IoUtils.stringFromResources(Path.of("resource_20241201_mappings.json"));
     private static final String RESOURCE_SETTINGS =
             IoUtils.stringFromResources(Path.of("resource_settings.json"));
+    private static final String RESOURCE_20241201_SETTINGS =
+            IoUtils.stringFromResources(Path.of("resource_20241201_settings.json"));
 
     private static final List<IndexRequest> INDEXES =
             List.of(
+                    new IndexRequest(
+                            RESOURCES_20241201,
+                            RESOURCE_20241201_MAPPINGS,
+                            RESOURCE_20241201_SETTINGS),
                     new IndexRequest(RESOURCES, RESOURCE_MAPPINGS, RESOURCE_SETTINGS),
                     new IndexRequest(DOIREQUESTS_INDEX),
                     new IndexRequest(MESSAGES_INDEX),

@@ -6,6 +6,7 @@ import static no.unit.nva.constants.Words.DOIREQUESTS_INDEX;
 import static no.unit.nva.constants.Words.MESSAGES_INDEX;
 import static no.unit.nva.constants.Words.PUBLISHING_REQUESTS_INDEX;
 import static no.unit.nva.constants.Words.RESOURCES;
+import static no.unit.nva.constants.Words.RESOURCES_20241201;
 import static no.unit.nva.constants.Words.TICKETS;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 
@@ -28,6 +29,7 @@ class DeleteIndicesHandlerTest {
     private static final List<String> ALL_INDICES =
             List.of(
                     RESOURCES,
+                    RESOURCES_20241201,
                     DOIREQUESTS_INDEX,
                     MESSAGES_INDEX,
                     TICKETS,
