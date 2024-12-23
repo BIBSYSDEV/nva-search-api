@@ -4,6 +4,7 @@ import static no.unit.nva.constants.Words.DOIREQUESTS_INDEX;
 import static no.unit.nva.constants.Words.MESSAGES_INDEX;
 import static no.unit.nva.constants.Words.PUBLISHING_REQUESTS_INDEX;
 import static no.unit.nva.constants.Words.RESOURCES;
+import static no.unit.nva.constants.Words.RESOURCES_20241201;
 import static no.unit.nva.constants.Words.TICKETS;
 
 import static nva.commons.core.attempt.Try.attempt;
@@ -38,6 +39,8 @@ public class DeleteIndicesHandler implements RequestHandler<Object, String> {
 
         attempt(() -> indexingClient.deleteIndex(RESOURCES))
                 .orElse(fail -> logError(fail.getException()));
+        attempt(() -> indexingClient.deleteIndex(RESOURCES_20241201))
+            .orElse(fail -> logError(fail.getException()));
         attempt(() -> indexingClient.deleteIndex(DOIREQUESTS_INDEX))
                 .orElse(fail -> logError(fail.getException()));
         attempt(() -> indexingClient.deleteIndex(MESSAGES_INDEX))
