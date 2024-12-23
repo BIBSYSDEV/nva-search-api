@@ -40,7 +40,7 @@ public class DeleteIndicesHandler implements RequestHandler<Object, String> {
         attempt(() -> indexingClient.deleteIndex(RESOURCES))
                 .orElse(fail -> logError(fail.getException()));
         attempt(() -> indexingClient.deleteIndex(RESOURCES_20241201))
-            .orElse(fail -> logError(fail.getException()));
+                .orElse(fail -> logError(fail.getException()));
         attempt(() -> indexingClient.deleteIndex(DOIREQUESTS_INDEX))
                 .orElse(fail -> logError(fail.getException()));
         attempt(() -> indexingClient.deleteIndex(MESSAGES_INDEX))
