@@ -2297,6 +2297,17 @@ components:
                   type: string
                 name:
                   type: string
+                scientificValue:
+                  type: string
+            publisher:
+              type: object
+              properties:
+                id:
+                  type: string
+                name:
+                  type: string
+                scientificValue:
+                  type: string
             name:
               type: string
             doi:

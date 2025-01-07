@@ -1,4 +1,4 @@
-package no.unit.nva.search.service.resource;
+package no.unit.nva.search.resource;
 
 import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 
@@ -71,11 +71,13 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
     public static final String SEQUENCE = "sequence";
     public static final String ROLE = "role";
     public static final String MANIFESTATIONS = "manifestations";
+    public static final String SCIENTIFIC_VALUE = "scientificValue";
     private final ObjectMapper objectMapper = dtoObjectMapper.copy();
     public static final String ENTITY_DESCRIPTION = "entityDescription";
     public static final String REFERENCE = "reference";
     public static final String PUBLICATION_CONTEXT = "publicationContext";
     public static final String SERIES = "series";
+    public static final String PUBLISHER = "publisher";
 
     public SimplifiedResourceModelMutator() {
         objectMapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
@@ -83,7 +85,7 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
     }
 
     public static String path(String... path) {
-        return String.join(".", path);
+        return String.join(DOT, path);
     }
 
     public static List<String> getIncludedFields() {
@@ -297,7 +299,8 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
                         .path(PUBLICATION_CONTEXT)
                         .path(NAME)
                         .textValue(),
-                uriFromText(source.path(ENTITY_DESCRIPTION).path(REFERENCE).path(DOI).textValue()));
+                uriFromText(source.path(ENTITY_DESCRIPTION).path(REFERENCE).path(DOI).textValue()),
+                mutatePublisher(source));
     }
 
     private String mutatePublicationContextType(JsonNode source) {
@@ -318,7 +321,26 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
         if (series.isMissingNode()) {
             return null;
         }
-        return new Series(series.path(ID).textValue(), series.path(NAME).textValue());
+        return new Series(
+                uriFromText(series.path(ID).textValue()),
+                series.path(NAME).textValue(),
+                series.path(SCIENTIFIC_VALUE).textValue());
+    }
+
+    private Publisher mutatePublisher(JsonNode source) {
+        var publisher =
+                source.path(ENTITY_DESCRIPTION)
+                        .path(REFERENCE)
+                        .path(PUBLICATION_CONTEXT)
+                        .path(PUBLISHER);
+
+        if (publisher.isMissingNode()) {
+            return null;
+        }
+        return new Publisher(
+                uriFromText(publisher.path(ID).textValue()),
+                publisher.path(NAME).textValue(),
+                publisher.path(SCIENTIFIC_VALUE).textValue());
     }
 
     private List<Contributor> mutateContributorsPreview(JsonNode source) {
