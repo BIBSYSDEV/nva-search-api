@@ -75,105 +75,105 @@ import org.opensearch.search.sort.SortOrder;
 @SuppressWarnings("PMD.GodClass")
 public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
-    private final ResourceStreamBuilders streamBuilders;
-    private final ResourceAccessFilter filterBuilder;
-    private final Map<String, String> additionalQueryParameters = new HashMap<>();
-    private UserSettingsClient userSettingsClient;
+  private final ResourceStreamBuilders streamBuilders;
+  private final ResourceAccessFilter filterBuilder;
+  private final Map<String, String> additionalQueryParameters = new HashMap<>();
+  private UserSettingsClient userSettingsClient;
 
-    private ResourceSearchQuery() {
-        super();
-        assignStatusImpossibleWhiteList();
+  private ResourceSearchQuery() {
+    super();
+    assignStatusImpossibleWhiteList();
     setAlwaysExcludedFields(List.of(GLOBAL_EXCLUDED_FIELDS));
-        streamBuilders = new ResourceStreamBuilders(parameters());
-        filterBuilder = new ResourceAccessFilter(this);
-    }
+    streamBuilders = new ResourceStreamBuilders(parameters());
+    filterBuilder = new ResourceAccessFilter(this);
+  }
 
-    public static ResourceParameterValidator builder() {
-        return new ResourceParameterValidator();
-    }
+  public static ResourceParameterValidator builder() {
+    return new ResourceParameterValidator();
+  }
 
-    private static boolean missingIdentifier(String sortString) {
-        return !sortString.contains(IDENTIFIER);
-    }
+  private static boolean missingIdentifier(String sortString) {
+    return !sortString.contains(IDENTIFIER);
+  }
 
-    /**
-     * Calculate the boost for a promoted publication. (4.14 down to 3.14 (PI))
-     *
-     * @param i index of the current publication
-     * @param size total number of promoted publications
-     * @return the boost value
-     */
-    private static float calculateBoostValue(AtomicInteger i, int size) {
-        return PI + 1F - ((float) i.getAndIncrement() / size);
-    }
+  /**
+   * Calculate the boost for a promoted publication. (4.14 down to 3.14 (PI))
+   *
+   * @param i index of the current publication
+   * @param size total number of promoted publications
+   * @return the boost value
+   */
+  private static float calculateBoostValue(AtomicInteger i, int size) {
+    return PI + 1F - ((float) i.getAndIncrement() / size);
+  }
 
-    /**
-     * Add a (default) filter to the query that will never match any document.
-     *
-     * <p>This whitelist the ResourceQuery from any forgetful developer (me)
-     *
-     * @apiNote In order to return any results, withRequiredStatus must be set
-     */
-    private void assignStatusImpossibleWhiteList() {
+  /**
+   * Add a (default) filter to the query that will never match any document.
+   *
+   * <p>This whitelist the ResourceQuery from any forgetful developer (me)
+   *
+   * @apiNote In order to return any results, withRequiredStatus must be set
+   */
+  private void assignStatusImpossibleWhiteList() {
     filters()
         .set(new TermsQueryBuilder(STATUS_KEYWORD, UUID.randomUUID().toString()).queryName(STATUS));
-    }
+  }
 
-    @Override
-    protected ResourceParameter keyFields() {
-        return NODES_SEARCHED;
-    }
+  @Override
+  protected ResourceParameter keyFields() {
+    return NODES_SEARCHED;
+  }
 
-    @Override
-    public AsType<ResourceParameter> sort() {
-        var sortString = parameters().get(SORT).toString();
-        if (missingIdentifier(sortString)) {
-            if (sortString.isBlank()) {
-                parameters().set(SORT, IDENTIFIER);
-            } else {
-                parameters().set(SORT, String.join(COMMA, sortString, IDENTIFIER));
-            }
-        }
-        return parameters().get(SORT);
+  @Override
+  public AsType<ResourceParameter> sort() {
+    var sortString = parameters().get(SORT).toString();
+    if (missingIdentifier(sortString)) {
+      if (sortString.isBlank()) {
+        parameters().set(SORT, IDENTIFIER);
+      } else {
+        parameters().set(SORT, String.join(COMMA, sortString, IDENTIFIER));
+      }
     }
+    return parameters().get(SORT);
+  }
 
-    @Override
-    protected String[] exclude() {
+  @Override
+  protected String[] exclude() {
     return Stream.concat(
             parameters().get(NODES_EXCLUDED).asSplitStream(COMMA), getExcludedFields().stream())
         .distinct()
         .toArray(String[]::new);
-    }
+  }
 
-    @Override
-    protected String[] include() {
-        return getIncludedFields().toArray(String[]::new);
-    }
+  @Override
+  protected String[] include() {
+    return getIncludedFields().toArray(String[]::new);
+  }
 
-    @Override
-    protected ResourceParameter keyAggregation() {
-        return AGGREGATION;
-    }
+  @Override
+  protected ResourceParameter keyAggregation() {
+    return AGGREGATION;
+  }
 
-    @Override
-    protected ResourceParameter keySearchAfter() {
-        return SEARCH_AFTER;
-    }
+  @Override
+  protected ResourceParameter keySearchAfter() {
+    return SEARCH_AFTER;
+  }
 
-    @Override
-    protected ResourceParameter toKey(String keyName) {
-        return ResourceParameter.keyFromString(keyName);
-    }
+  @Override
+  protected ResourceParameter toKey(String keyName) {
+    return ResourceParameter.keyFromString(keyName);
+  }
 
-    @Override
-    protected SortKey toSortKey(String sortName) {
-        return ResourceSort.fromSortKey(sortName);
-    }
+  @Override
+  protected SortKey toSortKey(String sortName) {
+    return ResourceSort.fromSortKey(sortName);
+  }
 
-    @Override
-    protected List<AggregationBuilder> builderAggregations() {
-        return RESOURCES_AGGREGATIONS;
-    }
+  @Override
+  protected List<AggregationBuilder> builderAggregations() {
+    return RESOURCES_AGGREGATIONS;
+  }
 
   @JacocoGenerated // default value shouldn't happen, (developer have forgotten to handle a key)
   @Override
@@ -193,81 +193,81 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
               mapOfPathAndBoost(parameters().get(NODES_SEARCHED)));
       default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
     };
-    }
+  }
 
   @Override
   public <R, Q extends Query<ResourceParameter>> HttpResponseFormatter<ResourceParameter> doSearch(
       OpenSearchClient<R, Q> queryClient) {
-        return super.doSearch(queryClient);
+    return super.doSearch(queryClient);
+  }
+
+  @Override
+  protected AsType<ResourceParameter> from() {
+    return parameters().get(FROM);
+  }
+
+  @Override
+  protected AsType<ResourceParameter> size() {
+    return parameters().get(SIZE);
+  }
+
+  @Override
+  protected Map<String, String> facetPaths() {
+    return facetResourcePaths;
+  }
+
+  @Override
+  protected BoolQueryBuilder builderMainQuery() {
+    var queryBuilder = super.builderMainQuery();
+    if (isLookingForOneContributor()) {
+      addPromotedPublications(this.userSettingsClient, queryBuilder);
     }
+    return queryBuilder;
+  }
 
-    @Override
-    protected AsType<ResourceParameter> from() {
-        return parameters().get(FROM);
-    }
+  private boolean isLookingForOneContributor() {
+    return parameters().get(CONTRIBUTOR).asSplitStream(COMMA).count() == 1;
+  }
 
-    @Override
-    protected AsType<ResourceParameter> size() {
-        return parameters().get(SIZE);
-    }
+  private void addPromotedPublications(UserSettingsClient client, BoolQueryBuilder builder) {
 
-    @Override
-    protected Map<String, String> facetPaths() {
-        return facetResourcePaths;
-    }
-
-    @Override
-    protected BoolQueryBuilder builderMainQuery() {
-        var queryBuilder = super.builderMainQuery();
-        if (isLookingForOneContributor()) {
-            addPromotedPublications(this.userSettingsClient, queryBuilder);
-        }
-        return queryBuilder;
-    }
-
-    private boolean isLookingForOneContributor() {
-        return parameters().get(CONTRIBUTOR).asSplitStream(COMMA).count() == 1;
-    }
-
-    private void addPromotedPublications(UserSettingsClient client, BoolQueryBuilder builder) {
-
-        var result = attempt(() -> client.doSearch(this));
-        if (result.isSuccess()) {
-            AtomicInteger i = new AtomicInteger();
-            var promoted = result.get().promotedPublications();
+    var result = attempt(() -> client.doSearch(this));
+    if (result.isSuccess()) {
+      AtomicInteger i = new AtomicInteger();
+      var promoted = result.get().promotedPublications();
       promoted.forEach(
           identifier ->
               builder.should(
                   matchQuery(IDENTIFIER_KEYWORD, identifier)
                       .boost(calculateBoostValue(i, promoted.size()))));
-        }
     }
+  }
 
-    @Override
-    public URI openSearchUri() {
+  @Override
+  public URI openSearchUri() {
     return fromUri(infrastructureApiUri)
         .addChild(Words.RESOURCES, Words.SEARCH)
         .addQueryParameters(queryParameters())
         .getUri();
-    }
+  }
 
-    private Map<String, String> queryParameters() {
-        return additionalQueryParameters;
-    }
+  private Map<String, String> queryParameters() {
+    return additionalQueryParameters;
+  }
 
-    public ResourceAccessFilter withFilter() {
-        return filterBuilder;
-    }
+  public ResourceAccessFilter withFilter() {
+    return filterBuilder;
+  }
 
-    public ResourceSearchQuery withScrollTime(String time) {
-        this.additionalQueryParameters.put("scroll", time);
-        return this;
-    }
+  public ResourceSearchQuery withScrollTime(String time) {
+    this.additionalQueryParameters.put("scroll", time);
+    return this;
+  }
 
-    public ResourceSearchQuery withUserSettings(UserSettingsClient userSettingsClient) {
-        this.userSettingsClient = userSettingsClient;
-        return this;
-    }
+  public ResourceSearchQuery withUserSettings(UserSettingsClient userSettingsClient) {
+    this.userSettingsClient = userSettingsClient;
+    return this;
+  }
 
   /**
    * ResourceParameterValidator is a class that validates parameters for a ResourceSearchQuery.
@@ -277,12 +277,12 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
   public static class ResourceParameterValidator
       extends ParameterValidator<ResourceParameter, ResourceSearchQuery> {
 
-        ResourceParameterValidator() {
-            super(new ResourceSearchQuery());
-        }
+    ResourceParameterValidator() {
+      super(new ResourceSearchQuery());
+    }
 
-        @Override
-        protected void assignDefaultValues() {
+    @Override
+    protected void assignDefaultValues() {
       requiredMissing()
           .forEach(
               key -> {
@@ -296,54 +296,54 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                   }
                 }
               });
-        }
+    }
 
-        @JacocoGenerated
-        @Override
-        protected void applyRulesAfterValidation() {
-            // convert page to offset if offset is not set
-            if (query.parameters().isPresent(PAGE)) {
-                if (query.parameters().isPresent(FROM)) {
-                    var page = query.parameters().get(PAGE).<Number>as();
-                    var perPage = query.parameters().get(SIZE).<Number>as();
+    @JacocoGenerated
+    @Override
+    protected void applyRulesAfterValidation() {
+      // convert page to offset if offset is not set
+      if (query.parameters().isPresent(PAGE)) {
+        if (query.parameters().isPresent(FROM)) {
+          var page = query.parameters().get(PAGE).<Number>as();
+          var perPage = query.parameters().get(SIZE).<Number>as();
           query.parameters().set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
-                }
-                query.parameters().remove(PAGE);
-            }
         }
+        query.parameters().remove(PAGE);
+      }
+    }
 
-        @Override
-        protected Collection<String> validKeys() {
-            return RESOURCE_PARAMETER_SET.stream().map(ResourceParameter::asLowerCase).toList();
-        }
+    @Override
+    protected Collection<String> validKeys() {
+      return RESOURCE_PARAMETER_SET.stream().map(ResourceParameter::asLowerCase).toList();
+    }
 
-        @Override
-        protected boolean isKeyValid(String keyName) {
-            return ResourceParameter.keyFromString(keyName) != ResourceParameter.INVALID;
-        }
+    @Override
+    protected boolean isKeyValid(String keyName) {
+      return ResourceParameter.keyFromString(keyName) != ResourceParameter.INVALID;
+    }
 
-        @Override
-        protected void validateSortKeyName(String name) {
-            var nameSort = name.split(COLON_OR_SPACE);
-            if (nameSort.length == NAME_AND_SORT_LENGTH) {
-                SortOrder.fromString(nameSort[1]);
-            }
-            if (nameSort.length > NAME_AND_SORT_LENGTH) {
-                throw new IllegalArgumentException(TOO_MANY_ARGUMENTS + name);
-            }
+    @Override
+    protected void validateSortKeyName(String name) {
+      var nameSort = name.split(COLON_OR_SPACE);
+      if (nameSort.length == NAME_AND_SORT_LENGTH) {
+        SortOrder.fromString(nameSort[1]);
+      }
+      if (nameSort.length > NAME_AND_SORT_LENGTH) {
+        throw new IllegalArgumentException(TOO_MANY_ARGUMENTS + name);
+      }
 
-            if (ResourceSort.fromSortKey(nameSort[0]) == INVALID) {
+      if (ResourceSort.fromSortKey(nameSort[0]) == INVALID) {
         throw new IllegalArgumentException(
             INVALID_VALUE_WITH_SORT.formatted(name, ResourceSort.validSortKeys()));
-            }
-        }
+      }
+    }
 
-        @Override
-        protected void setValue(String key, String value) {
-            var qpKey = ResourceParameter.keyFromString(key);
-            var decodedValue = getDecodedValue(qpKey, value);
-            switch (qpKey) {
-                case INVALID -> invalidKeys.add(key);
+    @Override
+    protected void setValue(String key, String value) {
+      var qpKey = ResourceParameter.keyFromString(key);
+      var decodedValue = getDecodedValue(qpKey, value);
+      switch (qpKey) {
+        case INVALID -> invalidKeys.add(key);
         case UNIT, UNIT_NOT, TOP_LEVEL_ORGANIZATION ->
             mergeToKey(qpKey, identifierToCristinId(decodedValue));
         case CONTRIBUTOR, CONTRIBUTOR_NOT ->
@@ -351,36 +351,36 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION ->
             query.parameters().set(qpKey, decodedValue);
         case NODES_SEARCHED -> query.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
-                case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
-                case SORT_ORDER -> mergeToKey(SORT, decodedValue);
-                default -> mergeToKey(qpKey, decodedValue);
-            }
-        }
+        case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
+        case SORT_ORDER -> mergeToKey(SORT, decodedValue);
+        default -> mergeToKey(qpKey, decodedValue);
+      }
+    }
 
-        private String identifierToCristinId(String decodedValue) {
+    private String identifierToCristinId(String decodedValue) {
       return Arrays.stream(decodedValue.split(COMMA))
           .map(value -> identifierToUri(value, CRISTIN_ORGANIZATION_PATH))
           .collect(Collectors.joining(COMMA));
-        }
+    }
 
-        private String identifierToCristinPersonId(String decodedValue) {
+    private String identifierToCristinPersonId(String decodedValue) {
       return Arrays.stream(decodedValue.split(COMMA))
           .map(value -> identifierToUri(value, CRISTIN_PERSON_PATH))
           .collect(Collectors.joining(COMMA));
-        }
+    }
 
-        private String currentHost() {
-            return HTTPS + query.getNvaSearchApiUri().getHost();
-        }
+    private String currentHost() {
+      return HTTPS + query.getNvaSearchApiUri().getHost();
+    }
 
-        private String identifierToUri(String decodedValue, String uriPath) {
+    private String identifierToUri(String decodedValue, String uriPath) {
       return isUriId(decodedValue)
           ? decodedValue
           : format("%s%s%s", currentHost(), uriPath, decodedValue);
-        }
-
-        private boolean isUriId(String decodedValue) {
-            return decodedValue.startsWith(HTTPS);
-        }
     }
+
+    private boolean isUriId(String decodedValue) {
+      return decodedValue.startsWith(HTTPS);
+    }
+  }
 }
