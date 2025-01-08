@@ -35,54 +35,54 @@ import java.util.stream.Stream;
  */
 public class SearchResourceLegacyHandler extends ApiGatewayHandler<Void, String> {
 
-    public static final String ENTITY_DESCRIPTION_CONTRIBUTORS = "entityDescription.contributors";
-    private final ResourceClient opensearchClient;
+  public static final String ENTITY_DESCRIPTION_CONTRIBUTORS = "entityDescription.contributors";
+  private final ResourceClient opensearchClient;
 
-    @JacocoGenerated
-    public SearchResourceLegacyHandler() {
-        this(new Environment(), defaultClient());
-    }
+  @JacocoGenerated
+  public SearchResourceLegacyHandler() {
+    this(new Environment(), defaultClient());
+  }
 
-    public SearchResourceLegacyHandler(Environment environment, ResourceClient resourceClient) {
-        super(Void.class, environment);
-        this.opensearchClient = resourceClient;
-    }
+  public SearchResourceLegacyHandler(Environment environment, ResourceClient resourceClient) {
+    super(Void.class, environment);
+    this.opensearchClient = resourceClient;
+  }
 
-    @Override
-    protected List<MediaType> listSupportedMediaTypes() {
-        return DEFAULT_RESPONSE_MEDIA_TYPES;
-    }
+  @Override
+  protected List<MediaType> listSupportedMediaTypes() {
+    return DEFAULT_RESPONSE_MEDIA_TYPES;
+  }
 
-    @Override
-    protected void validateRequest(Void unused, RequestInfo requestInfo, Context context) {
-        // Do nothing
-    }
+  @Override
+  protected void validateRequest(Void unused, RequestInfo requestInfo, Context context) {
+    // Do nothing
+  }
 
-    @Override
-    protected String processInput(Void input, RequestInfo requestInfo, Context context)
-            throws BadRequestException {
-        return ResourceSearchQuery.builder()
-                .fromRequestInfo(requestInfo)
-                .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
-                .withAlwaysExcludedFields(getExcludedFields())
-                .validate()
-                .build()
-                .withFilter()
-                .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
-                .apply()
-                .doSearch(opensearchClient)
-                .withMutators(new LegacyMutator())
-                .toString();
-    }
+  @Override
+  protected String processInput(Void input, RequestInfo requestInfo, Context context)
+      throws BadRequestException {
+    return ResourceSearchQuery.builder()
+        .fromRequestInfo(requestInfo)
+        .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
+        .withAlwaysExcludedFields(getExcludedFields())
+        .validate()
+        .build()
+        .withFilter()
+        .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+        .apply()
+        .doSearch(opensearchClient)
+        .withMutators(new LegacyMutator())
+        .toString();
+  }
 
-    private List<String> getExcludedFields() {
-        return Stream.of(GLOBAL_EXCLUDED_FIELDS, List.of(ENTITY_DESCRIPTION_CONTRIBUTORS))
-                .flatMap(Collection::stream)
-                .toList();
-    }
+  private List<String> getExcludedFields() {
+    return Stream.of(GLOBAL_EXCLUDED_FIELDS, List.of(ENTITY_DESCRIPTION_CONTRIBUTORS))
+        .flatMap(Collection::stream)
+        .toList();
+  }
 
-    @Override
-    protected Integer getSuccessStatusCode(Void input, String output) {
-        return HttpURLConnection.HTTP_OK;
-    }
+  @Override
+  protected Integer getSuccessStatusCode(Void input, String output) {
+    return HttpURLConnection.HTTP_OK;
+  }
 }

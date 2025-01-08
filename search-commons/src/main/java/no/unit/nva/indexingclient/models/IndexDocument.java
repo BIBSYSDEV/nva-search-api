@@ -9,23 +9,18 @@ import static no.unit.nva.constants.Words.CONSUMPTION_ATTRIBUTES;
 import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.constants.Words.TICKETS;
-
 import static nva.commons.core.attempt.Try.attempt;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-
-import no.unit.nva.commons.json.JsonSerializable;
-import no.unit.nva.identifiers.SortableIdentifier;
-
-import nva.commons.core.StringUtils;
-
-import org.opensearch.action.index.IndexRequest;
-import org.opensearch.common.xcontent.XContentType;
-
 import java.util.Objects;
 import java.util.Optional;
+import no.unit.nva.commons.json.JsonSerializable;
+import no.unit.nva.identifiers.SortableIdentifier;
+import nva.commons.core.StringUtils;
+import org.opensearch.action.index.IndexRequest;
+import org.opensearch.common.xcontent.XContentType;
 
 public record IndexDocument(
         @JsonProperty(CONSUMPTION_ATTRIBUTES) EventConsumptionAttributes consumptionAttributes,

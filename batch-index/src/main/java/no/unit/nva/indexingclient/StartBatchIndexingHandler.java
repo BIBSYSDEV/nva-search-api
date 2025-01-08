@@ -7,16 +7,13 @@ import static no.unit.nva.indexingclient.EmitEventUtils.emitEvent;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
-
-import nva.commons.core.JacocoGenerated;
-
-import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
-
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import nva.commons.core.JacocoGenerated;
+import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 
 public class StartBatchIndexingHandler implements RequestStreamHandler {
 

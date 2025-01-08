@@ -5,16 +5,13 @@ import static no.unit.nva.search.common.enums.FieldOperator.ANY_OF;
 import static no.unit.nva.search.common.enums.FieldOperator.BETWEEN;
 import static no.unit.nva.search.common.enums.FieldOperator.NOT_ANY_OF;
 
-import no.unit.nva.search.common.enums.ParameterKey;
-
-import nva.commons.core.JacocoGenerated;
-
-import org.opensearch.index.query.QueryBuilder;
-import org.opensearch.index.query.QueryBuilders;
-
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
+import no.unit.nva.search.common.enums.ParameterKey;
+import nva.commons.core.JacocoGenerated;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
 
 /**
  * Abstract class for building OpenSearch queries.

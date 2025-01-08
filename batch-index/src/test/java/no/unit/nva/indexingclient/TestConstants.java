@@ -4,8 +4,8 @@ import nva.commons.core.JacocoGenerated;
 
 public final class TestConstants {
 
-    public static final String RESOURCE_INDEX_NAME = "resources";
+  public static final String RESOURCE_INDEX_NAME = "resources";
 
-    @JacocoGenerated
-    private TestConstants() {}
+  @JacocoGenerated
+  private TestConstants() {}
 }

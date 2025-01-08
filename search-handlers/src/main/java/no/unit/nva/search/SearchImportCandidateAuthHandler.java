@@ -30,44 +30,44 @@ import java.util.List;
  */
 public class SearchImportCandidateAuthHandler extends ApiGatewayHandler<Void, String> {
 
-    private final ImportCandidateClient opensearchClient;
+  private final ImportCandidateClient opensearchClient;
 
-    @JacocoGenerated
-    public SearchImportCandidateAuthHandler() {
-        this(new Environment(), defaultClient());
-    }
+  @JacocoGenerated
+  public SearchImportCandidateAuthHandler() {
+    this(new Environment(), defaultClient());
+  }
 
-    public SearchImportCandidateAuthHandler(
-            Environment environment, ImportCandidateClient candidateClient) {
-        super(Void.class, environment);
-        this.opensearchClient = candidateClient;
-    }
+  public SearchImportCandidateAuthHandler(
+      Environment environment, ImportCandidateClient candidateClient) {
+    super(Void.class, environment);
+    this.opensearchClient = candidateClient;
+  }
 
-    @Override
-    protected String processInput(Void input, RequestInfo requestInfo, Context context)
-            throws BadRequestException {
-        return ImportCandidateSearchQuery.builder()
-                .fromRequestInfo(requestInfo)
-                .withRequiredParameters(FROM, SIZE, AGGREGATION)
-                .validate()
-                .build()
-                .doSearch(opensearchClient)
-                .toString();
-    }
+  @Override
+  protected String processInput(Void input, RequestInfo requestInfo, Context context)
+      throws BadRequestException {
+    return ImportCandidateSearchQuery.builder()
+        .fromRequestInfo(requestInfo)
+        .withRequiredParameters(FROM, SIZE, AGGREGATION)
+        .validate()
+        .build()
+        .doSearch(opensearchClient)
+        .toString();
+  }
 
-    @Override
-    protected Integer getSuccessStatusCode(Void input, String output) {
-        return HttpURLConnection.HTTP_OK;
-    }
+  @Override
+  protected Integer getSuccessStatusCode(Void input, String output) {
+    return HttpURLConnection.HTTP_OK;
+  }
 
-    @Override
-    protected List<MediaType> listSupportedMediaTypes() {
-        return DEFAULT_RESPONSE_MEDIA_TYPES;
-    }
+  @Override
+  protected List<MediaType> listSupportedMediaTypes() {
+    return DEFAULT_RESPONSE_MEDIA_TYPES;
+  }
 
-    @Override
-    protected void validateRequest(Void unused, RequestInfo requestInfo, Context context)
-            throws ApiGatewayException {
-        requestInfo.getUserName();
-    }
+  @Override
+  protected void validateRequest(Void unused, RequestInfo requestInfo, Context context)
+      throws ApiGatewayException {
+    requestInfo.getUserName();
+  }
 }

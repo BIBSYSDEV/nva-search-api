@@ -20,41 +20,41 @@ import java.util.ArrayList;
 
 public class DeleteImportCandidateIndexHandlerTest {
 
-    private static ListAppender appender;
+  private static ListAppender appender;
 
-    @BeforeAll
-    public static void initClass() {
-        appender = getAppender(DeleteIndicesHandler.class);
-    }
+  @BeforeAll
+  public static void initClass() {
+    appender = getAppender(DeleteIndicesHandler.class);
+  }
 
-    @Test
-    void shouldDeleteIndicesWhenFunctionIsInvoked() {
-        final var buffer = new ArrayList<String>();
-        var indexingClient =
-                new IndexingClient(null, null) {
-                    @Override
-                    public Void deleteIndex(String indexName) {
-                        buffer.add(indexName);
-                        return null;
-                    }
-                };
-        var handler = new DeleteImportCandidateIndexHandler(indexingClient);
-        handler.handleRequest(null, new FakeContext());
-        assertThat(buffer, hasItem(IMPORT_CANDIDATES_INDEX));
-    }
+  @Test
+  void shouldDeleteIndicesWhenFunctionIsInvoked() {
+    final var buffer = new ArrayList<String>();
+    var indexingClient =
+        new IndexingClient(null, null) {
+          @Override
+          public Void deleteIndex(String indexName) {
+            buffer.add(indexName);
+            return null;
+          }
+        };
+    var handler = new DeleteImportCandidateIndexHandler(indexingClient);
+    handler.handleRequest(null, new FakeContext());
+    assertThat(buffer, hasItem(IMPORT_CANDIDATES_INDEX));
+  }
 
-    @Test
-    void shouldLogWarningWhenIndexDeletionFails() {
-        var expectedMessage = randomString();
-        var indexingClient =
-                new IndexingClient(null, null) {
-                    @Override
-                    public Void deleteIndex(String indexName) {
-                        throw new RuntimeException(expectedMessage);
-                    }
-                };
-        var handler = new DeleteImportCandidateIndexHandler(indexingClient);
-        handler.handleRequest(null, new FakeContext());
-        assertThat(logToString(appender), containsString(expectedMessage));
-    }
+  @Test
+  void shouldLogWarningWhenIndexDeletionFails() {
+    var expectedMessage = randomString();
+    var indexingClient =
+        new IndexingClient(null, null) {
+          @Override
+          public Void deleteIndex(String indexName) {
+            throw new RuntimeException(expectedMessage);
+          }
+        };
+    var handler = new DeleteImportCandidateIndexHandler(indexingClient);
+    handler.handleRequest(null, new FakeContext());
+    assertThat(logToString(appender), containsString(expectedMessage));
+  }
 }

@@ -3,14 +3,12 @@ package no.unit.nva.constants;
 import static no.unit.nva.constants.Words.PREFIX;
 import static no.unit.nva.constants.Words.QUOTE;
 import static no.unit.nva.constants.Words.SUFFIX;
-
 import static nva.commons.core.StringUtils.EMPTY_STRING;
-
-import nva.commons.core.JacocoGenerated;
 
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
+import nva.commons.core.JacocoGenerated;
 
 /**
  * Error messages used in the search service.

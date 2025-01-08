@@ -44,100 +44,98 @@ import java.util.Map;
 
 class SearchResourceAuthHandlerTest {
 
-    public static final String SAMPLE_PATH = "search";
-    public static final String SAMPLE_DOMAIN_NAME = "localhost";
-    public static final String SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON =
-            "sample_opensearch_response.json";
-    private SearchResourceAuthHandler handler;
-    private Context contextMock;
-    private ByteArrayOutputStream outputStream;
-    private ResourceClient mockedSearchClient;
+  public static final String SAMPLE_PATH = "search";
+  public static final String SAMPLE_DOMAIN_NAME = "localhost";
+  public static final String SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON =
+      "sample_opensearch_response.json";
+  private SearchResourceAuthHandler handler;
+  private Context contextMock;
+  private ByteArrayOutputStream outputStream;
+  private ResourceClient mockedSearchClient;
 
-    @BeforeEach
-    void setUp() {
+  @BeforeEach
+  void setUp() {
 
-        mockedSearchClient = mock(ResourceClient.class);
-        handler = new SearchResourceAuthHandler(new Environment(), mockedSearchClient);
-        contextMock = mock(Context.class);
-        outputStream = new ByteArrayOutputStream();
-    }
+    mockedSearchClient = mock(ResourceClient.class);
+    handler = new SearchResourceAuthHandler(new Environment(), mockedSearchClient);
+    contextMock = mock(Context.class);
+    outputStream = new ByteArrayOutputStream();
+  }
 
-    @Test
-    void shouldOnlyReturnPublicationsFromCuratorsOrganizationWhenQuerying()
-            throws IOException, URISyntaxException {
-        prepareRestHighLevelClientOkResponse();
+  @Test
+  void shouldOnlyReturnPublicationsFromCuratorsOrganizationWhenQuerying()
+      throws IOException, URISyntaxException {
+    prepareRestHighLevelClientOkResponse();
 
-        var customer =
-                new URI(
-                        "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934");
-        var curatorOrganization =
-                new URI("https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0");
+    var customer =
+        new URI("https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934");
+    var curatorOrganization =
+        new URI("https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0");
 
-        handler.handleRequest(
-                getInputStreamWithAccessRight(
-                        customer, curatorOrganization, AccessRight.MANAGE_RESOURCES_ALL),
-                outputStream,
-                contextMock);
+    handler.handleRequest(
+        getInputStreamWithAccessRight(
+            customer, curatorOrganization, AccessRight.MANAGE_RESOURCES_ALL),
+        outputStream,
+        contextMock);
 
-        var gatewayResponse = FakeGatewayResponse.of(outputStream);
-        var actualBody = gatewayResponse.body();
+    var gatewayResponse = FakeGatewayResponse.of(outputStream);
+    var actualBody = gatewayResponse.body();
 
-        assertNotNull(gatewayResponse.headers());
-        assertEquals(HTTP_OK, gatewayResponse.statusCode());
-        assertThat(actualBody.hits().size(), is(equalTo(2)));
-    }
+    assertNotNull(gatewayResponse.headers());
+    assertEquals(HTTP_OK, gatewayResponse.statusCode());
+    assertThat(actualBody.hits().size(), is(equalTo(2)));
+  }
 
-    @Test
-    void shouldReturnOkWhenUserIsEditor() throws IOException {
-        prepareRestHighLevelClientOkResponse();
+  @Test
+  void shouldReturnOkWhenUserIsEditor() throws IOException {
+    prepareRestHighLevelClientOkResponse();
 
-        var input =
-                getInputStreamWithAccessRight(
-                        randomUri(), randomUri(), AccessRight.MANAGE_RESOURCES_ALL);
-        handler.handleRequest(input, outputStream, contextMock);
+    var input =
+        getInputStreamWithAccessRight(randomUri(), randomUri(), AccessRight.MANAGE_RESOURCES_ALL);
+    handler.handleRequest(input, outputStream, contextMock);
 
-        var gatewayResponse = FakeGatewayResponse.of(outputStream);
+    var gatewayResponse = FakeGatewayResponse.of(outputStream);
 
-        assertNotNull(gatewayResponse.headers());
-        assertEquals(HTTP_OK, gatewayResponse.statusCode());
-    }
+    assertNotNull(gatewayResponse.headers());
+    assertEquals(HTTP_OK, gatewayResponse.statusCode());
+  }
 
-    @Test
-    void shouldReturnUnauthorizedWhenUserIsMissingAccessRight() throws IOException {
-        prepareRestHighLevelClientOkResponse();
+  @Test
+  void shouldReturnUnauthorizedWhenUserIsMissingAccessRight() throws IOException {
+    prepareRestHighLevelClientOkResponse();
 
-        var input = getInputStreamWithAccessRight(randomUri(), randomUri(), AccessRight.SUPPORT);
-        handler.handleRequest(input, outputStream, contextMock);
+    var input = getInputStreamWithAccessRight(randomUri(), randomUri(), AccessRight.SUPPORT);
+    handler.handleRequest(input, outputStream, contextMock);
 
-        var gatewayResponse = FakeGatewayResponse.of(outputStream);
+    var gatewayResponse = FakeGatewayResponse.of(outputStream);
 
-        assertNotNull(gatewayResponse.headers());
-        assertEquals(HTTP_UNAUTHORIZED, gatewayResponse.statusCode());
-    }
+    assertNotNull(gatewayResponse.headers());
+    assertEquals(HTTP_UNAUTHORIZED, gatewayResponse.statusCode());
+  }
 
-    private void prepareRestHighLevelClientOkResponse() throws IOException {
-        var jsonResponse =
-                stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
-        var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
+  private void prepareRestHighLevelClientOkResponse() throws IOException {
+    var jsonResponse =
+        stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
+    var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
 
-        when(mockedSearchClient.doSearch(any())).thenReturn(body);
-    }
+    when(mockedSearchClient.doSearch(any())).thenReturn(body);
+  }
 
-    private InputStream getInputStreamWithAccessRight(
-            URI currentCustomer, URI topLevelCristinOrgId, AccessRight accessRight)
-            throws JsonProcessingException {
-        return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-                .withHeaders(Map.of(ACCEPT, "application/json"))
-                .withRequestContext(getRequestContext())
-                .withUserName(randomString())
-                .withCurrentCustomer(currentCustomer)
-                .withTopLevelCristinOrgId(topLevelCristinOrgId)
-                .withAccessRights(currentCustomer, accessRight)
-                .build();
-    }
+  private InputStream getInputStreamWithAccessRight(
+      URI currentCustomer, URI topLevelCristinOrgId, AccessRight accessRight)
+      throws JsonProcessingException {
+    return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
+        .withHeaders(Map.of(ACCEPT, "application/json"))
+        .withRequestContext(getRequestContext())
+        .withUserName(randomString())
+        .withCurrentCustomer(currentCustomer)
+        .withTopLevelCristinOrgId(topLevelCristinOrgId)
+        .withAccessRights(currentCustomer, accessRight)
+        .build();
+  }
 
-    private ObjectNode getRequestContext() {
-        return objectMapperWithEmpty.convertValue(
-                Map.of("path", SAMPLE_PATH, "domainName", SAMPLE_DOMAIN_NAME), ObjectNode.class);
-    }
+  private ObjectNode getRequestContext() {
+    return objectMapperWithEmpty.convertValue(
+        Map.of("path", SAMPLE_PATH, "domainName", SAMPLE_DOMAIN_NAME), ObjectNode.class);
+  }
 }
