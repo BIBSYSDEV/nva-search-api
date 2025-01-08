@@ -29,66 +29,65 @@ import java.util.stream.Stream;
  */
 public class FakeIndexingClient extends IndexingClient {
 
-    private static final long IGNORED_PROCESSING_TIME = 0;
-    private final Map<String, Map<String, JsonNode>> indexContents;
+  private static final long IGNORED_PROCESSING_TIME = 0;
+  private final Map<String, Map<String, JsonNode>> indexContents;
 
-    public FakeIndexingClient() {
-        super(null, null);
-        indexContents = new ConcurrentHashMap<>();
+  public FakeIndexingClient() {
+    super(null, null);
+    indexContents = new ConcurrentHashMap<>();
+  }
+
+  @Override
+  public Void addDocumentToIndex(IndexDocument indexDocument) throws IOException {
+    if (!indexContents.containsKey(indexDocument.getIndexName())) {
+      indexContents.put(indexDocument.getIndexName(), new HashMap<>());
     }
 
-    @Override
-    public Void addDocumentToIndex(IndexDocument indexDocument) throws IOException {
-        if (!indexContents.containsKey(indexDocument.getIndexName())) {
-            indexContents.put(indexDocument.getIndexName(), new HashMap<>());
-        }
+    indexContents
+        .get(indexDocument.getIndexName())
+        .put(indexDocument.getDocumentIdentifier(), indexDocument.resource());
+    return null;
+  }
 
-        indexContents
-                .get(indexDocument.getIndexName())
-                .put(indexDocument.getDocumentIdentifier(), indexDocument.resource());
-        return null;
+  @Override
+  public void removeDocumentFromResourcesIndex(String identifier) throws IOException {
+    indexContents.forEach((index, set) -> removeDocument(set, identifier));
+  }
+
+  @Override
+  public void removeDocumentFromImportCandidateIndex(String identifier) throws IOException {
+    indexContents.forEach((index, set) -> removeDocument(set, identifier));
+  }
+
+  @Override
+  public Stream<BulkResponse> batchInsert(Stream<IndexDocument> indexDocuments) {
+    var collectedDocuments = indexDocuments.collect(Collectors.toList());
+    for (IndexDocument collectedDocument : collectedDocuments) {
+      attempt(() -> addDocumentToIndex(collectedDocument)).orElseThrow();
     }
 
-    @Override
-    public void removeDocumentFromResourcesIndex(String identifier) throws IOException {
-        indexContents.forEach((index, set) -> removeDocument(set, identifier));
-    }
+    return constructSampleBulkResponse(collectedDocuments).stream();
+  }
 
-    @Override
-    public void removeDocumentFromImportCandidateIndex(String identifier) throws IOException {
-        indexContents.forEach((index, set) -> removeDocument(set, identifier));
-    }
+  public Set<JsonNode> getIndex(String indexName) {
+    return new HashSet<>(this.indexContents.getOrDefault(indexName, new HashMap<>()).values());
+  }
 
-    @Override
-    public Stream<BulkResponse> batchInsert(Stream<IndexDocument> indexDocuments) {
-        var collectedDocuments = indexDocuments.collect(Collectors.toList());
-        for (IndexDocument collectedDocument : collectedDocuments) {
-            attempt(() -> addDocumentToIndex(collectedDocument)).orElseThrow();
-        }
+  public Set<JsonNode> listAllDocuments(String indexName) {
+    return new HashSet<>(this.indexContents.get(indexName).values());
+  }
 
-        return constructSampleBulkResponse(collectedDocuments).stream();
-    }
+  private void removeDocument(Map<String, JsonNode> jsonNodes, String identifier) {
+    jsonNodes.remove(identifier);
+  }
 
-    public Set<JsonNode> getIndex(String indexName) {
-        return new HashSet<>(this.indexContents.getOrDefault(indexName, new HashMap<>()).values());
-    }
-
-    public Set<JsonNode> listAllDocuments(String indexName) {
-        return new HashSet<>(this.indexContents.get(indexName).values());
-    }
-
-    private void removeDocument(Map<String, JsonNode> jsonNodes, String identifier) {
-        jsonNodes.remove(identifier);
-    }
-
-    private List<BulkResponse> constructSampleBulkResponse(
-            Collection<IndexDocument> indexDocuments) {
-        DocWriteResponse response = null;
-        List<BulkItemResponse> responses =
-                indexDocuments.stream()
-                        .map(doc -> new BulkItemResponse(doc.hashCode(), OpType.UPDATE, response))
-                        .toList();
-        BulkItemResponse[] responsesArray = responses.toArray(BulkItemResponse[]::new);
-        return List.of(new BulkResponse(responsesArray, IGNORED_PROCESSING_TIME));
-    }
+  private List<BulkResponse> constructSampleBulkResponse(Collection<IndexDocument> indexDocuments) {
+    DocWriteResponse response = null;
+    List<BulkItemResponse> responses =
+        indexDocuments.stream()
+            .map(doc -> new BulkItemResponse(doc.hashCode(), OpType.UPDATE, response))
+            .toList();
+    BulkItemResponse[] responsesArray = responses.toArray(BulkItemResponse[]::new);
+    return List.of(new BulkResponse(responsesArray, IGNORED_PROCESSING_TIME));
+  }
 }

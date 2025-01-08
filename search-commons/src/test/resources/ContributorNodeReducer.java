@@ -16,13 +16,11 @@ import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-
+import java.nio.file.Path;
 import no.unit.nva.search.common.records.JsonNodeMutator;
 import no.unit.nva.search.resource.Constants;
 import nva.commons.core.ioutils.IoUtils;
 import org.junit.jupiter.api.Test;
-
-import java.nio.file.Path;
 
 /**
  * Reduces the number of contributors in a JsonNode.

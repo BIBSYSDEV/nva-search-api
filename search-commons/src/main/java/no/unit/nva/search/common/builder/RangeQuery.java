@@ -2,19 +2,16 @@ package no.unit.nva.search.common.builder;
 
 import static no.unit.nva.constants.ErrorMessages.OPERATOR_NOT_SUPPORTED;
 
+import java.util.Map.Entry;
+import java.util.stream.Stream;
 import no.unit.nva.search.common.constant.Functions;
 import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.enums.ParameterKind;
-
 import nva.commons.core.JacocoGenerated;
-
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map.Entry;
-import java.util.stream.Stream;
 
 /**
  * Class for building OpenSearch queries that search for a range of values.

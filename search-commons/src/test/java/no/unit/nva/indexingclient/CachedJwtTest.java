@@ -6,17 +6,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-
-import no.unit.nva.search.common.jwt.CachedJwtProvider;
-import no.unit.nva.search.common.jwt.CognitoAuthenticator;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
+import no.unit.nva.search.common.jwt.CachedJwtProvider;
+import no.unit.nva.search.common.jwt.CognitoAuthenticator;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class CachedJwtTest {
 

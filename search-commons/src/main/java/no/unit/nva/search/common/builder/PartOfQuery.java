@@ -2,14 +2,12 @@ package no.unit.nva.search.common.builder;
 
 import static no.unit.nva.constants.Words.HAS_PARTS;
 
-import no.unit.nva.search.common.constant.Functions;
-import no.unit.nva.search.common.enums.ParameterKey;
-
-import org.opensearch.index.query.QueryBuilder;
-import org.opensearch.join.query.HasParentQueryBuilder;
-
 import java.util.Map;
 import java.util.stream.Stream;
+import no.unit.nva.search.common.constant.Functions;
+import no.unit.nva.search.common.enums.ParameterKey;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.join.query.HasParentQueryBuilder;
 
 /**
  * Class for building OpenSearch queries that search for parts of a document.

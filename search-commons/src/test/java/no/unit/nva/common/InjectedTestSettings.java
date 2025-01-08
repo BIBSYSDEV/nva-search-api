@@ -11,28 +11,28 @@ import java.io.IOException;
 
 public class InjectedTestSettings implements TestExecutionListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(InjectedTestSettings.class);
+  private static final Logger logger = LoggerFactory.getLogger(InjectedTestSettings.class);
 
-    @Override
-    public void testPlanExecutionStarted(TestPlan testPlan) {
-        TestExecutionListener.super.testPlanExecutionStarted(testPlan);
-        try {
-            Configurator.setAllLevels("", Level.WARN);
-            logger.info("Setting up Opensearch server");
-            Containers.setup();
-        } catch (InterruptedException | IOException e) {
-            logger.error(e.getMessage());
-        }
+  @Override
+  public void testPlanExecutionStarted(TestPlan testPlan) {
+    TestExecutionListener.super.testPlanExecutionStarted(testPlan);
+    try {
+      Configurator.setAllLevels("", Level.WARN);
+      logger.info("Setting up Opensearch server");
+      Containers.setup();
+    } catch (InterruptedException | IOException e) {
+      logger.error(e.getMessage());
     }
+  }
 
-    @Override
-    public void testPlanExecutionFinished(TestPlan testPlan) {
-        TestExecutionListener.super.testPlanExecutionFinished(testPlan);
-        try {
-            logger.info("Closing Opensearch server");
-            Containers.afterAll();
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        }
+  @Override
+  public void testPlanExecutionFinished(TestPlan testPlan) {
+    TestExecutionListener.super.testPlanExecutionFinished(testPlan);
+    try {
+      logger.info("Closing Opensearch server");
+      Containers.afterAll();
+    } catch (Exception e) {
+      logger.error(e.getMessage());
     }
+  }
 }

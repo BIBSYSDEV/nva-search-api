@@ -3,15 +3,12 @@ package no.unit.nva.search.common.records;
 import static java.util.Objects.isNull;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
-import no.unit.nva.constants.Words;
-
-import nva.commons.core.JacocoGenerated;
-import nva.commons.core.paths.UriWrapper;
-
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import no.unit.nva.constants.Words;
+import nva.commons.core.JacocoGenerated;
+import nva.commons.core.paths.UriWrapper;
 
 /**
  * PagedSearchBuilder is a class that builds

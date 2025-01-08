@@ -10,27 +10,27 @@ import org.apache.commons.text.CaseUtils;
  * @author Stig Norland
  */
 public enum ParameterKind {
-    INVALID,
-    /**
-     * Ignored parameters are not processed by standard or custom handling. Normally used together
-     * with other parameters in custom handlers or paging.
-     */
-    FUZZY_KEYWORD,
-    KEYWORD,
-    TEXT,
-    FLAG,
-    CUSTOM,
-    NUMBER,
-    DATE,
-    ACROSS_FIELDS,
-    BOOLEAN,
-    EXISTS,
-    FREE_TEXT,
-    HAS_PARTS,
-    PART_OF,
-    SORT_KEY;
+  INVALID,
+  /**
+   * Ignored parameters are not processed by standard or custom handling. Normally used together
+   * with other parameters in custom handlers or paging.
+   */
+  FUZZY_KEYWORD,
+  KEYWORD,
+  TEXT,
+  FLAG,
+  CUSTOM,
+  NUMBER,
+  DATE,
+  ACROSS_FIELDS,
+  BOOLEAN,
+  EXISTS,
+  FREE_TEXT,
+  HAS_PARTS,
+  PART_OF,
+  SORT_KEY;
 
-    public String asCamelCase() {
-        return CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
-    }
+  public String asCamelCase() {
+    return CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
+  }
 }

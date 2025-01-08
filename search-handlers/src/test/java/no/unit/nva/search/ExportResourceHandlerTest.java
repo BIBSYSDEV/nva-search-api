@@ -5,7 +5,6 @@ import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.search.resource.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -14,25 +13,21 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 import no.unit.nva.indexing.testutils.FakeSearchResponse;
 import no.unit.nva.search.common.csv.ExportCsv;
 import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.scroll.ScrollClient;
 import no.unit.nva.testutils.HandlerRequestBuilder;
-
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
-
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
 
 class ExportResourceHandlerTest {
     private static final String SAMPLE_PATH = "search";

@@ -69,8 +69,11 @@ import static no.unit.nva.search.common.constant.Functions.labels;
 import static no.unit.nva.search.common.constant.Functions.multipleFields;
 import static no.unit.nva.search.common.constant.Functions.nestedBranchBuilder;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 import nva.commons.core.JacocoGenerated;
-
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
@@ -78,11 +81,6 @@ import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder
 import org.opensearch.search.aggregations.bucket.nested.ReverseNestedAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.opensearch.search.aggregations.metrics.CardinalityAggregationBuilder;
-
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
 
 /**
  * Constants for the Resource Search.

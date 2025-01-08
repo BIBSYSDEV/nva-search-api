@@ -1,17 +1,14 @@
 package no.unit.nva.indexingclient;
 
+import java.time.Duration;
 import no.unit.nva.indexingclient.models.QueueClient;
-
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
-
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
-
-import java.time.Duration;
 
 @JacocoGenerated
 public final class IndexQueueClient implements QueueClient {

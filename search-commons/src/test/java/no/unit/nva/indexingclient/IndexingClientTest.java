@@ -6,9 +6,7 @@ import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCached
 import static no.unit.nva.indexingclient.IndexingClient.BULK_SIZE;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
-
 import static nva.commons.core.attempt.Try.attempt;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -28,7 +26,11 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
 import no.unit.nva.indexingclient.models.IndexDocument;
@@ -36,9 +38,7 @@ import no.unit.nva.indexingclient.models.IndicesClientWrapper;
 import no.unit.nva.indexingclient.models.RestHighLevelClientWrapper;
 import no.unit.nva.search.common.jwt.CachedJwtProvider;
 import no.unit.nva.search.common.records.UsernamePasswordWrapper;
-
 import nva.commons.secrets.SecretsReader;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -52,12 +52,6 @@ import org.opensearch.action.index.IndexResponse;
 import org.opensearch.client.IndicesClient;
 import org.opensearch.client.RequestOptions;
 import org.opensearch.client.indices.CreateIndexRequest;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 class IndexingClientTest {
 

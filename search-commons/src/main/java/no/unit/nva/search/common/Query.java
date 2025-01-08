@@ -2,13 +2,12 @@ package no.unit.nva.search.common;
 
 import static no.unit.nva.search.common.constant.Functions.readSearchInfrastructureApiUri;
 
-import no.unit.nva.search.common.enums.ParameterKey;
-import no.unit.nva.search.common.records.HttpResponseFormatter;
-import no.unit.nva.search.common.records.QueryContentWrapper;
-
 import java.net.URI;
 import java.time.Instant;
 import java.util.stream.Stream;
+import no.unit.nva.search.common.enums.ParameterKey;
+import no.unit.nva.search.common.records.HttpResponseFormatter;
+import no.unit.nva.search.common.records.QueryContentWrapper;
 
 /**
  * Query is a class that represents a query to the search service.

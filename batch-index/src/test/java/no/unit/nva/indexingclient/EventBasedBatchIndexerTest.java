@@ -6,9 +6,7 @@ import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.indexingclient.Constants.NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
-
 import static nva.commons.core.attempt.Try.attempt;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -20,7 +18,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
 import no.unit.nva.identifiers.SortableIdentifier;
@@ -29,26 +33,16 @@ import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
 import no.unit.nva.indexingclient.models.IndexDocument;
 import no.unit.nva.s3.S3Driver;
 import no.unit.nva.stubs.FakeS3Client;
-
 import nva.commons.core.attempt.Try;
 import nva.commons.core.ioutils.IoUtils;
 import nva.commons.core.paths.UnixPath;
 import nva.commons.core.paths.UriWrapper;
-
 import org.apache.logging.log4j.core.test.appender.ListAppender;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @SuppressWarnings({"PMD.VariableDeclarationUsageDistance"})
 public class EventBasedBatchIndexerTest extends BatchIndexTest {

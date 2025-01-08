@@ -4,9 +4,9 @@ import java.util.List;
 
 public interface IndexingResult<T> {
 
-    List<T> failedResults();
+  List<T> failedResults();
 
-    String nextStartMarker();
+  String nextStartMarker();
 
-    boolean truncated();
+  boolean truncated();
 }

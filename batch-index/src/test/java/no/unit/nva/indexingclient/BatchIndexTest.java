@@ -1,22 +1,18 @@
 package no.unit.nva.indexingclient;
 
 import static no.unit.nva.indexingclient.TestConstants.RESOURCE_INDEX_NAME;
-
 import static org.mockito.Mockito.mock;
 
 import com.amazonaws.services.lambda.runtime.Context;
-
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Stream;
 import no.unit.nva.indexing.testutils.FakeIndexingClient;
 import no.unit.nva.indexingclient.models.IndexDocument;
-
 import org.opensearch.action.DocWriteRequest.OpType;
 import org.opensearch.action.bulk.BulkItemResponse;
 import org.opensearch.action.bulk.BulkItemResponse.Failure;
 import org.opensearch.action.bulk.BulkResponse;
-
-import java.util.List;
-import java.util.Random;
-import java.util.stream.Stream;
 
 public class BatchIndexTest {
 

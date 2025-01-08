@@ -1,17 +1,15 @@
 package no.unit.nva.indexingclient;
 
 import static no.unit.nva.indexingclient.Constants.PERSISTED_RESOURCES_PATH;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class StartBatchIndexingHandlerTest extends BatchIndexTest {
 

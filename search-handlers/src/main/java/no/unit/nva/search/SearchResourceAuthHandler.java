@@ -37,60 +37,60 @@ import java.util.List;
  */
 public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
 
-    private final ResourceClient opensearchClient;
+  private final ResourceClient opensearchClient;
 
-    @JacocoGenerated
-    public SearchResourceAuthHandler() {
-        this(new Environment(), defaultClient());
+  @JacocoGenerated
+  public SearchResourceAuthHandler() {
+    this(new Environment(), defaultClient());
+  }
+
+  public SearchResourceAuthHandler(Environment environment, ResourceClient resourceClient) {
+    super(Void.class, environment);
+    this.opensearchClient = resourceClient;
+  }
+
+  @Override
+  protected List<MediaType> listSupportedMediaTypes() {
+    return DEFAULT_RESPONSE_MEDIA_TYPES;
+  }
+
+  @Override
+  protected void validateRequest(Void unused, RequestInfo requestInfo, Context context)
+      throws ApiGatewayException {
+    validateAccessRight(requestInfo.getAccessRights());
+  }
+
+  @Override
+  protected String processInput(Void input, RequestInfo requestInfo, Context context)
+      throws BadRequestException, UnauthorizedException {
+
+    return ResourceSearchQuery.builder()
+        .fromRequestInfo(requestInfo)
+        .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
+        .withAlwaysExcludedFields(GLOBAL_EXCLUDED_FIELDS)
+        .validate()
+        .build()
+        .withFilter()
+        .requiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED, UNPUBLISHED)
+        .customerCurationInstitutions(requestInfo)
+        .apply()
+        .doSearch(opensearchClient)
+        .toString();
+  }
+
+  @Override
+  protected Integer getSuccessStatusCode(Void input, String output) {
+    return HttpURLConnection.HTTP_OK;
+  }
+
+  private void validateAccessRight(List<AccessRight> accessRights) throws UnauthorizedException {
+    if (accessRights.contains(AccessRight.MANAGE_RESOURCES_ALL)
+        || accessRights.contains(AccessRight.MANAGE_CUSTOMERS)
+    //                || accessRights.contains(AccessRight.MANAGE_OWN_AFFILIATION)
+    //                || accessRights.contains(AccessRight.MANAGE_RESOURCES_STANDARD)
+    ) {
+      return;
     }
-
-    public SearchResourceAuthHandler(Environment environment, ResourceClient resourceClient) {
-        super(Void.class, environment);
-        this.opensearchClient = resourceClient;
-    }
-
-    @Override
-    protected List<MediaType> listSupportedMediaTypes() {
-        return DEFAULT_RESPONSE_MEDIA_TYPES;
-    }
-
-    @Override
-    protected void validateRequest(Void unused, RequestInfo requestInfo, Context context)
-            throws ApiGatewayException {
-        validateAccessRight(requestInfo.getAccessRights());
-    }
-
-    @Override
-    protected String processInput(Void input, RequestInfo requestInfo, Context context)
-            throws BadRequestException, UnauthorizedException {
-
-        return ResourceSearchQuery.builder()
-                .fromRequestInfo(requestInfo)
-                .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
-                .withAlwaysExcludedFields(GLOBAL_EXCLUDED_FIELDS)
-                .validate()
-                .build()
-                .withFilter()
-                .requiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED, UNPUBLISHED)
-                .customerCurationInstitutions(requestInfo)
-                .apply()
-                .doSearch(opensearchClient)
-                .toString();
-    }
-
-    @Override
-    protected Integer getSuccessStatusCode(Void input, String output) {
-        return HttpURLConnection.HTTP_OK;
-    }
-
-    private void validateAccessRight(List<AccessRight> accessRights) throws UnauthorizedException {
-        if (accessRights.contains(AccessRight.MANAGE_RESOURCES_ALL)
-                || accessRights.contains(AccessRight.MANAGE_CUSTOMERS)
-        //                || accessRights.contains(AccessRight.MANAGE_OWN_AFFILIATION)
-        //                || accessRights.contains(AccessRight.MANAGE_RESOURCES_STANDARD)
-        ) {
-            return;
-        }
-        throw new UnauthorizedException();
-    }
+    throw new UnauthorizedException();
+  }
 }

@@ -1,5 +1,6 @@
 package no.unit.nva.search.resource;
 
+import static java.util.Objects.nonNull;
 import static no.unit.nva.common.Containers.container;
 import static no.unit.nva.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.common.MockedHttpResponse.mockedFutureHttpResponse;
@@ -16,7 +17,6 @@ import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PE
 import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_SINCE;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
-
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -27,20 +27,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import static java.util.Objects.nonNull;
-
-import no.unit.nva.search.common.records.PagedSearch;
-
-import nva.commons.apigateway.exceptions.BadRequestException;
-import nva.commons.core.paths.UriWrapper;
-
-import org.joda.time.DateTime;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -48,6 +34,15 @@ import java.net.http.HttpClient;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import no.unit.nva.search.common.records.PagedSearch;
+import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.core.paths.UriWrapper;
+import org.joda.time.DateTime;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class ResourceSearchQueryTest {
 

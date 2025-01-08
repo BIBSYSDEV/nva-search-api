@@ -1,5 +1,6 @@
 package no.unit.nva.search.resource;
 
+import static java.lang.String.format;
 import static no.unit.nva.constants.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.constants.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.constants.ErrorMessages.INVALID_VALUE_WITH_SORT;
@@ -34,30 +35,9 @@ import static no.unit.nva.search.resource.ResourceParameter.SEARCH_AFTER;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
 import static no.unit.nva.search.resource.ResourceSort.INVALID;
-
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
-
 import static org.opensearch.index.query.QueryBuilders.matchQuery;
-
-import static java.lang.String.format;
-
-import no.unit.nva.constants.Words;
-import no.unit.nva.search.common.AsType;
-import no.unit.nva.search.common.OpenSearchClient;
-import no.unit.nva.search.common.ParameterValidator;
-import no.unit.nva.search.common.Query;
-import no.unit.nva.search.common.SearchQuery;
-import no.unit.nva.search.common.enums.SortKey;
-import no.unit.nva.search.common.records.HttpResponseFormatter;
-
-import nva.commons.core.JacocoGenerated;
-
-import org.opensearch.index.query.BoolQueryBuilder;
-import org.opensearch.index.query.QueryBuilder;
-import org.opensearch.index.query.TermsQueryBuilder;
-import org.opensearch.search.aggregations.AggregationBuilder;
-import org.opensearch.search.sort.SortOrder;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -70,6 +50,20 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import no.unit.nva.constants.Words;
+import no.unit.nva.search.common.AsType;
+import no.unit.nva.search.common.OpenSearchClient;
+import no.unit.nva.search.common.ParameterValidator;
+import no.unit.nva.search.common.Query;
+import no.unit.nva.search.common.SearchQuery;
+import no.unit.nva.search.common.enums.SortKey;
+import no.unit.nva.search.common.records.HttpResponseFormatter;
+import nva.commons.core.JacocoGenerated;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.TermsQueryBuilder;
+import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.sort.SortOrder;
 
 /**
  * ResourceSearchQuery is a query for searching resources.
@@ -94,6 +88,25 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         filterBuilder = new ResourceAccessFilter(this);
     }
 
+    public static ResourceParameterValidator builder() {
+        return new ResourceParameterValidator();
+    }
+
+    private static boolean missingIdentifier(String sortString) {
+        return !sortString.contains(IDENTIFIER);
+    }
+
+    /**
+     * Calculate the boost for a promoted publication. (4.14 down to 3.14 (PI))
+     *
+     * @param i index of the current publication
+     * @param size total number of promoted publications
+     * @return the boost value
+     */
+    private static float calculateBoostValue(AtomicInteger i, int size) {
+        return PI + 1F - ((float) i.getAndIncrement() / size);
+    }
+
     /**
      * Add a (default) filter to the query that will never match any document.
      *
@@ -106,10 +119,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                 .set(
                         new TermsQueryBuilder(STATUS_KEYWORD, UUID.randomUUID().toString())
                                 .queryName(STATUS));
-    }
-
-    public static ResourceParameterValidator builder() {
-        return new ResourceParameterValidator();
     }
 
     @Override
@@ -128,10 +137,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
             }
         }
         return parameters().get(SORT);
-    }
-
-    private static boolean missingIdentifier(String sortString) {
-        return !sortString.contains(IDENTIFIER);
     }
 
     @Override
@@ -240,17 +245,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                                     matchQuery(IDENTIFIER_KEYWORD, identifier)
                                             .boost(calculateBoostValue(i, promoted.size()))));
         }
-    }
-
-    /**
-     * Calculate the boost for a promoted publication. (4.14 down to 3.14 (PI))
-     *
-     * @param i index of the current publication
-     * @param size total number of promoted publications
-     * @return the boost value
-     */
-    private static float calculateBoostValue(AtomicInteger i, int size) {
-        return PI + 1F - ((float) i.getAndIncrement() / size);
     }
 
     @Override
