@@ -2,7 +2,9 @@ package no.unit.nva.search.resource;
 
 import static no.unit.nva.testutils.RandomDataGenerator.objectMapper;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
+
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
@@ -16,9 +18,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import java.nio.file.Path;
+
 import no.unit.nva.search.resource.response.ResourceSearchResponse;
+
 import org.junit.jupiter.api.Test;
+
+import java.nio.file.Path;
 
 class SimplifiedMutatorTest {
 

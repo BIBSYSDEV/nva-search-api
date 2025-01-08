@@ -7,18 +7,22 @@ import static no.unit.nva.constants.Words.UNDERSCORE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search.common.enums.FieldOperator.NA;
+
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 
-import java.util.Locale;
-import java.util.StringJoiner;
-import java.util.stream.Stream;
 import no.unit.nva.search.common.enums.FieldOperator;
 import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.enums.ParameterKind;
 import no.unit.nva.search.common.enums.ValueEncoding;
+
 import nva.commons.core.JacocoGenerated;
+
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.text.CaseUtils;
+
+import java.util.Locale;
+import java.util.StringJoiner;
+import java.util.stream.Stream;
 
 /**
  * Enum for all the parameters that can be used to query the search index. This enum needs to

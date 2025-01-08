@@ -1,7 +1,5 @@
 package no.unit.nva.indexingclient.keybatch;
 
-import static java.util.Objects.nonNull;
-import static java.util.UUID.randomUUID;
 import static no.unit.nva.constants.Defaults.ENVIRONMENT;
 import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.indexingclient.Constants.EVENT_BUS;
@@ -9,17 +7,20 @@ import static no.unit.nva.indexingclient.Constants.MANDATORY_UNUSED_SUBTOPIC;
 import static no.unit.nva.indexingclient.Constants.TOPIC;
 import static no.unit.nva.indexingclient.Constants.defaultS3Client;
 
+import static java.util.Objects.nonNull;
+import static java.util.UUID.randomUUID;
+
 import com.amazonaws.services.lambda.runtime.Context;
-import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.util.List;
-import java.util.stream.Collectors;
+
 import no.unit.nva.events.handlers.EventHandler;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
 import no.unit.nva.indexingclient.EventBasedBatchIndexer;
+
 import nva.commons.core.JacocoGenerated;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
@@ -31,6 +32,11 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Object;
+
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class GenerateKeyBatchesHandler extends EventHandler<KeyBatchRequestEvent, Void> {
 

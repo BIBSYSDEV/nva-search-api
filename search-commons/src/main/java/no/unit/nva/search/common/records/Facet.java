@@ -2,10 +2,12 @@ package no.unit.nva.search.common.records;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import no.unit.nva.commons.json.JsonSerializable;
+
 import java.net.URI;
 import java.util.Map;
 import java.util.Objects;
-import no.unit.nva.commons.json.JsonSerializable;
 
 /**
  * Facet is a class that represents a facet in a search result.

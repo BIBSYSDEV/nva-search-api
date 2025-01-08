@@ -2,12 +2,15 @@ package no.unit.nva.constants;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.net.MediaType;
-import java.net.URI;
-import java.util.List;
+
 import no.unit.nva.commons.json.JsonUtils;
+
 import nva.commons.apigateway.MediaTypes;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
+
+import java.net.URI;
+import java.util.List;
 
 /**
  * Default values for the search service.

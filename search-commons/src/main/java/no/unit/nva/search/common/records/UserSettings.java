@@ -3,6 +3,7 @@ package no.unit.nva.search.common.records;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.util.List;
 
 /**

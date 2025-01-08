@@ -1,9 +1,11 @@
 package no.unit.nva.common;
 
-import static java.util.Objects.nonNull;
 import static no.unit.nva.constants.Words.CONTENT_TYPE;
 import static no.unit.nva.testutils.TestHeaders.APPLICATION_JSON;
+
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
+
+import static java.util.Objects.nonNull;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -15,6 +17,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+
 import javax.net.ssl.SSLSession;
 
 public class MockedHttpResponse {

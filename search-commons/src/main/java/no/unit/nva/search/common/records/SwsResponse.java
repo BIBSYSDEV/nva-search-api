@@ -4,11 +4,14 @@ import static java.util.Objects.nonNull;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
+
+import no.unit.nva.search.common.records.SwsResponse.HitsInfo.Hit;
+
+import nva.commons.core.JacocoGenerated;
+
 import java.beans.Transient;
 import java.util.List;
 import java.util.Optional;
-import no.unit.nva.search.common.records.SwsResponse.HitsInfo.Hit;
-import nva.commons.core.JacocoGenerated;
 
 /**
  * Response from SWS, almost identical to Opensearch's response.

@@ -1,6 +1,5 @@
 package no.unit.nva.search.ticket;
 
-import static java.util.Objects.nonNull;
 import static no.unit.nva.constants.ErrorMessages.NOT_IMPLEMENTED_FOR;
 import static no.unit.nva.constants.Words.CHAR_UNDERSCORE;
 import static no.unit.nva.constants.Words.COLON;
@@ -51,6 +50,19 @@ import static no.unit.nva.search.ticket.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search.ticket.Constants.TYPE_KEYWORD;
 import static no.unit.nva.search.ticket.Constants.VIEWED_BY_FIELDS;
 
+import static java.util.Objects.nonNull;
+
+import no.unit.nva.constants.Words;
+import no.unit.nva.search.common.enums.FieldOperator;
+import no.unit.nva.search.common.enums.ParameterKey;
+import no.unit.nva.search.common.enums.ParameterKind;
+import no.unit.nva.search.common.enums.ValueEncoding;
+
+import nva.commons.core.JacocoGenerated;
+
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.text.CaseUtils;
+
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Locale;
@@ -58,14 +70,6 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import no.unit.nva.constants.Words;
-import no.unit.nva.search.common.enums.FieldOperator;
-import no.unit.nva.search.common.enums.ParameterKey;
-import no.unit.nva.search.common.enums.ParameterKind;
-import no.unit.nva.search.common.enums.ValueEncoding;
-import nva.commons.core.JacocoGenerated;
-import org.apache.commons.lang3.NotImplementedException;
-import org.apache.commons.text.CaseUtils;
 
 /**
  * Enum for all the parameters that can be used to query the search index. This enum needs to

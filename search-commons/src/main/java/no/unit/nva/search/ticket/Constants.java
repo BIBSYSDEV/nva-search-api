@@ -25,18 +25,21 @@ import static no.unit.nva.search.common.constant.Functions.branchBuilder;
 import static no.unit.nva.search.common.constant.Functions.filterBranchBuilder;
 import static no.unit.nva.search.common.constant.Functions.jsonPath;
 import static no.unit.nva.search.common.constant.Functions.multipleFields;
+
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import nva.commons.core.JacocoGenerated;
+
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Constants for the ticket search.

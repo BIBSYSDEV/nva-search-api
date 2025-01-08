@@ -3,12 +3,15 @@ package no.unit.nva.indexingclient.models;
 import static no.unit.nva.constants.Defaults.ENVIRONMENT;
 import static no.unit.nva.constants.Words.AUTHORIZATION;
 
-import java.net.URI;
 import no.unit.nva.auth.CognitoCredentials;
 import no.unit.nva.search.common.jwt.CachedJwtProvider;
 import no.unit.nva.search.common.records.UsernamePasswordWrapper;
+
 import nva.commons.secrets.SecretsReader;
+
 import org.opensearch.client.RequestOptions;
+
+import java.net.URI;
 
 public class AuthenticatedOpenSearchClientWrapper {
 

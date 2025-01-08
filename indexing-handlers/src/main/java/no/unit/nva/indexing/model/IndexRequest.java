@@ -3,9 +3,11 @@ package no.unit.nva.indexing.model;
 import static nva.commons.core.attempt.Try.attempt;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+
+import no.unit.nva.commons.json.JsonUtils;
+
 import java.util.Collections;
 import java.util.Map;
-import no.unit.nva.commons.json.JsonUtils;
 
 public class IndexRequest {
     private final String name;

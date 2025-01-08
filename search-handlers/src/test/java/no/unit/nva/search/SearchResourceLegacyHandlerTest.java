@@ -1,7 +1,5 @@
 package no.unit.nva.search;
 
-import static java.net.HttpURLConnection.HTTP_OK;
-import static java.util.Objects.nonNull;
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.constants.Words.COMMA;
@@ -9,7 +7,9 @@ import static no.unit.nva.constants.Words.CONTRIBUTOR;
 import static no.unit.nva.search.resource.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
+
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
@@ -22,16 +22,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import static java.net.HttpURLConnection.HTTP_OK;
+import static java.util.Objects.nonNull;
+
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
+
 import no.unit.nva.constants.Words;
 import no.unit.nva.indexing.testutils.FakeSearchResponse;
 import no.unit.nva.search.common.FakeGatewayResponse;
@@ -39,12 +36,22 @@ import no.unit.nva.search.common.csv.ExportCsv;
 import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.testutils.HandlerRequestBuilder;
+
 import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.Environment;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 class SearchResourceLegacyHandlerTest {
 
@@ -54,7 +61,7 @@ class SearchResourceLegacyHandlerTest {
     public static final String SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON =
             "sample_opensearch_response.json";
     public static final String EMPTY_OPENSEARCH_RESPONSE_JSON = "empty_opensearch_response.json";
-    private SearchResourceLegacyHandler handler;
+  private SearchResourceHandler handler;
     private Context contextMock;
     private ByteArrayOutputStream outputStream;
     private ResourceClient mockedSearchClient;
@@ -86,7 +93,7 @@ class SearchResourceLegacyHandlerTest {
     void setUp() {
 
         mockedSearchClient = mock(ResourceClient.class);
-        handler = new SearchResourceLegacyHandler(new Environment(), mockedSearchClient);
+    handler = new SearchResourceHandler(new Environment(), mockedSearchClient);
         contextMock = mock(Context.class);
         outputStream = new ByteArrayOutputStream();
     }

@@ -1,9 +1,11 @@
 package no.unit.nva.indexing.handlers;
 
 import static no.unit.nva.constants.Defaults.ENVIRONMENT;
+
 import static nva.commons.core.attempt.Try.attempt;
 
 import com.amazonaws.services.lambda.runtime.Context;
+
 import no.unit.nva.events.handlers.DestinationsEventBridgeEventHandler;
 import no.unit.nva.events.models.AwsEventBridgeDetail;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
@@ -14,10 +16,12 @@ import no.unit.nva.indexingclient.IndexingClient;
 import no.unit.nva.indexingclient.models.IndexDocument;
 import no.unit.nva.indexingclient.models.QueueClient;
 import no.unit.nva.s3.S3Driver;
+
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.Failure;
 import nva.commons.core.paths.UnixPath;
 import nva.commons.core.paths.UriWrapper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

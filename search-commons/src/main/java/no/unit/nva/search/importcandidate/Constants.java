@@ -20,14 +20,16 @@ import static no.unit.nva.search.common.constant.Functions.labels;
 import static no.unit.nva.search.common.constant.Functions.multipleFields;
 import static no.unit.nva.search.common.constant.Functions.nestedBranchBuilder;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import nva.commons.core.JacocoGenerated;
+
 import org.opensearch.script.Script;
 import org.opensearch.script.ScriptType;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Constants for the import candidates search.

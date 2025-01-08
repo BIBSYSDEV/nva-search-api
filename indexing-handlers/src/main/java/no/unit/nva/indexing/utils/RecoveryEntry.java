@@ -1,13 +1,16 @@
 package no.unit.nva.indexing.utils;
 
+import no.unit.nva.indexingclient.models.IndexDocument;
+import no.unit.nva.indexingclient.models.QueueClient;
+
+import nva.commons.core.Environment;
+
+import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
+import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
-import no.unit.nva.indexingclient.models.IndexDocument;
-import no.unit.nva.indexingclient.models.QueueClient;
-import nva.commons.core.Environment;
-import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
-import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 
 public final class RecoveryEntry {
 

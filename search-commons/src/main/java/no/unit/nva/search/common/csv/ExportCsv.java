@@ -1,10 +1,12 @@
 package no.unit.nva.search.common.csv;
 
 import com.opencsv.bean.CsvBindByName;
-import java.util.List;
-import java.util.Objects;
+
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.StringUtils;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Class for exporting data to CSV.

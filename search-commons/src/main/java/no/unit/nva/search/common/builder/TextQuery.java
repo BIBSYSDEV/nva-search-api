@@ -1,20 +1,23 @@
 package no.unit.nva.search.common.builder;
 
 import static no.unit.nva.constants.Words.KEYWORD_FALSE;
+
 import static org.opensearch.index.query.QueryBuilders.matchPhrasePrefixQuery;
 import static org.opensearch.index.query.QueryBuilders.matchQuery;
 
-import java.util.Arrays;
-import java.util.Map.Entry;
-import java.util.stream.Stream;
 import no.unit.nva.search.common.constant.Functions;
 import no.unit.nva.search.common.enums.ParameterKey;
+
 import org.opensearch.index.query.DisMaxQueryBuilder;
 import org.opensearch.index.query.MatchPhrasePrefixQueryBuilder;
 import org.opensearch.index.query.MatchQueryBuilder;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
+
+import java.util.Arrays;
+import java.util.Map.Entry;
+import java.util.stream.Stream;
 
 /**
  * Class for building OpenSearch queries that search for text.
