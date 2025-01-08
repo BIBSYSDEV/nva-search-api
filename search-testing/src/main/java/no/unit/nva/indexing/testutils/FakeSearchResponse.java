@@ -1,15 +1,13 @@
 package no.unit.nva.indexing.testutils;
 
-import no.unit.nva.search.common.csv.ExportCsv;
-
-import nva.commons.core.JacocoGenerated;
-import nva.commons.core.ioutils.IoUtils;
-
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import no.unit.nva.search.common.csv.ExportCsv;
+import nva.commons.core.JacocoGenerated;
+import nva.commons.core.ioutils.IoUtils;
 
 public final class FakeSearchResponse {
 
@@ -18,6 +16,9 @@ public final class FakeSearchResponse {
             Path.of("search_response_template_json.tmpl");
     public static final Path SEARCH_HIT_TEMPLATE = Path.of("publication_hit_template_json.tmpl");
     public static final Path CONTRIBUTOR_TEMPLATE = Path.of("contributor_json.tmpl");
+
+    @JacocoGenerated
+    private FakeSearchResponse() {}
 
     public static String generateSearchResponseString(List<ExportCsv> csv, String scrollId) {
         var template = IoUtils.stringFromResources(SEARCH_RESPONSE_TEMPLATE);
@@ -82,7 +83,4 @@ public final class FakeSearchResponse {
             return day;
         }
     }
-
-    @JacocoGenerated
-    private FakeSearchResponse() {}
 }

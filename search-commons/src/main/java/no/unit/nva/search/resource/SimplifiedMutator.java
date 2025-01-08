@@ -2,6 +2,7 @@ package no.unit.nva.search.resource;
 
 import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 
+import static no.unit.nva.constants.Words.DOT;
 import static nva.commons.core.attempt.Try.attempt;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -75,20 +76,20 @@ public class SimplifiedMutator implements JsonNodeMutator {
     public static final String ROLE = "role";
     public static final String MANIFESTATIONS = "manifestations";
     public static final String SCIENTIFIC_VALUE = "scientificValue";
-    private final ObjectMapper objectMapper = dtoObjectMapper.copy();
     public static final String ENTITY_DESCRIPTION = "entityDescription";
     public static final String REFERENCE = "reference";
     public static final String PUBLICATION_CONTEXT = "publicationContext";
     public static final String SERIES = "series";
     public static final String PUBLISHER = "publisher";
+    private final ObjectMapper objectMapper = dtoObjectMapper.copy();
 
-  public SimplifiedMutator() {
+    public SimplifiedMutator() {
         objectMapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 
     public static String path(String... path) {
-        return Arrays.stream(path).collect(Collectors.joining("."));
+        return String.join(DOT, path);
     }
 
     public static List<String> getIncludedFields() {
@@ -129,18 +130,18 @@ public class SimplifiedMutator implements JsonNodeMutator {
                 path(ADDITIONAL_IDENTIFIERS, VALUE));
     }
 
-    @Override
-    public JsonNode transform(JsonNode source) {
-        return (JsonNode)
-                attempt(() -> objectMapper.valueToTree(transformToDto(source))).orElseThrow();
-    }
-
     @NotNull
     private static PublicationDate mutatePublicationDate(JsonNode source) {
         return new PublicationDate(
                 source.path(ENTITY_DESCRIPTION).path(PUBLICATION_DATE).path(YEAR).textValue(),
                 source.path(ENTITY_DESCRIPTION).path(PUBLICATION_DATE).path(MONTH).textValue(),
                 source.path(ENTITY_DESCRIPTION).path(PUBLICATION_DATE).path(DAY).textValue());
+    }
+
+    @Override
+    public JsonNode transform(JsonNode source) {
+        return (JsonNode)
+                attempt(() -> objectMapper.valueToTree(transformToDto(source))).orElseThrow();
     }
 
     private ResourceSearchResponse transformToDto(JsonNode source) throws IOException {
@@ -347,7 +348,7 @@ public class SimplifiedMutator implements JsonNodeMutator {
     }
 
     private List<Contributor> mutateContributorsPreview(JsonNode source) {
-        var contributors = new ArrayList();
+        var contributors = new ArrayList<Contributor>();
         source.path(ENTITY_DESCRIPTION)
                 .path(CONTRIBUTORS_PREVIEW)
                 .iterator()
@@ -359,12 +360,12 @@ public class SimplifiedMutator implements JsonNodeMutator {
                                 affiliationNode
                                         .iterator()
                                         .forEachRemaining(
-                                                aff -> {
-                                                    affiliations.add(
-                                                            new Affiliation(
-                                                                    aff.path(ID).textValue(),
-                                                                    aff.path(TYPE).textValue()));
-                                                });
+                                                aff ->
+                                                        affiliations.add(
+                                                                new Affiliation(
+                                                                        aff.path(ID).textValue(),
+                                                                        aff.path(TYPE)
+                                                                                .textValue())));
                             }
 
                             contributors.add(

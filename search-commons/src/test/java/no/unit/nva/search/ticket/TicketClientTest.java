@@ -207,6 +207,21 @@ class TicketClientTest {
         return attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
     }
 
+    static Stream<URI> uriSortingProvider() {
+
+        return Stream.of(
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "sort=status&sortOrder=asc&sort=created_date&order=desc"),
+                URI.create(REQUEST_BASE_URL + "orderBy=status:asc,created_date:desc"),
+                URI.create(REQUEST_BASE_URL + "sort=status+asc&sort=created_date+desc"),
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "sort=created_date&sortOrder=asc&sort=status&order=desc"),
+                URI.create(REQUEST_BASE_URL + "sort=modified_date+asc&sort=type+desc"),
+                URI.create(REQUEST_BASE_URL + "sort=relevance,modified_date+asc"));
+    }
+
     @Test
     void shouldCheckMapping() {
 
@@ -669,21 +684,6 @@ class TicketClientTest {
                                 .withFilter()
                                 .fromRequestInfo(mockedRequestInfoLocal)
                                 .doSearch(searchClient));
-    }
-
-    static Stream<URI> uriSortingProvider() {
-
-        return Stream.of(
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "sort=status&sortOrder=asc&sort=created_date&order=desc"),
-                URI.create(REQUEST_BASE_URL + "orderBy=status:asc,created_date:desc"),
-                URI.create(REQUEST_BASE_URL + "sort=status+asc&sort=created_date+desc"),
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "sort=created_date&sortOrder=asc&sort=status&order=desc"),
-                URI.create(REQUEST_BASE_URL + "sort=modified_date+asc&sort=type+desc"),
-                URI.create(REQUEST_BASE_URL + "sort=relevance,modified_date+asc"));
     }
 
     @Test

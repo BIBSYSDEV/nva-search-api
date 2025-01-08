@@ -29,8 +29,8 @@ class SimplifiedMutatorTest {
 
     @Test
     void shouldNotThrowOnEmptyBody() {
-    assertDoesNotThrow(
-        () -> new SimplifiedMutator().transform(new ObjectMapper().createObjectNode()));
+        assertDoesNotThrow(
+                () -> new SimplifiedMutator().transform(new ObjectMapper().createObjectNode()));
     }
 
     @Test
@@ -38,7 +38,7 @@ class SimplifiedMutatorTest {
         var id = randomString();
         var input = new ObjectMapper().createObjectNode();
         input.set("id", new TextNode(id));
-    var result = new SimplifiedMutator().transform(input);
+        var result = new SimplifiedMutator().transform(input);
         assertTrue(result.isObject());
         ObjectNode resultAsObject = (ObjectNode) result;
         resultAsObject
@@ -46,7 +46,7 @@ class SimplifiedMutatorTest {
                 .forEachRemaining(
                         jsonNode -> {
                             if (jsonNode.isTextual()) {
-                                assertFalse(jsonNode.textValue().equals(""));
+                                assertFalse(jsonNode.textValue().isEmpty());
                             }
                         });
         assertFalse(input.path("id").isMissingNode());
@@ -61,7 +61,7 @@ class SimplifiedMutatorTest {
 
         var contributorsInSampleJson = 1;
 
-    var mutated = new SimplifiedMutator().transform(json);
+        var mutated = new SimplifiedMutator().transform(json);
         var asDto = objectMapper.treeToValue(mutated, ResourceSearchResponse.class);
         assertThat(asDto.contributorsPreview().size(), is(equalTo(contributorsInSampleJson)));
         assertThat(asDto.contributorsCount(), is(equalTo(contributorsInSampleJson)));
@@ -78,7 +78,7 @@ class SimplifiedMutatorTest {
         entityDescription.set("alternativeTitles", alternativeTitles);
         input.set("entityDescription", entityDescription);
 
-    var mutated = new SimplifiedMutator().transform(input);
+        var mutated = new SimplifiedMutator().transform(input);
         var asDto = objectMapper.treeToValue(mutated, ResourceSearchResponse.class);
         assertThat(asDto.alternativeTitles().size(), is(equalTo(1)));
         assertThat(asDto.alternativeTitles().get(language), is(equalTo(expectedAlternativeTitle)));
@@ -104,7 +104,7 @@ class SimplifiedMutatorTest {
         entityDescription.set("reference", reference);
         input.set("entityDescription", entityDescription);
 
-    var mutated = new SimplifiedMutator().transform(input);
+        var mutated = new SimplifiedMutator().transform(input);
         var asDto = objectMapper.treeToValue(mutated, ResourceSearchResponse.class);
 
         assertThat(asDto.otherIdentifiers().isbn(), hasItem(isbn1));
@@ -117,7 +117,7 @@ class SimplifiedMutatorTest {
                 new ObjectMapper()
                         .readTree(stringFromResources(Path.of("resource_datasource.json")))
                         .get(0);
-    var result = new SimplifiedMutator().transform(json);
+        var result = new SimplifiedMutator().transform(json);
         assertNotNull(result);
     }
 }

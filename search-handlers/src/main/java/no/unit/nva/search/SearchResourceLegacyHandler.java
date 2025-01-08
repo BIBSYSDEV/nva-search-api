@@ -61,18 +61,18 @@ public class SearchResourceLegacyHandler extends ApiGatewayHandler<Void, String>
     @Override
     protected String processInput(Void input, RequestInfo requestInfo, Context context)
             throws BadRequestException {
-    return ResourceSearchQuery.builder()
-        .fromRequestInfo(requestInfo)
-        .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
-        .withAlwaysExcludedFields(getExcludedFields())
-        .validate()
-        .build()
-        .withFilter()
-        .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
-        .apply()
-        .doSearch(opensearchClient)
-        .withMutators(new LegacyMutator())
-        .toString();
+        return ResourceSearchQuery.builder()
+                .fromRequestInfo(requestInfo)
+                .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
+                .withAlwaysExcludedFields(getExcludedFields())
+                .validate()
+                .build()
+                .withFilter()
+                .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                .apply()
+                .doSearch(opensearchClient)
+                .withMutators(new LegacyMutator())
+                .toString();
     }
 
     private List<String> getExcludedFields() {

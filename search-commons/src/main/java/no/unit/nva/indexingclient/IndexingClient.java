@@ -80,6 +80,10 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
         return new IndexingClient(defaultRestHighLevelClientWrapper(), cachedJwtProvider);
     }
 
+    private static DeleteRequest deleteDocumentRequest(String index, String identifier) {
+        return new DeleteRequest(index, identifier).routing(DEFAULT_SHARD_ID);
+    }
+
     public Void addDocumentToIndex(IndexDocument indexDocument) throws IOException {
         logger.debug(
                 INITIAL_LOG_MESSAGE,
@@ -98,10 +102,6 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
         var deleteRequest = deleteDocumentRequest(RESOURCES, identifier);
         var deleteResponse = openSearchClient.delete(deleteRequest, getRequestOptions());
         loggWarningIfNotFound(identifier, deleteResponse);
-    }
-
-    private static DeleteRequest deleteDocumentRequest(String index, String identifier) {
-        return new DeleteRequest(index, identifier).routing(DEFAULT_SHARD_ID);
     }
 
     public void removeDocumentFromImportCandidateIndex(String identifier) throws IOException {

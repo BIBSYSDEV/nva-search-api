@@ -26,6 +26,13 @@ public class HeaderColumnNameAndOrderMappingStrategy<T> extends HeaderColumnName
         super();
     }
 
+    public static HeaderColumnNameAndOrderMappingStrategy
+            headerColumnNameAndOrderMappingStrategyWithType(Class type) {
+        var strategy = new HeaderColumnNameAndOrderMappingStrategy<>();
+        strategy.setType(type);
+        return strategy;
+    }
+
     /**
      * This maintains case of header strings.
      *
@@ -102,12 +109,5 @@ public class HeaderColumnNameAndOrderMappingStrategy<T> extends HeaderColumnName
                     .column();
         }
         return StringUtils.EMPTY;
-    }
-
-    public static HeaderColumnNameAndOrderMappingStrategy
-            headerColumnNameAndOrderMappingStrategyWithType(Class type) {
-        var strategy = new HeaderColumnNameAndOrderMappingStrategy<>();
-        strategy.setType(type);
-        return strategy;
     }
 }

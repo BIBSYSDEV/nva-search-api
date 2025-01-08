@@ -8,6 +8,7 @@ import static no.unit.nva.constants.Words.IDENTITY;
 import static no.unit.nva.constants.Words.NO;
 import static no.unit.nva.constants.Words.VERIFICATION_STATUS;
 import static no.unit.nva.constants.Words.VERIFIED;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -19,7 +20,9 @@ import com.fasterxml.jackson.databind.node.TextNode;
 
 import no.unit.nva.search.common.records.JsonNodeMutator;
 import no.unit.nva.search.resource.Constants;
+
 import nva.commons.core.ioutils.IoUtils;
+
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;

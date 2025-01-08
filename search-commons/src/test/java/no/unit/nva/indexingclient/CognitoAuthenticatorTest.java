@@ -1,12 +1,13 @@
 package no.unit.nva.indexingclient;
 
+import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
+import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.auth.AuthorizedBackendClient.APPLICATION_X_WWW_FORM_URLENCODED;
 import static no.unit.nva.constants.Words.AUTHORIZATION;
 import static no.unit.nva.indexing.testutils.Constants.TEST_SCOPE;
 import static no.unit.nva.indexing.testutils.Constants.TEST_TOKEN;
 import static no.unit.nva.search.common.jwt.CognitoAuthenticator.AUTHORIZATION_ERROR_MESSAGE;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
-
 import static org.apache.http.protocol.HTTP.CONTENT_TYPE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -18,16 +19,6 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
-import static java.net.HttpURLConnection.HTTP_OK;
-
-import no.unit.nva.auth.CognitoCredentials;
-import no.unit.nva.indexingclient.utils.HttpRequestMetadataMatcher;
-import no.unit.nva.search.common.jwt.CognitoAuthenticator;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -37,6 +28,11 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.NoSuchElementException;
+import no.unit.nva.auth.CognitoCredentials;
+import no.unit.nva.indexingclient.utils.HttpRequestMetadataMatcher;
+import no.unit.nva.search.common.jwt.CognitoAuthenticator;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings({"unchecked"})
 class CognitoAuthenticatorTest {

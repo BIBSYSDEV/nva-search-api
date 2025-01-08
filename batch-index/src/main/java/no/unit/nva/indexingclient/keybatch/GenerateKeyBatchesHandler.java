@@ -44,11 +44,11 @@ public class GenerateKeyBatchesHandler extends EventHandler<KeyBatchRequestEvent
     public static final String DELIMITER = "/";
     public static final String DEFAULT_START_MARKER = null;
     public static final String START_MARKER_MESSAGE = "Start marker: {}";
-    private static final Logger logger = LoggerFactory.getLogger(GenerateKeyBatchesHandler.class);
     public static final String INPUT_BUCKET = ENVIRONMENT.readEnv("PERSISTED_RESOURCES_BUCKET");
     public static final String OUTPUT_BUCKET = ENVIRONMENT.readEnv("KEY_BATCHES_BUCKET");
     public static final int MAX_KEYS =
             Integer.parseInt(ENVIRONMENT.readEnvOpt("BATCH_SIZE").orElse(DEFAULT_BATCH_SIZE));
+    private static final Logger logger = LoggerFactory.getLogger(GenerateKeyBatchesHandler.class);
     private final S3Client inputClient;
     private final S3Client outputClient;
     private final EventBridgeClient eventBridgeClient;
@@ -109,7 +109,7 @@ public class GenerateKeyBatchesHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     private static String getLastEvaluatedKey(List<String> keys) {
-        return keys.get(keys.size() - 1);
+        return keys.getLast();
     }
 
     @JacocoGenerated

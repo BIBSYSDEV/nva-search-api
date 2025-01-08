@@ -25,11 +25,12 @@ import static no.unit.nva.search.common.constant.Functions.branchBuilder;
 import static no.unit.nva.search.common.constant.Functions.filterBranchBuilder;
 import static no.unit.nva.search.common.constant.Functions.jsonPath;
 import static no.unit.nva.search.common.constant.Functions.multipleFields;
-
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import nva.commons.core.JacocoGenerated;
-
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
@@ -37,18 +38,12 @@ import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * Constants for the ticket search.
  *
  * @author Stig Norland
  */
 public final class Constants {
-
-    private static final String FINALIZED_BY = "finalizedBy";
 
     static final String ASSIGNEE_ASTERISK = "assignee.*";
     static final String BY_USER_PENDING = "byUserPending";
@@ -65,7 +60,6 @@ public final class Constants {
     static final String USER_IS_NOT_ALLOWED_TO_SEARCH_FOR_TICKETS_NOT_OWNED_BY_THEMSELVES =
             "User is not allowed to search for tickets not owned by themselves";
     static final String USER_IS_REQUIRED = "User is required";
-
     static final Map<String, String> facetTicketsPaths =
             Map.of(
                     BY_USER_PENDING, "/withAppliedFilter/byUserPending/type",
@@ -79,11 +73,6 @@ public final class Constants {
                     jsonPath(ASSIGNEE, LAST_NAME, KEYWORD),
                     jsonPath(ASSIGNEE, USERNAME, KEYWORD));
     static final String CUSTOMER_ID_KEYWORD = CUSTOMER_ID + DOT + KEYWORD;
-    static final String FINALIZED_BY_FIELDS =
-            multipleFields(
-                    jsonPath(FINALIZED_BY, USERNAME, KEYWORD),
-                    jsonPath(FINALIZED_BY, FIRST_NAME, KEYWORD),
-                    jsonPath(FINALIZED_BY, LAST_NAME, KEYWORD));
     static final String ID_KEYWORD = ID + DOT + KEYWORD;
     static final String MESSAGE_FIELDS =
             jsonPath(MESSAGES, "text", KEYWORD) + PIPE + jsonPath(MESSAGES, STATUS, KEYWORD);
@@ -114,6 +103,12 @@ public final class Constants {
                     jsonPath(VIEWED_BY, USERNAME, KEYWORD),
                     jsonPath(VIEWED_BY, FIRST_NAME, KEYWORD),
                     jsonPath(VIEWED_BY, LAST_NAME, KEYWORD));
+    private static final String FINALIZED_BY = "finalizedBy";
+    static final String FINALIZED_BY_FIELDS =
+            multipleFields(
+                    jsonPath(FINALIZED_BY, USERNAME, KEYWORD),
+                    jsonPath(FINALIZED_BY, FIRST_NAME, KEYWORD),
+                    jsonPath(FINALIZED_BY, LAST_NAME, KEYWORD));
 
     @JacocoGenerated
     public Constants() {}

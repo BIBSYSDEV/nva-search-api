@@ -52,6 +52,13 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
         this.searchQuery.filters().set();
     }
 
+    private static URI getCurationInstitutionId(RequestInfo requestInfo)
+            throws UnauthorizedException {
+        return requestInfo.getTopLevelOrgCristinId().isPresent()
+                ? requestInfo.getTopLevelOrgCristinId().get()
+                : requestInfo.getPersonAffiliation();
+    }
+
     @Override
     public ResourceSearchQuery apply() {
         return searchQuery;
@@ -116,13 +123,6 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
         }
         this.searchQuery.filters().add(filter);
         return this;
-    }
-
-    private static URI getCurationInstitutionId(RequestInfo requestInfo)
-            throws UnauthorizedException {
-        return requestInfo.getTopLevelOrgCristinId().isPresent()
-                ? requestInfo.getTopLevelOrgCristinId().get()
-                : requestInfo.getPersonAffiliation();
     }
 
     private QueryBuilder getContributingOrganisationAccessFilter(String institutionId) {

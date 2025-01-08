@@ -36,6 +36,12 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
         this.key = key;
     }
 
+    private static Stream<String> splitParts(String delimiter, String value) {
+        return Arrays.stream(value.split(delimiter))
+                .filter(predicate -> !predicate.isBlank())
+                .sequential();
+    }
+
     public <T> T as() {
         if (isNull(value)) {
             return null;
@@ -110,12 +116,6 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
     public Stream<String> asSplitStream(String delimiter) {
         // Optional null stream, skipping null check
         return asStream().flatMap(value -> splitParts(delimiter, value));
-    }
-
-    private static Stream<String> splitParts(String delimiter, String value) {
-        return Arrays.stream(value.split(delimiter))
-                .filter(predicate -> !predicate.isBlank())
-                .sequential();
     }
 
     /**

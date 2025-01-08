@@ -18,6 +18,9 @@ import java.util.Date;
 
 public final class MockedJwtProvider {
 
+    @JacocoGenerated
+    private MockedJwtProvider() {}
+
     public static CachedJwtProvider setupMockedCachedJwtProvider() {
         var jwt = mock(DecodedJWT.class);
         var cogintoAuthenticatorMock = mock(CognitoAuthenticator.class);
@@ -28,7 +31,4 @@ public final class MockedJwtProvider {
 
         return CachedJwtProvider.prepareWithAuthenticator(cogintoAuthenticatorMock);
     }
-
-    @JacocoGenerated
-    private MockedJwtProvider() {}
 }

@@ -29,9 +29,8 @@ import java.util.function.Supplier;
  */
 public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
 
-    private final ResourceClient opensearchClient;
-
     private static final String V_2024_12_01_SIMPLER_MODEL = "2024-12-01";
+    private final ResourceClient opensearchClient;
 
     @JacocoGenerated
     public SearchResourceHandler() {

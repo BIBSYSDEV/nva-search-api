@@ -235,43 +235,6 @@ class ResourceClientTest {
                 Arguments.of(22, List.of(MANAGE_CUSTOMERS, MANAGE_RESOURCES_ALL)));
     }
 
-    @Test
-    void shouldCheckMapping() {
-
-        var mapping = indexingClient.getMapping(RESOURCES);
-        assertThat(mapping, is(notNullValue()));
-        var topLevelOrgType =
-                mapping.path(PROPERTIES).path(TOP_LEVEL_ORGANIZATIONS).path(TYPE).textValue();
-        assertThat(topLevelOrgType, is(equalTo(NESTED)));
-        logger.info(mapping.toString());
-    }
-
-    @Test
-    void testingFromRequestInfoSuccessful() throws UnauthorizedException, BadRequestException {
-        AtomicReference<URI> uri = new AtomicReference<>();
-        uriSortingProvider().findFirst().ifPresent(uri::set);
-
-        var accessRights = List.of(MANAGE_CUSTOMERS);
-        var mockedRequestInfoLocal = mock(RequestInfo.class);
-        when(mockedRequestInfoLocal.getPersonAffiliation())
-                .thenReturn(
-                        URI.create(
-                                "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0"));
-        when(mockedRequestInfoLocal.getAccessRights()).thenReturn(accessRights);
-
-        var result =
-                ResourceSearchQuery.builder()
-                        .fromRequestInfo(mockedRequestInfoLocal)
-                        .fromTestQueryParameters(queryToMapEntries(uri.get()))
-                        .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                        .withRequiredParameters(FROM, SIZE)
-                        .build()
-                        .withFilter()
-                        .fromRequestInfo(mockedRequestInfoLocal)
-                        .doSearch(searchClient);
-        assertThat(result.toPagedResponse().hits().size(), is(2));
-    }
-
     static Stream<URI> uriSortingProvider() {
 
         return Stream.of(
@@ -307,6 +270,83 @@ class ResourceClientTest {
                 URI.create(
                         BASE_URL
                                 + "query=year+project&sort=published_date+asc&sort=category+desc"));
+    }
+
+    private static int pageNodeToInt(JsonNode hit) {
+        return hit.at(
+                        String.join(
+                                SLASH,
+                                SLASH + ENTITY_DESCRIPTION,
+                                REFERENCE,
+                                PUBLICATION_INSTANCE,
+                                PAGES,
+                                PAGES))
+                .asInt();
+    }
+
+    private static HttpResponseFormatter<ResourceParameter> fetchDocumentWithId(
+            IndexDocument indexDocument) throws BadRequestException {
+        return ResourceSearchQuery.builder()
+                .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                .fromTestParameterMap(Map.of(ID, indexDocument.getDocumentIdentifier()))
+                .build()
+                .withFilter()
+                .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                .apply()
+                .doSearch(searchClient);
+    }
+
+    private static IndexDocument indexDocumentWithIdentifier() throws JsonProcessingException {
+        var identifier = SortableIdentifier.next();
+        var document =
+                """
+                {
+                     "type": "Publication",
+                     "status": "PUBLISHED",
+                     "identifier": "__ID__"
+                }
+                """
+                        .replace("__ID__", identifier.toString());
+        var jsonNode = JsonUtils.dtoObjectMapper.readTree(document);
+        return new IndexDocument(new EventConsumptionAttributes(RESOURCES, identifier), jsonNode);
+    }
+
+    @Test
+    void shouldCheckMapping() {
+
+        var mapping = indexingClient.getMapping(RESOURCES);
+        assertThat(mapping, is(notNullValue()));
+        var topLevelOrgType =
+                mapping.path(PROPERTIES).path(TOP_LEVEL_ORGANIZATIONS).path(TYPE).textValue();
+        assertThat(topLevelOrgType, is(equalTo(NESTED)));
+        logger.info(mapping.toString());
+    }
+
+    @Test
+    void testingFromRequestInfoSuccessful() throws UnauthorizedException, BadRequestException {
+        AtomicReference<URI> uri = new AtomicReference<>();
+        uriSortingProvider().findFirst().ifPresent(uri::set);
+
+        var accessRights = List.of(MANAGE_CUSTOMERS);
+        var mockedRequestInfoLocal = mock(RequestInfo.class);
+        when(mockedRequestInfoLocal.getPersonAffiliation())
+                .thenReturn(
+                        URI.create(
+                                "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0"));
+        when(mockedRequestInfoLocal.getAccessRights()).thenReturn(accessRights);
+
+        var result =
+                ResourceSearchQuery.builder()
+                        .fromRequestInfo(mockedRequestInfoLocal)
+                        .fromTestQueryParameters(queryToMapEntries(uri.get()))
+                        .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                        .withRequiredParameters(FROM, SIZE)
+                        .build()
+                        .withFilter()
+                        .fromRequestInfo(mockedRequestInfoLocal)
+                        .doSearch(searchClient);
+        assertThat(result.toPagedResponse().hits().size(), is(2));
     }
 
     @Test
@@ -1097,18 +1137,6 @@ class ResourceClientTest {
                 everyItem(allOf(greaterThanOrEqualTo(min), lessThanOrEqualTo(max))));
     }
 
-    private static int pageNodeToInt(JsonNode hit) {
-        return hit.at(
-                        String.join(
-                                SLASH,
-                                SLASH + ENTITY_DESCRIPTION,
-                                REFERENCE,
-                                PUBLICATION_INSTANCE,
-                                PAGES,
-                                PAGES))
-                .asInt();
-    }
-
     @Test
     void shouldRemoveDocumentFromIndexWithShards()
             throws BadRequestException, IOException, InterruptedException {
@@ -1126,33 +1154,5 @@ class ResourceClientTest {
         var responseAfterDeletion = fetchDocumentWithId(indexDocument);
 
         assertThat(responseAfterDeletion.toPagedResponse().hits(), is(emptyIterable()));
-    }
-
-    private static HttpResponseFormatter<ResourceParameter> fetchDocumentWithId(
-            IndexDocument indexDocument) throws BadRequestException {
-        return ResourceSearchQuery.builder()
-                .withRequiredParameters(FROM, SIZE, AGGREGATION)
-                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                .fromTestParameterMap(Map.of(ID, indexDocument.getDocumentIdentifier()))
-                .build()
-                .withFilter()
-                .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
-                .apply()
-                .doSearch(searchClient);
-    }
-
-    private static IndexDocument indexDocumentWithIdentifier() throws JsonProcessingException {
-        var identifier = SortableIdentifier.next();
-        var document =
-                """
-                {
-                     "type": "Publication",
-                     "status": "PUBLISHED",
-                     "identifier": "__ID__"
-                }
-                """
-                        .replace("__ID__", identifier.toString());
-        var jsonNode = JsonUtils.dtoObjectMapper.readTree(document);
-        return new IndexDocument(new EventConsumptionAttributes(RESOURCES, identifier), jsonNode);
     }
 }

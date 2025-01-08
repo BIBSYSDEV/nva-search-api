@@ -14,18 +14,15 @@ import software.amazon.awssdk.services.s3.S3Client;
 
 public final class Constants {
 
-    static final String BATCH_INDEX_EVENT_TOPIC = "SearchService.Index.Batch";
     public static final String MANDATORY_UNUSED_SUBTOPIC = "DETAIL.WITH.TOPIC";
+    public static final String EVENT_BUS = ENVIRONMENT.readEnv("EVENT_BUS");
+    public static final String TOPIC = ENVIRONMENT.readEnv("TOPIC");
+    static final String BATCH_INDEX_EVENT_TOPIC = "SearchService.Index.Batch";
     static final String S3_LOCATION_FIELD = "s3Location";
-
     static final Config config = ConfigFactory.load();
     static final String PERSISTED_RESOURCES_PATH = config.getString("batch.persistedResourcesPath");
     static final String BATCH_INDEX_EVENT_BUS_NAME = config.getString("batch.index.eventbusname");
     static final boolean RECURSION_ENABLED = config.getBoolean("batch.index.recursion");
-
-    public static final String EVENT_BUS = ENVIRONMENT.readEnv("EVENT_BUS");
-    public static final String TOPIC = ENVIRONMENT.readEnv("TOPIC");
-
     private static final String AWS_REGION_ENV_VARIABLE = "AWS_REGION";
     private static final int NUMBER_OF_FILES_PER_EVENT =
             config.getInt("batch.index.number_of_files_per_event");
