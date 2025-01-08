@@ -37,7 +37,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class SimplifiedResourceModelMutator implements JsonNodeMutator {
+public class SimplifiedMutator implements JsonNodeMutator {
 
     public static final String ID = "id";
     public static final String IDENTIFIER = "identifier";
@@ -82,7 +82,7 @@ public class SimplifiedResourceModelMutator implements JsonNodeMutator {
     public static final String SERIES = "series";
     public static final String PUBLISHER = "publisher";
 
-    public SimplifiedResourceModelMutator() {
+  public SimplifiedMutator() {
         objectMapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import no.unit.nva.search.common.records.JsonNodeMutator;
 
-public class ContributorCopyMutator implements JsonNodeMutator {
+public class LegacyMutator implements JsonNodeMutator {
 
     public static final String CONTRIBUTORS_PREVIEW = "contributorsPreview";
     public static final String ENTITY_DESCRIPTION = "entityDescription";
