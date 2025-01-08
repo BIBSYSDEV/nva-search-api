@@ -1,28 +1,23 @@
 package no.unit.nva.search.common.records;
 
 import static com.google.common.net.MediaType.CSV_UTF_8;
-
+import static java.util.Objects.nonNull;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.search.common.constant.Functions.hasContent;
-
 import static nva.commons.core.paths.UriWrapper.fromUri;
 
-import static java.util.Objects.nonNull;
-
 import com.google.common.net.MediaType;
-
-import no.unit.nva.constants.Words;
-import no.unit.nva.search.common.AggregationFormat;
-import no.unit.nva.search.common.QueryKeys;
-import no.unit.nva.search.common.csv.ResourceCsvTransformer;
-import no.unit.nva.search.common.enums.ParameterKey;
-
 import java.net.URI;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import no.unit.nva.constants.Words;
+import no.unit.nva.search.common.AggregationFormat;
+import no.unit.nva.search.common.QueryKeys;
+import no.unit.nva.search.common.csv.ResourceCsvTransformer;
+import no.unit.nva.search.common.enums.ParameterKey;
 
 /**
  * HttpResponseFormatter is a class that formats a search response.

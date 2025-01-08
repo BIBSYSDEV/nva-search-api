@@ -5,15 +5,13 @@ import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvCustomBindByName;
 import com.opencsv.bean.HeaderColumnNameMappingStrategy;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
-
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import org.apache.commons.collections4.comparators.ComparableComparator;
 import org.apache.commons.collections4.comparators.ComparatorChain;
 import org.apache.commons.collections4.comparators.FixedOrderComparator;
 import org.apache.commons.collections4.comparators.NullComparator;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 /**
  * Class for exporting data to CSV.
@@ -24,6 +22,13 @@ import java.util.stream.Collectors;
 public class HeaderColumnNameAndOrderMappingStrategy<T> extends HeaderColumnNameMappingStrategy<T> {
     public HeaderColumnNameAndOrderMappingStrategy() {
         super();
+    }
+
+    public static HeaderColumnNameAndOrderMappingStrategy
+            headerColumnNameAndOrderMappingStrategyWithType(Class type) {
+        var strategy = new HeaderColumnNameAndOrderMappingStrategy<>();
+        strategy.setType(type);
+        return strategy;
     }
 
     /**
@@ -102,12 +107,5 @@ public class HeaderColumnNameAndOrderMappingStrategy<T> extends HeaderColumnName
                     .column();
         }
         return StringUtils.EMPTY;
-    }
-
-    public static HeaderColumnNameAndOrderMappingStrategy
-            headerColumnNameAndOrderMappingStrategyWithType(Class type) {
-        var strategy = new HeaderColumnNameAndOrderMappingStrategy<>();
-        strategy.setType(type);
-        return strategy;
     }
 }

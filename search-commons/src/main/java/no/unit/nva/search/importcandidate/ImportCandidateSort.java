@@ -2,19 +2,16 @@ package no.unit.nva.search.importcandidate;
 
 import static no.unit.nva.constants.Words.CHAR_UNDERSCORE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_PIPE;
-
 import static nva.commons.core.StringUtils.EMPTY_STRING;
-
-import no.unit.nva.constants.Words;
-import no.unit.nva.search.common.enums.SortKey;
-
-import org.apache.commons.text.CaseUtils;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import no.unit.nva.constants.Words;
+import no.unit.nva.search.common.enums.SortKey;
+import org.apache.commons.text.CaseUtils;
 
 /**
  * ImportCandidateSort is an enum for sorting import candidates.

@@ -1,5 +1,6 @@
 package no.unit.nva.search.ticket;
 
+import static java.util.Objects.isNull;
 import static no.unit.nva.search.ticket.Constants.CANNOT_SEARCH_AS_BOTH_ASSIGNEE_AND_OWNER_AT_THE_SAME_TIME;
 import static no.unit.nva.search.ticket.Constants.FILTER_BY_ORGANIZATION;
 import static no.unit.nva.search.ticket.Constants.FILTER_BY_OWNER;
@@ -14,32 +15,25 @@ import static no.unit.nva.search.ticket.Constants.USER_IS_REQUIRED;
 import static no.unit.nva.search.ticket.TicketParameter.ASSIGNEE;
 import static no.unit.nva.search.ticket.TicketParameter.OWNER;
 import static no.unit.nva.search.ticket.TicketParameter.STATISTICS;
-
 import static nva.commons.apigateway.AccessRight.MANAGE_CUSTOMERS;
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
 import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
-
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
-
-import static java.util.Objects.isNull;
-
-import no.unit.nva.search.common.records.FilterBuilder;
-
-import nva.commons.apigateway.AccessRight;
-import nva.commons.apigateway.RequestInfo;
-import nva.commons.apigateway.exceptions.UnauthorizedException;
-
-import org.opensearch.index.query.BoolQueryBuilder;
-import org.opensearch.index.query.MultiMatchQueryBuilder;
-import org.opensearch.index.query.Operator;
-import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.index.query.TermsQueryBuilder;
 
 import java.net.URI;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import no.unit.nva.search.common.records.FilterBuilder;
+import nva.commons.apigateway.AccessRight;
+import nva.commons.apigateway.RequestInfo;
+import nva.commons.apigateway.exceptions.UnauthorizedException;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.MultiMatchQueryBuilder;
+import org.opensearch.index.query.Operator;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.index.query.TermsQueryBuilder;
 
 /**
  * TicketAccessFilter is a class that filters tickets based on access rights.

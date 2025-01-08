@@ -1,41 +1,15 @@
 package no.unit.nva.indexingclient.keybatch;
 
+import static java.util.Objects.nonNull;
 import static no.unit.nva.constants.Defaults.ENVIRONMENT;
 import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.indexingclient.Constants.EVENT_BUS;
 import static no.unit.nva.indexingclient.Constants.MANDATORY_UNUSED_SUBTOPIC;
 import static no.unit.nva.indexingclient.Constants.TOPIC;
 import static no.unit.nva.indexingclient.Constants.defaultS3Client;
-
 import static nva.commons.core.attempt.Try.attempt;
 
-import static java.util.Objects.nonNull;
-
 import com.amazonaws.services.lambda.runtime.Context;
-
-import no.unit.nva.events.handlers.EventHandler;
-import no.unit.nva.events.models.AwsEventBridgeEvent;
-import no.unit.nva.indexingclient.AggregationsValidator;
-import no.unit.nva.indexingclient.IndexingClient;
-import no.unit.nva.indexingclient.models.IndexDocument;
-import no.unit.nva.s3.S3Driver;
-
-import nva.commons.core.JacocoGenerated;
-import nva.commons.core.attempt.Failure;
-import nva.commons.core.paths.UnixPath;
-
-import org.opensearch.action.bulk.BulkResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
-import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
-import software.amazon.awssdk.services.eventbridge.model.PutEventsRequest;
-import software.amazon.awssdk.services.eventbridge.model.PutEventsRequestEntry;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
-
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -43,6 +17,25 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
+import no.unit.nva.events.handlers.EventHandler;
+import no.unit.nva.events.models.AwsEventBridgeEvent;
+import no.unit.nva.indexingclient.AggregationsValidator;
+import no.unit.nva.indexingclient.IndexingClient;
+import no.unit.nva.indexingclient.models.IndexDocument;
+import no.unit.nva.s3.S3Driver;
+import nva.commons.core.JacocoGenerated;
+import nva.commons.core.attempt.Failure;
+import nva.commons.core.paths.UnixPath;
+import org.opensearch.action.bulk.BulkResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
+import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
+import software.amazon.awssdk.services.eventbridge.model.PutEventsRequest;
+import software.amazon.awssdk.services.eventbridge.model.PutEventsRequestEntry;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 
 public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent, Void> {
 
@@ -121,18 +114,17 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
         var batchResponse = fetchSingleBatch(startMarker);
 
         if (batchResponse.isTruncated()) {
-            sendEvent(
-                    constructRequestEntry(
-                            batchResponse.contents().get(0).key(), context, location));
+      sendEvent(
+          constructRequestEntry(batchResponse.contents().getFirst().key(), context, location));
         }
 
-        var batchKey = batchResponse.contents().get(0).key();
+    var batchKey = batchResponse.contents().getFirst().key();
         var content = extractContent(batchKey);
         var indexDocuments = mapToIndexDocuments(content);
 
         sendDocumentsToIndexInBatches(indexDocuments);
 
-        logger.info(LAST_CONSUMED_BATCH, batchResponse.contents().get(0));
+    logger.info(LAST_CONSUMED_BATCH, batchResponse.contents().getFirst());
         return null;
     }
 

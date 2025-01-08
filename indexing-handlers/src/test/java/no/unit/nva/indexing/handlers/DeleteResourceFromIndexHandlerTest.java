@@ -39,85 +39,83 @@ import java.util.Set;
 
 public class DeleteResourceFromIndexHandlerTest {
 
-    public static final String RESOURCES_INDEX = "resource";
+  public static final String RESOURCES_INDEX = "resource";
 
-    public static final String SOMETHING_BAD_HAPPENED = "Something bad happened";
-    private static final Context CONTEXT = Mockito.mock(Context.class);
-    private static ListAppender appender;
-    private FakeIndexingClient indexingClient;
-    private ByteArrayOutputStream output;
-    private DeleteResourceFromIndexHandler handler;
+  public static final String SOMETHING_BAD_HAPPENED = "Something bad happened";
+  private static final Context CONTEXT = Mockito.mock(Context.class);
+  private static ListAppender appender;
+  private FakeIndexingClient indexingClient;
+  private ByteArrayOutputStream output;
+  private DeleteResourceFromIndexHandler handler;
 
-    @BeforeAll
-    public static void initClass() {
-        appender = getAppender(DeleteResourceFromIndexHandler.class);
+  @BeforeAll
+  public static void initClass() {
+    appender = getAppender(DeleteResourceFromIndexHandler.class);
+  }
+
+  private static IndexDocument createSampleResource(SortableIdentifier identifierProvider) {
+    String randomJson = randomJson();
+    ObjectNode objectNode =
+        attempt(() -> (ObjectNode) objectMapperWithEmpty.readTree(randomJson)).orElseThrow();
+    EventConsumptionAttributes metadata =
+        new EventConsumptionAttributes(RESOURCES_INDEX, identifierProvider);
+    return new IndexDocument(metadata, objectNode);
+  }
+
+  @BeforeEach
+  void init() {
+    indexingClient = new FakeIndexingClient();
+    handler = new DeleteResourceFromIndexHandler(indexingClient);
+    output = new ByteArrayOutputStream();
+  }
+
+  @Test
+  void shouldThrowRuntimeExceptionAndLogErrorWhenIndexingClientIsThrowingException()
+      throws IOException {
+    indexingClient = new FakeIndexingClientThrowingException();
+    handler = new DeleteResourceFromIndexHandler(indexingClient);
+    try (var eventReference = createEventBridgeEvent(SortableIdentifier.next())) {
+      assertThrows(
+          RuntimeException.class, () -> handler.handleRequest(eventReference, output, CONTEXT));
     }
+    assertThat(logToString(appender), containsString(SOMETHING_BAD_HAPPENED));
+  }
 
-    private static IndexDocument createSampleResource(SortableIdentifier identifierProvider) {
-        String randomJson = randomJson();
-        ObjectNode objectNode =
-                attempt(() -> (ObjectNode) objectMapperWithEmpty.readTree(randomJson))
-                        .orElseThrow();
-        EventConsumptionAttributes metadata =
-                new EventConsumptionAttributes(RESOURCES_INDEX, identifierProvider);
-        return new IndexDocument(metadata, objectNode);
+  @Test
+  void shouldRemoveDocumentFromSearchIndexClient() throws IOException {
+    var resourceIdentifier = SortableIdentifier.next();
+    var sampleDocument = createSampleResorce(resourceIdentifier);
+    indexingClient.addDocumentToIndex(sampleDocument);
+    var eventReference = createEventBridgeEvent(resourceIdentifier);
+    handler.handleRequest(eventReference, output, CONTEXT);
+    Set<JsonNode> allIndexedDocuments = indexingClient.listAllDocuments(RESOURCES_INDEX);
+    assertThat(allIndexedDocuments, not(contains(sampleDocument.resource())));
+  }
+
+  private IndexDocument createSampleResorce(SortableIdentifier resourceIdentifier) {
+    return createSampleResource(resourceIdentifier);
+  }
+
+  private InputStream createEventBridgeEvent(SortableIdentifier resourceIdentifier)
+      throws IOException {
+    DeleteResourceEvent deleteResourceEvent =
+        new DeleteResourceEvent(DeleteImportCandidateEvent.EVENT_TOPIC, resourceIdentifier);
+
+    AwsEventBridgeDetail<DeleteResourceEvent> detail = new AwsEventBridgeDetail<>();
+    detail.setResponsePayload(deleteResourceEvent);
+
+    AwsEventBridgeEvent<AwsEventBridgeDetail<DeleteResourceEvent>> event =
+        new AwsEventBridgeEvent<>();
+    event.setDetail(detail);
+
+    return new ByteArrayInputStream(objectMapperWithEmpty.writeValueAsBytes(event));
+  }
+
+  static class FakeIndexingClientThrowingException extends FakeIndexingClient {
+
+    @Override
+    public void removeDocumentFromResourcesIndex(String identifier) throws IOException {
+      throw new IOException(SOMETHING_BAD_HAPPENED);
     }
-
-    @BeforeEach
-    void init() {
-        indexingClient = new FakeIndexingClient();
-        handler = new DeleteResourceFromIndexHandler(indexingClient);
-        output = new ByteArrayOutputStream();
-    }
-
-    @Test
-    void shouldThrowRuntimeExceptionAndLogErrorWhenIndexingClientIsThrowingException()
-            throws IOException {
-        indexingClient = new FakeIndexingClientThrowingException();
-        handler = new DeleteResourceFromIndexHandler(indexingClient);
-        try (var eventReference = createEventBridgeEvent(SortableIdentifier.next())) {
-            assertThrows(
-                    RuntimeException.class,
-                    () -> handler.handleRequest(eventReference, output, CONTEXT));
-        }
-        assertThat(logToString(appender), containsString(SOMETHING_BAD_HAPPENED));
-    }
-
-    @Test
-    void shouldRemoveDocumentFromSearchIndexClient() throws IOException {
-        var resourceIdentifier = SortableIdentifier.next();
-        var sampleDocument = createSampleResorce(resourceIdentifier);
-        indexingClient.addDocumentToIndex(sampleDocument);
-        var eventReference = createEventBridgeEvent(resourceIdentifier);
-        handler.handleRequest(eventReference, output, CONTEXT);
-        Set<JsonNode> allIndexedDocuments = indexingClient.listAllDocuments(RESOURCES_INDEX);
-        assertThat(allIndexedDocuments, not(contains(sampleDocument.resource())));
-    }
-
-    private IndexDocument createSampleResorce(SortableIdentifier resourceIdentifier) {
-        return createSampleResource(resourceIdentifier);
-    }
-
-    private InputStream createEventBridgeEvent(SortableIdentifier resourceIdentifier)
-            throws IOException {
-        DeleteResourceEvent deleteResourceEvent =
-                new DeleteResourceEvent(DeleteImportCandidateEvent.EVENT_TOPIC, resourceIdentifier);
-
-        AwsEventBridgeDetail<DeleteResourceEvent> detail = new AwsEventBridgeDetail<>();
-        detail.setResponsePayload(deleteResourceEvent);
-
-        AwsEventBridgeEvent<AwsEventBridgeDetail<DeleteResourceEvent>> event =
-                new AwsEventBridgeEvent<>();
-        event.setDetail(detail);
-
-        return new ByteArrayInputStream(objectMapperWithEmpty.writeValueAsBytes(event));
-    }
-
-    static class FakeIndexingClientThrowingException extends FakeIndexingClient {
-
-        @Override
-        public void removeDocumentFromResourcesIndex(String identifier) throws IOException {
-            throw new IOException(SOMETHING_BAD_HAPPENED);
-        }
-    }
+  }
 }

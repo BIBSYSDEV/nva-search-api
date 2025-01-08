@@ -4,14 +4,11 @@ import static java.util.Objects.nonNull;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
-
-import no.unit.nva.search.common.records.SwsResponse.HitsInfo.Hit;
-
-import nva.commons.core.JacocoGenerated;
-
 import java.beans.Transient;
 import java.util.List;
 import java.util.Optional;
+import no.unit.nva.search.common.records.SwsResponse.HitsInfo.Hit;
+import nva.commons.core.JacocoGenerated;
 
 /**
  * Response from SWS, almost identical to Opensearch's response.
@@ -39,9 +36,9 @@ public record SwsResponse(
     @JacocoGenerated
     @Transient
     public List<String> getSort() {
-        return nonNull(hits) && nonNull(hits.hits) && !hits.hits.isEmpty()
-                ? Optional.ofNullable(hits.hits.get(hits.hits.size() - 1).sort()).orElse(List.of())
-                : List.of();
+    return nonNull(hits) && nonNull(hits.hits) && !hits.hits.isEmpty()
+        ? Optional.ofNullable(hits.hits.getLast().sort()).orElse(List.of())
+        : List.of();
     }
 
     public record ShardsInfo(Long total, Long successful, Long skipped, Long failed) {}

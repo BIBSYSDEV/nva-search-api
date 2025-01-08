@@ -28,120 +28,120 @@ import java.util.stream.Stream;
 @SuppressWarnings({"PMD.ShortMethodName"})
 public class AsType<K extends Enum<K> & ParameterKey<K>> {
 
-    private final String value;
-    private final K key;
+  private final String value;
+  private final K key;
 
-    public AsType(String value, K key) {
-        this.value = value;
-        this.key = key;
+  public AsType(String value, K key) {
+    this.value = value;
+    this.key = key;
+  }
+
+  private static Stream<String> splitParts(String delimiter, String value) {
+    return Arrays.stream(value.split(delimiter))
+        .filter(predicate -> !predicate.isBlank())
+        .sequential();
+  }
+
+  public <T> T as() {
+    if (isNull(value)) {
+      return null;
+    }
+    if (getKey().fieldType().equals(ParameterKind.CUSTOM)) {
+      SearchQuery.logger.debug(
+          "CUSTOM lacks TypeInfo, use explicit casting if 'String' doesn't cut it.");
     }
 
-    public <T> T as() {
-        if (isNull(value)) {
-            return null;
-        }
-        if (getKey().fieldType().equals(ParameterKind.CUSTOM)) {
-            SearchQuery.logger.debug(
-                    "CUSTOM lacks TypeInfo, use explicit casting if 'String' doesn't cut it.");
-        }
+    return (T)
+        switch (getKey().fieldType()) {
+          case DATE -> castDateTime();
+          case NUMBER -> castNumber();
+          default -> value;
+        };
+  }
 
-        return (T)
-                switch (getKey().fieldType()) {
-                    case DATE -> castDateTime();
-                    case NUMBER -> castNumber();
-                    default -> value;
-                };
-    }
+  public K getKey() {
+    return key;
+  }
 
-    public K getKey() {
-        return key;
-    }
+  private <T> T castDateTime() {
+    return ((Class<T>) DateTime.class).cast(asDateTime());
+  }
 
-    private <T> T castDateTime() {
-        return ((Class<T>) DateTime.class).cast(asDateTime());
-    }
+  public DateTime asDateTime() {
+    return DateTime.parse(value);
+  }
 
-    public DateTime asDateTime() {
-        return DateTime.parse(value);
-    }
+  private <T extends Number> T castNumber() {
+    return (T) attempt(this::asNumber).orElseThrow();
+  }
 
-    private <T extends Number> T castNumber() {
-        return (T) attempt(this::asNumber).orElseThrow();
-    }
+  public Number asNumber() {
+    return Integer.parseInt(value);
+  }
 
-    public Number asNumber() {
-        return Integer.parseInt(value);
-    }
+  public boolean isEmpty() {
+    return isNull(value) || value.isEmpty();
+  }
 
-    public boolean isEmpty() {
-        return isNull(value) || value.isEmpty();
-    }
+  public boolean contains(Object o) {
+    return nonNull(value) && value.contains(o.toString());
+  }
 
-    public boolean contains(Object o) {
-        return nonNull(value) && value.contains(o.toString());
-    }
+  /**
+   * EqualsIgnoreCase.
+   *
+   * @param o Object with toString()
+   * @return equalsIgnoreCase of objects toString()
+   */
+  public boolean equalsIgnoreCase(Object o) {
+    return nonNull(value) && value.equalsIgnoreCase(o.toString());
+  }
 
-    /**
-     * EqualsIgnoreCase.
-     *
-     * @param o Object with toString()
-     * @return equalsIgnoreCase of objects toString()
-     */
-    public boolean equalsIgnoreCase(Object o) {
-        return nonNull(value) && value.equalsIgnoreCase(o.toString());
-    }
+  /**
+   * Split.
+   *
+   * @param delimiter regex to split on
+   * @return The value split, or null.
+   */
+  public String[] split(String delimiter) {
+    return nonNull(value) ? value.split(delimiter) : null;
+  }
 
-    /**
-     * Split.
-     *
-     * @param delimiter regex to split on
-     * @return The value split, or null.
-     */
-    public String[] split(String delimiter) {
-        return nonNull(value) ? value.split(delimiter) : null;
-    }
+  /**
+   * AsSplitStream.
+   *
+   * @param delimiter regex to split on
+   * @return The value as an optional Stream, split by delimiter.
+   */
+  public Stream<String> asSplitStream(String delimiter) {
+    // Optional null stream, skipping null check
+    return asStream().flatMap(value -> splitParts(delimiter, value));
+  }
 
-    /**
-     * AsSplitStream.
-     *
-     * @param delimiter regex to split on
-     * @return The value as an optional Stream, split by delimiter.
-     */
-    public Stream<String> asSplitStream(String delimiter) {
-        // Optional null stream, skipping null check
-        return asStream().flatMap(value -> splitParts(delimiter, value));
-    }
+  /**
+   * AsStream.
+   *
+   * @return The value as an optional Stream.
+   */
+  public Stream<String> asStream() {
+    return Optional.ofNullable(value).stream();
+  }
 
-    private static Stream<String> splitParts(String delimiter, String value) {
-        return Arrays.stream(value.split(delimiter))
-                .filter(predicate -> !predicate.isBlank())
-                .sequential();
-    }
+  /**
+   * AsBoolean.
+   *
+   * @return False if value is null or FALSE, otherwise True
+   */
+  public Boolean asBoolean() {
+    return Boolean.parseBoolean(value);
+  }
 
-    /**
-     * AsStream.
-     *
-     * @return The value as an optional Stream.
-     */
-    public Stream<String> asStream() {
-        return Optional.ofNullable(value).stream();
-    }
+  public String asLowerCase() {
+    return value.toLowerCase(Locale.getDefault());
+  }
 
-    /**
-     * AsBoolean.
-     *
-     * @return False if value is null or FALSE, otherwise True
-     */
-    public Boolean asBoolean() {
-        return Boolean.parseBoolean(value);
-    }
-
-    public String asLowerCase() {
-        return value.toLowerCase(Locale.getDefault());
-    }
-
-    @Override
-    public String toString() {
-        return nonNull(value) ? value : EMPTY_STRING;
-    }
+  @Override
+  public String toString() {
+    return nonNull(value) ? value : EMPTY_STRING;
+  }
 }

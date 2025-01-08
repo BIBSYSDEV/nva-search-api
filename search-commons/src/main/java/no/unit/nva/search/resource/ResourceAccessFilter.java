@@ -10,22 +10,18 @@ import static no.unit.nva.search.common.enums.PublicationStatus.UNPUBLISHED;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTOR_ORG_KEYWORD;
 import static no.unit.nva.search.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search.resource.ResourceParameter.STATISTICS;
-
 import static nva.commons.apigateway.AccessRight.MANAGE_CUSTOMERS;
 import static nva.commons.apigateway.AccessRight.MANAGE_RESOURCES_ALL;
 
+import java.net.URI;
+import java.util.Arrays;
 import no.unit.nva.search.common.enums.PublicationStatus;
 import no.unit.nva.search.common.records.FilterBuilder;
-
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
-
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermsQueryBuilder;
-
-import java.net.URI;
-import java.util.Arrays;
 
 /**
  * ResourceAccessFilter is a class that filters tickets based on access rights.
@@ -50,6 +46,13 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
     public ResourceAccessFilter(ResourceSearchQuery query) {
         this.searchQuery = query;
         this.searchQuery.filters().set();
+    }
+
+    private static URI getCurationInstitutionId(RequestInfo requestInfo)
+            throws UnauthorizedException {
+        return requestInfo.getTopLevelOrgCristinId().isPresent()
+                ? requestInfo.getTopLevelOrgCristinId().get()
+                : requestInfo.getPersonAffiliation();
     }
 
     @Override
@@ -116,13 +119,6 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
         }
         this.searchQuery.filters().add(filter);
         return this;
-    }
-
-    private static URI getCurationInstitutionId(RequestInfo requestInfo)
-            throws UnauthorizedException {
-        return requestInfo.getTopLevelOrgCristinId().isPresent()
-                ? requestInfo.getTopLevelOrgCristinId().get()
-                : requestInfo.getPersonAffiliation();
     }
 
     private QueryBuilder getContributingOrganisationAccessFilter(String institutionId) {

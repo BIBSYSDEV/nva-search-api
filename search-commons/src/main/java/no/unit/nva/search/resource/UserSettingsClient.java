@@ -8,20 +8,10 @@ import static no.unit.nva.constants.Words.HTTPS;
 import static no.unit.nva.search.common.constant.Functions.readApiHost;
 import static no.unit.nva.search.resource.Constants.PERSON_PREFERENCES;
 import static no.unit.nva.search.resource.ResourceParameter.CONTRIBUTOR;
-
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.net.MediaType;
-
-import no.unit.nva.commons.json.JsonSerializable;
-import no.unit.nva.search.common.OpenSearchClient;
-import no.unit.nva.search.common.jwt.CachedJwtProvider;
-import no.unit.nva.search.common.records.UserSettings;
-
-import nva.commons.core.JacocoGenerated;
-import nva.commons.core.attempt.FunctionWithException;
-
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
@@ -32,6 +22,12 @@ import java.time.Instant;
 import java.util.List;
 import java.util.function.BinaryOperator;
 import java.util.stream.Stream;
+import no.unit.nva.commons.json.JsonSerializable;
+import no.unit.nva.search.common.OpenSearchClient;
+import no.unit.nva.search.common.jwt.CachedJwtProvider;
+import no.unit.nva.search.common.records.UserSettings;
+import nva.commons.core.JacocoGenerated;
+import nva.commons.core.attempt.FunctionWithException;
 
 /**
  * Client for searching user settings.

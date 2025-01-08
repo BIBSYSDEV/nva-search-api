@@ -2,13 +2,10 @@ package no.unit.nva.indexing.handlers;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import java.util.Objects;
 import no.unit.nva.commons.json.JsonSerializable;
 import no.unit.nva.identifiers.SortableIdentifier;
-
 import nva.commons.core.JacocoGenerated;
-
-import java.util.Objects;
 
 public class DeleteResourceEvent implements JsonSerializable {
 
