@@ -7,12 +7,18 @@ import static no.unit.nva.search.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
+import java.util.List;
 import no.unit.nva.search.common.records.JsonNodeMutator;
 
-import java.util.List;
-
 public class LegacyMutator implements JsonNodeMutator {
+
+  public static List<String> getExcludedFields() {
+    return List.of(GLOBAL_EXCLUDED_FIELDS);
+  }
+
+  public static List<String> getIncludedFields() {
+    return List.of();
+  }
 
     @Override
     public JsonNode transform(JsonNode source) {
@@ -23,12 +29,4 @@ public class LegacyMutator implements JsonNodeMutator {
         }
         return source;
     }
-
-  public static List<String> getExcludedFields() {
-    return List.of(GLOBAL_EXCLUDED_FIELDS);
-  }
-
-  public static List<String> getIncludedFields() {
-    return List.of();
-  }
 }

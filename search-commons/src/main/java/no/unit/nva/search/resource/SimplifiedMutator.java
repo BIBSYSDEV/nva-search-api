@@ -113,17 +113,17 @@ public class SimplifiedMutator implements JsonNodeMutator {
         path(Constants.ADDITIONAL_IDENTIFIERS, VALUE));
   }
 
-  @Override
-  public JsonNode transform(JsonNode source) {
-    return (JsonNode) attempt(() -> objectMapper.valueToTree(transformToDto(source))).orElseThrow();
-  }
-
   @NotNull
   private static PublicationDate mutatePublicationDate(JsonNode source) {
     return new PublicationDate(
         source.path(ENTITY_DESCRIPTION).path(PUBLICATION_DATE).path(YEAR).textValue(),
         source.path(ENTITY_DESCRIPTION).path(PUBLICATION_DATE).path(MONTH).textValue(),
         source.path(ENTITY_DESCRIPTION).path(PUBLICATION_DATE).path(DAY).textValue());
+  }
+
+  @Override
+  public JsonNode transform(JsonNode source) {
+    return (JsonNode) attempt(() -> objectMapper.valueToTree(transformToDto(source))).orElseThrow();
   }
 
   private ResourceSearchResponse transformToDto(JsonNode source) throws IOException {
