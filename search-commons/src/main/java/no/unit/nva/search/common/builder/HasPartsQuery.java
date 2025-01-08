@@ -19,23 +19,20 @@ import org.opensearch.join.query.HasChildQueryBuilder;
  */
 public class HasPartsQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBuilder<K> {
 
-    @Override
-    @JacocoGenerated
-    protected Stream<Map.Entry<K, QueryBuilder>> buildMatchAnyValueQuery(K key, String... values) {
-        return buildHasChildQuery(key, values)
-                .flatMap(builder -> Functions.queryToEntry(key, builder));
-    }
+  @Override
+  @JacocoGenerated
+  protected Stream<Map.Entry<K, QueryBuilder>> buildMatchAnyValueQuery(K key, String... values) {
+    return buildHasChildQuery(key, values).flatMap(builder -> Functions.queryToEntry(key, builder));
+  }
 
-    @Override
-    protected Stream<Map.Entry<K, QueryBuilder>> buildMatchAllValuesQuery(K key, String... values) {
-        return buildHasChildQuery(key, values)
-                .flatMap(builder -> Functions.queryToEntry(key, builder));
-    }
+  @Override
+  protected Stream<Map.Entry<K, QueryBuilder>> buildMatchAllValuesQuery(K key, String... values) {
+    return buildHasChildQuery(key, values).flatMap(builder -> Functions.queryToEntry(key, builder));
+  }
 
-    private Stream<QueryBuilder> buildHasChildQuery(K key, String... values) {
-        var builder =
-                new HasChildQueryBuilder(
-                        PART_OF, getSubQuery(key.subQuery(), values), ScoreMode.None);
-        return Stream.of(builder);
-    }
+  private Stream<QueryBuilder> buildHasChildQuery(K key, String... values) {
+    var builder =
+        new HasChildQueryBuilder(PART_OF, getSubQuery(key.subQuery(), values), ScoreMode.None);
+    return Stream.of(builder);
+  }
 }

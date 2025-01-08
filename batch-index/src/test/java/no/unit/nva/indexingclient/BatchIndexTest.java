@@ -16,38 +16,32 @@ import org.opensearch.action.bulk.BulkResponse;
 
 public class BatchIndexTest {
 
-    public static final Context CONTEXT = mock(Context.class);
-    private static final Random RANDOM = new Random();
-    private static final int ARBITRARY_QUERY_TIME = 123;
+  public static final Context CONTEXT = mock(Context.class);
+  private static final Random RANDOM = new Random();
+  private static final int ARBITRARY_QUERY_TIME = 123;
 
-    protected FakeIndexingClient failingOpenSearchClient() {
-        return new FakeIndexingClient() {
-            @Override
-            public Stream<BulkResponse> batchInsert(Stream<IndexDocument> indexDocuments) {
-                List<BulkItemResponse> itemResponses =
-                        indexDocuments
-                                .map(IndexDocument::getDocumentIdentifier)
-                                .map(id -> createFailure(id))
-                                .map(
-                                        fail ->
-                                                new BulkItemResponse(
-                                                        randomNumber(), OpType.UPDATE, fail))
-                                .toList();
-                BulkResponse response =
-                        new BulkResponse(
-                                itemResponses.toArray(BulkItemResponse[]::new),
-                                ARBITRARY_QUERY_TIME);
-                return Stream.of(response);
-            }
-        };
-    }
+  protected FakeIndexingClient failingOpenSearchClient() {
+    return new FakeIndexingClient() {
+      @Override
+      public Stream<BulkResponse> batchInsert(Stream<IndexDocument> indexDocuments) {
+        List<BulkItemResponse> itemResponses =
+            indexDocuments
+                .map(IndexDocument::getDocumentIdentifier)
+                .map(id -> createFailure(id))
+                .map(fail -> new BulkItemResponse(randomNumber(), OpType.UPDATE, fail))
+                .toList();
+        BulkResponse response =
+            new BulkResponse(itemResponses.toArray(BulkItemResponse[]::new), ARBITRARY_QUERY_TIME);
+        return Stream.of(response);
+      }
+    };
+  }
 
-    private Failure createFailure(String identifier) {
-        return new Failure(
-                RESOURCE_INDEX_NAME, identifier, new Exception("failingBulkIndexMessage"));
-    }
+  private Failure createFailure(String identifier) {
+    return new Failure(RESOURCE_INDEX_NAME, identifier, new Exception("failingBulkIndexMessage"));
+  }
 
-    private int randomNumber() {
-        return RANDOM.nextInt();
-    }
+  private int randomNumber() {
+    return RANDOM.nextInt();
+  }
 }

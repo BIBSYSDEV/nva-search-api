@@ -68,308 +68,303 @@ import org.slf4j.LoggerFactory;
  *     define the parameters that can be used in the query.
  */
 @SuppressWarnings({
-    "PMD.CouplingBetweenObjects",
-    "PMD.GodClass",
-    "PMD.ConstructorCallsOverridableMethod"
+  "PMD.CouplingBetweenObjects",
+  "PMD.GodClass",
+  "PMD.ConstructorCallsOverridableMethod"
 })
 public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Query<K> {
 
-    protected static final Logger logger = LoggerFactory.getLogger(SearchQuery.class);
-    private final transient Set<AccessRight> accessRights;
-    private transient MediaType mediaType;
-    private transient Set<String> excludedFields = Set.of();
-    private transient Set<String> includedFields = Set.of("*");
+  protected static final Logger logger = LoggerFactory.getLogger(SearchQuery.class);
+  private final transient Set<AccessRight> accessRights;
+  private transient MediaType mediaType;
+  private transient Set<String> excludedFields = Set.of();
+  private transient Set<String> includedFields = Set.of("*");
 
-    /**
-     * Always set at runtime by ParameterValidator.fromRequestInfo(RequestInfo requestInfo); This
-     * value only used in debug and tests.
-     */
-    private transient URI gatewayUri =
-            URI.create("https://api.dev.nva.aws.unit.no/resource/search");
+  /**
+   * Always set at runtime by ParameterValidator.fromRequestInfo(RequestInfo requestInfo); This
+   * value only used in debug and tests.
+   */
+  private transient URI gatewayUri = URI.create("https://api.dev.nva.aws.unit.no/resource/search");
 
-    protected SearchQuery() {
-        super();
-        queryKeys = new QueryKeys<>(keyFields());
-        accessRights = EnumSet.noneOf(AccessRight.class);
-        setMediaType(JSON_UTF_8.toString());
+  protected SearchQuery() {
+    super();
+    queryKeys = new QueryKeys<>(keyFields());
+    accessRights = EnumSet.noneOf(AccessRight.class);
+    setMediaType(JSON_UTF_8.toString());
+  }
+
+  protected abstract K keyFields();
+
+  protected abstract AsType<K> sort();
+
+  protected abstract String[] exclude();
+
+  protected abstract String[] include();
+
+  protected abstract K keyAggregation();
+
+  protected abstract K keySearchAfter();
+
+  protected abstract K toKey(String keyName);
+
+  protected abstract SortKey toSortKey(String sortName);
+
+  protected abstract List<AggregationBuilder> builderAggregations();
+
+  protected abstract Stream<Entry<K, QueryBuilder>> builderCustomQueryStream(K key);
+
+  public boolean hasAccessRights(AccessRight... rights) {
+    return accessRights.containsAll(List.of(rights));
+  }
+
+  protected void setAccessRights(List<AccessRight> accessRights) {
+    this.accessRights.clear();
+    this.accessRights.addAll(accessRights);
+  }
+
+  public void setAlwaysExcludedFields(List<String> fieldNames) {
+    this.excludedFields = new HashSet<>(fieldNames);
+  }
+
+  public void setAlwaysIncludedFields(List<String> fieldNames) {
+    this.includedFields = new HashSet<>(fieldNames);
+  }
+
+  protected Set<String> getExcludedFields() {
+    return excludedFields;
+  }
+
+  protected Set<String> getIncludedFields() {
+    return includedFields;
+  }
+
+  protected void setOpenSearchUri(URI openSearchUri) {
+    this.infrastructureApiUri = openSearchUri;
+  }
+
+  @JacocoGenerated // default can only be tested if we add a new fieldtype not in use....
+  protected Stream<Entry<K, QueryBuilder>> builderStreamDefaultQuery(K key) {
+    final var value = parameters().get(key).toString();
+    return switch (key.fieldType()) {
+      case FUZZY_KEYWORD -> new FuzzyKeywordQuery<K>().buildQuery(key, value);
+      case KEYWORD -> new KeywordQuery<K>().buildQuery(key, value);
+      case TEXT -> new TextQuery<K>().buildQuery(key, value);
+      case FLAG -> Stream.empty();
+      case CUSTOM -> builderCustomQueryStream(key);
+      case NUMBER, DATE -> new RangeQuery<K>().buildQuery(key, value);
+      case ACROSS_FIELDS -> new AcrossFieldsQuery<K>().buildQuery(key, value);
+      case EXISTS -> new ExistsQuery<K>().buildQuery(key, value);
+      case FREE_TEXT -> Functions.queryToEntry(key, builderSearchAllQuery(key));
+      case HAS_PARTS -> new HasPartsQuery<K>().buildQuery(key, value);
+      case PART_OF -> new PartOfQuery<K>().buildQuery(key, value);
+      default -> throw new RuntimeException(ErrorMessages.HANDLER_NOT_DEFINED + key.name());
+    };
+  }
+
+  @Override
+  public Stream<QueryContentWrapper> assemble() {
+    // TODO extract builderDefaultSearchSource() and this content into a separate class?
+    var contentWrappers = new ArrayList<QueryContentWrapper>(numberOfRequests());
+    var builder = builderDefaultSearchSource();
+
+    handleFetchSource(builder);
+    handleAggregation(builder, contentWrappers);
+    handleSearchAfter(builder);
+    handleSorting(builder);
+    contentWrappers.add(new QueryContentWrapper(builder.toString(), this.openSearchUri()));
+    return contentWrappers.stream();
+  }
+
+  @Override
+  public <R, Q extends Query<K>> HttpResponseFormatter<K> doSearch(
+      OpenSearchClient<R, Q> queryClient) {
+    return new HttpResponseFormatter<>(
+        (SwsResponse) queryClient.doSearch((Q) this),
+        getMediaType(),
+        getNvaSearchApiUri(),
+        from().as(),
+        size().as(),
+        facetPaths(),
+        parameters());
+  }
+
+  protected abstract AsType<K> from();
+
+  protected abstract AsType<K> size();
+
+  /**
+   * Path to each and every facet defined in builderAggregations().
+   *
+   * @return MapOf(Name, Path)
+   */
+  protected abstract Map<String, String> facetPaths();
+
+  public MediaType getMediaType() {
+    return mediaType;
+  }
+
+  final void setMediaType(String mediaType) {
+    if (nonNull(mediaType) && mediaType.contains(Words.TEXT_CSV)) {
+      this.mediaType = CSV_UTF_8;
+    } else {
+      this.mediaType = JSON_UTF_8;
     }
+  }
 
-    protected abstract K keyFields();
+  public URI getNvaSearchApiUri() {
+    return gatewayUri;
+  }
 
-    protected abstract AsType<K> sort();
+  @JacocoGenerated
+  public void setNvaSearchApiUri(URI gatewayUri) {
+    this.gatewayUri = gatewayUri;
+  }
 
-    protected abstract String[] exclude();
+  /**
+   * Creates a boolean query, with all the search parameters.
+   *
+   * @return a BoolQueryBuilder
+   */
+  protected BoolQueryBuilder builderMainQuery() {
+    var boolQueryBuilder = QueryBuilders.boolQuery();
+    parameters()
+        .getSearchKeys()
+        .flatMap(this::builderStreamDefaultQuery)
+        .forEach(
+            entry -> {
+              if (isMustNot(entry.getKey())) {
+                boolQueryBuilder.mustNot(entry.getValue());
+              } else {
+                boolQueryBuilder.must(entry.getValue());
+              }
+            });
+    return boolQueryBuilder;
+  }
 
-    protected abstract String[] include();
+  protected Stream<SortBuilder<?>> builderStreamFieldSort() {
+    return sort()
+        .asSplitStream(COMMA)
+        .flatMap(
+            item -> {
+              final var parts = item.split(COLON_OR_SPACE);
+              final var order =
+                  SortOrder.fromString(attempt(() -> parts[1]).orElse((f) -> DEFAULT_SORT_ORDER));
+              final var sortKey = toSortKey(parts[0]);
 
-    protected abstract K keyAggregation();
+              return RELEVANCE_KEY_NAME.equalsIgnoreCase(sortKey.name())
+                  ? Stream.of(SortBuilders.scoreSort().order(order))
+                  : sortKey
+                      .jsonPaths()
+                      .map(path -> SortBuilders.fieldSort(path).order(order).missing(SORT_LAST));
+            });
+  }
 
-    protected abstract K keySearchAfter();
+  protected AggregationBuilder builderAggregationsWithFilter() {
+    var aggrFilter = AggregationBuilders.filter(POST_FILTER, filters().get());
+    builderAggregations().forEach(aggrFilter::subAggregation);
+    return aggrFilter;
+  }
 
-    protected abstract K toKey(String keyName);
+  protected SearchSourceBuilder builderDefaultSearchSource() {
+    var queryBuilder =
+        parameters().getSearchKeys().findAny().isEmpty()
+            ? QueryBuilders.matchAllQuery()
+            : builderMainQuery();
 
-    protected abstract SortKey toSortKey(String sortName);
+    return new SearchSourceBuilder()
+        .query(queryBuilder)
+        .size(size().as())
+        .from(from().as())
+        .postFilter(filters().get())
+        .trackTotalHits(true);
+  }
 
-    protected abstract List<AggregationBuilder> builderAggregations();
+  /**
+   * Creates a multi match query, all words needs to be present, within a document.
+   *
+   * @return a MultiMatchQueryBuilder
+   */
+  protected QueryBuilder builderSearchAllQuery(K searchAllKey) {
+    var fields = mapOfPathAndBoost(parameters().get(keyFields()));
+    var value = parameters().get(searchAllKey).toString();
+    return QueryBuilders.multiMatchQuery(value)
+        .fields(fields)
+        .type(Type.CROSS_FIELDS)
+        .operator(Operator.AND);
+  }
 
-    protected abstract Stream<Entry<K, QueryBuilder>> builderCustomQueryStream(K key);
+  protected Map<String, Float> mapOfPathAndBoost(AsType<K> fieldValue) {
+    return fieldValue.isEmpty() || fieldValue.asLowerCase().contains(ALL)
+        ? Map.of(ASTERISK, 1F) // NONE or ALL -> <'*',1.0>
+        : fieldValue
+            .asSplitStream(COMMA)
+            .map(this::toKey)
+            .flatMap(this::entryStreamOfPathAndBoost)
+            .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+  }
 
-    public boolean hasAccessRights(AccessRight... rights) {
-        return accessRights.containsAll(List.of(rights));
+  private void handleAggregation(
+      SearchSourceBuilder builder, List<QueryContentWrapper> contentWrappers) {
+    if (hasAggregation()) {
+      var aggregationBuilder = builder.shallowCopy();
+      aggregationBuilder.size(ZERO_RESULTS_AGGREGATION_ONLY);
+      aggregationBuilder.aggregation(builderAggregationsWithFilter());
+      contentWrappers.add(
+          new QueryContentWrapper(aggregationBuilder.toString(), this.openSearchUri()));
     }
+  }
 
-    protected void setAccessRights(List<AccessRight> accessRights) {
-        this.accessRights.clear();
-        this.accessRights.addAll(accessRights);
+  private void handleFetchSource(SearchSourceBuilder builder) {
+    if (isFetchSource()) {
+      builder.fetchSource(include(), exclude());
+    } else {
+      builder.fetchSource(true);
     }
+  }
 
-    public void setAlwaysExcludedFields(List<String> fieldNames) {
-        this.excludedFields = new HashSet<>(fieldNames);
+  private void handleSearchAfter(SearchSourceBuilder builder) {
+    var sortKeys = parameters().remove(keySearchAfter()).split(COMMA);
+    if (nonNull(sortKeys)) {
+      builder.searchAfter(sortKeys);
     }
+  }
 
-    public void setAlwaysIncludedFields(List<String> fieldNames) {
-        this.includedFields = new HashSet<>(fieldNames);
+  private void handleSorting(SearchSourceBuilder builder) {
+    if (hasSortBy(RELEVANCE_KEY_NAME)) {
+      // Not very well documented.
+      // This allows sorting on relevance together with other fields.
+      builder.trackScores(true);
     }
+    builderStreamFieldSort().forEach(builder::sort);
+  }
 
-    protected Set<String> getExcludedFields() {
-        return excludedFields;
-    }
+  private Stream<Entry<String, Float>> entryStreamOfPathAndBoost(K key) {
+    return key.searchFields(KEYWORD_FALSE).map(jsonPath -> entryOfPathAndBoost(key, jsonPath));
+  }
 
-    protected Set<String> getIncludedFields() {
-        return includedFields;
-    }
+  private Entry<String, Float> entryOfPathAndBoost(K key, String jsonPath) {
+    return Map.entry(jsonPath, key.fieldBoost());
+  }
 
-    protected void setOpenSearchUri(URI openSearchUri) {
-        this.infrastructureApiUri = openSearchUri;
-    }
+  private int numberOfRequests() {
+    return hasAggregation() ? 2 : 1;
+  }
 
-    @JacocoGenerated // default can only be tested if we add a new fieldtype not in use....
-    protected Stream<Entry<K, QueryBuilder>> builderStreamDefaultQuery(K key) {
-        final var value = parameters().get(key).toString();
-        return switch (key.fieldType()) {
-            case FUZZY_KEYWORD -> new FuzzyKeywordQuery<K>().buildQuery(key, value);
-            case KEYWORD -> new KeywordQuery<K>().buildQuery(key, value);
-            case TEXT -> new TextQuery<K>().buildQuery(key, value);
-            case FLAG -> Stream.empty();
-            case CUSTOM -> builderCustomQueryStream(key);
-            case NUMBER, DATE -> new RangeQuery<K>().buildQuery(key, value);
-            case ACROSS_FIELDS -> new AcrossFieldsQuery<K>().buildQuery(key, value);
-            case EXISTS -> new ExistsQuery<K>().buildQuery(key, value);
-            case FREE_TEXT -> Functions.queryToEntry(key, builderSearchAllQuery(key));
-            case HAS_PARTS -> new HasPartsQuery<K>().buildQuery(key, value);
-            case PART_OF -> new PartOfQuery<K>().buildQuery(key, value);
-            default -> throw new RuntimeException(ErrorMessages.HANDLER_NOT_DEFINED + key.name());
-        };
-    }
+  protected boolean hasSortBy(String sortKeyName) {
+    var sorts = sort().toString();
+    return nonNull(sorts) && sorts.split(COMMA).length > 1 && sorts.contains(sortKeyName);
+  }
 
-    @Override
-    public Stream<QueryContentWrapper> assemble() {
-        // TODO extract builderDefaultSearchSource() and this content into a separate class?
-        var contentWrappers = new ArrayList<QueryContentWrapper>(numberOfRequests());
-        var builder = builderDefaultSearchSource();
+  private boolean isMustNot(K key) {
+    return NOT_ALL_OF.equals(key.searchOperator()) || NOT_ANY_OF.equals(key.searchOperator());
+  }
 
-        handleFetchSource(builder);
-        handleAggregation(builder, contentWrappers);
-        handleSearchAfter(builder);
-        handleSorting(builder);
-        contentWrappers.add(new QueryContentWrapper(builder.toString(), this.openSearchUri()));
-        return contentWrappers.stream();
-    }
+  private boolean isFetchSource() {
+    return nonNull(exclude()) || nonNull(include());
+  }
 
-    @Override
-    public <R, Q extends Query<K>> HttpResponseFormatter<K> doSearch(
-            OpenSearchClient<R, Q> queryClient) {
-        return new HttpResponseFormatter<>(
-                (SwsResponse) queryClient.doSearch((Q) this),
-                getMediaType(),
-                getNvaSearchApiUri(),
-                from().as(),
-                size().as(),
-                facetPaths(),
-                parameters());
-    }
-
-    protected abstract AsType<K> from();
-
-    protected abstract AsType<K> size();
-
-    /**
-     * Path to each and every facet defined in builderAggregations().
-     *
-     * @return MapOf(Name, Path)
-     */
-    protected abstract Map<String, String> facetPaths();
-
-    public MediaType getMediaType() {
-        return mediaType;
-    }
-
-    final void setMediaType(String mediaType) {
-        if (nonNull(mediaType) && mediaType.contains(Words.TEXT_CSV)) {
-            this.mediaType = CSV_UTF_8;
-        } else {
-            this.mediaType = JSON_UTF_8;
-        }
-    }
-
-    public URI getNvaSearchApiUri() {
-        return gatewayUri;
-    }
-
-    @JacocoGenerated
-    public void setNvaSearchApiUri(URI gatewayUri) {
-        this.gatewayUri = gatewayUri;
-    }
-
-    /**
-     * Creates a boolean query, with all the search parameters.
-     *
-     * @return a BoolQueryBuilder
-     */
-    protected BoolQueryBuilder builderMainQuery() {
-        var boolQueryBuilder = QueryBuilders.boolQuery();
-        parameters()
-                .getSearchKeys()
-                .flatMap(this::builderStreamDefaultQuery)
-                .forEach(
-                        entry -> {
-                            if (isMustNot(entry.getKey())) {
-                                boolQueryBuilder.mustNot(entry.getValue());
-                            } else {
-                                boolQueryBuilder.must(entry.getValue());
-                            }
-                        });
-        return boolQueryBuilder;
-    }
-
-    protected Stream<SortBuilder<?>> builderStreamFieldSort() {
-        return sort().asSplitStream(COMMA)
-                .flatMap(
-                        item -> {
-                            final var parts = item.split(COLON_OR_SPACE);
-                            final var order =
-                                    SortOrder.fromString(
-                                            attempt(() -> parts[1])
-                                                    .orElse((f) -> DEFAULT_SORT_ORDER));
-                            final var sortKey = toSortKey(parts[0]);
-
-                            return RELEVANCE_KEY_NAME.equalsIgnoreCase(sortKey.name())
-                                    ? Stream.of(SortBuilders.scoreSort().order(order))
-                                    : sortKey.jsonPaths()
-                                            .map(
-                                                    path ->
-                                                            SortBuilders.fieldSort(path)
-                                                                    .order(order)
-                                                                    .missing(SORT_LAST));
-                        });
-    }
-
-    protected AggregationBuilder builderAggregationsWithFilter() {
-        var aggrFilter = AggregationBuilders.filter(POST_FILTER, filters().get());
-        builderAggregations().forEach(aggrFilter::subAggregation);
-        return aggrFilter;
-    }
-
-    protected SearchSourceBuilder builderDefaultSearchSource() {
-        var queryBuilder =
-                parameters().getSearchKeys().findAny().isEmpty()
-                        ? QueryBuilders.matchAllQuery()
-                        : builderMainQuery();
-
-        return new SearchSourceBuilder()
-                .query(queryBuilder)
-                .size(size().as())
-                .from(from().as())
-                .postFilter(filters().get())
-                .trackTotalHits(true);
-    }
-
-    /**
-     * Creates a multi match query, all words needs to be present, within a document.
-     *
-     * @return a MultiMatchQueryBuilder
-     */
-    protected QueryBuilder builderSearchAllQuery(K searchAllKey) {
-        var fields = mapOfPathAndBoost(parameters().get(keyFields()));
-        var value = parameters().get(searchAllKey).toString();
-        return QueryBuilders.multiMatchQuery(value)
-                .fields(fields)
-                .type(Type.CROSS_FIELDS)
-                .operator(Operator.AND);
-    }
-
-    protected Map<String, Float> mapOfPathAndBoost(AsType<K> fieldValue) {
-        return fieldValue.isEmpty() || fieldValue.asLowerCase().contains(ALL)
-                ? Map.of(ASTERISK, 1F) // NONE or ALL -> <'*',1.0>
-                : fieldValue
-                        .asSplitStream(COMMA)
-                        .map(this::toKey)
-                        .flatMap(this::entryStreamOfPathAndBoost)
-                        .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-    }
-
-    private void handleAggregation(
-            SearchSourceBuilder builder, List<QueryContentWrapper> contentWrappers) {
-        if (hasAggregation()) {
-            var aggregationBuilder = builder.shallowCopy();
-            aggregationBuilder.size(ZERO_RESULTS_AGGREGATION_ONLY);
-            aggregationBuilder.aggregation(builderAggregationsWithFilter());
-            contentWrappers.add(
-                    new QueryContentWrapper(aggregationBuilder.toString(), this.openSearchUri()));
-        }
-    }
-
-    private void handleFetchSource(SearchSourceBuilder builder) {
-        if (isFetchSource()) {
-            builder.fetchSource(include(), exclude());
-        } else {
-            builder.fetchSource(true);
-        }
-    }
-
-    private void handleSearchAfter(SearchSourceBuilder builder) {
-        var sortKeys = parameters().remove(keySearchAfter()).split(COMMA);
-        if (nonNull(sortKeys)) {
-            builder.searchAfter(sortKeys);
-        }
-    }
-
-    private void handleSorting(SearchSourceBuilder builder) {
-        if (hasSortBy(RELEVANCE_KEY_NAME)) {
-            // Not very well documented.
-            // This allows sorting on relevance together with other fields.
-            builder.trackScores(true);
-        }
-        builderStreamFieldSort().forEach(builder::sort);
-    }
-
-    private Stream<Entry<String, Float>> entryStreamOfPathAndBoost(K key) {
-        return key.searchFields(KEYWORD_FALSE).map(jsonPath -> entryOfPathAndBoost(key, jsonPath));
-    }
-
-    private Entry<String, Float> entryOfPathAndBoost(K key, String jsonPath) {
-        return Map.entry(jsonPath, key.fieldBoost());
-    }
-
-    private int numberOfRequests() {
-        return hasAggregation() ? 2 : 1;
-    }
-
-    protected boolean hasSortBy(String sortKeyName) {
-        var sorts = sort().toString();
-        return nonNull(sorts) && sorts.split(COMMA).length > 1 && sorts.contains(sortKeyName);
-    }
-
-    private boolean isMustNot(K key) {
-        return NOT_ALL_OF.equals(key.searchOperator()) || NOT_ANY_OF.equals(key.searchOperator());
-    }
-
-    private boolean isFetchSource() {
-        return nonNull(exclude()) || nonNull(include());
-    }
-
-    private boolean hasAggregation() {
-        return getMediaType().is(JSON_UTF_8)
-                && ALL.equalsIgnoreCase(parameters().get(keyAggregation()).as());
-    }
+  private boolean hasAggregation() {
+    return getMediaType().is(JSON_UTF_8)
+        && ALL.equalsIgnoreCase(parameters().get(keyAggregation()).as());
+  }
 }

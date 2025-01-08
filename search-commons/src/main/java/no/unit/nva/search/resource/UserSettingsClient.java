@@ -36,67 +36,67 @@ import nva.commons.core.attempt.FunctionWithException;
  */
 public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceSearchQuery> {
 
-    private URI userSettingUri;
+  private URI userSettingUri;
 
-    public UserSettingsClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
-        super(client, cachedJwtProvider);
-    }
+  public UserSettingsClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
+    super(client, cachedJwtProvider);
+  }
 
-    @Override
-    public UserSettings doSearch(ResourceSearchQuery query) {
-        queryBuilderStart = Instant.now();
-        queryParameters = EMPTY_STRING;
-        return createQueryBuilderStream(query)
-                .map(this::createRequest)
-                .map(super::fetch)
-                .map(super::handleResponse)
-                .findFirst()
-                .orElseThrow()
-                .join();
-    }
+  @Override
+  public UserSettings doSearch(ResourceSearchQuery query) {
+    queryBuilderStart = Instant.now();
+    queryParameters = EMPTY_STRING;
+    return createQueryBuilderStream(query)
+        .map(this::createRequest)
+        .map(super::fetch)
+        .map(super::handleResponse)
+        .findFirst()
+        .orElseThrow()
+        .join();
+  }
 
-    @Override
-    protected UserSettings jsonToResponse(HttpResponse<String> response)
-            throws JsonProcessingException {
-        return singleLineObjectMapper.readValue(response.body(), UserSettings.class);
-    }
+  @Override
+  protected UserSettings jsonToResponse(HttpResponse<String> response)
+      throws JsonProcessingException {
+    return singleLineObjectMapper.readValue(response.body(), UserSettings.class);
+  }
 
-    @Override
-    @JacocoGenerated
-    protected BinaryOperator<UserSettings> responseAccumulator() {
-        // not in use
-        return null;
-    }
+  @Override
+  @JacocoGenerated
+  protected BinaryOperator<UserSettings> responseAccumulator() {
+    // not in use
+    return null;
+  }
 
-    @Override
-    protected FunctionWithException<UserSettings, UserSettings, RuntimeException>
-            logAndReturnResult() {
-        return result -> {
-            logger.info(new UserSettingLog(userSettingUri, result).toJsonString());
-            return result;
-        };
-    }
+  @Override
+  protected FunctionWithException<UserSettings, UserSettings, RuntimeException>
+      logAndReturnResult() {
+    return result -> {
+      logger.info(new UserSettingLog(userSettingUri, result).toJsonString());
+      return result;
+    };
+  }
 
-    private Stream<String> createQueryBuilderStream(ResourceSearchQuery query) {
-        return query.parameters().get(CONTRIBUTOR).asStream();
-    }
+  private Stream<String> createQueryBuilderStream(ResourceSearchQuery query) {
+    return query.parameters().get(CONTRIBUTOR).asStream();
+  }
 
-    private HttpRequest createRequest(String contributorId) {
-        var personId = URLEncoder.encode(contributorId, Charset.defaultCharset());
-        userSettingUri = URI.create(HTTPS + readApiHost() + PERSON_PREFERENCES + personId);
-        return HttpRequest.newBuilder(userSettingUri)
-                .headers(
-                        ACCEPT, MediaType.JSON_UTF_8.toString(),
-                        CONTENT_TYPE, MediaType.JSON_UTF_8.toString(),
-                        AUTHORIZATION_HEADER, jwtProvider.getValue().getToken())
-                .GET()
-                .build();
-    }
+  private HttpRequest createRequest(String contributorId) {
+    var personId = URLEncoder.encode(contributorId, Charset.defaultCharset());
+    userSettingUri = URI.create(HTTPS + readApiHost() + PERSON_PREFERENCES + personId);
+    return HttpRequest.newBuilder(userSettingUri)
+        .headers(
+            ACCEPT, MediaType.JSON_UTF_8.toString(),
+            CONTENT_TYPE, MediaType.JSON_UTF_8.toString(),
+            AUTHORIZATION_HEADER, jwtProvider.getValue().getToken())
+        .GET()
+        .build();
+  }
 
-    private record UserSettingLog(URI uri, List<String> promotedPublications)
-            implements JsonSerializable {
-        public UserSettingLog(URI uri, UserSettings userSettings) {
-            this(uri, userSettings.promotedPublications());
-        }
+  private record UserSettingLog(URI uri, List<String> promotedPublications)
+      implements JsonSerializable {
+    public UserSettingLog(URI uri, UserSettings userSettings) {
+      this(uri, userSettings.promotedPublications());
     }
+  }
 }

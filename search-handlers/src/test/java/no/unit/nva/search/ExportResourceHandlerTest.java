@@ -30,81 +30,79 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class ExportResourceHandlerTest {
-    private static final String SAMPLE_PATH = "search";
-    private static final String SAMPLE_DOMAIN_NAME = "localhost";
-    private ResourceClient mockedResourceClient;
-    private ScrollClient mockedScrollClient;
-    private ExportResourceHandler handler;
+  private static final String SAMPLE_PATH = "search";
+  private static final String SAMPLE_DOMAIN_NAME = "localhost";
+  private ResourceClient mockedResourceClient;
+  private ScrollClient mockedScrollClient;
+  private ExportResourceHandler handler;
 
-    private static SwsResponse csvToSwsResponse(ExportCsv csv, String scrollId)
-            throws JsonProcessingException {
-        var jsonResponse = FakeSearchResponse.generateSearchResponseString(List.of(csv), scrollId);
-        return objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
-    }
+  private static SwsResponse csvToSwsResponse(ExportCsv csv, String scrollId)
+      throws JsonProcessingException {
+    var jsonResponse = FakeSearchResponse.generateSearchResponseString(List.of(csv), scrollId);
+    return objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
+  }
 
-    private static ExportCsv csvWithFullDate(String title) {
-        var id = randomUri().toString();
-        var type = "AcademicArticle";
-        var contributors = List.of(randomString(), randomString(), randomString());
-        var date = "2022-01-22";
+  private static ExportCsv csvWithFullDate(String title) {
+    var id = randomUri().toString();
+    var type = "AcademicArticle";
+    var contributors = List.of(randomString(), randomString(), randomString());
+    var date = "2022-01-22";
 
-        return new ExportCsv()
-                .withId(id)
-                .withMainTitle(title)
-                .withPublicationInstance(type)
-                .withPublicationDate(date)
-                .withContributors(String.join(COMMA, contributors));
-    }
+    return new ExportCsv()
+        .withId(id)
+        .withMainTitle(title)
+        .withPublicationInstance(type)
+        .withPublicationDate(date)
+        .withContributors(String.join(COMMA, contributors));
+  }
 
-    @BeforeEach
-    void setUp() {
-        mockedResourceClient = mock(ResourceClient.class);
-        mockedScrollClient = mock(ScrollClient.class);
-        handler = new ExportResourceHandler(mockedResourceClient, mockedScrollClient, null, null);
-    }
+  @BeforeEach
+  void setUp() {
+    mockedResourceClient = mock(ResourceClient.class);
+    mockedScrollClient = mock(ScrollClient.class);
+    handler = new ExportResourceHandler(mockedResourceClient, mockedScrollClient, null, null);
+  }
 
-    @Test
-    void shouldReturnCsvWithTitleField() throws IOException, BadRequestException {
-        var expectedTitle1 = randomString();
-        var expectedTitle2 = randomString();
-        var expectedTitle3 = randomString();
-        prepareRestHighLevelClientOkResponse(
-                csvWithFullDate(expectedTitle1),
-                csvWithFullDate(expectedTitle2),
-                csvWithFullDate(expectedTitle3));
+  @Test
+  void shouldReturnCsvWithTitleField() throws IOException, BadRequestException {
+    var expectedTitle1 = randomString();
+    var expectedTitle2 = randomString();
+    var expectedTitle3 = randomString();
+    prepareRestHighLevelClientOkResponse(
+        csvWithFullDate(expectedTitle1),
+        csvWithFullDate(expectedTitle2),
+        csvWithFullDate(expectedTitle3));
 
-        var s3data =
-                handler.processS3Input(
-                        null, RequestInfo.fromRequest(getRequestInputStreamAccepting()), null);
+    var s3data =
+        handler.processS3Input(
+            null, RequestInfo.fromRequest(getRequestInputStreamAccepting()), null);
 
-        assertThat(StringUtils.countMatches(s3data, expectedTitle1), is(1));
-        assertThat(StringUtils.countMatches(s3data, expectedTitle2), is(1));
-        assertThat(StringUtils.countMatches(s3data, expectedTitle3), is(1));
-    }
+    assertThat(StringUtils.countMatches(s3data, expectedTitle1), is(1));
+    assertThat(StringUtils.countMatches(s3data, expectedTitle2), is(1));
+    assertThat(StringUtils.countMatches(s3data, expectedTitle3), is(1));
+  }
 
-    private void prepareRestHighLevelClientOkResponse(
-            ExportCsv initialSearchResult,
-            ExportCsv scroll1SearchResult,
-            ExportCsv scroll2SearchResult)
-            throws IOException {
+  private void prepareRestHighLevelClientOkResponse(
+      ExportCsv initialSearchResult, ExportCsv scroll1SearchResult, ExportCsv scroll2SearchResult)
+      throws IOException {
 
-        when(mockedResourceClient.doSearch(any()))
-                .thenReturn(csvToSwsResponse(initialSearchResult, "scrollId1"));
+    when(mockedResourceClient.doSearch(any()))
+        .thenReturn(csvToSwsResponse(initialSearchResult, "scrollId1"));
 
-        when(mockedScrollClient.doSearch(any()))
-                .thenReturn(csvToSwsResponse(scroll1SearchResult, "scrollId2"))
-                .thenReturn(csvToSwsResponse(scroll2SearchResult, null));
-    }
+    when(mockedScrollClient.doSearch(any()))
+        .thenReturn(csvToSwsResponse(scroll1SearchResult, "scrollId2"))
+        .thenReturn(csvToSwsResponse(scroll2SearchResult, null));
+  }
 
-    private InputStream getRequestInputStreamAccepting() throws JsonProcessingException {
-        return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-                .withQueryParameters(Map.of(SEARCH_ALL.asCamelCase(), "*"))
-                .withRequestContext(getRequestContext())
-                .build();
-    }
+  private InputStream getRequestInputStreamAccepting() throws JsonProcessingException {
+    return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
+        .withQueryParameters(Map.of(SEARCH_ALL.asCamelCase(), "*"))
+        .withRequestContext(getRequestContext())
+        .build();
+  }
 
-    private ObjectNode getRequestContext() {
-        return objectMapperWithEmpty.convertValue(
-                Map.of("path", SAMPLE_PATH, "domainName", SAMPLE_DOMAIN_NAME), ObjectNode.class);
-    }
+  private ObjectNode getRequestContext() {
+    return objectMapperWithEmpty.convertValue(
+        Map.of("path", SAMPLE_PATH, "domainName", SAMPLE_DOMAIN_NAME), ObjectNode.class);
+  }
 }

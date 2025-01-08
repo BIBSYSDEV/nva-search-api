@@ -3,12 +3,14 @@ package no.unit.nva.search;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.SPACE;
 import static no.unit.nva.search.common.enums.FieldOperator.BETWEEN;
-
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import no.unit.nva.search.common.builder.PartOfQuery;
 import no.unit.nva.search.common.builder.RangeQuery;
 import no.unit.nva.search.common.enums.ParameterKey;
@@ -19,14 +21,9 @@ import no.unit.nva.search.resource.ResourceParameter;
 import no.unit.nva.search.resource.ResourceSort;
 import no.unit.nva.search.ticket.TicketParameter;
 import no.unit.nva.search.ticket.TicketSort;
-
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 class HardToHitFunctionsTest {
   private static final Logger logger = LoggerFactory.getLogger(HardToHitFunctionsTest.class);

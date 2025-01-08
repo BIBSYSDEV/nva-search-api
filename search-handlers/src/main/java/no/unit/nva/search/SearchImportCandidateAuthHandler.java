@@ -8,19 +8,16 @@ import static no.unit.nva.search.importcandidate.ImportCandidateParameter.SIZE;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
-
+import java.net.HttpURLConnection;
+import java.util.List;
 import no.unit.nva.search.importcandidate.ImportCandidateClient;
 import no.unit.nva.search.importcandidate.ImportCandidateSearchQuery;
-
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
-
-import java.net.HttpURLConnection;
-import java.util.List;
 
 /**
  * Handler for searching import candidates.

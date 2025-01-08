@@ -20,36 +20,34 @@ import nva.commons.secrets.SecretsReader;
  * @author Stig Norland
  */
 public class ImportCandidateClient
-        extends OpenSearchClient<SwsResponse, ImportCandidateSearchQuery> {
+    extends OpenSearchClient<SwsResponse, ImportCandidateSearchQuery> {
 
-    public ImportCandidateClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
-        super(client, cachedJwtProvider);
-    }
+  public ImportCandidateClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
+    super(client, cachedJwtProvider);
+  }
 
-    @JacocoGenerated
-    public static ImportCandidateClient defaultClient() {
-        var cachedJwtProvider = getCachedJwtProvider(new SecretsReader());
-        return new ImportCandidateClient(HttpClient.newHttpClient(), cachedJwtProvider);
-    }
+  @JacocoGenerated
+  public static ImportCandidateClient defaultClient() {
+    var cachedJwtProvider = getCachedJwtProvider(new SecretsReader());
+    return new ImportCandidateClient(HttpClient.newHttpClient(), cachedJwtProvider);
+  }
 
-    @Override
-    protected SwsResponse jsonToResponse(HttpResponse<String> response)
-            throws JsonProcessingException {
-        return singleLineObjectMapper.readValue(response.body(), SwsResponse.class);
-    }
+  @Override
+  protected SwsResponse jsonToResponse(HttpResponse<String> response)
+      throws JsonProcessingException {
+    return singleLineObjectMapper.readValue(response.body(), SwsResponse.class);
+  }
 
-    @Override
-    protected BinaryOperator<SwsResponse> responseAccumulator() {
-        return (a, b) ->
-                SwsResponse.SwsResponseBuilder.swsResponseBuilder().merge(a).merge(b).build();
-    }
+  @Override
+  protected BinaryOperator<SwsResponse> responseAccumulator() {
+    return (a, b) -> SwsResponse.SwsResponseBuilder.swsResponseBuilder().merge(a).merge(b).build();
+  }
 
-    @Override
-    protected FunctionWithException<SwsResponse, SwsResponse, RuntimeException>
-            logAndReturnResult() {
-        return result -> {
-            logger.info(buildLogInfo(result));
-            return result;
-        };
-    }
+  @Override
+  protected FunctionWithException<SwsResponse, SwsResponse, RuntimeException> logAndReturnResult() {
+    return result -> {
+      logger.info(buildLogInfo(result));
+      return result;
+    };
+  }
 }

@@ -12,29 +12,29 @@ import org.slf4j.LoggerFactory;
 
 public class DeleteImportCandidateIndexHandler implements RequestHandler<Object, String> {
 
-    public static final String FINISHED = "FINISHED";
-    public static final String INDEX_DELETION_FAILED_MESSAGE = "Index deletion failed";
-    private static final Logger logger = LoggerFactory.getLogger(DeleteIndicesHandler.class);
-    private final IndexingClient indexingClient;
+  public static final String FINISHED = "FINISHED";
+  public static final String INDEX_DELETION_FAILED_MESSAGE = "Index deletion failed";
+  private static final Logger logger = LoggerFactory.getLogger(DeleteIndicesHandler.class);
+  private final IndexingClient indexingClient;
 
-    @JacocoGenerated
-    public DeleteImportCandidateIndexHandler() {
-        this(IndexingClient.defaultIndexingClient());
-    }
+  @JacocoGenerated
+  public DeleteImportCandidateIndexHandler() {
+    this(IndexingClient.defaultIndexingClient());
+  }
 
-    public DeleteImportCandidateIndexHandler(IndexingClient indexingClient) {
-        this.indexingClient = indexingClient;
-    }
+  public DeleteImportCandidateIndexHandler(IndexingClient indexingClient) {
+    this.indexingClient = indexingClient;
+  }
 
-    @Override
-    public String handleRequest(Object input, Context context) {
-        attempt(() -> indexingClient.deleteIndex(IMPORT_CANDIDATES_INDEX))
-                .orElse(fail -> logError(fail.getException()));
-        return FINISHED;
-    }
+  @Override
+  public String handleRequest(Object input, Context context) {
+    attempt(() -> indexingClient.deleteIndex(IMPORT_CANDIDATES_INDEX))
+        .orElse(fail -> logError(fail.getException()));
+    return FINISHED;
+  }
 
-    private Void logError(Exception exception) {
-        logger.warn(INDEX_DELETION_FAILED_MESSAGE, exception);
-        return null;
-    }
+  private Void logError(Exception exception) {
+    logger.warn(INDEX_DELETION_FAILED_MESSAGE, exception);
+    return null;
+  }
 }

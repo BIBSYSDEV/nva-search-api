@@ -25,57 +25,54 @@ import nva.commons.secrets.SecretsReader;
  */
 public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceSearchQuery> {
 
-    @SuppressWarnings("PMD.DoNotUseThreads")
-    private static final ExecutorService executorService = Executors.newFixedThreadPool(3);
+  @SuppressWarnings("PMD.DoNotUseThreads")
+  private static final ExecutorService executorService = Executors.newFixedThreadPool(3);
 
-    private final UserSettingsClient userSettingsClient;
+  private final UserSettingsClient userSettingsClient;
 
-    public ResourceClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
-        this(client, cachedJwtProvider, new UserSettingsClient(client, cachedJwtProvider));
-    }
+  public ResourceClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
+    this(client, cachedJwtProvider, new UserSettingsClient(client, cachedJwtProvider));
+  }
 
-    public ResourceClient(
-            HttpClient client,
-            CachedJwtProvider jwtProvider,
-            UserSettingsClient userSettingsClient) {
-        super(client, jwtProvider);
-        this.userSettingsClient = userSettingsClient;
-    }
+  public ResourceClient(
+      HttpClient client, CachedJwtProvider jwtProvider, UserSettingsClient userSettingsClient) {
+    super(client, jwtProvider);
+    this.userSettingsClient = userSettingsClient;
+  }
 
-    @JacocoGenerated
-    public static ResourceClient defaultClient() {
-        var cachedJwtProvider = getCachedJwtProvider(new SecretsReader());
-        var httpClient =
-                HttpClient.newBuilder()
-                        .executor(executorService)
-                        .version(HttpClient.Version.HTTP_2)
-                        .connectTimeout(Duration.ofSeconds(10))
-                        .build();
-        return new ResourceClient(httpClient, cachedJwtProvider);
-    }
+  @JacocoGenerated
+  public static ResourceClient defaultClient() {
+    var cachedJwtProvider = getCachedJwtProvider(new SecretsReader());
+    var httpClient =
+        HttpClient.newBuilder()
+            .executor(executorService)
+            .version(HttpClient.Version.HTTP_2)
+            .connectTimeout(Duration.ofSeconds(10))
+            .build();
+    return new ResourceClient(httpClient, cachedJwtProvider);
+  }
 
-    @Override
-    public SwsResponse doSearch(ResourceSearchQuery query) {
-        return super.doSearch(query.withUserSettings(userSettingsClient));
-    }
+  @Override
+  public SwsResponse doSearch(ResourceSearchQuery query) {
+    return super.doSearch(query.withUserSettings(userSettingsClient));
+  }
 
-    @Override
-    protected SwsResponse jsonToResponse(HttpResponse<String> response)
-            throws JsonProcessingException {
-        return singleLineObjectMapper.readValue(response.body(), SwsResponse.class);
-    }
+  @Override
+  protected SwsResponse jsonToResponse(HttpResponse<String> response)
+      throws JsonProcessingException {
+    return singleLineObjectMapper.readValue(response.body(), SwsResponse.class);
+  }
 
-    @Override
-    protected BinaryOperator<SwsResponse> responseAccumulator() {
-        return (a, b) -> swsResponseBuilder().merge(a).merge(b).build();
-    }
+  @Override
+  protected BinaryOperator<SwsResponse> responseAccumulator() {
+    return (a, b) -> swsResponseBuilder().merge(a).merge(b).build();
+  }
 
-    @Override
-    protected FunctionWithException<SwsResponse, SwsResponse, RuntimeException>
-            logAndReturnResult() {
-        return result -> {
-            logger.info(buildLogInfo(result));
-            return result;
-        };
-    }
+  @Override
+  protected FunctionWithException<SwsResponse, SwsResponse, RuntimeException> logAndReturnResult() {
+    return result -> {
+      logger.info(buildLogInfo(result));
+      return result;
+    };
+  }
 }

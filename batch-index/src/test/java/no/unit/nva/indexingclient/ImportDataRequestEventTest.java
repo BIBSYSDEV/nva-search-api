@@ -4,7 +4,6 @@ import static no.unit.nva.constants.Defaults.objectMapperNoEmpty;
 import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.constants.Words.SLASH;
 import static no.unit.nva.indexingclient.Constants.S3_LOCATION_FIELD;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -16,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 

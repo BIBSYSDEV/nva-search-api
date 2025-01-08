@@ -55,11 +55,9 @@ import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
 import static no.unit.nva.search.resource.ResourceParameter.STATISTICS;
 import static no.unit.nva.search.resource.ResourceParameter.UNIT;
-
 import static nva.commons.apigateway.AccessRight.MANAGE_CUSTOMERS;
 import static nva.commons.apigateway.AccessRight.MANAGE_DEGREE;
 import static nva.commons.apigateway.AccessRight.MANAGE_RESOURCES_ALL;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
@@ -83,39 +81,6 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-
-import no.unit.nva.commons.json.JsonUtils;
-import no.unit.nva.constants.Words;
-import no.unit.nva.identifiers.SortableIdentifier;
-import no.unit.nva.indexingclient.IndexingClient;
-import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
-import no.unit.nva.indexingclient.models.IndexDocument;
-import no.unit.nva.indexingclient.models.RestHighLevelClientWrapper;
-import no.unit.nva.search.common.csv.ResourceCsvTransformer;
-import no.unit.nva.search.common.jwt.CachedJwtProvider;
-import no.unit.nva.search.common.records.HttpResponseFormatter;
-import no.unit.nva.search.scroll.ScrollClient;
-import no.unit.nva.search.scroll.ScrollQuery;
-
-import nva.commons.apigateway.AccessRight;
-import nva.commons.apigateway.RequestInfo;
-import nva.commons.apigateway.exceptions.ApiGatewayException;
-import nva.commons.apigateway.exceptions.BadRequestException;
-import nva.commons.apigateway.exceptions.UnauthorizedException;
-import nva.commons.core.paths.UriWrapper;
-
-import org.apache.http.HttpHost;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.opensearch.client.RestClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -128,6 +93,35 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import no.unit.nva.commons.json.JsonUtils;
+import no.unit.nva.constants.Words;
+import no.unit.nva.identifiers.SortableIdentifier;
+import no.unit.nva.indexingclient.IndexingClient;
+import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
+import no.unit.nva.indexingclient.models.IndexDocument;
+import no.unit.nva.indexingclient.models.RestHighLevelClientWrapper;
+import no.unit.nva.search.common.csv.ResourceCsvTransformer;
+import no.unit.nva.search.common.jwt.CachedJwtProvider;
+import no.unit.nva.search.common.records.HttpResponseFormatter;
+import no.unit.nva.search.scroll.ScrollClient;
+import no.unit.nva.search.scroll.ScrollQuery;
+import nva.commons.apigateway.AccessRight;
+import nva.commons.apigateway.RequestInfo;
+import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.apigateway.exceptions.UnauthorizedException;
+import nva.commons.core.paths.UriWrapper;
+import org.apache.http.HttpHost;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.opensearch.client.RestClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
 class ResourceClientTest {

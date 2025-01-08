@@ -17,19 +17,18 @@ import org.opensearch.join.query.HasParentQueryBuilder;
  */
 public class PartOfQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBuilder<K> {
 
-    @Override
-    Stream<Map.Entry<K, QueryBuilder>> buildMatchAnyValueQuery(K key, String... values) {
-        return buildHasParent(key, values).flatMap(builder -> Functions.queryToEntry(key, builder));
-    }
+  @Override
+  Stream<Map.Entry<K, QueryBuilder>> buildMatchAnyValueQuery(K key, String... values) {
+    return buildHasParent(key, values).flatMap(builder -> Functions.queryToEntry(key, builder));
+  }
 
-    @Override
-    Stream<Map.Entry<K, QueryBuilder>> buildMatchAllValuesQuery(K key, String... values) {
-        return buildHasParent(key, values).flatMap(builder -> Functions.queryToEntry(key, builder));
-    }
+  @Override
+  Stream<Map.Entry<K, QueryBuilder>> buildMatchAllValuesQuery(K key, String... values) {
+    return buildHasParent(key, values).flatMap(builder -> Functions.queryToEntry(key, builder));
+  }
 
-    private Stream<QueryBuilder> buildHasParent(K key, String... values) {
-        var builder =
-                new HasParentQueryBuilder(HAS_PARTS, getSubQuery(key.subQuery(), values), true);
-        return Stream.of(builder);
-    }
+  private Stream<QueryBuilder> buildHasParent(K key, String... values) {
+    var builder = new HasParentQueryBuilder(HAS_PARTS, getSubQuery(key.subQuery(), values), true);
+    return Stream.of(builder);
+  }
 }

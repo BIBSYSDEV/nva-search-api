@@ -7,11 +7,10 @@ import org.junit.jupiter.api.Test;
 
 class PartOfQueryTest {
 
-    @Test
-    void checkPartOfQuery() {
-        var partOfQuery = new PartOfQuery<ResourceParameter>();
-        assertNotNull(
-                partOfQuery.buildMatchAnyValueQuery(
-                        ResourceParameter.CONTRIBUTORS_OF_CHILD, "ewsrdf"));
-    }
+  @Test
+  void checkPartOfQuery() {
+    var partOfQuery = new PartOfQuery<ResourceParameter>();
+    assertNotNull(
+        partOfQuery.buildMatchAnyValueQuery(ResourceParameter.CONTRIBUTORS_OF_CHILD, "ewsrdf"));
+  }
 }

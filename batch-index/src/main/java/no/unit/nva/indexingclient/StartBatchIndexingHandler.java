@@ -17,29 +17,29 @@ import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 
 public class StartBatchIndexingHandler implements RequestStreamHandler {
 
-    private final EventBridgeClient eventBridgeClient;
+  private final EventBridgeClient eventBridgeClient;
 
-    @JacocoGenerated
-    public StartBatchIndexingHandler() {
-        this(defaultEventBridgeClient());
-    }
+  @JacocoGenerated
+  public StartBatchIndexingHandler() {
+    this(defaultEventBridgeClient());
+  }
 
-    public StartBatchIndexingHandler(EventBridgeClient eventBridgeClient) {
-        this.eventBridgeClient = eventBridgeClient;
-    }
+  public StartBatchIndexingHandler(EventBridgeClient eventBridgeClient) {
+    this.eventBridgeClient = eventBridgeClient;
+  }
 
-    @Override
-    public void handleRequest(InputStream input, OutputStream output, Context context)
-            throws IOException {
-        var firstImportRequestEvent = new ImportDataRequestEvent(PERSISTED_RESOURCES_PATH);
-        emitEvent(eventBridgeClient, firstImportRequestEvent, context);
-        writeOutput(output);
-    }
+  @Override
+  public void handleRequest(InputStream input, OutputStream output, Context context)
+      throws IOException {
+    var firstImportRequestEvent = new ImportDataRequestEvent(PERSISTED_RESOURCES_PATH);
+    emitEvent(eventBridgeClient, firstImportRequestEvent, context);
+    writeOutput(output);
+  }
 
-    protected void writeOutput(OutputStream outputStream) throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {
-            String outputJson = objectMapperWithEmpty.writeValueAsString("OK");
-            writer.write(outputJson);
-        }
+  protected void writeOutput(OutputStream outputStream) throws IOException {
+    try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {
+      String outputJson = objectMapperWithEmpty.writeValueAsString("OK");
+      writer.write(outputJson);
     }
+  }
 }

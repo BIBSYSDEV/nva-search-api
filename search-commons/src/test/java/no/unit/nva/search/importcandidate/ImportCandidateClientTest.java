@@ -17,7 +17,6 @@ import static no.unit.nva.search.importcandidate.ImportCandidateParameter.SIZE;
 import static no.unit.nva.search.importcandidate.ImportCandidateParameter.SORT;
 import static no.unit.nva.search.importcandidate.ImportCandidateParameter.TOP_LEVEL_ORGANIZATION;
 import static no.unit.nva.search.importcandidate.ImportCandidateParameter.TYPE;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -29,22 +28,19 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import no.unit.nva.constants.Words;
-
-import nva.commons.apigateway.exceptions.ApiGatewayException;
-import nva.commons.apigateway.exceptions.BadRequestException;
-
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 import java.util.stream.Stream;
+import no.unit.nva.constants.Words;
+import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.apigateway.exceptions.BadRequestException;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class ImportCandidateClientTest {
 

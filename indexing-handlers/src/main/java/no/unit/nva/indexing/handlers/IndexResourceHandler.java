@@ -22,69 +22,66 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class IndexResourceHandler
-        extends DestinationsEventBridgeEventHandler<EventReference, Void> {
+    extends DestinationsEventBridgeEventHandler<EventReference, Void> {
 
-    public static final String INDEXING_MESSAGE = "Indexing document with id: {} to {}";
-    private static final Logger LOGGER = LoggerFactory.getLogger(IndexResourceHandler.class);
-    private static final String EXPANDED_RESOURCES_BUCKET =
-            ENVIRONMENT.readEnv("EXPANDED_RESOURCES_BUCKET");
-    private static final String SENT_TO_RECOVERY_QUEUE_MESSAGE =
-            "IndexDocument for index {} has been sent to recovery queue: {}";
-    private final S3Driver resourcesS3Driver;
-    private final IndexingClient indexingClient;
-    private final QueueClient queueClient;
+  public static final String INDEXING_MESSAGE = "Indexing document with id: {} to {}";
+  private static final Logger LOGGER = LoggerFactory.getLogger(IndexResourceHandler.class);
+  private static final String EXPANDED_RESOURCES_BUCKET =
+      ENVIRONMENT.readEnv("EXPANDED_RESOURCES_BUCKET");
+  private static final String SENT_TO_RECOVERY_QUEUE_MESSAGE =
+      "IndexDocument for index {} has been sent to recovery queue: {}";
+  private final S3Driver resourcesS3Driver;
+  private final IndexingClient indexingClient;
+  private final QueueClient queueClient;
 
-    @JacocoGenerated
-    public IndexResourceHandler() {
-        this(
-                new S3Driver(EXPANDED_RESOURCES_BUCKET),
-                defaultIndexingClient(),
-                IndexQueueClient.defaultQueueClient());
-    }
+  @JacocoGenerated
+  public IndexResourceHandler() {
+    this(
+        new S3Driver(EXPANDED_RESOURCES_BUCKET),
+        defaultIndexingClient(),
+        IndexQueueClient.defaultQueueClient());
+  }
 
-    public IndexResourceHandler(
-            S3Driver resourcesS3Driver, IndexingClient indexingClient, QueueClient queueClient) {
-        super(EventReference.class);
-        this.resourcesS3Driver = resourcesS3Driver;
-        this.indexingClient = indexingClient;
-        this.queueClient = queueClient;
-    }
+  public IndexResourceHandler(
+      S3Driver resourcesS3Driver, IndexingClient indexingClient, QueueClient queueClient) {
+    super(EventReference.class);
+    this.resourcesS3Driver = resourcesS3Driver;
+    this.indexingClient = indexingClient;
+    this.queueClient = queueClient;
+  }
 
-    @JacocoGenerated
-    public static IndexingClient defaultIndexingClient() {
-        return IndexingClient.defaultIndexingClient();
-    }
+  @JacocoGenerated
+  public static IndexingClient defaultIndexingClient() {
+    return IndexingClient.defaultIndexingClient();
+  }
 
-    @Override
-    protected Void processInputPayload(
-            EventReference input,
-            AwsEventBridgeEvent<AwsEventBridgeDetail<EventReference>> event,
-            Context context) {
+  @Override
+  protected Void processInputPayload(
+      EventReference input,
+      AwsEventBridgeEvent<AwsEventBridgeDetail<EventReference>> event,
+      Context context) {
 
-        var resourceRelativePath = UriWrapper.fromUri(input.getUri()).toS3bucketPath();
-        var indexDocument = fetchFileFromS3Bucket(resourceRelativePath).validate();
-        attempt(() -> indexingClient.addDocumentToIndex(indexDocument))
-                .orElse(failure -> persistRecoveryMessage(failure, indexDocument));
-        LOGGER.info(
-                INDEXING_MESSAGE,
-                indexDocument.getDocumentIdentifier(),
-                indexDocument.getIndexName());
-        return null;
-    }
+    var resourceRelativePath = UriWrapper.fromUri(input.getUri()).toS3bucketPath();
+    var indexDocument = fetchFileFromS3Bucket(resourceRelativePath).validate();
+    attempt(() -> indexingClient.addDocumentToIndex(indexDocument))
+        .orElse(failure -> persistRecoveryMessage(failure, indexDocument));
+    LOGGER.info(
+        INDEXING_MESSAGE, indexDocument.getDocumentIdentifier(), indexDocument.getIndexName());
+    return null;
+  }
 
-    private Void persistRecoveryMessage(Failure<Void> failure, IndexDocument indexDocument) {
-        var documentIdentifier = indexDocument.getDocumentIdentifier();
-        RecoveryEntry.fromIndexDocument(indexDocument)
-                .withIdentifier(documentIdentifier)
-                .withException(failure.getException())
-                .persist(queueClient);
-        LOGGER.error(
-                SENT_TO_RECOVERY_QUEUE_MESSAGE, indexDocument.getIndexName(), documentIdentifier);
-        return null;
-    }
+  private Void persistRecoveryMessage(Failure<Void> failure, IndexDocument indexDocument) {
+    var documentIdentifier = indexDocument.getDocumentIdentifier();
+    RecoveryEntry.fromIndexDocument(indexDocument)
+        .withIdentifier(documentIdentifier)
+        .withException(failure.getException())
+        .persist(queueClient);
+    LOGGER.error(SENT_TO_RECOVERY_QUEUE_MESSAGE, indexDocument.getIndexName(), documentIdentifier);
+    return null;
+  }
 
-    private IndexDocument fetchFileFromS3Bucket(UnixPath resourceRelativePath) {
-        var resource = resourcesS3Driver.getFile(resourceRelativePath);
-        return IndexDocument.fromJsonString(resource);
-    }
+  private IndexDocument fetchFileFromS3Bucket(UnixPath resourceRelativePath) {
+    var resource = resourcesS3Driver.getFile(resourceRelativePath);
+    return IndexDocument.fromJsonString(resource);
+  }
 }

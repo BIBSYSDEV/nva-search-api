@@ -7,15 +7,12 @@ import static no.unit.nva.indexingclient.Constants.S3_LOCATION_FIELD;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import no.unit.nva.commons.json.JsonSerializable;
-import no.unit.nva.events.models.EventBody;
-
-import nva.commons.core.JacocoGenerated;
-
 import java.net.URI;
 import java.util.Objects;
 import java.util.Optional;
+import no.unit.nva.commons.json.JsonSerializable;
+import no.unit.nva.events.models.EventBody;
+import nva.commons.core.JacocoGenerated;
 
 public class ImportDataRequestEvent implements EventBody, JsonSerializable {
 

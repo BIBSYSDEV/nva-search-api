@@ -9,16 +9,16 @@ import org.mockito.ArgumentMatcher;
  */
 public class HttpRequestMetadataMatcher implements ArgumentMatcher<HttpRequest> {
 
-    private final HttpRequest sourceRequest;
+  private final HttpRequest sourceRequest;
 
-    public HttpRequestMetadataMatcher(HttpRequest sourceRequest) {
-        this.sourceRequest = sourceRequest;
-    }
+  public HttpRequestMetadataMatcher(HttpRequest sourceRequest) {
+    this.sourceRequest = sourceRequest;
+  }
 
-    @Override
-    public boolean matches(HttpRequest request) {
-        return request.method().equals(sourceRequest.method())
-                && request.uri().equals(sourceRequest.uri())
-                && request.headers().equals(sourceRequest.headers());
-    }
+  @Override
+  public boolean matches(HttpRequest request) {
+    return request.method().equals(sourceRequest.method())
+        && request.uri().equals(sourceRequest.uri())
+        && request.headers().equals(sourceRequest.headers());
+  }
 }

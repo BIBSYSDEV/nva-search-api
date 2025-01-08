@@ -12,8 +12,8 @@ import java.util.List;
  */
 @JsonInclude
 public record UserSettings(List<String> promotedPublications) {
-    @Override
-    public List<String> promotedPublications() {
-        return promotedPublications.stream().map(id -> fromUri(id).getLastPathElement()).toList();
-    }
+  @Override
+  public List<String> promotedPublications() {
+    return promotedPublications.stream().map(id -> fromUri(id).getLastPathElement()).toList();
+  }
 }

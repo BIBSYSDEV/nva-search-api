@@ -13,30 +13,30 @@ import org.junit.jupiter.api.Test;
 
 class StartBatchIndexingHandlerTest extends BatchIndexTest {
 
-    private ByteArrayOutputStream outputStream;
-    private StubEventBridgeClient eventBridgeClient;
+  private ByteArrayOutputStream outputStream;
+  private StubEventBridgeClient eventBridgeClient;
 
-    @BeforeEach
-    public void initialize() {
-        outputStream = new ByteArrayOutputStream();
-        eventBridgeClient = new StubEventBridgeClient();
-    }
+  @BeforeEach
+  public void initialize() {
+    outputStream = new ByteArrayOutputStream();
+    eventBridgeClient = new StubEventBridgeClient();
+  }
 
-    @Test
-    void handlerSendsEventToEventBridgeWhenItReceivesAnImportRequest() throws IOException {
+  @Test
+  void handlerSendsEventToEventBridgeWhenItReceivesAnImportRequest() throws IOException {
 
-        var handler = newHandler();
+    var handler = newHandler();
 
-        handler.handleRequest(newImportRequest(), outputStream, CONTEXT);
-        var expectedImportRequest = new ImportDataRequestEvent(PERSISTED_RESOURCES_PATH);
-        assertThat(eventBridgeClient.getLatestEvent(), is(equalTo(expectedImportRequest)));
-    }
+    handler.handleRequest(newImportRequest(), outputStream, CONTEXT);
+    var expectedImportRequest = new ImportDataRequestEvent(PERSISTED_RESOURCES_PATH);
+    assertThat(eventBridgeClient.getLatestEvent(), is(equalTo(expectedImportRequest)));
+  }
 
-    private StartBatchIndexingHandler newHandler() {
-        return new StartBatchIndexingHandler(eventBridgeClient);
-    }
+  private StartBatchIndexingHandler newHandler() {
+    return new StartBatchIndexingHandler(eventBridgeClient);
+  }
 
-    private InputStream newImportRequest() {
-        return null;
-    }
+  private InputStream newImportRequest() {
+    return null;
+  }
 }

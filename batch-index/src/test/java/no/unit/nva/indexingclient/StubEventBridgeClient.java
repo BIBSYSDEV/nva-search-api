@@ -11,33 +11,31 @@ import software.amazon.awssdk.services.eventbridge.model.PutEventsResponse;
 
 public class StubEventBridgeClient implements EventBridgeClient {
 
-    private ImportDataRequestEvent latestEvent;
+  private ImportDataRequestEvent latestEvent;
 
-    public ImportDataRequestEvent getLatestEvent() {
-        return latestEvent;
-    }
+  public ImportDataRequestEvent getLatestEvent() {
+    return latestEvent;
+  }
 
-    public PutEventsResponse putEvents(PutEventsRequest putEventsRequest) {
-        this.latestEvent = saveContainedEvent(putEventsRequest);
-        return PutEventsResponse.builder().failedEntryCount(0).build();
-    }
+  public PutEventsResponse putEvents(PutEventsRequest putEventsRequest) {
+    this.latestEvent = saveContainedEvent(putEventsRequest);
+    return PutEventsResponse.builder().failedEntryCount(0).build();
+  }
 
-    @Override
-    public String serviceName() {
-        return null;
-    }
+  @Override
+  public String serviceName() {
+    return null;
+  }
 
-    @Override
-    public void close() {}
+  @Override
+  public void close() {}
 
-    private ImportDataRequestEvent saveContainedEvent(PutEventsRequest putEventsRequest) {
-        PutEventsRequestEntry eventEntry =
-                putEventsRequest.entries().stream().collect(SingletonCollector.collect());
-        return attempt(eventEntry::detail)
-                .map(
-                        jsonString ->
-                                objectMapperWithEmpty.readValue(
-                                        jsonString, ImportDataRequestEvent.class))
-                .orElseThrow();
-    }
+  private ImportDataRequestEvent saveContainedEvent(PutEventsRequest putEventsRequest) {
+    PutEventsRequestEntry eventEntry =
+        putEventsRequest.entries().stream().collect(SingletonCollector.collect());
+    return attempt(eventEntry::detail)
+        .map(
+            jsonString -> objectMapperWithEmpty.readValue(jsonString, ImportDataRequestEvent.class))
+        .orElseThrow();
+  }
 }

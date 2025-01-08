@@ -18,10 +18,10 @@ import no.unit.nva.commons.json.JsonSerializable;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record Facet(
-        URI id, String key, @JsonAlias("doc_count") Integer count, Map<String, String> labels)
-        implements JsonSerializable {
+    URI id, String key, @JsonAlias("doc_count") Integer count, Map<String, String> labels)
+    implements JsonSerializable {
 
-    public Facet {
-        Objects.requireNonNull(count);
-    }
+  public Facet {
+    Objects.requireNonNull(count);
+  }
 }

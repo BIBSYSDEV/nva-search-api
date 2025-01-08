@@ -38,28 +38,28 @@ import nva.commons.core.JacocoGenerated;
  */
 public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
 
-    private final ResourceClient opensearchClient;
+  private final ResourceClient opensearchClient;
 
-    @JacocoGenerated
-    public SearchResourceAuthHandler() {
-        this(new Environment(), defaultClient());
-    }
+  @JacocoGenerated
+  public SearchResourceAuthHandler() {
+    this(new Environment(), defaultClient());
+  }
 
-    public SearchResourceAuthHandler(Environment environment, ResourceClient resourceClient) {
-        super(Void.class, environment);
-        this.opensearchClient = resourceClient;
-    }
+  public SearchResourceAuthHandler(Environment environment, ResourceClient resourceClient) {
+    super(Void.class, environment);
+    this.opensearchClient = resourceClient;
+  }
 
-    @Override
-    protected List<MediaType> listSupportedMediaTypes() {
-        return DEFAULT_RESPONSE_MEDIA_TYPES;
-    }
+  @Override
+  protected List<MediaType> listSupportedMediaTypes() {
+    return DEFAULT_RESPONSE_MEDIA_TYPES;
+  }
 
   @Override
   protected void validateRequest(Void unused, RequestInfo requestInfo, Context context)
       throws ApiGatewayException {
-        validateAccessRight(requestInfo.getAccessRights());
-    }
+    validateAccessRight(requestInfo.getAccessRights());
+  }
 
   @Override
   protected String processInput(Void input, RequestInfo requestInfo, Context context)
@@ -79,20 +79,20 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
         .doSearch(opensearchClient)
         .withMutator(getMutator(version))
         .toString();
-    }
+  }
 
-    @Override
-    protected Integer getSuccessStatusCode(Void input, String output) {
-        return HttpURLConnection.HTTP_OK;
-    }
+  @Override
+  protected Integer getSuccessStatusCode(Void input, String output) {
+    return HttpURLConnection.HTTP_OK;
+  }
 
-    private void validateAccessRight(List<AccessRight> accessRights) throws UnauthorizedException {
+  private void validateAccessRight(List<AccessRight> accessRights) throws UnauthorizedException {
     if (accessRights.contains(AccessRight.MANAGE_RESOURCES_ALL)
         || accessRights.contains(AccessRight.MANAGE_CUSTOMERS)) {
-            return;
-        }
-        throw new UnauthorizedException();
+      return;
     }
+    throw new UnauthorizedException();
+  }
 
   private List<String> getExcludedFields(String version) {
     return V_2024_12_01_SIMPLER_MODEL.equals(version)
