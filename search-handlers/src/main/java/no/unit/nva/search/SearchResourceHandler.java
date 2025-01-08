@@ -12,26 +12,22 @@ import static no.unit.nva.search.resource.ResourceParameter.SORT;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
-
+import java.net.HttpURLConnection;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 import no.unit.nva.search.common.ContentTypeUtils;
 import no.unit.nva.search.common.records.JsonNodeMutator;
 import no.unit.nva.search.resource.LegacyMutator;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.ResourceSearchQuery;
 import no.unit.nva.search.resource.SimplifiedMutator;
-
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
-
 import org.apache.http.HttpHeaders;
-
-import java.net.HttpURLConnection;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 
 /**
  * Handler for searching resources.
@@ -40,31 +36,31 @@ import java.util.function.Supplier;
  */
 public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
 
-    private final ResourceClient opensearchClient;
+  private final ResourceClient opensearchClient;
 
-    @JacocoGenerated
-    public SearchResourceHandler() {
-        this(new Environment(), defaultClient());
-    }
+  @JacocoGenerated
+  public SearchResourceHandler() {
+    this(new Environment(), defaultClient());
+  }
 
-    public SearchResourceHandler(Environment environment, ResourceClient resourceClient) {
-        super(Void.class, environment);
-        this.opensearchClient = resourceClient;
-    }
+  public SearchResourceHandler(Environment environment, ResourceClient resourceClient) {
+    super(Void.class, environment);
+    this.opensearchClient = resourceClient;
+  }
 
-    @Override
-    protected List<MediaType> listSupportedMediaTypes() {
-        return DEFAULT_RESPONSE_MEDIA_TYPES;
-    }
+  @Override
+  protected List<MediaType> listSupportedMediaTypes() {
+    return DEFAULT_RESPONSE_MEDIA_TYPES;
+  }
 
-    @Override
-    protected void validateRequest(Void unused, RequestInfo requestInfo, Context context) {
-        // Do nothing
-    }
+  @Override
+  protected void validateRequest(Void unused, RequestInfo requestInfo, Context context) {
+    // Do nothing
+  }
 
-    @Override
-    protected String processInput(Void input, RequestInfo requestInfo, Context context)
-            throws BadRequestException {
+  @Override
+  protected String processInput(Void input, RequestInfo requestInfo, Context context)
+      throws BadRequestException {
     var version = ContentTypeUtils.extractVersionFromRequestInfo(requestInfo);
 
     return ResourceSearchQuery.builder()
@@ -79,12 +75,12 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
         .doSearch(opensearchClient)
         .withMutator(getMutator(version))
         .toString();
-    }
+  }
 
-    @Override
-    protected void addAdditionalHeaders(Supplier<Map<String, String>> additionalHeaders) {
-        super.addAdditionalHeaders(() -> Map.of(HttpHeaders.VARY, HttpHeaders.ACCEPT));
-    }
+  @Override
+  protected void addAdditionalHeaders(Supplier<Map<String, String>> additionalHeaders) {
+    super.addAdditionalHeaders(() -> Map.of(HttpHeaders.VARY, HttpHeaders.ACCEPT));
+  }
 
   private List<String> getIncludedFields(String version) {
     return V_2024_12_01_SIMPLER_MODEL.equals(version)
@@ -98,8 +94,8 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
         : new LegacyMutator();
   }
 
-    @Override
-    protected Integer getSuccessStatusCode(Void input, String output) {
-        return HttpURLConnection.HTTP_OK;
-    }
+  @Override
+  protected Integer getSuccessStatusCode(Void input, String output) {
+    return HttpURLConnection.HTTP_OK;
+  }
 }
