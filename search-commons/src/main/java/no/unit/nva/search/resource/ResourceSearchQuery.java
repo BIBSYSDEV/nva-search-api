@@ -80,7 +80,7 @@ import java.util.stream.Stream;
  */
 @SuppressWarnings("PMD.GodClass")
 public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
-    private static final String EXCLUDED_RESOURCE_FIELDS = "entityDescription.contributors";
+
     private final ResourceStreamBuilders streamBuilders;
     private final ResourceAccessFilter filterBuilder;
     private final Map<String, String> additionalQueryParameters = new HashMap<>();
@@ -89,7 +89,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     private ResourceSearchQuery() {
         super();
         assignStatusImpossibleWhiteList();
-        setAlwaysExcludedFields(GLOBAL_EXCLUDED_FIELDS);
+    setAlwaysExcludedFields(List.of(GLOBAL_EXCLUDED_FIELDS));
         streamBuilders = new ResourceStreamBuilders(parameters());
         filterBuilder = new ResourceAccessFilter(this);
     }

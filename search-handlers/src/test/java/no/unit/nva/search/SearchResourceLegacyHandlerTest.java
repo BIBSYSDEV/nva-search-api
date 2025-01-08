@@ -4,6 +4,8 @@ import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.CONTRIBUTOR;
+import static no.unit.nva.constants.Words.CONTRIBUTORS;
+import static no.unit.nva.constants.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.search.resource.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
@@ -61,7 +63,7 @@ class SearchResourceLegacyHandlerTest {
     public static final String SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON =
             "sample_opensearch_response.json";
     public static final String EMPTY_OPENSEARCH_RESPONSE_JSON = "empty_opensearch_response.json";
-    private SearchResourceLegacyHandler handler;
+  private SearchResourceHandler handler;
     private Context contextMock;
     private ByteArrayOutputStream outputStream;
     private ResourceClient mockedSearchClient;
@@ -93,7 +95,7 @@ class SearchResourceLegacyHandlerTest {
     void setUp() {
 
         mockedSearchClient = mock(ResourceClient.class);
-        handler = new SearchResourceLegacyHandler(new Environment(), mockedSearchClient);
+    handler = new SearchResourceHandler(new Environment(), mockedSearchClient);
         contextMock = mock(Context.class);
         outputStream = new ByteArrayOutputStream();
     }
@@ -164,11 +166,11 @@ class SearchResourceLegacyHandlerTest {
 
         assertNotNull(gatewayResponse.headers());
         assertEquals(HTTP_OK, gatewayResponse.statusCode());
-        assertFalse(firstHit.path("entityDescription").path("contributors").isMissingNode());
-        assertNotNull(firstHit.path("entityDescription").path("contributors").get(0));
-        assertEquals(
-                firstHit.path("entityDescription").path("contributors"),
-                firstHit.path("entityDescription").path("contributorsPreview"));
+    assertFalse(firstHit.path(ENTITY_DESCRIPTION).path(CONTRIBUTORS).isMissingNode());
+    assertNotNull(firstHit.path(ENTITY_DESCRIPTION).path(CONTRIBUTORS).get(0));
+    assertEquals(
+        firstHit.path(ENTITY_DESCRIPTION).path(CONTRIBUTORS),
+        firstHit.path(ENTITY_DESCRIPTION).path("contributorsPreview"));
     }
 
     @Test

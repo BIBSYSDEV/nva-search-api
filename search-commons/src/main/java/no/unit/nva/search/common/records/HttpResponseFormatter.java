@@ -62,7 +62,14 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
         this(response, mediaType, null, 0, 0, Map.of(), null);
     }
 
-    public HttpResponseFormatter<K> withMutators(JsonNodeMutator... mutators) {
+  /**
+   * Add the mutator to the formatter if there is none already.
+   *
+   * @param mutators the mutators to add
+   * @return this
+   */
+  public HttpResponseFormatter<K> withMutator(JsonNodeMutator... mutators) {
+
         this.mutators = List.of(mutators);
         return this;
     }

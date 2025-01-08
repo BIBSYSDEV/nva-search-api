@@ -91,11 +91,13 @@ import java.util.stream.Stream;
  */
 public final class Constants {
 
+  public static final String MANIFESTATIONS = "manifestations";
+  public static final String V_2024_12_01_SIMPLER_MODEL = "2024-12-01";
     public static final String PERSON_PREFERENCES = "/person-preferences/";
     public static final String UNIQUE_PUBLICATIONS = "unique_publications";
     public static final String CRISTIN_ORGANIZATION_PATH = "/cristin/organization/";
     public static final String CRISTIN_PERSON_PATH = "/cristin/person/";
-    public static final List<String> GLOBAL_EXCLUDED_FIELDS = List.of("joinField");
+  public static final String GLOBAL_EXCLUDED_FIELDS = "joinField";
     public static final String DEFAULT_RESOURCE_SORT_FIELDS =
             RELEVANCE_KEY_NAME + COMMA + IDENTIFIER;
     public static final String IDENTIFIER_KEYWORD = jsonPath(IDENTIFIER, KEYWORD);
@@ -261,6 +263,13 @@ public final class Constants {
                     scientificIndexHierarchy(),
                     topLevelOrganisationsHierarchy());
     public static final String SEQUENCE = "sequence";
+  public static final String CONTRIBUTORS_PREVIEW = "contributorsPreview";
+  public static final String ALTERNATIVE_TITLES = "alternativeTitles";
+  public static final String CONTRIBUTORS_COUNT = "contributorsCount";
+  public static final String ADDITIONAL_IDENTIFIERS = "additionalIdentifiers";
+  public static final String SCOPUS_IDENTIFIER = "ScopusIdentifier";
+  public static final String CRISTIN_IDENTIFIER = "CristinIdentifier";
+  public static final String DESCRIPTION = "description";
     private static final Map<String, String> facetResourcePaths1 =
             Map.of(
                     TYPE, "/withAppliedFilter/entityDescription/reference/publicationInstance/type",
