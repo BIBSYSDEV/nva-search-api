@@ -94,6 +94,25 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         filterBuilder = new ResourceAccessFilter(this);
     }
 
+  public static ResourceParameterValidator builder() {
+    return new ResourceParameterValidator();
+  }
+
+  private static boolean missingIdentifier(String sortString) {
+    return !sortString.contains(IDENTIFIER);
+  }
+
+  /**
+   * Calculate the boost for a promoted publication. (4.14 down to 3.14 (PI))
+   *
+   * @param i index of the current publication
+   * @param size total number of promoted publications
+   * @return the boost value
+   */
+  private static float calculateBoostValue(AtomicInteger i, int size) {
+    return PI + 1F - ((float) i.getAndIncrement() / size);
+  }
+
     /**
      * Add a (default) filter to the query that will never match any document.
      *
@@ -106,10 +125,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                 .set(
                         new TermsQueryBuilder(STATUS_KEYWORD, UUID.randomUUID().toString())
                                 .queryName(STATUS));
-    }
-
-    public static ResourceParameterValidator builder() {
-        return new ResourceParameterValidator();
     }
 
     @Override
@@ -128,10 +143,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
             }
         }
         return parameters().get(SORT);
-    }
-
-    private static boolean missingIdentifier(String sortString) {
-        return !sortString.contains(IDENTIFIER);
     }
 
     @Override
@@ -240,17 +251,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                                     matchQuery(IDENTIFIER_KEYWORD, identifier)
                                             .boost(calculateBoostValue(i, promoted.size()))));
         }
-    }
-
-    /**
-     * Calculate the boost for a promoted publication. (4.14 down to 3.14 (PI))
-     *
-     * @param i index of the current publication
-     * @param size total number of promoted publications
-     * @return the boost value
-     */
-    private static float calculateBoostValue(AtomicInteger i, int size) {
-        return PI + 1F - ((float) i.getAndIncrement() / size);
     }
 
     @Override

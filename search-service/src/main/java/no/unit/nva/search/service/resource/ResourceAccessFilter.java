@@ -47,14 +47,27 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
         this.searchQuery.filters().set();
     }
 
+  private static URI getCurationInstitutionId(RequestInfo requestInfo)
+      throws UnauthorizedException {
+    return requestInfo.getTopLevelOrgCristinId().isPresent()
+        ? requestInfo.getTopLevelOrgCristinId().get()
+        : requestInfo.getPersonAffiliation();
+  }
+
     @Override
     public ResourceSearchQuery apply() {
         return searchQuery;
     }
 
-    @Override
-    public ResourceSearchQuery fromRequestInfo(RequestInfo requestInfo)
-            throws UnauthorizedException {
+  /**
+   * Create a ResourceAccessFilter from a RequestInfo.
+   *
+   * @param requestInfo RequestInfo
+   * @return ResourceAccessFilter
+   * @throws UnauthorizedException if the user does not have the required access rights
+   */
+  @Override
+  public ResourceSearchQuery fromRequestInfo(RequestInfo requestInfo) throws UnauthorizedException {
 
         return customerCurationInstitutions(requestInfo)
                 .requiredStatus(PublicationStatus.PUBLISHED, PublicationStatus.PUBLISHED_METADATA)
@@ -112,13 +125,6 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
         }
         this.searchQuery.filters().add(filter);
         return this;
-    }
-
-    private static URI getCurationInstitutionId(RequestInfo requestInfo)
-            throws UnauthorizedException {
-        return requestInfo.getTopLevelOrgCristinId().isPresent()
-                ? requestInfo.getTopLevelOrgCristinId().get()
-                : requestInfo.getPersonAffiliation();
     }
 
     private QueryBuilder getContributingOrganisationAccessFilter(String institutionId) {

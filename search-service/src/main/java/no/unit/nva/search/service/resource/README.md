@@ -20,39 +20,43 @@
     "year": "2023"
   },
   "filesStatus": "hasPublicFiles",
-  "associatedArtifacts": [{
-    "type": "PublishedFile",
-    "administrativeAgreement": false,
-    "identifier": "98893bfd-82d3-44d8-af10-9d1097c9510e",
-    "license": "https://rightsstatements.org/page/inc/1.0",
-    "mimeType": "application/pdf",
-    "name": "20200017-03-TN_Release_area_variability.pdf",
-    "publishedDate": "2023-10-31T11:25:43.223366513Z",
-    "publisherAuthority": false,
-    "size": 699309,
-    "visibleForNonOwner": true
-  }
+  "associatedArtifacts": [
+    {
+      "type": "PublishedFile",
+      "administrativeAgreement": false,
+      "identifier": "98893bfd-82d3-44d8-af10-9d1097c9510e",
+      "license": "https://rightsstatements.org/page/inc/1.0",
+      "mimeType": "application/pdf",
+      "name": "20200017-03-TN_Release_area_variability.pdf",
+      "publishedDate": "2023-10-31T11:25:43.223366513Z",
+      "publisherAuthority": false,
+      "size": 699309,
+      "visibleForNonOwner": true
+    }
   ],
   "createdDate": "2023-09-29T12:14:46Z",
-  "contributorOrganizations": ["https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0", "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0"],
-
+  "contributorOrganizations": [
+    "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+    "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0"
+  ],
   "entityDescription": {
     "type": "EntityDescription",
     "abstract": "The hazard mapping tool NAKSIN estimates ....",
     "alternativeAbstracts": {},
-    "contributors": [{
-      "type": "Contributor",
-      "correspondingAuthor": false,
-      "identity": {
-        "id": "https://api.dev.nva.aws.unit.no/cristin/person/11111",
-        "type": "Identity",
-        "name": "Dieter Issler"
-      },
-      "role": {
-        "type": "Creator"
-      },
-      "sequence": 1
-    }
+    "contributors": [
+      {
+        "type": "Contributor",
+        "correspondingAuthor": false,
+        "identity": {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/person/11111",
+          "type": "Identity",
+          "name": "Dieter Issler"
+        },
+        "role": {
+          "type": "Creator"
+        },
+        "sequence": 1
+      }
     ],
     "language": "http://lexvo.org/id/iso639-3/eng",
     "mainTitle": "A Simple Model for the Variability of Release Area Size",
@@ -100,11 +104,12 @@
   "identifier": "018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642",
   "modelVersion": "0.20.54",
   "nviType": "NonNviCandidate",
-  "projects": [{
-    "id": "https://api.dev.nva.aws.unit.no/cristin/project/14334631",
-    "type": "ResearchProject",
-    "name": "Utvikling av eplekaken"
-  }
+  "projects": [
+    {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/project/14334631",
+      "type": "ResearchProject",
+      "name": "Utvikling av eplekaken"
+    }
   ],
   "publishedDate": "2023-09-29T12:14:46Z",
   "publisher": {
@@ -116,27 +121,29 @@
     "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
   },
   "status": "PUBLISHED",
-  "topLevelOrganizations": [{
-    "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-    "type": "Organization",
-    "countryCode": "NO",
-    "hasPart": [{
-      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.1.0.0",
+  "topLevelOrganizations": [
+    {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
       "type": "Organization",
-      "acronym": "UA",
+      "countryCode": "NO",
+      "hasPart": [
+        {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.1.0.0",
+          "type": "Organization",
+          "acronym": "UA",
+          "labels": {
+            "en": "The Education and Administration Division"
+          },
+          "partOf": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+          }
+        }
+      ],
       "labels": {
-        "en": "The Education and Administration Division"
-      },
-      "partOf": {
-        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+        "nb": "Forsvarets høgskole",
+        "en": "Norwegian Defence University College"
       }
     }
-    ],
-    "labels": {
-      "nb": "Forsvarets høgskole",
-      "en": "Norwegian Defence University College"
-    }
-  }
   ]
 }
 ```
@@ -346,7 +353,7 @@ Accept: application/json
 | nodes_searched                     | nodesSearched                   | flag         | na                       | NODES_SEARCHED                                                                                                                                                                                                                                                                                                                                            |
 | nodes_included                     | nodesIncluded                   | flag         | all_of                   | NODES_INCLUDED                                                                                                                                                                                                                                                                                                                                            |
 | nodes_excluded                     | nodesExcluded                   | flag         | all_of                   | NODES_EXCLUDED                                                                                                                                                                                                                                                                                                                                            |
-                                                                                                                                                                                                                                                                                                                                              |
+|
 
 ## Notes
 

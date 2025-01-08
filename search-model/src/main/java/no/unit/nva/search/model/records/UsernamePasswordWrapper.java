@@ -1,7 +1,5 @@
 package no.unit.nva.search.model.records;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import nva.commons.core.JacocoGenerated;
 
 /**
@@ -9,21 +7,7 @@ import nva.commons.core.JacocoGenerated;
  *
  * @author Sondre Vestad
  */
-public class UsernamePasswordWrapper {
-    @JsonProperty("username")
-    public String username;
-
-    @JsonProperty("password")
-    public String password;
-
-    @JacocoGenerated
-    public UsernamePasswordWrapper() {}
-
-    @JacocoGenerated
-    public UsernamePasswordWrapper(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
+public record UsernamePasswordWrapper(String username, String password) {
 
     @JacocoGenerated
     public String getUsername() {

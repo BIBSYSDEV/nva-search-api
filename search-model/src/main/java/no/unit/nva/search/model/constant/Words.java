@@ -38,6 +38,7 @@ public final class Words {
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String CONTRIBUTOR = "contributor";
     public static final String CONTRIBUTORS = "contributors";
+    public static final String CONTRIBUTORS_PREVIEW = "contributorsPreview";
     public static final String CONTRIBUTOR_ORGANIZATIONS = "contributorOrganizations";
     public static final String COUNTRY_CODE = "countryCode";
     public static final String COURSE = "course";
