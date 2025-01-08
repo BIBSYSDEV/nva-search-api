@@ -13,7 +13,7 @@ import static no.unit.nva.search.resource.ResourceParameter.SORT;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 
-import no.unit.nva.search.resource.ContributorCopyMutator;
+import no.unit.nva.search.resource.LegacyMutator;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.ResourceSearchQuery;
 
@@ -61,18 +61,18 @@ public class SearchResourceLegacyHandler extends ApiGatewayHandler<Void, String>
     @Override
     protected String processInput(Void input, RequestInfo requestInfo, Context context)
             throws BadRequestException {
-        return ResourceSearchQuery.builder()
-                .fromRequestInfo(requestInfo)
-                .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
-                .withAlwaysExcludedFields(getExcludedFields())
-                .validate()
-                .build()
-                .withFilter()
-                .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
-                .apply()
-                .doSearch(opensearchClient)
-                .withMutators(new ContributorCopyMutator())
-                .toString();
+    return ResourceSearchQuery.builder()
+        .fromRequestInfo(requestInfo)
+        .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
+        .withAlwaysExcludedFields(getExcludedFields())
+        .validate()
+        .build()
+        .withFilter()
+        .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+        .apply()
+        .doSearch(opensearchClient)
+        .withMutators(new LegacyMutator())
+        .toString();
     }
 
     private List<String> getExcludedFields() {

@@ -14,7 +14,7 @@ import com.google.common.net.MediaType;
 
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.ResourceSearchQuery;
-import no.unit.nva.search.resource.SimplifiedResourceModelMutator;
+import no.unit.nva.search.resource.SimplifiedMutator;
 
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
@@ -57,18 +57,18 @@ public class SearchResource20241201Handler extends ApiGatewayHandler<Void, Strin
     @Override
     protected String processInput(Void input, RequestInfo requestInfo, Context context)
             throws BadRequestException {
-        return ResourceSearchQuery.builder()
-                .fromRequestInfo(requestInfo)
-                .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
-                .withAlwaysIncludedFields(SimplifiedResourceModelMutator.getIncludedFields())
-                .validate()
-                .build()
-                .withFilter()
-                .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
-                .apply()
-                .doSearch(opensearchClient)
-                .withMutators(new SimplifiedResourceModelMutator())
-                .toString();
+    return ResourceSearchQuery.builder()
+        .fromRequestInfo(requestInfo)
+        .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
+        .withAlwaysIncludedFields(SimplifiedMutator.getIncludedFields())
+        .validate()
+        .build()
+        .withFilter()
+        .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+        .apply()
+        .doSearch(opensearchClient)
+        .withMutators(new SimplifiedMutator())
+        .toString();
     }
 
     @Override
