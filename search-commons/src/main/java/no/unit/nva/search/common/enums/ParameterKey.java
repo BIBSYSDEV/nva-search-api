@@ -1,6 +1,5 @@
 package no.unit.nva.search.common.enums;
 
-import static java.util.Objects.nonNull;
 import static no.unit.nva.constants.ErrorMessages.INVALID_BOOLEAN;
 import static no.unit.nva.constants.ErrorMessages.INVALID_DATE;
 import static no.unit.nva.constants.ErrorMessages.INVALID_NUMBER;
@@ -14,12 +13,16 @@ import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_NON_EMPTY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_NUMBER;
 import static no.unit.nva.search.common.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search.common.enums.ParameterKind.KEYWORD;
+
 import static nva.commons.core.StringUtils.EMPTY_STRING;
+
+import static java.util.Objects.nonNull;
+
+import no.unit.nva.constants.Words;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
-import no.unit.nva.constants.Words;
 
 /**
  * Interface for defining the keys used in the search service.

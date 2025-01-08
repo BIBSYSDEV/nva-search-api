@@ -1,7 +1,7 @@
 package no.unit.nva.indexingclient.models;
 
-import java.io.IOException;
 import nva.commons.core.JacocoGenerated;
+
 import org.opensearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.opensearch.action.admin.indices.settings.put.UpdateSettingsRequest;
 import org.opensearch.action.support.master.AcknowledgedResponse;
@@ -11,6 +11,8 @@ import org.opensearch.client.indices.CreateIndexRequest;
 import org.opensearch.client.indices.CreateIndexResponse;
 import org.opensearch.client.indices.GetIndexRequest;
 import org.opensearch.client.indices.GetIndexResponse;
+
+import java.io.IOException;
 
 /** Wrapper class for being able to test calls to the final class IndicesClient. */
 @JacocoGenerated

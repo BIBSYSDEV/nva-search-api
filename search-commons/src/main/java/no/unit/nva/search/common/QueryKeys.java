@@ -1,9 +1,13 @@
 package no.unit.nva.search.common;
 
-import static java.util.Objects.nonNull;
 import static no.unit.nva.constants.Words.PLUS;
 import static no.unit.nva.constants.Words.SPACE;
 import static no.unit.nva.search.common.constant.Functions.decodeUTF;
+
+import static java.util.Objects.nonNull;
+
+import no.unit.nva.search.common.enums.ParameterKey;
+import no.unit.nva.search.common.enums.ValueEncoding;
 
 import java.util.Comparator;
 import java.util.HashSet;
@@ -12,8 +16,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
-import no.unit.nva.search.common.enums.ParameterKey;
-import no.unit.nva.search.common.enums.ValueEncoding;
 
 /**
  * This class operates on the queryKeys that a request provides.

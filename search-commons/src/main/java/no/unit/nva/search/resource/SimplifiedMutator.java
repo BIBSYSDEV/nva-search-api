@@ -1,14 +1,52 @@
 package no.unit.nva.search.resource;
 
 import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
+import static no.unit.nva.constants.Words.ABSTRACT;
+import static no.unit.nva.constants.Words.AFFILIATIONS;
+import static no.unit.nva.constants.Words.CREATED_DATE;
+import static no.unit.nva.constants.Words.DAY;
+import static no.unit.nva.constants.Words.DOI;
 import static no.unit.nva.constants.Words.DOT;
+import static no.unit.nva.constants.Words.ENTITY_DESCRIPTION;
+import static no.unit.nva.constants.Words.ID;
+import static no.unit.nva.constants.Words.IDENTIFIER;
+import static no.unit.nva.constants.Words.IDENTITY;
+import static no.unit.nva.constants.Words.ISBN_LIST;
+import static no.unit.nva.constants.Words.MAIN_TITLE;
+import static no.unit.nva.constants.Words.MODIFIED_DATE;
+import static no.unit.nva.constants.Words.MONTH;
+import static no.unit.nva.constants.Words.NAME;
+import static no.unit.nva.constants.Words.ONLINE_ISSN;
+import static no.unit.nva.constants.Words.ORC_ID;
+import static no.unit.nva.constants.Words.PRINT_ISSN;
+import static no.unit.nva.constants.Words.PUBLICATION_CONTEXT;
+import static no.unit.nva.constants.Words.PUBLICATION_DATE;
+import static no.unit.nva.constants.Words.PUBLICATION_INSTANCE;
+import static no.unit.nva.constants.Words.PUBLISHED_DATE;
+import static no.unit.nva.constants.Words.PUBLISHER;
+import static no.unit.nva.constants.Words.REFERENCE;
+import static no.unit.nva.constants.Words.ROLE;
+import static no.unit.nva.constants.Words.SCIENTIFIC_VALUE;
+import static no.unit.nva.constants.Words.SERIES;
+import static no.unit.nva.constants.Words.STATUS;
+import static no.unit.nva.constants.Words.TYPE;
+import static no.unit.nva.constants.Words.VALUE;
+import static no.unit.nva.constants.Words.YEAR;
+import static no.unit.nva.search.resource.Constants.ADDITIONAL_IDENTIFIERS;
+import static no.unit.nva.search.resource.Constants.ALTERNATIVE_TITLES;
+import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_COUNT;
+import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_PREVIEW;
+import static no.unit.nva.search.resource.Constants.CRISTIN_IDENTIFIER;
+import static no.unit.nva.search.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
+import static no.unit.nva.search.resource.Constants.MANIFESTATIONS;
+import static no.unit.nva.search.resource.Constants.SCOPUS_IDENTIFIER;
+import static no.unit.nva.search.resource.Constants.SEQUENCE;
 
 import static nva.commons.core.attempt.Try.attempt;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 import no.unit.nva.search.common.records.JsonNodeMutator;
 import no.unit.nva.search.resource.response.Affiliation;
@@ -39,56 +77,20 @@ import java.util.stream.Stream;
 
 public class SimplifiedMutator implements JsonNodeMutator {
 
-  public static final String ID = "id";
-  public static final String IDENTIFIER = "identifier";
-  public static final String AFFILIATIONS = "affiliations";
-  public static final String PUBLICATION_INSTANCE = "publicationInstance";
-  public static final String TYPE = "type";
-  public static final String ABSTRACT = "abstract";
-  public static final String MAIN_TITLE = "mainTitle";
-  public static final String DESCRIPTION = "description";
-  public static final String ALTERNATIVE_TITLES = "alternativeTitles";
-  public static final String PUBLICATION_DATE = "publicationDate";
-  public static final String YEAR = "year";
-  public static final String MONTH = "month";
-  public static final String DAY = "day";
-  public static final String CONTRIBUTORS_COUNT = "contributorsCount";
-  public static final String ONLINE_ISSN = "onlineIssn";
-  public static final String PRINT_ISSN = "printIssn";
-  public static final String ISBN_LIST = "isbnList";
-  public static final String ADDITIONAL_IDENTIFIERS = "additionalIdentifiers";
   public static final String HANDLE_IDENTIFIER = "HandleIdentifier";
-  public static final String VALUE = "value";
-  public static final String SCOPUS_IDENTIFIER = "ScopusIdentifier";
-  public static final String CRISTIN_IDENTIFIER = "CristinIdentifier";
-  public static final String STATUS = "status";
-  public static final String CREATED_DATE = "createdDate";
-  public static final String MODIFIED_DATE = "modifiedDate";
-  public static final String PUBLISHED_DATE = "publishedDate";
-  public static final String NAME = "name";
-  public static final String DOI = "doi";
-  public static final String CONTRIBUTORS_PREVIEW = "contributorsPreview";
   public static final String CORRESPONDING_AUTHOR = "correspondingAuthor";
-  public static final String IDENTITY = "identity";
-  public static final String ORCID_ID = "orcId";
-  public static final String SEQUENCE = "sequence";
-  public static final String ROLE = "role";
-  public static final String MANIFESTATIONS = "manifestations";
-  public static final String SCIENTIFIC_VALUE = "scientificValue";
-  public static final String ENTITY_DESCRIPTION = "entityDescription";
-  public static final String REFERENCE = "reference";
-  public static final String PUBLICATION_CONTEXT = "publicationContext";
-  public static final String SERIES = "series";
-  public static final String PUBLISHER = "publisher";
   private final ObjectMapper objectMapper = dtoObjectMapper.copy();
 
   public SimplifiedMutator() {
-    objectMapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
     objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
   }
 
   public static String path(String... path) {
     return String.join(DOT, path);
+  }
+
+  public static List<String> getExcludedFields() {
+    return GLOBAL_EXCLUDED_FIELDS;
   }
 
   public static List<String> getIncludedFields() {
@@ -103,7 +105,7 @@ public class SimplifiedMutator implements JsonNodeMutator {
         path(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, MANIFESTATIONS, ISBN_LIST),
         path(ENTITY_DESCRIPTION, REFERENCE, DOI),
         path(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT), // TODO: Narrow down further?
-        path(ENTITY_DESCRIPTION, DESCRIPTION),
+        path(ENTITY_DESCRIPTION, Constants.DESCRIPTION),
         path(ENTITY_DESCRIPTION, MAIN_TITLE),
         path(ENTITY_DESCRIPTION, ABSTRACT),
         path(ENTITY_DESCRIPTION, ALTERNATIVE_TITLES),
@@ -113,7 +115,7 @@ public class SimplifiedMutator implements JsonNodeMutator {
         path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, CORRESPONDING_AUTHOR),
         path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, IDENTITY, ID),
         path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, IDENTITY, NAME),
-        path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, IDENTITY, ORCID_ID),
+        path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, IDENTITY, ORC_ID),
         path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, ROLE, TYPE),
         path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, SEQUENCE),
         path(ENTITY_DESCRIPTION, PUBLICATION_DATE),
@@ -147,7 +149,7 @@ public class SimplifiedMutator implements JsonNodeMutator {
                 .textValue())
         .withMainTitle(source.path(ENTITY_DESCRIPTION).path(MAIN_TITLE).textValue())
         .withMainLanguageAbstract(source.path(ENTITY_DESCRIPTION).path(ABSTRACT).textValue())
-        .withDescription(source.path(ENTITY_DESCRIPTION).path(DESCRIPTION).textValue())
+        .withDescription(source.path(ENTITY_DESCRIPTION).path(Constants.DESCRIPTION).textValue())
         .withAlternativeTitles(mutateAlternativeTitles(source))
         .withPublicationDate(mutatePublicationDate(source))
         .withContributorsPreview(mutateContributorsPreview(source))
@@ -358,7 +360,7 @@ public class SimplifiedMutator implements JsonNodeMutator {
                       new Identity(
                           uriFromText(contributorNode.path(IDENTITY).path(ID).textValue()),
                           contributorNode.path(IDENTITY).path(NAME).textValue(),
-                          uriFromText(contributorNode.path(IDENTITY).path(ORCID_ID).textValue())),
+                          uriFromText(contributorNode.path(IDENTITY).path(ORC_ID).textValue())),
                       contributorNode.path(ROLE).path(TYPE).textValue(),
                       contributorNode.path(SEQUENCE).asInt()));
             });

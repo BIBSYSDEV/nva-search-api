@@ -35,6 +35,7 @@ import static no.unit.nva.search.resource.ResourceParameter.ABSTRACT;
 import static no.unit.nva.search.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search.resource.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.search.resource.ResourceParameter.TITLE;
+
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
 import static org.opensearch.index.query.QueryBuilders.existsQuery;
 import static org.opensearch.index.query.QueryBuilders.matchPhrasePrefixQuery;
@@ -44,17 +45,19 @@ import static org.opensearch.index.query.QueryBuilders.nestedQuery;
 import static org.opensearch.index.query.QueryBuilders.termQuery;
 import static org.opensearch.index.query.QueryBuilders.termsQuery;
 
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import no.unit.nva.search.common.QueryKeys;
 import no.unit.nva.search.common.builder.FuzzyKeywordQuery;
 import no.unit.nva.search.common.constant.Functions;
+
 import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.join.query.HasParentQueryBuilder;
+
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Stream builders for resource queries.

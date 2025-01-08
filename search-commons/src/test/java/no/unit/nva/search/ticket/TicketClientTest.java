@@ -1,6 +1,5 @@
 package no.unit.nva.search.ticket;
 
-import static java.util.Objects.nonNull;
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.common.Containers.container;
 import static no.unit.nva.common.Containers.indexingClient;
@@ -21,6 +20,7 @@ import static no.unit.nva.search.ticket.TicketParameter.SIZE;
 import static no.unit.nva.search.ticket.TicketParameter.SORT;
 import static no.unit.nva.search.ticket.TicketParameter.STATISTICS;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
+
 import static nva.commons.apigateway.AccessRight.MANAGE_CUSTOMERS;
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
 import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
@@ -28,6 +28,7 @@ import static nva.commons.apigateway.AccessRight.SUPPORT;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static nva.commons.core.paths.UriWrapper.fromUri;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -41,7 +42,30 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import static java.util.Objects.nonNull;
+
 import com.fasterxml.jackson.core.type.TypeReference;
+
+import no.unit.nva.commons.json.JsonUtils;
+import no.unit.nva.constants.Words;
+import no.unit.nva.search.common.records.Facet;
+
+import nva.commons.apigateway.AccessRight;
+import nva.commons.apigateway.RequestInfo;
+import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.apigateway.exceptions.UnauthorizedException;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.nio.file.Path;
@@ -52,23 +76,6 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import no.unit.nva.commons.json.JsonUtils;
-import no.unit.nva.constants.Words;
-import no.unit.nva.search.common.records.Facet;
-import nva.commons.apigateway.AccessRight;
-import nva.commons.apigateway.RequestInfo;
-import nva.commons.apigateway.exceptions.ApiGatewayException;
-import nva.commons.apigateway.exceptions.BadRequestException;
-import nva.commons.apigateway.exceptions.UnauthorizedException;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
 class TicketClientTest {

@@ -1,20 +1,24 @@
 package no.unit.nva.indexingclient;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexingclient.models.IndexDocument;
 import no.unit.nva.s3.ListingResult;
 import no.unit.nva.s3.S3Driver;
+
 import nva.commons.core.paths.UnixPath;
+
 import org.opensearch.action.bulk.BulkItemResponse;
 import org.opensearch.action.bulk.BulkItemResponse.Failure;
 import org.opensearch.action.bulk.BulkResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import software.amazon.awssdk.services.s3.S3Client;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class BatchIndexer implements IndexingResult<SortableIdentifier> {
 

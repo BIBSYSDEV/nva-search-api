@@ -1,6 +1,7 @@
 package no.unit.nva.search.ticket;
 
 import static no.unit.nva.search.common.enums.SortKey.getIgnoreCaseAndUnderscoreKeyExpression;
+
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 
 import java.util.Arrays;

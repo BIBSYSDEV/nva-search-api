@@ -4,12 +4,15 @@ import static no.unit.nva.indexingclient.Constants.BATCH_INDEX_EVENT_BUS_NAME;
 import static no.unit.nva.indexingclient.Constants.MANDATORY_UNUSED_SUBTOPIC;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import java.time.Instant;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 import software.amazon.awssdk.services.eventbridge.model.PutEventsRequest;
 import software.amazon.awssdk.services.eventbridge.model.PutEventsRequestEntry;
+
+import java.time.Instant;
 
 public final class EmitEventUtils {
 

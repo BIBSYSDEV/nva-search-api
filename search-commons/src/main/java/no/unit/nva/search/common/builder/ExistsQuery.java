@@ -2,16 +2,20 @@ package no.unit.nva.search.common.builder;
 
 import static no.unit.nva.constants.Words.KEYWORD_FALSE;
 import static no.unit.nva.search.common.constant.Functions.queryToEntry;
+
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
 import static org.opensearch.index.query.QueryBuilders.existsQuery;
 
-import java.util.Map.Entry;
-import java.util.stream.Stream;
 import no.unit.nva.search.common.enums.ParameterKey;
+
 import nva.commons.core.JacocoGenerated;
+
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.ExistsQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
+
+import java.util.Map.Entry;
+import java.util.stream.Stream;
 
 /**
  * Class for building OpenSearch queries that check if a field exists.

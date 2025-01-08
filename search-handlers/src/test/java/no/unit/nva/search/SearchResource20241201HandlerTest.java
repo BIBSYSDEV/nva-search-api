@@ -1,9 +1,10 @@
 package no.unit.nva.search;
 
-import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.search.resource.ResourceParameter.SEARCH_ALL;
+
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -12,23 +13,29 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import static java.net.HttpURLConnection.HTTP_OK;
+
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import no.unit.nva.search.common.FakeGatewayResponse;
+import no.unit.nva.search.common.records.SwsResponse;
+import no.unit.nva.search.resource.ResourceClient;
+import no.unit.nva.search.resource.response.ResourceSearchResponse;
+import no.unit.nva.testutils.HandlerRequestBuilder;
+
+import nva.commons.core.Environment;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.Map;
-import no.unit.nva.search.common.FakeGatewayResponse;
-import no.unit.nva.search.common.records.SwsResponse;
-import no.unit.nva.search.resource.ResourceClient;
-import no.unit.nva.search.resource.response.ResourceSearchResponse;
-import no.unit.nva.testutils.HandlerRequestBuilder;
-import nva.commons.core.Environment;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 class SearchResource20241201HandlerTest {
   public static final String SAMPLE_PATH = "search";
@@ -36,7 +43,7 @@ class SearchResource20241201HandlerTest {
   public static final String SAMPLE_SEARCH_TERM = "searchTerm";
   public static final String SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON =
       "sample_opensearch_response.json";
-  private SearchResource20241201Handler handler;
+  private SearchResourceHandler handler;
   private Context contextMock;
   private ByteArrayOutputStream outputStream;
   private ResourceClient mockedSearchClient;
@@ -45,7 +52,7 @@ class SearchResource20241201HandlerTest {
   void setUp() {
 
     mockedSearchClient = mock(ResourceClient.class);
-    handler = new SearchResource20241201Handler(new Environment(), mockedSearchClient);
+    handler = new SearchResourceHandler(new Environment(), mockedSearchClient);
     contextMock = mock(Context.class);
     outputStream = new ByteArrayOutputStream();
   }

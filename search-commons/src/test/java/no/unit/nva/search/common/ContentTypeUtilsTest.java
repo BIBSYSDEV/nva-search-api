@@ -4,9 +4,11 @@ import static org.apache.http.HttpHeaders.ACCEPT;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import java.util.Map;
 import nva.commons.apigateway.RequestInfo;
+
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 
 class ContentTypeUtilsTest {
     public static final String ACCEPT_HEADER_VALUE = "application/json; version=2023-05-10";

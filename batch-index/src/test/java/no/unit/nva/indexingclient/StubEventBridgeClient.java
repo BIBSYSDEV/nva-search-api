@@ -1,9 +1,11 @@
 package no.unit.nva.indexingclient;
 
 import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
+
 import static nva.commons.core.attempt.Try.attempt;
 
 import nva.commons.core.SingletonCollector;
+
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 import software.amazon.awssdk.services.eventbridge.model.PutEventsRequest;
 import software.amazon.awssdk.services.eventbridge.model.PutEventsRequestEntry;

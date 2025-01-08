@@ -2,8 +2,8 @@ package no.unit.nva.indexingclient.models;
 
 import static no.unit.nva.constants.Defaults.ENVIRONMENT;
 
-import java.io.IOException;
 import nva.commons.core.JacocoGenerated;
+
 import org.apache.http.HttpHost;
 import org.opensearch.action.bulk.BulkRequest;
 import org.opensearch.action.bulk.BulkResponse;
@@ -21,6 +21,8 @@ import org.opensearch.client.RestClientBuilder;
 import org.opensearch.client.RestHighLevelClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 /** Class for avoiding mocking/spying the ES final classes. */
 public class RestHighLevelClientWrapper {

@@ -6,20 +6,25 @@ import static no.unit.nva.constants.Words.PUBLISHING_REQUESTS_INDEX;
 import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.constants.Words.TICKETS;
 import static no.unit.nva.indexingclient.IndexingClient.defaultIndexingClient;
+
 import static nva.commons.core.attempt.Try.attempt;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
+
 import no.unit.nva.indexing.model.IndexRequest;
 import no.unit.nva.indexingclient.IndexingClient;
+
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.Failure;
 import nva.commons.core.ioutils.IoUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.file.Path;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class InitHandler implements RequestHandler<Object, String> {
 

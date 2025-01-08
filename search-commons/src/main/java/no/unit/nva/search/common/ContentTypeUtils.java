@@ -2,9 +2,11 @@ package no.unit.nva.search.common;
 
 import static org.apache.http.HttpHeaders.ACCEPT;
 
-import java.util.Optional;
 import nva.commons.apigateway.RequestInfo;
+
 import org.apache.http.entity.ContentType;
+
+import java.util.Optional;
 
 public class ContentTypeUtils {
 

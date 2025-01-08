@@ -8,17 +8,22 @@ import static no.unit.nva.indexingclient.Constants.defaultS3Client;
 import static no.unit.nva.indexingclient.EmitEventUtils.emitEvent;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import java.io.InputStream;
-import java.io.OutputStream;
+
 import no.unit.nva.events.handlers.EventHandler;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
 import no.unit.nva.identifiers.SortableIdentifier;
+
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.ioutils.IoUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 import software.amazon.awssdk.services.s3.S3Client;
+
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class EventBasedBatchIndexer
         extends EventHandler<ImportDataRequestEvent, SortableIdentifier[]> {

@@ -2,14 +2,17 @@ package no.unit.nva.search.common.builder;
 
 import static no.unit.nva.constants.Words.PART_OF;
 
-import java.util.Map;
-import java.util.stream.Stream;
 import no.unit.nva.search.common.constant.Functions;
 import no.unit.nva.search.common.enums.ParameterKey;
+
 import nva.commons.core.JacocoGenerated;
+
 import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.join.query.HasChildQueryBuilder;
+
+import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Class for building OpenSearch queries that search for parts of a document.

@@ -4,10 +4,12 @@ import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+
+import no.unit.nva.search.common.records.PagedSearch;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
-import no.unit.nva.search.common.records.PagedSearch;
 
 @SuppressWarnings("PMD.ShortMethodName")
 public record FakeGatewayResponse<T>(T body, int statusCode, Map<String, String> headers) {

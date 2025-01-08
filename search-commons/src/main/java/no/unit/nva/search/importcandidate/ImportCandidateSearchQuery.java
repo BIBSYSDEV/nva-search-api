@@ -32,9 +32,25 @@ import static no.unit.nva.search.importcandidate.ImportCandidateParameter.PAGE;
 import static no.unit.nva.search.importcandidate.ImportCandidateParameter.SEARCH_AFTER;
 import static no.unit.nva.search.importcandidate.ImportCandidateParameter.SIZE;
 import static no.unit.nva.search.importcandidate.ImportCandidateParameter.SORT;
+
 import static nva.commons.core.paths.UriWrapper.fromUri;
+
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
 import static org.opensearch.index.query.QueryBuilders.termQuery;
+
+import no.unit.nva.search.common.AsType;
+import no.unit.nva.search.common.ParameterValidator;
+import no.unit.nva.search.common.SearchQuery;
+import no.unit.nva.search.common.constant.Functions;
+import no.unit.nva.search.common.enums.SortKey;
+
+import nva.commons.core.JacocoGenerated;
+
+import org.apache.lucene.search.join.ScoreMode;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.sort.SortOrder;
 
 import java.net.URI;
 import java.util.Collection;
@@ -42,17 +58,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
-import no.unit.nva.search.common.AsType;
-import no.unit.nva.search.common.ParameterValidator;
-import no.unit.nva.search.common.SearchQuery;
-import no.unit.nva.search.common.constant.Functions;
-import no.unit.nva.search.common.enums.SortKey;
-import nva.commons.core.JacocoGenerated;
-import org.apache.lucene.search.join.ScoreMode;
-import org.opensearch.index.query.QueryBuilder;
-import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.search.aggregations.AggregationBuilder;
-import org.opensearch.search.sort.SortOrder;
 
 /**
  * ImportCandidateSearchQuery is a class that represents a search query for import candidates.

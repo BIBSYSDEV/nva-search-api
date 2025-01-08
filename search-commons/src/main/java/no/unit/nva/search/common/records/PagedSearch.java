@@ -1,15 +1,18 @@
 package no.unit.nva.search.common.records;
 
-import static java.util.Objects.nonNull;
 import static no.unit.nva.constants.Defaults.PAGINATED_SEARCH_RESULT_CONTEXT;
+
+import static java.util.Objects.nonNull;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+
+import no.unit.nva.commons.json.JsonSerializable;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import no.unit.nva.commons.json.JsonSerializable;
 
 /**
  * PagedSearch is a class that represents a paged search result.
