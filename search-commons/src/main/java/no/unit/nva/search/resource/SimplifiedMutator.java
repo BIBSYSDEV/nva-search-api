@@ -32,6 +32,7 @@ import static no.unit.nva.constants.Words.STATUS;
 import static no.unit.nva.constants.Words.TYPE;
 import static no.unit.nva.constants.Words.VALUE;
 import static no.unit.nva.constants.Words.YEAR;
+import static no.unit.nva.search.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
 import static no.unit.nva.search.resource.Constants.MANIFESTATIONS;
 import static no.unit.nva.search.resource.Constants.SEQUENCE;
 import static nva.commons.core.attempt.Try.attempt;
@@ -79,7 +80,7 @@ public class SimplifiedMutator implements JsonNodeMutator {
   }
 
   public static List<String> getExcludedFields() {
-    return List.of();
+    return List.of(GLOBAL_EXCLUDED_FIELDS);
   }
 
   public static List<String> getIncludedFields() {

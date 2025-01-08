@@ -1,5 +1,6 @@
 package no.unit.nva.search.resource;
 
+import static java.lang.String.format;
 import static no.unit.nva.constants.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.constants.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.constants.ErrorMessages.INVALID_VALUE_WITH_SORT;
@@ -34,30 +35,9 @@ import static no.unit.nva.search.resource.ResourceParameter.SEARCH_AFTER;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
 import static no.unit.nva.search.resource.ResourceSort.INVALID;
-
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
-
 import static org.opensearch.index.query.QueryBuilders.matchQuery;
-
-import static java.lang.String.format;
-
-import no.unit.nva.constants.Words;
-import no.unit.nva.search.common.AsType;
-import no.unit.nva.search.common.OpenSearchClient;
-import no.unit.nva.search.common.ParameterValidator;
-import no.unit.nva.search.common.Query;
-import no.unit.nva.search.common.SearchQuery;
-import no.unit.nva.search.common.enums.SortKey;
-import no.unit.nva.search.common.records.HttpResponseFormatter;
-
-import nva.commons.core.JacocoGenerated;
-
-import org.opensearch.index.query.BoolQueryBuilder;
-import org.opensearch.index.query.QueryBuilder;
-import org.opensearch.index.query.TermsQueryBuilder;
-import org.opensearch.search.aggregations.AggregationBuilder;
-import org.opensearch.search.sort.SortOrder;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -70,6 +50,20 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import no.unit.nva.constants.Words;
+import no.unit.nva.search.common.AsType;
+import no.unit.nva.search.common.OpenSearchClient;
+import no.unit.nva.search.common.ParameterValidator;
+import no.unit.nva.search.common.Query;
+import no.unit.nva.search.common.SearchQuery;
+import no.unit.nva.search.common.enums.SortKey;
+import no.unit.nva.search.common.records.HttpResponseFormatter;
+import nva.commons.core.JacocoGenerated;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.TermsQueryBuilder;
+import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.sort.SortOrder;
 
 /**
  * ResourceSearchQuery is a query for searching resources.
@@ -102,10 +96,8 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
      * @apiNote In order to return any results, withRequiredStatus must be set
      */
     private void assignStatusImpossibleWhiteList() {
-        filters()
-                .set(
-                        new TermsQueryBuilder(STATUS_KEYWORD, UUID.randomUUID().toString())
-                                .queryName(STATUS));
+    filters()
+        .set(new TermsQueryBuilder(STATUS_KEYWORD, UUID.randomUUID().toString()).queryName(STATUS));
     }
 
     public static ResourceParameterValidator builder() {
@@ -136,11 +128,10 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     @Override
     protected String[] exclude() {
-        return Stream.concat(
-                        parameters().get(NODES_EXCLUDED).asSplitStream(COMMA),
-                        getExcludedFields().stream())
-                .distinct()
-                .toArray(String[]::new);
+    return Stream.concat(
+            parameters().get(NODES_EXCLUDED).asSplitStream(COMMA), getExcludedFields().stream())
+        .distinct()
+        .toArray(String[]::new);
     }
 
     @Override
@@ -173,30 +164,29 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         return RESOURCES_AGGREGATIONS;
     }
 
-    @JacocoGenerated // default value shouldn't happen, (developer have forgotten to handle a key)
-    @Override
-    protected Stream<Entry<ResourceParameter, QueryBuilder>> builderCustomQueryStream(
-            ResourceParameter key) {
-        return switch (key) {
-            case FUNDING -> streamBuilders.fundingQuery(key);
-            case CRISTIN_IDENTIFIER ->
-                    streamBuilders.additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
-            case SCOPUS_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
-            case SCIENTIFIC_VALUE -> streamBuilders.scientificValueQuery(key);
-            case TOP_LEVEL_ORGANIZATION, UNIT, UNIT_NOT -> streamBuilders.subUnitIncludedQuery(key);
-            case UNIDENTIFIED_NORWEGIAN -> streamBuilders.unIdentifiedNorwegians(key);
-            case UNIDENTIFIED_CONTRIBUTOR_INSTITUTION ->
-                    streamBuilders.unIdentifiedContributorOrInstitution(key);
-            case SEARCH_ALL ->
-                    streamBuilders.searchAllWithBoostsQuery(
-                            mapOfPathAndBoost(parameters().get(NODES_SEARCHED)));
-            default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
-        };
+  @JacocoGenerated // default value shouldn't happen, (developer have forgotten to handle a key)
+  @Override
+  protected Stream<Entry<ResourceParameter, QueryBuilder>> builderCustomQueryStream(
+      ResourceParameter key) {
+    return switch (key) {
+      case FUNDING -> streamBuilders.fundingQuery(key);
+      case CRISTIN_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
+      case SCOPUS_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
+      case SCIENTIFIC_VALUE -> streamBuilders.scientificValueQuery(key);
+      case TOP_LEVEL_ORGANIZATION, UNIT, UNIT_NOT -> streamBuilders.subUnitIncludedQuery(key);
+      case UNIDENTIFIED_NORWEGIAN -> streamBuilders.unIdentifiedNorwegians(key);
+      case UNIDENTIFIED_CONTRIBUTOR_INSTITUTION ->
+          streamBuilders.unIdentifiedContributorOrInstitution(key);
+      case SEARCH_ALL ->
+          streamBuilders.searchAllWithBoostsQuery(
+              mapOfPathAndBoost(parameters().get(NODES_SEARCHED)));
+      default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
+    };
     }
 
-    @Override
-    public <R, Q extends Query<ResourceParameter>>
-            HttpResponseFormatter<ResourceParameter> doSearch(OpenSearchClient<R, Q> queryClient) {
+  @Override
+  public <R, Q extends Query<ResourceParameter>> HttpResponseFormatter<ResourceParameter> doSearch(
+      OpenSearchClient<R, Q> queryClient) {
         return super.doSearch(queryClient);
     }
 
@@ -234,11 +224,11 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         if (result.isSuccess()) {
             AtomicInteger i = new AtomicInteger();
             var promoted = result.get().promotedPublications();
-            promoted.forEach(
-                    identifier ->
-                            builder.should(
-                                    matchQuery(IDENTIFIER_KEYWORD, identifier)
-                                            .boost(calculateBoostValue(i, promoted.size()))));
+      promoted.forEach(
+          identifier ->
+              builder.should(
+                  matchQuery(IDENTIFIER_KEYWORD, identifier)
+                      .boost(calculateBoostValue(i, promoted.size()))));
         }
     }
 
@@ -255,10 +245,10 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     @Override
     public URI openSearchUri() {
-        return fromUri(infrastructureApiUri)
-                .addChild(Words.RESOURCES, Words.SEARCH)
-                .addQueryParameters(queryParameters())
-                .getUri();
+    return fromUri(infrastructureApiUri)
+        .addChild(Words.RESOURCES, Words.SEARCH)
+        .addQueryParameters(queryParameters())
+        .getUri();
     }
 
     private Map<String, String> queryParameters() {
@@ -279,13 +269,13 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         return this;
     }
 
-    /**
-     * ResourceParameterValidator is a class that validates parameters for a ResourceSearchQuery.
-     *
-     * @author Stig Norland
-     */
-    public static class ResourceParameterValidator
-            extends ParameterValidator<ResourceParameter, ResourceSearchQuery> {
+  /**
+   * ResourceParameterValidator is a class that validates parameters for a ResourceSearchQuery.
+   *
+   * @author Stig Norland
+   */
+  public static class ResourceParameterValidator
+      extends ParameterValidator<ResourceParameter, ResourceSearchQuery> {
 
         ResourceParameterValidator() {
             super(new ResourceSearchQuery());
@@ -293,19 +283,19 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
         @Override
         protected void assignDefaultValues() {
-            requiredMissing()
-                    .forEach(
-                            key -> {
-                                switch (key) {
-                                    case FROM -> setValue(key.name(), DEFAULT_OFFSET);
-                                    case SIZE -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
-                                    case SORT -> setValue(key.name(), DEFAULT_RESOURCE_SORT_FIELDS);
-                                    case AGGREGATION -> setValue(key.name(), NONE);
-                                    default -> {
-                                        /* ignore and continue */
-                                    }
-                                }
-                            });
+      requiredMissing()
+          .forEach(
+              key -> {
+                switch (key) {
+                  case FROM -> setValue(key.name(), DEFAULT_OFFSET);
+                  case SIZE -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
+                  case SORT -> setValue(key.name(), DEFAULT_RESOURCE_SORT_FIELDS);
+                  case AGGREGATION -> setValue(key.name(), NONE);
+                  default -> {
+                    /* ignore and continue */
+                  }
+                }
+              });
         }
 
         @JacocoGenerated
@@ -316,8 +306,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                 if (query.parameters().isPresent(FROM)) {
                     var page = query.parameters().get(PAGE).<Number>as();
                     var perPage = query.parameters().get(SIZE).<Number>as();
-                    query.parameters()
-                            .set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
+          query.parameters().set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
                 }
                 query.parameters().remove(PAGE);
             }
@@ -344,8 +333,8 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
             }
 
             if (ResourceSort.fromSortKey(nameSort[0]) == INVALID) {
-                throw new IllegalArgumentException(
-                        INVALID_VALUE_WITH_SORT.formatted(name, ResourceSort.validSortKeys()));
+        throw new IllegalArgumentException(
+            INVALID_VALUE_WITH_SORT.formatted(name, ResourceSort.validSortKeys()));
             }
         }
 
@@ -355,14 +344,13 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
             var decodedValue = getDecodedValue(qpKey, value);
             switch (qpKey) {
                 case INVALID -> invalidKeys.add(key);
-                case UNIT, UNIT_NOT, TOP_LEVEL_ORGANIZATION ->
-                        mergeToKey(qpKey, identifierToCristinId(decodedValue));
-                case CONTRIBUTOR, CONTRIBUTOR_NOT ->
-                        mergeToKey(qpKey, identifierToCristinPersonId(decodedValue));
-                case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION ->
-                        query.parameters().set(qpKey, decodedValue);
-                case NODES_SEARCHED ->
-                        query.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
+        case UNIT, UNIT_NOT, TOP_LEVEL_ORGANIZATION ->
+            mergeToKey(qpKey, identifierToCristinId(decodedValue));
+        case CONTRIBUTOR, CONTRIBUTOR_NOT ->
+            mergeToKey(qpKey, identifierToCristinPersonId(decodedValue));
+        case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION ->
+            query.parameters().set(qpKey, decodedValue);
+        case NODES_SEARCHED -> query.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 default -> mergeToKey(qpKey, decodedValue);
@@ -370,15 +358,15 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         }
 
         private String identifierToCristinId(String decodedValue) {
-            return Arrays.stream(decodedValue.split(COMMA))
-                    .map(value -> identifierToUri(value, CRISTIN_ORGANIZATION_PATH))
-                    .collect(Collectors.joining(COMMA));
+      return Arrays.stream(decodedValue.split(COMMA))
+          .map(value -> identifierToUri(value, CRISTIN_ORGANIZATION_PATH))
+          .collect(Collectors.joining(COMMA));
         }
 
         private String identifierToCristinPersonId(String decodedValue) {
-            return Arrays.stream(decodedValue.split(COMMA))
-                    .map(value -> identifierToUri(value, CRISTIN_PERSON_PATH))
-                    .collect(Collectors.joining(COMMA));
+      return Arrays.stream(decodedValue.split(COMMA))
+          .map(value -> identifierToUri(value, CRISTIN_PERSON_PATH))
+          .collect(Collectors.joining(COMMA));
         }
 
         private String currentHost() {
@@ -386,9 +374,9 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         }
 
         private String identifierToUri(String decodedValue, String uriPath) {
-            return isUriId(decodedValue)
-                    ? decodedValue
-                    : format("%s%s%s", currentHost(), uriPath, decodedValue);
+      return isUriId(decodedValue)
+          ? decodedValue
+          : format("%s%s%s", currentHost(), uriPath, decodedValue);
         }
 
         private boolean isUriId(String decodedValue) {
