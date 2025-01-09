@@ -1,5 +1,6 @@
 package no.unit.nva.search.common;
 
+import static java.util.Objects.nonNull;
 import static no.unit.nva.constants.Words.BUCKETS;
 import static no.unit.nva.constants.Words.ENGLISH_CODE;
 import static no.unit.nva.constants.Words.KEY;
@@ -10,22 +11,16 @@ import static no.unit.nva.constants.Words.VALUE;
 import static no.unit.nva.constants.Words.ZERO;
 import static no.unit.nva.search.common.AggregationFormat.Constants.DOC_COUNT;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_WORD_ENDING_WITH_HASHTAG;
-
 import static nva.commons.core.StringUtils.EMPTY_STRING;
-
-import static java.util.Objects.nonNull;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Streams;
-
-import no.unit.nva.commons.json.JsonUtils;
-
-import nva.commons.core.JacocoGenerated;
-
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
+import no.unit.nva.commons.json.JsonUtils;
+import nva.commons.core.JacocoGenerated;
 
 /**
  * Formats the aggregation response from OpenSearch.

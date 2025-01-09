@@ -2,20 +2,12 @@ package no.unit.nva.search.common.jwt;
 
 import static no.unit.nva.auth.AuthorizedBackendClient.APPLICATION_X_WWW_FORM_URLENCODED;
 import static no.unit.nva.constants.Words.AUTHORIZATION;
-
 import static nva.commons.core.attempt.Try.attempt;
-
 import static org.apache.http.protocol.HTTP.CONTENT_TYPE;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.jr.ob.JSON;
-
-import no.unit.nva.auth.CognitoCredentials;
-
-import nva.commons.core.JacocoGenerated;
-import nva.commons.core.paths.UriWrapper;
-
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -24,6 +16,9 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Objects;
+import no.unit.nva.auth.CognitoCredentials;
+import nva.commons.core.JacocoGenerated;
+import nva.commons.core.paths.UriWrapper;
 
 /**
  * Class for authenticating with Cognito.

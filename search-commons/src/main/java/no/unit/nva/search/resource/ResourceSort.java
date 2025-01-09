@@ -7,13 +7,7 @@ import static no.unit.nva.constants.Words.KEYWORD;
 import static no.unit.nva.constants.Words.YEAR;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_PIPE;
 import static no.unit.nva.search.resource.Constants.IDENTIFIER_KEYWORD;
-
 import static nva.commons.core.StringUtils.EMPTY_STRING;
-
-import no.unit.nva.constants.Words;
-import no.unit.nva.search.common.enums.SortKey;
-
-import org.apache.commons.text.CaseUtils;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -21,6 +15,9 @@ import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import no.unit.nva.constants.Words;
+import no.unit.nva.search.common.enums.SortKey;
+import org.apache.commons.text.CaseUtils;
 
 /**
  * Enum for sorting resources.

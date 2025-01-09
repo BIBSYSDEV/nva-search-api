@@ -4,9 +4,7 @@ import static no.unit.nva.constants.Defaults.ENVIRONMENT;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-
 import nva.commons.core.JacocoGenerated;
-
 import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;

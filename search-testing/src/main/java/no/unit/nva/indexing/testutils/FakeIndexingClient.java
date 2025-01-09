@@ -3,15 +3,6 @@ package no.unit.nva.indexing.testutils;
 import static nva.commons.core.attempt.Try.attempt;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
-import no.unit.nva.indexingclient.IndexingClient;
-import no.unit.nva.indexingclient.models.IndexDocument;
-
-import org.opensearch.action.DocWriteRequest.OpType;
-import org.opensearch.action.DocWriteResponse;
-import org.opensearch.action.bulk.BulkItemResponse;
-import org.opensearch.action.bulk.BulkResponse;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,6 +13,12 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import no.unit.nva.indexingclient.IndexingClient;
+import no.unit.nva.indexingclient.models.IndexDocument;
+import org.opensearch.action.DocWriteRequest.OpType;
+import org.opensearch.action.DocWriteResponse;
+import org.opensearch.action.bulk.BulkItemResponse;
+import org.opensearch.action.bulk.BulkResponse;
 
 /**
  * Faking the Indexing Client instead of the OpenSearch client because faking the OpenSearch client
