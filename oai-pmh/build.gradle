@@ -1,0 +1,15 @@
+plugins {
+    id("com.github.bjornvester.xjc") version "1.8.2"
+}
+
+xjc {
+    defaultPackage.set('org.openarchives.oai.v2.generated')
+}
+
+tasks.withType(Checkstyle).configureEach {
+    exclude { '**/generated/*' }
+}
+
+tasks.withType(Pmd).configureEach {
+    exclude { '**/generated/*' }
+}
