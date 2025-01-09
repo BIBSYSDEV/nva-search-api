@@ -1,20 +1,17 @@
 package no.unit.nva.search.common;
 
-import static nva.commons.core.StringUtils.EMPTY_STRING;
-import static nva.commons.core.attempt.Try.attempt;
-
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-
-import no.unit.nva.search.common.enums.ParameterKey;
-import no.unit.nva.search.common.enums.ParameterKind;
-
-import org.joda.time.DateTime;
+import static nva.commons.core.StringUtils.EMPTY_STRING;
+import static nva.commons.core.attempt.Try.attempt;
 
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Stream;
+import no.unit.nva.search.common.enums.ParameterKey;
+import no.unit.nva.search.common.enums.ParameterKind;
+import org.joda.time.DateTime;
 
 /**
  * AutoConvert value to Date, Number (or String).

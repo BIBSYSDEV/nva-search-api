@@ -1,5 +1,6 @@
 package no.unit.nva.common;
 
+import static java.util.Objects.nonNull;
 import static no.unit.nva.common.TestConstants.DELAY_AFTER_INDEXING;
 import static no.unit.nva.common.TestConstants.OPEN_SEARCH_IMAGE;
 import static no.unit.nva.constants.Words.IDENTIFIER;
@@ -7,32 +8,26 @@ import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.constants.Words.TICKETS;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 
-import static java.util.Objects.nonNull;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
-
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Map;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexingclient.IndexingClient;
 import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
 import no.unit.nva.indexingclient.models.IndexDocument;
 import no.unit.nva.indexingclient.models.RestHighLevelClientWrapper;
-
 import org.apache.http.HttpHost;
 import org.opensearch.client.RestClient;
 import org.opensearch.testcontainers.OpensearchContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Map;
 
 @Testcontainers
 public class Containers {

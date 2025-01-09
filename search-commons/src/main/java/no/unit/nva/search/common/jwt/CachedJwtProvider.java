@@ -1,7 +1,6 @@
 package no.unit.nva.search.common.jwt;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-
 import java.time.Clock;
 import java.util.Date;
 
