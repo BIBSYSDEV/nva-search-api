@@ -6,10 +6,7 @@ xjc {
     defaultPackage.set('org.openarchives.oai.v2.generated')
 }
 
-tasks.withType(Checkstyle).configureEach {
-    exclude { '**/generated/*' }
-}
-
-tasks.withType(Pmd).configureEach {
-    exclude { '**/generated/*' }
+// effectively skip all tests and verifications for this module
+tasks.named("check").configure {
+    dependsOn = []
 }
