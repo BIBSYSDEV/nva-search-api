@@ -76,7 +76,7 @@ tasks.named('test', Test) {
 spotless {
     java {
         toggleOffOn() // Ignores sections between `spotless:off` / `spotless:on`
-        googleJavaFormat().aosp().reflowLongStrings().formatJavadoc(true).reorderImports(true)
+        googleJavaFormat().reflowLongStrings().formatJavadoc(true).reorderImports(true)
     }
 
     format 'misc', {
