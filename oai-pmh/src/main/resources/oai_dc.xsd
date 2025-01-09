@@ -1,0 +1,43 @@
+<?xml version='1.0'?>
+<!DOCTYPE xs:schema PUBLIC "-//W3C//DTD XMLSCHEMA 200102//EN" "XMLSchema.dtd" >
+<xs:schema targetNamespace="http://www.openarchives.org/OAI/2.0/oai_dc/"
+  xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+  <xs:annotation>
+    <xs:documentation>
+      XML Schema 2002-03-18 by Pete Johnston.
+      Adjusted for usage in the OAI-PMH.
+      Schema imports the Dublin Core elements from the DCMI schema for unqualified Dublin Core.
+      2002-12-19 updated to use simpledc20021212.xsd (instead of simpledc20020312.xsd)
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:import namespace="http://purl.org/dc/elements/1.1/"
+    schemaLocation="simpledc20021212.xsd"/>
+
+  <xs:element name="dc" type="oai_dc:oai_dcType"/>
+
+  <xs:complexType name="oai_dcType">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element ref="dc:title"/>
+      <xs:element ref="dc:creator"/>
+      <xs:element ref="dc:subject"/>
+      <xs:element ref="dc:description"/>
+      <xs:element ref="dc:publisher"/>
+      <xs:element ref="dc:contributor"/>
+      <xs:element ref="dc:date"/>
+      <xs:element ref="dc:type"/>
+      <xs:element ref="dc:format"/>
+      <xs:element ref="dc:identifier"/>
+      <xs:element ref="dc:source"/>
+      <xs:element ref="dc:language"/>
+      <xs:element ref="dc:relation"/>
+      <xs:element ref="dc:coverage"/>
+      <xs:element ref="dc:rights"/>
+    </xs:choice>
+  </xs:complexType>
+
+</xs:schema>
