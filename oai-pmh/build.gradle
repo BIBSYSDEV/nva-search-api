@@ -1,0 +1,12 @@
+plugins {
+    id("com.github.bjornvester.xjc") version "1.8.2"
+}
+
+xjc {
+    defaultPackage.set('org.openarchives.oai.v2.generated')
+}
+
+// effectively skip all tests and verifications for this module
+tasks.named("check").configure {
+    dependsOn = []
+}

@@ -38,29 +38,8 @@ import static no.unit.nva.search.ticket.TicketParameter.TICKET_PARAMETER_SET;
 import static no.unit.nva.search.ticket.TicketParameter.TYPE;
 import static no.unit.nva.search.ticket.TicketStatus.NEW;
 import static no.unit.nva.search.ticket.TicketStatus.PENDING;
-
 import static nva.commons.core.paths.UriWrapper.fromUri;
-
 import static org.opensearch.index.query.QueryBuilders.multiMatchQuery;
-
-import no.unit.nva.search.common.AsType;
-import no.unit.nva.search.common.ParameterValidator;
-import no.unit.nva.search.common.SearchQuery;
-import no.unit.nva.search.common.builder.AcrossFieldsQuery;
-import no.unit.nva.search.common.builder.KeywordQuery;
-import no.unit.nva.search.common.constant.Functions;
-import no.unit.nva.search.common.enums.SortKey;
-
-import nva.commons.core.JacocoGenerated;
-
-import org.opensearch.index.query.BoolQueryBuilder;
-import org.opensearch.index.query.MultiMatchQueryBuilder;
-import org.opensearch.index.query.Operator;
-import org.opensearch.index.query.QueryBuilder;
-import org.opensearch.index.query.TermQueryBuilder;
-import org.opensearch.index.query.TermsQueryBuilder;
-import org.opensearch.search.aggregations.AggregationBuilder;
-import org.opensearch.search.sort.SortOrder;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -70,6 +49,22 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.stream.Stream;
+import no.unit.nva.search.common.AsType;
+import no.unit.nva.search.common.ParameterValidator;
+import no.unit.nva.search.common.SearchQuery;
+import no.unit.nva.search.common.builder.AcrossFieldsQuery;
+import no.unit.nva.search.common.builder.KeywordQuery;
+import no.unit.nva.search.common.constant.Functions;
+import no.unit.nva.search.common.enums.SortKey;
+import nva.commons.core.JacocoGenerated;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.MultiMatchQueryBuilder;
+import org.opensearch.index.query.Operator;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.TermQueryBuilder;
+import org.opensearch.index.query.TermsQueryBuilder;
+import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.sort.SortOrder;
 
 /**
  * TicketSearchQuery is a class that searches for tickets.

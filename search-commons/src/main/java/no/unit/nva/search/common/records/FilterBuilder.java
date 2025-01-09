@@ -1,7 +1,6 @@
 package no.unit.nva.search.common.records;
 
 import no.unit.nva.search.common.Query;
-
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 

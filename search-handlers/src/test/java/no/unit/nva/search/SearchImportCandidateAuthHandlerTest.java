@@ -1,14 +1,14 @@
 package no.unit.nva.search;
 
+import static java.net.HttpURLConnection.HTTP_OK;
+import static java.util.Objects.nonNull;
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.search.importcandidate.ImportCandidateParameter.SEARCH_ALL;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
-
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
-
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
@@ -20,13 +20,16 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import static java.net.HttpURLConnection.HTTP_OK;
-import static java.util.Objects.nonNull;
-
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 import no.unit.nva.constants.Words;
 import no.unit.nva.indexing.testutils.FakeSearchResponse;
 import no.unit.nva.search.common.FakeGatewayResponse;
@@ -35,23 +38,13 @@ import no.unit.nva.search.common.records.PagedSearch;
 import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.importcandidate.ImportCandidateClient;
 import no.unit.nva.testutils.HandlerRequestBuilder;
-
 import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.Environment;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
 
 class SearchImportCandidateAuthHandlerTest {
 

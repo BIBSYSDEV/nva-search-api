@@ -1,5 +1,6 @@
 package no.unit.nva.search.common.constant;
 
+import static java.util.Objects.nonNull;
 import static no.unit.nva.constants.Defaults.ENVIRONMENT;
 import static no.unit.nva.constants.Words.BOKMAAL_CODE;
 import static no.unit.nva.constants.Words.COLON;
@@ -14,22 +15,7 @@ import static no.unit.nva.constants.Words.SAMI_CODE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_ASC_OR_DESC_GROUP;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SELECTED_GROUP;
-
 import static nva.commons.core.StringUtils.SPACE;
-
-import static java.util.Objects.nonNull;
-
-import no.unit.nva.constants.Defaults;
-import no.unit.nva.search.common.enums.ParameterKey;
-
-import nva.commons.core.JacocoGenerated;
-
-import org.opensearch.index.query.QueryBuilder;
-import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.search.aggregations.AggregationBuilders;
-import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
-import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
-import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -39,6 +25,15 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import no.unit.nva.constants.Defaults;
+import no.unit.nva.search.common.enums.ParameterKey;
+import nva.commons.core.JacocoGenerated;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.search.aggregations.AggregationBuilders;
+import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
+import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
+import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
 /**
  * Class for building OpenSearch queries that search across multiple fields.

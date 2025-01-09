@@ -3,9 +3,7 @@ package no.unit.nva.indexingclient.keybatch;
 import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.indexingclient.TestConstants.RESOURCE_INDEX_NAME;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
-
 import static nva.commons.core.attempt.Try.attempt;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
@@ -13,31 +11,26 @@ import static org.mockito.Mockito.mock;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
-
-import no.unit.nva.events.models.AwsEventBridgeEvent;
-import no.unit.nva.identifiers.SortableIdentifier;
-import no.unit.nva.s3.S3Driver;
-import no.unit.nva.stubs.FakeS3Client;
-
-import nva.commons.core.SingletonCollector;
-import nva.commons.core.ioutils.IoUtils;
-import nva.commons.core.paths.UnixPath;
-import nva.commons.core.paths.UriWrapper;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
-import software.amazon.awssdk.services.eventbridge.model.PutEventsRequest;
-import software.amazon.awssdk.services.eventbridge.model.PutEventsResponse;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
-
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import no.unit.nva.events.models.AwsEventBridgeEvent;
+import no.unit.nva.identifiers.SortableIdentifier;
+import no.unit.nva.s3.S3Driver;
+import no.unit.nva.stubs.FakeS3Client;
+import nva.commons.core.SingletonCollector;
+import nva.commons.core.ioutils.IoUtils;
+import nva.commons.core.paths.UnixPath;
+import nva.commons.core.paths.UriWrapper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
+import software.amazon.awssdk.services.eventbridge.model.PutEventsRequest;
+import software.amazon.awssdk.services.eventbridge.model.PutEventsResponse;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 
 class GenerateKeyBatchesHandlerTest {
 

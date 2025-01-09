@@ -1,15 +1,13 @@
 package no.unit.nva.indexing.testutils;
 
-import no.unit.nva.search.common.csv.ExportCsv;
-
-import nva.commons.core.JacocoGenerated;
-import nva.commons.core.ioutils.IoUtils;
-
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import no.unit.nva.search.common.csv.ExportCsv;
+import nva.commons.core.JacocoGenerated;
+import nva.commons.core.ioutils.IoUtils;
 
 public final class FakeSearchResponse {
 
