@@ -72,6 +72,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -172,36 +173,7 @@ public class SimplifiedMutator implements JsonNodeMutator {
   }
 
   private OtherIdentifiers mutateOtherIdentifiers(JsonNode source) throws IOException {
-    var issns =
-        Stream.of(
-                source
-                    .path(ENTITY_DESCRIPTION)
-                    .path(REFERENCE)
-                    .path(PUBLICATION_CONTEXT)
-                    .path(ONLINE_ISSN)
-                    .textValue(),
-                source
-                    .path(ENTITY_DESCRIPTION)
-                    .path(REFERENCE)
-                    .path(PUBLICATION_CONTEXT)
-                    .path(PRINT_ISSN)
-                    .textValue(),
-                source
-                    .path(ENTITY_DESCRIPTION)
-                    .path(REFERENCE)
-                    .path(PUBLICATION_CONTEXT)
-                    .path(SERIES)
-                    .path(ONLINE_ISSN)
-                    .textValue(),
-                source
-                    .path(ENTITY_DESCRIPTION)
-                    .path(REFERENCE)
-                    .path(PUBLICATION_CONTEXT)
-                    .path(SERIES)
-                    .path(PRINT_ISSN)
-                    .textValue())
-            .filter(Objects::nonNull)
-            .collect(Collectors.toSet());
+    var issns = getIssns(source);
 
     var isbnsInSourceNode =
         source.path(ENTITY_DESCRIPTION).path(REFERENCE).path(PUBLICATION_CONTEXT).path(ISBN_LIST);
@@ -219,16 +191,11 @@ public class SimplifiedMutator implements JsonNodeMutator {
           .iterator()
           .forEachRemaining(
               manifest -> {
-                if (!manifest.get(ISBN_LIST).isMissingNode()) {
-                  List<String> isbns =
-                      (List<String>)
-                          attempt(
-                                  () ->
-                                      objectMapper
-                                          .readerForListOf(String.class)
-                                          .readValue(manifest.get(ISBN_LIST)))
-                              .orElseThrow();
-                  isbnsInManifestations.addAll(isbns);
+                if (!manifest.path(ISBN_LIST).isMissingNode()) {
+                  manifest
+                      .get(ISBN_LIST)
+                      .elements()
+                      .forEachRemaining(isbn -> isbnsInManifestations.add(isbn.textValue()));
                 }
               });
     }
@@ -249,17 +216,10 @@ public class SimplifiedMutator implements JsonNodeMutator {
         .forEachRemaining(
             i -> {
               switch (i.path(TYPE).textValue()) {
-                case HANDLE_IDENTIFIER:
-                  handleIdentifiers.add(i.path(VALUE).textValue());
-                  break;
-                case SCOPUS_IDENTIFIER:
-                  scopusIdentifiers.add(i.path(VALUE).textValue());
-                  break;
-                case CRISTIN_IDENTIFIER:
-                  cristinIdentifiers.add(i.path(VALUE).textValue());
-                  break;
-                default:
-                  break;
+                case HANDLE_IDENTIFIER -> handleIdentifiers.add(i.path(VALUE).textValue());
+                case SCOPUS_IDENTIFIER -> scopusIdentifiers.add(i.path(VALUE).textValue());
+                case CRISTIN_IDENTIFIER -> cristinIdentifiers.add(i.path(VALUE).textValue());
+                default -> {}
               }
             });
 
@@ -269,6 +229,38 @@ public class SimplifiedMutator implements JsonNodeMutator {
         new HashSet<>(handleIdentifiers),
         new HashSet<>(issns),
         new HashSet<>(isbns));
+  }
+
+  private Set<String> getIssns(JsonNode source) {
+    return Stream.of(
+            source
+                .path(ENTITY_DESCRIPTION)
+                .path(REFERENCE)
+                .path(PUBLICATION_CONTEXT)
+                .path(ONLINE_ISSN)
+                .textValue(),
+            source
+                .path(ENTITY_DESCRIPTION)
+                .path(REFERENCE)
+                .path(PUBLICATION_CONTEXT)
+                .path(PRINT_ISSN)
+                .textValue(),
+            source
+                .path(ENTITY_DESCRIPTION)
+                .path(REFERENCE)
+                .path(PUBLICATION_CONTEXT)
+                .path(SERIES)
+                .path(ONLINE_ISSN)
+                .textValue(),
+            source
+                .path(ENTITY_DESCRIPTION)
+                .path(REFERENCE)
+                .path(PUBLICATION_CONTEXT)
+                .path(SERIES)
+                .path(PRINT_ISSN)
+                .textValue())
+        .filter(Objects::nonNull)
+        .collect(Collectors.toSet());
   }
 
   private RecordMetadata mutateRecordMetadata(JsonNode source) {
