@@ -3,9 +3,11 @@ package no.unit.nva.search.common.builder;
 import static no.unit.nva.constants.Words.KEYWORD_FALSE;
 import static no.unit.nva.constants.Words.KEYWORD_TRUE;
 
+import java.util.Arrays;
+import java.util.Map.Entry;
+import java.util.stream.Stream;
 import no.unit.nva.search.common.constant.Functions;
 import no.unit.nva.search.common.enums.ParameterKey;
-
 import org.opensearch.common.unit.Fuzziness;
 import org.opensearch.index.query.DisMaxQueryBuilder;
 import org.opensearch.index.query.Operator;
@@ -13,10 +15,6 @@ import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
-
-import java.util.Arrays;
-import java.util.Map.Entry;
-import java.util.stream.Stream;
 
 /**
  * Class for building OpenSearch queries that search for keywords with fuzzy matching.

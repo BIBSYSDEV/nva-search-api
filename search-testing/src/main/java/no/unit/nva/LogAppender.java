@@ -1,18 +1,15 @@
 package no.unit.nva;
 
+import static java.util.Objects.nonNull;
 import static no.unit.nva.constants.Words.SPACE;
 
-import static java.util.Objects.nonNull;
-
+import java.util.List;
 import nva.commons.core.JacocoGenerated;
-
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.test.appender.ListAppender;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 @SuppressWarnings({"PMD.CloseResource"})
 public final class LogAppender {

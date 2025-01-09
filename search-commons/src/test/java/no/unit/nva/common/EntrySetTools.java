@@ -1,20 +1,17 @@
 package no.unit.nva.common;
 
+import static java.util.Objects.nonNull;
 import static no.unit.nva.constants.Words.AMPERSAND;
 import static no.unit.nva.constants.Words.EQUAL;
-
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
-
-import static java.util.Objects.nonNull;
-
-import nva.commons.core.JacocoGenerated;
 
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map.Entry;
+import nva.commons.core.JacocoGenerated;
 
 public final class EntrySetTools {
 

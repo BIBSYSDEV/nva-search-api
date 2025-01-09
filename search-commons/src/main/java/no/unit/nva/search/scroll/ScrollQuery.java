@@ -1,29 +1,23 @@
 package no.unit.nva.search.scroll;
 
 import static com.google.common.net.MediaType.CSV_UTF_8;
-
+import static java.util.Objects.nonNull;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
-
 import static org.opensearch.core.xcontent.XContentHelper.toXContent;
 
-import static java.util.Objects.nonNull;
-
 import com.fasterxml.jackson.databind.JsonNode;
-
+import java.net.URI;
+import java.util.Objects;
+import java.util.stream.Stream;
 import no.unit.nva.search.common.OpenSearchClient;
 import no.unit.nva.search.common.Query;
 import no.unit.nva.search.common.records.HttpResponseFormatter;
 import no.unit.nva.search.common.records.QueryContentWrapper;
 import no.unit.nva.search.common.records.SwsResponse;
-
 import org.opensearch.action.search.SearchScrollRequest;
 import org.opensearch.common.xcontent.XContentType;
 import org.opensearch.core.xcontent.ToXContent;
-
-import java.net.URI;
-import java.util.Objects;
-import java.util.stream.Stream;
 
 /**
  * ScrollQuery is a class that sends a request to the search index.

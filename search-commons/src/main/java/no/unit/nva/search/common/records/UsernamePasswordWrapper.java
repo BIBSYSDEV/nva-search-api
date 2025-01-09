@@ -1,7 +1,6 @@
 package no.unit.nva.search.common.records;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import nva.commons.core.JacocoGenerated;
 
 /**
