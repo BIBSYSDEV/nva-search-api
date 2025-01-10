@@ -5,7 +5,6 @@ plugins {
 xjc {
     useJakarta = true
     markGenerated = true
-    xsdDir.set(layout.projectDirectory.dir("src/main/xsd"))
     defaultPackage.set('org.openarchives.oai.pmh.v2')
 }
 
