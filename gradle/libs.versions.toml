@@ -8,7 +8,7 @@ guava = { strictly = '33.3.0-jre' }
 hamcrest = { strictly = '3.0' }
 jackson = { strictly = '2.17.2' }
 jakartaXmlBindApi = { strictly = '4.0.2' }
-glassfishJaxbRuntime = { strictly = '3.0.1' }
+glassfishJaxbRuntime = { strictly = '4.0.5' }
 javers = { strictly = '7.1.0' }
 jupiter = { strictly = '5.11.0' }
 junit = { strictly = '1.10.2' }
