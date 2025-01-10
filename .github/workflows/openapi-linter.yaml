@@ -4,7 +4,6 @@ on: [ push ]
 
 jobs:
   openapi-linter:
-
     runs-on: ubuntu-latest
 
     services:
@@ -14,9 +13,9 @@ jobs:
           - 80:8080
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Validate OpenAPI definition
-        uses: char0n/swagger-editor-validate@v1
+        uses: swaggerexpert/swagger-editor-validate@v1
         with:
           swagger-editor-url: http://localhost/
           definition-file: docs/openapi.yaml
