@@ -3,7 +3,10 @@ plugins {
 }
 
 xjc {
-    defaultPackage.set('org.openarchives.oai.v2.generated')
+    useJakarta = true
+    markGenerated = true
+    xsdDir.set(layout.projectDirectory.dir("src/main/xsd"))
+    defaultPackage.set('org.openarchives.oai.pmh.v2')
 }
 
 // effectively skip all tests and verifications for this module

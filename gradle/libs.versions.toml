@@ -7,6 +7,8 @@ com-auth0-jwt = { strictly = '4.4.0' }
 guava = { strictly = '33.3.0-jre' }
 hamcrest = { strictly = '3.0' }
 jackson = { strictly = '2.17.2' }
+jakartaXmlBindApi = { strictly = '4.0.2' }
+glassfishJaxbRuntime = { strictly = '3.0.1' }
 javers = { strictly = '7.1.0' }
 jupiter = { strictly = '5.11.0' }
 junit = { strictly = '1.10.2' }
@@ -22,7 +24,7 @@ typesafe = { strictly = '1.4.1' }
 xraySdk = { strictly = '2.10.0' }
 jena = { strictly = '4.10.0' }
 zalandoProblem = { strictly = '0.27.1' }
-
+xmlUnit = { strictly = '2.10.0' }
 
 
 [libraries]
@@ -58,6 +60,9 @@ jackson-datatype-jdk8 = { group = 'com.fasterxml.jackson.datatype', name = 'jack
 
 jackson-jr-objects = { group = 'com.fasterxml.jackson.jr', name = 'jackson-jr-objects', version.ref = 'jackson' }
 jackson-jr-annotations = { group = 'com.fasterxml.jackson.jr', name = 'jackson-jr-annotation-support', version.ref = 'jackson' }
+
+jakarta-xml-bind-api = { group = 'jakarta.xml.bind', name = 'jakarta.xml.bind-api', version.ref = 'jakartaXmlBindApi'}
+glassfish-jaxb-runtime = { group = 'org.glassfish.jaxb', name = 'jaxb-runtime', version.ref = 'glassfishJaxbRuntime'}
 
 slf4j = { group = 'org.slf4j', name = 'slf4j-api', version.ref = 'slf4j' }
 log4j-core = { group = 'org.apache.logging.log4j', name = 'log4j-core', version.ref = 'log4j' }
@@ -96,6 +101,9 @@ csv = { group = 'com.opencsv', name = 'opencsv', version.ref = 'open-csv' }
 
 jena-core = { group = 'org.apache.jena', name = 'jena-core', version.ref = 'jena' }
 jena-arq = { group = 'org.apache.jena', name = 'jena-arq', version.ref = 'jena' }
+
+xml-unit-core = { group = 'org.xmlunit', name = 'xmlunit-core', version.ref = 'xmlUnit'}
+xml-unit-matchers = { group = 'org.xmlunit', name = 'xmlunit-matchers', version.ref = 'xmlUnit'}
 
 [bundles]
 jackson = ['jackson-core', 'jackson-databind', 'jackson-annotations', 'jackson-datatype-jsr310', 'jackson-datatype-jdk8']
