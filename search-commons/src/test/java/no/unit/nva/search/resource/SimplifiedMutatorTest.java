@@ -9,6 +9,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -41,7 +42,7 @@ class SimplifiedMutatorTest {
         .forEachRemaining(
             jsonNode -> {
               if (jsonNode.isTextual()) {
-                assertFalse(jsonNode.textValue().isEmpty());
+                assertNotEquals("", jsonNode.textValue());
               }
             });
     assertFalse(input.path("id").isMissingNode());
