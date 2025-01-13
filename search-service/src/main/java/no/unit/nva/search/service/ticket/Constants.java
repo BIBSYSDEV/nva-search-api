@@ -25,21 +25,18 @@ import static no.unit.nva.search.model.constant.Words.STATUS;
 import static no.unit.nva.search.model.constant.Words.TYPE;
 import static no.unit.nva.search.model.constant.Words.USERNAME;
 import static no.unit.nva.search.model.constant.Words.VIEWED_BY;
-
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import nva.commons.core.JacocoGenerated;
-
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Constants for the ticket search.
