@@ -9,5 +9,4 @@ public class NodeUtils {
   public static URI toUri(JsonNode node) {
     return Objects.isNull(node) || !node.isTextual() ? null : URI.create(node.textValue());
   }
-
 }

@@ -66,7 +66,6 @@ public record ResourceSearchResponse(
               .path(PUBLICATION_INSTANCE)
               .path(TYPE)
               .textValue();
-
       return this;
     }
 
