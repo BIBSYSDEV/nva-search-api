@@ -5,7 +5,6 @@ import static no.unit.nva.search.model.constant.Words.NAME;
 import static no.unit.nva.search.model.constant.Words.SCIENTIFIC_VALUE;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import java.net.URI;
 
 public record PublishingDetails(

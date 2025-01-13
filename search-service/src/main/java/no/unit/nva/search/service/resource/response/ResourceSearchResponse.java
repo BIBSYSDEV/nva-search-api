@@ -1,7 +1,6 @@
 package no.unit.nva.search.service.resource.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.net.URI;
 import java.util.List;
 import java.util.Map;

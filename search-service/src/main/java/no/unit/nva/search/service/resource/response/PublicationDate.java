@@ -1,8 +1,7 @@
 package no.unit.nva.search.service.resource.response;
 
-import org.joda.time.DateTime;
-
 import java.time.Instant;
+import org.joda.time.DateTime;
 
 public record PublicationDate(String year, String month, String day) {
 

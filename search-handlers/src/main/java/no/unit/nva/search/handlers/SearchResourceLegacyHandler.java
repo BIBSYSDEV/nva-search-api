@@ -12,21 +12,18 @@ import static no.unit.nva.search.service.resource.ResourceParameter.SORT;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
-
+import java.net.HttpURLConnection;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Stream;
 import no.unit.nva.search.service.resource.ContributorCopyMutator;
 import no.unit.nva.search.service.resource.ResourceClient;
 import no.unit.nva.search.service.resource.ResourceSearchQuery;
-
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
-
-import java.net.HttpURLConnection;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * Handler for searching resources.

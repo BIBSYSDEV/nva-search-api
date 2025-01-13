@@ -33,23 +33,11 @@ import static no.unit.nva.search.model.constant.Words.STATUS;
 import static no.unit.nva.search.model.constant.Words.TYPE;
 import static no.unit.nva.search.model.constant.Words.YEAR;
 import static no.unit.nva.search.service.resource.Constants.SEQUENCE;
-
 import static nva.commons.core.attempt.Try.attempt;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import no.unit.nva.search.model.records.JsonNodeMutator;
-import no.unit.nva.search.service.resource.response.Contributor;
-import no.unit.nva.search.service.resource.response.PublicationDate;
-import no.unit.nva.search.service.resource.response.PublishingDetails;
-import no.unit.nva.search.service.resource.response.RecordMetadata;
-import no.unit.nva.search.service.resource.response.ResourceSearchResponse;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -60,6 +48,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import no.unit.nva.search.model.records.JsonNodeMutator;
+import no.unit.nva.search.service.resource.response.Contributor;
+import no.unit.nva.search.service.resource.response.PublicationDate;
+import no.unit.nva.search.service.resource.response.PublishingDetails;
+import no.unit.nva.search.service.resource.response.RecordMetadata;
+import no.unit.nva.search.service.resource.response.ResourceSearchResponse;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SimplifiedResourceModelMutator implements JsonNodeMutator {
 

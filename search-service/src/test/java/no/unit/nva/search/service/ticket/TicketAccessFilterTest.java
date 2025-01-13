@@ -4,9 +4,9 @@ import org.junit.jupiter.api.Test;
 
 class TicketAccessFilterTest {
 
-    @Test
-    void ShouldFailapply() {
-        //        TicketAccessFilter filter = new TicketAccessFilter();
-        //        assertThrows(UnauthorizedException.class, filter::apply);
-    }
+  @Test
+  void ShouldFailapply() {
+    //        TicketAccessFilter filter = new TicketAccessFilter();
+    //        assertThrows(UnauthorizedException.class, filter::apply);
+  }
 }

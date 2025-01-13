@@ -1,7 +1,6 @@
 package no.unit.nva.search.service.resource.response;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.joda.time.DateTime;
 
 public record RecordMetadata(
