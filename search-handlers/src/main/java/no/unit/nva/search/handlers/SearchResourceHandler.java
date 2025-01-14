@@ -85,7 +85,7 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
     @Override
     protected void addAdditionalHeaders(Supplier<Map<String, String>> additionalHeaders) {
     super.addAdditionalHeaders(() -> Map.of(HttpHeaders.VARY, HttpHeaders.ACCEPT));
-    }
+  }
 
   private List<String> getIncludedFields(String version) {
     return V_2024_12_01_SIMPLER_MODEL.equals(version)

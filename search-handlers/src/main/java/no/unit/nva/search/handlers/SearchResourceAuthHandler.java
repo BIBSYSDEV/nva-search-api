@@ -5,7 +5,6 @@ import static no.unit.nva.search.model.enums.PublicationStatus.DELETED;
 import static no.unit.nva.search.model.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.model.enums.PublicationStatus.PUBLISHED_METADATA;
 import static no.unit.nva.search.model.enums.PublicationStatus.UNPUBLISHED;
-import static no.unit.nva.search.service.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
 import static no.unit.nva.search.service.resource.Constants.V_2024_12_01_SIMPLER_MODEL;
 import static no.unit.nva.search.service.resource.ResourceClient.defaultClient;
 import static no.unit.nva.search.service.resource.ResourceParameter.AGGREGATION;

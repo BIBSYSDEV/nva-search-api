@@ -36,7 +36,7 @@ class SearchResource20241201HandlerTest {
   public static final String SAMPLE_SEARCH_TERM = "searchTerm";
   public static final String SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON =
       "sample_opensearch_response.json";
-  private SearchResource20241201Handler handler;
+  private SearchResourceHandler handler;
   private Context contextMock;
   private ByteArrayOutputStream outputStream;
   private ResourceClient mockedSearchClient;
@@ -45,7 +45,7 @@ class SearchResource20241201HandlerTest {
   void setUp() {
 
     mockedSearchClient = mock(ResourceClient.class);
-    handler = new SearchResource20241201Handler(new Environment(), mockedSearchClient);
+    handler = new SearchResourceHandler(new Environment(), mockedSearchClient);
     contextMock = mock(Context.class);
     outputStream = new ByteArrayOutputStream();
   }

@@ -249,14 +249,6 @@ public class SimplifiedMutator implements JsonNodeMutator {
         source.path(ENTITY_DESCRIPTION).path(REFERENCE).path(PUBLICATION_CONTEXT).path(PUBLISHER));
   }
 
-  private String fromNodePublicationContextType(JsonNode source) {
-    return source
-        .path(ENTITY_DESCRIPTION)
-        .path(REFERENCE)
-        .path(PUBLICATION_CONTEXT)
-        .path(TYPE)
-        .textValue();
-  }
 
   private List<Contributor> fromNodeContributorPreviews(JsonNode source) {
     var contributors = new ArrayList<Contributor>();
