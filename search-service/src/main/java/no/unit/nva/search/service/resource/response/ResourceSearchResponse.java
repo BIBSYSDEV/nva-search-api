@@ -63,7 +63,7 @@ public record ResourceSearchResponse(
     }
 
     public Builder withIdentifier(JsonNode identifier) {
-      this.identifier = isNull(role) ? null : identifier.textValue();
+      this.identifier = isNull(identifier) ? null : identifier.textValue();
       return this;
     }
 
