@@ -1,14 +1,24 @@
 package no.unit.nva.search.handlers;
 
 import static no.unit.nva.search.model.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
+import static no.unit.nva.search.model.enums.PublicationStatus.PUBLISHED;
+import static no.unit.nva.search.model.enums.PublicationStatus.PUBLISHED_METADATA;
 import static no.unit.nva.search.service.resource.ResourceClient.defaultClient;
+import static no.unit.nva.search.service.resource.ResourceParameter.AGGREGATION;
+import static no.unit.nva.search.service.resource.ResourceParameter.FROM;
+import static no.unit.nva.search.service.resource.ResourceParameter.SIZE;
+import static no.unit.nva.search.service.resource.ResourceParameter.SORT;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 
 import no.unit.nva.search.model.ContentTypeUtils;
+import no.unit.nva.search.model.records.JsonNodeMutator;
+import no.unit.nva.search.service.resource.LegacyMutator;
 import no.unit.nva.search.service.resource.ResourceClient;
 
+import no.unit.nva.search.service.resource.ResourceSearchQuery;
+import no.unit.nva.search.service.resource.SimplifiedMutator;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -53,29 +63,41 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
         // Do nothing
     }
 
-    @Override
-    protected String processInput(Void input, RequestInfo requestInfo, Context context)
-            throws BadRequestException {
+  @Override
+  protected String processInput(Void input, RequestInfo requestInfo, Context context)
+      throws BadRequestException {
+    var version = ContentTypeUtils.extractVersionFromRequestInfo(requestInfo);
 
-        return switch (ContentTypeUtils.extractVersionFromRequestInfo(requestInfo)) {
-            case V_2024_12_01_SIMPLER_MODEL ->
-                    new SearchResource20241201Handler(environment, opensearchClient)
-                            .processInput(input, requestInfo, context);
-            case null, default ->
-                    new SearchResourceLegacyHandler(environment, opensearchClient)
-                            .processInput(input, requestInfo, context);
-        };
+    return ResourceSearchQuery.builder()
+        .fromRequestInfo(requestInfo)
+        .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
+        .withAlwaysIncludedFields(getIncludedFields(version))
+        .validate()
+        .build()
+        .withFilter()
+        .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+        .apply()
+        .doSearch(opensearchClient)
+        .withMutators(getMutator(version))
+        .toString();
     }
 
     @Override
-    @JacocoGenerated
     protected void addAdditionalHeaders(Supplier<Map<String, String>> additionalHeaders) {
-        super.addAdditionalHeaders(getMapSupplier());
+    super.addAdditionalHeaders(() -> Map.of(HttpHeaders.VARY, HttpHeaders.ACCEPT));
     }
 
-    protected Supplier<Map<String, String>> getMapSupplier() {
-        return () -> Map.of(HttpHeaders.VARY, HttpHeaders.ACCEPT);
+  private List<String> getIncludedFields(String version) {
+    return V_2024_12_01_SIMPLER_MODEL.equals(version)
+        ? SimplifiedMutator.getIncludedFields()
+        : LegacyMutator.getIncludedFields();
     }
+
+  private JsonNodeMutator getMutator(String version) {
+    return V_2024_12_01_SIMPLER_MODEL.equals(version)
+        ? new SimplifiedMutator()
+        : new LegacyMutator();
+  }
 
     @Override
     protected Integer getSuccessStatusCode(Void input, String output) {

@@ -45,7 +45,7 @@ public class ImportCandidateInitHandlerTest {
   void shouldNotThrowExceptionIfIndicesClientDoesNotThrowException() throws IOException {
     doNothing().when(indexingClient).createIndex(any(String.class));
     var response = initHandler.handleRequest(null, context);
-    assertEquals(response, SUCCESS);
+    assertEquals(SUCCESS, response);
   }
 
   @Test

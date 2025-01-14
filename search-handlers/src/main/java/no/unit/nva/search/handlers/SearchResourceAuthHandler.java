@@ -6,6 +6,7 @@ import static no.unit.nva.search.model.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.model.enums.PublicationStatus.PUBLISHED_METADATA;
 import static no.unit.nva.search.model.enums.PublicationStatus.UNPUBLISHED;
 import static no.unit.nva.search.service.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
+import static no.unit.nva.search.service.resource.Constants.V_2024_12_01_SIMPLER_MODEL;
 import static no.unit.nva.search.service.resource.ResourceClient.defaultClient;
 import static no.unit.nva.search.service.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.service.resource.ResourceParameter.FROM;
@@ -15,9 +16,13 @@ import static no.unit.nva.search.service.resource.ResourceParameter.SORT;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 
+import no.unit.nva.search.model.ContentTypeUtils;
+import no.unit.nva.search.model.records.JsonNodeMutator;
+import no.unit.nva.search.service.resource.LegacyMutator;
 import no.unit.nva.search.service.resource.ResourceClient;
 import no.unit.nva.search.service.resource.ResourceSearchQuery;
 
+import no.unit.nva.search.service.resource.SimplifiedMutator;
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
@@ -54,28 +59,30 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
         return DEFAULT_RESPONSE_MEDIA_TYPES;
     }
 
-    @Override
-    protected void validateRequest(Void unused, RequestInfo requestInfo, Context context)
-            throws ApiGatewayException {
+  @Override
+  protected void validateRequest(Void unused, RequestInfo requestInfo, Context context)
+      throws ApiGatewayException {
         validateAccessRight(requestInfo.getAccessRights());
     }
 
-    @Override
-    protected String processInput(Void input, RequestInfo requestInfo, Context context)
-            throws BadRequestException, UnauthorizedException {
+  @Override
+  protected String processInput(Void input, RequestInfo requestInfo, Context context)
+      throws BadRequestException, UnauthorizedException {
+    var version = ContentTypeUtils.extractVersionFromRequestInfo(requestInfo);
 
-        return ResourceSearchQuery.builder()
-                .fromRequestInfo(requestInfo)
-                .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
-                .withAlwaysExcludedFields(GLOBAL_EXCLUDED_FIELDS)
-                .validate()
-                .build()
-                .withFilter()
-                .requiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED, UNPUBLISHED)
-                .customerCurationInstitutions(requestInfo)
-                .apply()
-                .doSearch(opensearchClient)
-                .toString();
+    return ResourceSearchQuery.builder()
+        .fromRequestInfo(requestInfo)
+        .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
+        .withAlwaysExcludedFields(getExcludedFields(version))
+        .validate()
+        .build()
+        .withFilter()
+        .requiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED, UNPUBLISHED)
+        .customerCurationInstitutions(requestInfo)
+        .apply()
+        .doSearch(opensearchClient)
+        .withMutators(getMutator(version))
+        .toString();
     }
 
     @Override
@@ -84,13 +91,22 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
     }
 
     private void validateAccessRight(List<AccessRight> accessRights) throws UnauthorizedException {
-        if (accessRights.contains(AccessRight.MANAGE_RESOURCES_ALL)
-                || accessRights.contains(AccessRight.MANAGE_CUSTOMERS)
-        //                || accessRights.contains(AccessRight.MANAGE_OWN_AFFILIATION)
-        //                || accessRights.contains(AccessRight.MANAGE_RESOURCES_STANDARD)
-        ) {
+    if (accessRights.contains(AccessRight.MANAGE_RESOURCES_ALL)
+        || accessRights.contains(AccessRight.MANAGE_CUSTOMERS)) {
             return;
         }
         throw new UnauthorizedException();
     }
+
+  private List<String> getExcludedFields(String version) {
+    return V_2024_12_01_SIMPLER_MODEL.equals(version)
+        ? SimplifiedMutator.getExcludedFields()
+        : LegacyMutator.getExcludedFields();
+  }
+
+  private JsonNodeMutator getMutator(String version) {
+    return V_2024_12_01_SIMPLER_MODEL.equals(version)
+        ? new SimplifiedMutator()
+        : new LegacyMutator();
+  }
 }
