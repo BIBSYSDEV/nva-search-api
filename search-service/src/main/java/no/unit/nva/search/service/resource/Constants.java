@@ -69,8 +69,11 @@ import static no.unit.nva.search.model.constant.Words.TYPE;
 import static no.unit.nva.search.model.constant.Words.VALUE;
 import static no.unit.nva.search.model.constant.Words.YEAR;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 import nva.commons.core.JacocoGenerated;
-
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
@@ -79,11 +82,6 @@ import org.opensearch.search.aggregations.bucket.nested.ReverseNestedAggregation
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.opensearch.search.aggregations.metrics.CardinalityAggregationBuilder;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
-
 /**
  * Constants for the Resource Search.
  *
@@ -91,6 +89,16 @@ import java.util.stream.Stream;
  */
 public final class Constants {
 
+  public static final String DESCRIPTION = "description";
+  public static final String ADDITIONAL_IDENTIFIERS = "additionalIdentifiers";
+  public static final String ALTERNATIVE_TITLES = "alternativeTitles";
+  public static final String CONTRIBUTORS_PREVIEW = "contributorsPreview";
+  public static final String CONTRIBUTORS_COUNT = "contributorsCount";
+  public static final String MANIFESTATIONS = "manifestations";
+  public static final String SCOPUS_IDENTIFIER = "scopusIdentifier";
+  public static final String CRISTIN_IDENTIFIER = "cristinIdentifier";
+
+  public static final String V_2024_12_01_SIMPLER_MODEL = "2024-12-01";
     public static final String PERSON_PREFERENCES = "/person-preferences/";
     public static final String UNIQUE_PUBLICATIONS = "unique_publications";
     public static final String CRISTIN_ORGANIZATION_PATH = "/cristin/organization/";

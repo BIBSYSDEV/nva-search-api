@@ -1,12 +1,13 @@
 package no.unit.nva.search.service;
 
-import java.io.IOException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestPlan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 public class InjectedTestSettings implements TestExecutionListener {
 

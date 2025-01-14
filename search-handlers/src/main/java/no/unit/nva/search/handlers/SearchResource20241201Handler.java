@@ -29,47 +29,47 @@ import nva.commons.core.JacocoGenerated;
  */
 public class SearchResource20241201Handler extends ApiGatewayHandler<Void, String> {
 
-    private final ResourceClient opensearchClient;
+  private final ResourceClient opensearchClient;
 
-    @JacocoGenerated
-    public SearchResource20241201Handler() {
-        this(new Environment(), defaultClient());
-    }
+  @JacocoGenerated
+  public SearchResource20241201Handler() {
+    this(new Environment(), defaultClient());
+  }
 
-    public SearchResource20241201Handler(Environment environment, ResourceClient resourceClient) {
-        super(Void.class, environment);
-        this.opensearchClient = resourceClient;
-    }
+  public SearchResource20241201Handler(Environment environment, ResourceClient resourceClient) {
+    super(Void.class, environment);
+    this.opensearchClient = resourceClient;
+  }
 
-    @Override
-    protected List<MediaType> listSupportedMediaTypes() {
-        return DEFAULT_RESPONSE_MEDIA_TYPES;
-    }
+  @Override
+  protected List<MediaType> listSupportedMediaTypes() {
+    return DEFAULT_RESPONSE_MEDIA_TYPES;
+  }
 
-    @Override
-    protected void validateRequest(Void unused, RequestInfo requestInfo, Context context) {
-        // Do nothing
-    }
+  @Override
+  protected void validateRequest(Void unused, RequestInfo requestInfo, Context context) {
+    // Do nothing
+  }
 
-    @Override
-    protected String processInput(Void input, RequestInfo requestInfo, Context context)
-            throws BadRequestException {
-        return ResourceSearchQuery.builder()
-                .fromRequestInfo(requestInfo)
-                .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
-                .withAlwaysIncludedFields(SimplifiedResourceModelMutator.getIncludedFields())
-                .validate()
-                .build()
-                .withFilter()
-                .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
-                .apply()
-                .doSearch(opensearchClient)
-                .withMutators(new SimplifiedResourceModelMutator())
-                .toString();
-    }
+  @Override
+  protected String processInput(Void input, RequestInfo requestInfo, Context context)
+      throws BadRequestException {
+    return ResourceSearchQuery.builder()
+        .fromRequestInfo(requestInfo)
+        .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
+        .withAlwaysIncludedFields(SimplifiedResourceModelMutator.getIncludedFields())
+        .validate()
+        .build()
+        .withFilter()
+        .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+        .apply()
+        .doSearch(opensearchClient)
+        .withMutators(new SimplifiedResourceModelMutator())
+        .toString();
+  }
 
-    @Override
-    protected Integer getSuccessStatusCode(Void input, String output) {
-        return HttpURLConnection.HTTP_OK;
-    }
+  @Override
+  protected Integer getSuccessStatusCode(Void input, String output) {
+    return HttpURLConnection.HTTP_OK;
+  }
 }

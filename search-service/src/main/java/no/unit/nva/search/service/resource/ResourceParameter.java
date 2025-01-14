@@ -1,6 +1,5 @@
 package no.unit.nva.search.service.resource;
 
-import static java.util.Objects.nonNull;
 import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_CATEGORY_KEYS;
 import static no.unit.nva.search.model.constant.Patterns.PATTERN_IS_CATEGORY_NOT_KEYS;
@@ -91,6 +90,17 @@ import static no.unit.nva.search.service.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search.service.resource.Constants.SUBJECTS;
 import static no.unit.nva.search.service.resource.Constants.TOP_LEVEL_ORG_ID;
 
+import static java.util.Objects.nonNull;
+
+import no.unit.nva.search.model.enums.FieldOperator;
+import no.unit.nva.search.model.enums.ParameterKey;
+import no.unit.nva.search.model.enums.ParameterKind;
+import no.unit.nva.search.model.enums.ValueEncoding;
+
+import nva.commons.core.JacocoGenerated;
+
+import org.apache.commons.text.CaseUtils;
+
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Locale;
@@ -98,12 +108,6 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import no.unit.nva.search.model.enums.FieldOperator;
-import no.unit.nva.search.model.enums.ParameterKey;
-import no.unit.nva.search.model.enums.ParameterKind;
-import no.unit.nva.search.model.enums.ValueEncoding;
-import nva.commons.core.JacocoGenerated;
-import org.apache.commons.text.CaseUtils;
 
 /**
  * Enum for all the parameters that can be used to query the search index. This enum needs to

@@ -21,13 +21,12 @@ import java.nio.file.Path;
 import no.unit.nva.search.service.resource.response.ResourceSearchResponse;
 import org.junit.jupiter.api.Test;
 
-class SimplifiedResourceModelMutatorTest {
+class SimplifiedMutatorTest {
 
   @Test
   void shouldNotThrowOnEmptyBody() {
     assertDoesNotThrow(
-        () ->
-            new SimplifiedResourceModelMutator().transform(new ObjectMapper().createObjectNode()));
+        () -> new SimplifiedMutator().transform(new ObjectMapper().createObjectNode()));
   }
 
   @Test
@@ -35,7 +34,7 @@ class SimplifiedResourceModelMutatorTest {
     var id = randomString();
     var input = new ObjectMapper().createObjectNode();
     input.set("id", new TextNode(id));
-    var result = new SimplifiedResourceModelMutator().transform(input);
+    var result = new SimplifiedMutator().transform(input);
     assertTrue(result.isObject());
     ObjectNode resultAsObject = (ObjectNode) result;
     resultAsObject
@@ -58,7 +57,7 @@ class SimplifiedResourceModelMutatorTest {
 
     var contributorsInSampleJson = 1;
 
-    var mutated = new SimplifiedResourceModelMutator().transform(json);
+    var mutated = new SimplifiedMutator().transform(json);
     var asDto = objectMapper.treeToValue(mutated, ResourceSearchResponse.class);
     assertThat(asDto.contributorsPreview().size(), is(equalTo(contributorsInSampleJson)));
     assertThat(asDto.contributorsCount(), is(equalTo(contributorsInSampleJson)));
@@ -75,7 +74,7 @@ class SimplifiedResourceModelMutatorTest {
     entityDescription.set("alternativeTitles", alternativeTitles);
     input.set("entityDescription", entityDescription);
 
-    var mutated = new SimplifiedResourceModelMutator().transform(input);
+    var mutated = new SimplifiedMutator().transform(input);
     var asDto = objectMapper.treeToValue(mutated, ResourceSearchResponse.class);
     assertThat(asDto.alternativeTitles().size(), is(equalTo(1)));
     assertThat(asDto.alternativeTitles().get(language), is(equalTo(expectedAlternativeTitle)));
@@ -101,7 +100,7 @@ class SimplifiedResourceModelMutatorTest {
     entityDescription.set("reference", reference);
     input.set("entityDescription", entityDescription);
 
-    var mutated = new SimplifiedResourceModelMutator().transform(input);
+    var mutated = new SimplifiedMutator().transform(input);
     var asDto = objectMapper.treeToValue(mutated, ResourceSearchResponse.class);
 
     assertThat(asDto.otherIdentifiers().isbn(), hasItem(isbn1));
@@ -114,7 +113,7 @@ class SimplifiedResourceModelMutatorTest {
         new ObjectMapper()
             .readTree(stringFromResources(Path.of("resource_datasource.json")))
             .get(0);
-    var result = new SimplifiedResourceModelMutator().transform(json);
+    var result = new SimplifiedMutator().transform(json);
     assertNotNull(result);
   }
 }

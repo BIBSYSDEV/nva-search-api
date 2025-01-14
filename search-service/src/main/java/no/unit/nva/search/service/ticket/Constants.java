@@ -45,8 +45,6 @@ import org.opensearch.search.aggregations.AggregationBuilder;
  */
 public final class Constants {
 
-  private static final String FINALIZED_BY = "finalizedBy";
-
   static final String ASSIGNEE_ASTERISK = "assignee.*";
   static final String BY_USER_PENDING = "byUserPending";
   static final String CANNOT_SEARCH_AS_BOTH_ASSIGNEE_AND_OWNER_AT_THE_SAME_TIME =
@@ -62,7 +60,6 @@ public final class Constants {
   static final String USER_IS_NOT_ALLOWED_TO_SEARCH_FOR_TICKETS_NOT_OWNED_BY_THEMSELVES =
       "User is not allowed to search for tickets not owned by themselves";
   static final String USER_IS_REQUIRED = "User is required";
-
   static final Map<String, String> facetTicketsPaths =
       Map.of(
           BY_USER_PENDING, "/withAppliedFilter/byUserPending/type",
@@ -76,11 +73,6 @@ public final class Constants {
           jsonPath(ASSIGNEE, LAST_NAME, KEYWORD),
           jsonPath(ASSIGNEE, USERNAME, KEYWORD));
   static final String CUSTOMER_ID_KEYWORD = CUSTOMER_ID + DOT + KEYWORD;
-  static final String FINALIZED_BY_FIELDS =
-      multipleFields(
-          jsonPath(FINALIZED_BY, USERNAME, KEYWORD),
-          jsonPath(FINALIZED_BY, FIRST_NAME, KEYWORD),
-          jsonPath(FINALIZED_BY, LAST_NAME, KEYWORD));
   static final String ID_KEYWORD = ID + DOT + KEYWORD;
   static final String MESSAGE_FIELDS =
       jsonPath(MESSAGES, "text", KEYWORD) + PIPE + jsonPath(MESSAGES, STATUS, KEYWORD);
@@ -111,6 +103,12 @@ public final class Constants {
           jsonPath(VIEWED_BY, USERNAME, KEYWORD),
           jsonPath(VIEWED_BY, FIRST_NAME, KEYWORD),
           jsonPath(VIEWED_BY, LAST_NAME, KEYWORD));
+  private static final String FINALIZED_BY = "finalizedBy";
+  static final String FINALIZED_BY_FIELDS =
+      multipleFields(
+          jsonPath(FINALIZED_BY, USERNAME, KEYWORD),
+          jsonPath(FINALIZED_BY, FIRST_NAME, KEYWORD),
+          jsonPath(FINALIZED_BY, LAST_NAME, KEYWORD));
 
   @JacocoGenerated
   public Constants() {}

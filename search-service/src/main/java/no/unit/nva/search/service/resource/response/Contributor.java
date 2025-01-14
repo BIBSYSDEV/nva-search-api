@@ -1,5 +1,6 @@
 package no.unit.nva.search.service.resource.response;
 
+import static java.util.Objects.isNull;
 import static no.unit.nva.search.model.constant.Words.ID;
 import static no.unit.nva.search.model.constant.Words.NAME;
 import static no.unit.nva.search.model.constant.Words.ORC_ID;
@@ -25,11 +26,11 @@ public record Contributor(
       JsonNode correspondingAuthor,
       JsonNode sequence) {
     this(
-        new Identity(identity),
-        role.asText(),
-        affiliationsFromJsonNode(affiliations),
-        correspondingAuthor.asBoolean(),
-        sequence.asInt());
+        isNull(identity) ? null : new Identity(identity),
+        isNull(role) ? null : role.asText(),
+        isNull(affiliations) ? null : affiliationsFromJsonNode(affiliations),
+        !isNull(correspondingAuthor) && correspondingAuthor.asBoolean(),
+        isNull(role) ? 0 : sequence.asInt());
   }
 
   private static Set<Affiliation> affiliationsFromJsonNode(JsonNode affiliationNode) {
@@ -42,13 +43,14 @@ public record Contributor(
     return Collections.unmodifiableSet(affiliations);
   }
 
-  public record Identity(URI id, String name, URI orcId) implements WithUri {
+  public record Identity(URI id, String name, URI orcId) implements NodeUtils {
 
     public Identity(JsonNode identity) {
-      this(
-          WithUri.fromNode(identity.get(ID)),
-          identity.get(NAME).asText(),
-          WithUri.fromNode(identity.get(ORC_ID)));
+      this(identity.path(ID), identity.path(NAME), identity.path(ORC_ID));
+    }
+
+    public Identity(JsonNode id, JsonNode name, JsonNode orcId) {
+      this(NodeUtils.toUri(id), isNull(name) ? null : name.asText(), NodeUtils.toUri(orcId));
     }
   }
 
