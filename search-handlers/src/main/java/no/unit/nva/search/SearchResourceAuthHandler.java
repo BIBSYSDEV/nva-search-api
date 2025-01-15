@@ -1,10 +1,6 @@
 package no.unit.nva.search;
 
 import static no.unit.nva.constants.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
-import static no.unit.nva.search.common.enums.PublicationStatus.DELETED;
-import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
-import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
-import static no.unit.nva.search.common.enums.PublicationStatus.UNPUBLISHED;
 import static no.unit.nva.search.resource.Constants.V_2024_12_01_SIMPLER_MODEL;
 import static no.unit.nva.search.resource.ResourceClient.defaultClient;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
@@ -15,7 +11,6 @@ import static no.unit.nva.search.resource.ResourceParameter.SORT;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
-import java.util.Arrays;
 import java.util.List;
 import no.unit.nva.search.common.ContentTypeUtils;
 import no.unit.nva.search.common.records.JsonNodeMutator;
