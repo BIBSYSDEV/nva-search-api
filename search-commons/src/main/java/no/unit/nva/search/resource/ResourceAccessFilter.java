@@ -4,17 +4,22 @@ import static no.unit.nva.constants.Words.CURATING_INSTITUTIONS;
 import static no.unit.nva.constants.Words.DOT;
 import static no.unit.nva.constants.Words.KEYWORD;
 import static no.unit.nva.constants.Words.STATUS;
+import static no.unit.nva.search.common.enums.PublicationStatus.DELETED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
-import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
 import static no.unit.nva.search.common.enums.PublicationStatus.UNPUBLISHED;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTOR_ORG_KEYWORD;
 import static no.unit.nva.search.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search.resource.ResourceParameter.STATISTICS;
 import static nva.commons.apigateway.AccessRight.MANAGE_CUSTOMERS;
 import static nva.commons.apigateway.AccessRight.MANAGE_RESOURCES_ALL;
+import static nva.commons.apigateway.AccessRight.MANAGE_RESOURCES_STANDARD;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
 import no.unit.nva.search.common.enums.PublicationStatus;
 import no.unit.nva.search.common.records.FilterBuilder;
 import nva.commons.apigateway.RequestInfo;
@@ -41,6 +46,15 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
   private static final String EDITOR_FILTER = "EditorFilter";
   private static final String CURATOR_FILTER = "CuratorFilter";
 
+
+  private final static Map<PublicationStatus, Set<String>> STATUS_ACCESS_MAP = Map.of(
+      PUBLISHED,Set.of(MANAGE_CUSTOMERS, MANAGE_RESOURCES_STANDARD, MANAGE_RESOURCES_ALL),
+      DELETED, Set.of(MANAGE_CUSTOMERS, MANAGE_RESOURCES_STANDARD, MANAGE_RESOURCES_ALL),
+      UNPUBLISHED, Set.of(MANAGE_CUSTOMERS, MANAGE_RESOURCES_ALL)
+  };
+
+
+
   private final ResourceSearchQuery searchQuery;
 
   public ResourceAccessFilter(ResourceSearchQuery query) {
@@ -62,10 +76,7 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
 
   @Override
   public ResourceSearchQuery fromRequestInfo(RequestInfo requestInfo) throws UnauthorizedException {
-
-    return customerCurationInstitutions(requestInfo)
-        .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
-        .apply();
+    return requiredStatus(PUBLISHED).apply();
   }
 
   /**
@@ -82,10 +93,7 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
    */
   public ResourceAccessFilter requiredStatus(PublicationStatus... publicationStatus) {
     final var values =
-        Arrays.stream(publicationStatus)
-            .filter(this::isStatusAllowed)
-            .map(PublicationStatus::toString)
-            .toArray(String[]::new);
+        Arrays.stream(publicationStatus).map(PublicationStatus::toString).toArray(String[]::new);
     final var filter = new TermsQueryBuilder(STATUS_KEYWORD, values).queryName(STATUS);
     this.searchQuery.filters().add(filter);
     return this;
@@ -101,11 +109,18 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
    */
   public ResourceAccessFilter customerCurationInstitutions(RequestInfo requestInfo)
       throws UnauthorizedException {
-    if (isCurator() && isStatisticsQuery()) {
+    if (isAppAdmin() && isStatisticsQuery()) {
       return this;
     }
+
     final var filter =
         QueryBuilders.boolQuery().minimumShouldMatch(1).queryName(EDITOR_CURATOR_FILTER);
+    final var statuses =
+        Stream.of(PUBLISHED, DELETED, UNPUBLISHED)
+            .filter(this::isStatusAllowed)
+            .toArray(PublicationStatus[]::new);
+    requiredStatus(statuses);
+
     var curationInstitutionId = getCurationInstitutionId(requestInfo).toString();
     if (isCurator()) {
       filter.should(getCuratingInstitutionAccessFilter(curationInstitutionId));
@@ -135,15 +150,22 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
    * @return true if allowed
    */
   private boolean isStatusAllowed(PublicationStatus publicationStatus) {
-    return isEditor() || publicationStatus != UNPUBLISHED;
+    return isAppAdmin()
+        || (isEditor() && publicationStatus == DELETED)
+        || publicationStatus == PUBLISHED
+        || publicationStatus == UNPUBLISHED;
   }
 
   private boolean isStatisticsQuery() {
     return searchQuery.parameters().isPresent(STATISTICS);
   }
 
-  private boolean isCurator() {
+  private boolean isAppAdmin() {
     return searchQuery.hasAccessRights(MANAGE_CUSTOMERS);
+  }
+
+  private boolean isCurator() {
+    return searchQuery.hasAccessRights(MANAGE_RESOURCES_STANDARD);
   }
 
   private boolean isEditor() {

@@ -1276,7 +1276,7 @@
       "owner": "ngi@7452.0.0.0",
       "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
-    "status": "PUBLISHED_METADATA",
+    "status": "UNPUBLISHED",
     "joinField": {
       "name": "hasParts"
     }

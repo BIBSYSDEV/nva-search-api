@@ -12,6 +12,7 @@ import static no.unit.nva.search.common.ContentTypeUtils.extractContentTypeFromR
 import static no.unit.nva.search.common.constant.Functions.decodeUTF;
 import static no.unit.nva.search.common.constant.Functions.mergeWithColonOrComma;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
+import static nva.commons.core.attempt.Try.attempt;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -180,7 +181,9 @@ public abstract class ParameterValidator<
     var contentType = extractContentTypeFromRequestInfo(requestInfo);
     query.setMediaType(isNull(contentType) ? null : contentType.getMimeType());
     var uri = URI.create(HTTPS + requestInfo.getDomainName() + requestInfo.getPath());
-    query.setAccessRights(requestInfo.getAccessRights());
+    if (attempt(requestInfo::getAuthHeader).isSuccess()) {
+      query.setAccessRights(requestInfo.getAccessRights());
+    }
     query.setNvaSearchApiUri(uri);
     return fromMultiValueParameters(requestInfo.getMultiValueQueryStringParameters());
   }

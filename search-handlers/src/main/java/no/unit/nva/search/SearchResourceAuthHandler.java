@@ -15,6 +15,7 @@ import static no.unit.nva.search.resource.ResourceParameter.SORT;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
+import java.util.Arrays;
 import java.util.List;
 import no.unit.nva.search.common.ContentTypeUtils;
 import no.unit.nva.search.common.records.JsonNodeMutator;
@@ -73,7 +74,6 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
         .validate()
         .build()
         .withFilter()
-        .requiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED, UNPUBLISHED)
         .customerCurationInstitutions(requestInfo)
         .apply()
         .doSearch(opensearchClient)
@@ -86,9 +86,18 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
     return HttpURLConnection.HTTP_OK;
   }
 
+  /**
+   * Validates that the user has the required access rights to search resources.
+   * MANAGE_RESOURCES_ALL (editor) MANAGE_RESOURCES_STANDARD (any curator) MANAGE_CUSTOMERS (app
+   * admin)
+   *
+   * @param accessRights the access rights of the user.
+   * @throws UnauthorizedException if the user does not have the required access rights.
+   */
   private void validateAccessRight(List<AccessRight> accessRights) throws UnauthorizedException {
     if (accessRights.contains(AccessRight.MANAGE_RESOURCES_ALL)
-        || accessRights.contains(AccessRight.MANAGE_CUSTOMERS)) {
+        || accessRights.contains(AccessRight.MANAGE_CUSTOMERS)
+        || accessRights.contains(AccessRight.MANAGE_RESOURCES_STANDARD)) {
       return;
     }
     throw new UnauthorizedException();

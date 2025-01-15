@@ -41,13 +41,22 @@ import static no.unit.nva.search.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
 import static no.unit.nva.search.resource.Constants.MANIFESTATIONS;
 import static no.unit.nva.search.resource.Constants.SCOPUS_IDENTIFIER;
 import static no.unit.nva.search.resource.Constants.SEQUENCE;
-
 import static nva.commons.core.attempt.Try.attempt;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import no.unit.nva.search.common.records.JsonNodeMutator;
 import no.unit.nva.search.resource.response.Affiliation;
 import no.unit.nva.search.resource.response.Contributor;
@@ -60,21 +69,8 @@ import no.unit.nva.search.resource.response.RecordMetadata;
 import no.unit.nva.search.resource.response.ResourceSearchResponse;
 import no.unit.nva.search.resource.response.ResourceSearchResponse.Builder;
 import no.unit.nva.search.resource.response.Series;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class SimplifiedMutator implements JsonNodeMutator {
 
