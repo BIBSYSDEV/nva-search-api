@@ -82,8 +82,6 @@ public class SimplifiedMutator implements JsonNodeMutator {
         .setInclude(
             JsonInclude.Value.construct(
                 JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL));
-
-    //        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
   }
 
   public static String path(String... path) {
