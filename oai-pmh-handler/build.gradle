@@ -1,0 +1,23 @@
+plugins {
+    id 'nva.search.service.java-conventions'
+}
+
+dependencies {
+    implementation project(':oai-pmh')
+
+    implementation libs.aws.lambda.java.core
+    implementation libs.bundles.logging
+    implementation libs.nva.core
+    implementation libs.nva.apigateway
+    implementation libs.guava
+    implementation libs.jakarta.xml.bind.api
+    implementation libs.glassfish.jaxb.runtime
+    implementation libs.bundles.jackson
+
+    testImplementation libs.xml.unit.core
+    testImplementation libs.xml.unit.matchers
+}
+
+test {
+    useJUnitPlatform()
+}
