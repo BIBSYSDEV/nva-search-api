@@ -1,10 +1,6 @@
 package no.unit.nva.search;
 
 import static no.unit.nva.constants.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
-import static no.unit.nva.search.common.enums.PublicationStatus.DELETED;
-import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
-import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
-import static no.unit.nva.search.common.enums.PublicationStatus.UNPUBLISHED;
 import static no.unit.nva.search.resource.Constants.V_2024_12_01_SIMPLER_MODEL;
 import static no.unit.nva.search.resource.ResourceClient.defaultClient;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
@@ -73,7 +69,6 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
         .validate()
         .build()
         .withFilter()
-        .requiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED, UNPUBLISHED)
         .customerCurationInstitutions(requestInfo)
         .apply()
         .doSearch(opensearchClient)
@@ -86,9 +81,18 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
     return HttpURLConnection.HTTP_OK;
   }
 
+  /**
+   * Validates that the user has the required access rights to search resources.
+   * MANAGE_RESOURCES_ALL (editor) MANAGE_RESOURCES_STANDARD (any curator) MANAGE_CUSTOMERS (app
+   * admin)
+   *
+   * @param accessRights the access rights of the user.
+   * @throws UnauthorizedException if the user does not have the required access rights.
+   */
   private void validateAccessRight(List<AccessRight> accessRights) throws UnauthorizedException {
     if (accessRights.contains(AccessRight.MANAGE_RESOURCES_ALL)
-        || accessRights.contains(AccessRight.MANAGE_CUSTOMERS)) {
+        || accessRights.contains(AccessRight.MANAGE_CUSTOMERS)
+        || accessRights.contains(AccessRight.MANAGE_RESOURCES_STANDARD)) {
       return;
     }
     throw new UnauthorizedException();

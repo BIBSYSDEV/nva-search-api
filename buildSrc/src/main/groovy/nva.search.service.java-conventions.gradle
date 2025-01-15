@@ -29,6 +29,13 @@ sourceSets {
     }
 }
 
+pmd {
+    pmdMain {
+        excludes = [
+                '**/generated/.*'
+        ]
+    }
+}
 
 tasks.named('jacocoTestCoverageVerification', JacocoCoverageVerification) {
     violationRules {

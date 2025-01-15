@@ -58,6 +58,7 @@ import static no.unit.nva.search.resource.ResourceParameter.UNIT;
 import static nva.commons.apigateway.AccessRight.MANAGE_CUSTOMERS;
 import static nva.commons.apigateway.AccessRight.MANAGE_DEGREE;
 import static nva.commons.apigateway.AccessRight.MANAGE_RESOURCES_ALL;
+import static nva.commons.apigateway.AccessRight.MANAGE_RESOURCES_STANDARD;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
@@ -222,9 +223,9 @@ class ResourceClientTest {
 
   static Stream<Arguments> roleProvider() {
     return Stream.of(
-        Arguments.of(5, List.of(MANAGE_RESOURCES_ALL)),
-        Arguments.of(22, List.of(MANAGE_CUSTOMERS)),
-        Arguments.of(22, List.of(MANAGE_CUSTOMERS, MANAGE_RESOURCES_ALL)));
+        Arguments.of(5, List.of(MANAGE_RESOURCES_STANDARD)),
+        Arguments.of(22, List.of(MANAGE_RESOURCES_ALL)),
+        Arguments.of(22, List.of(MANAGE_RESOURCES_ALL, MANAGE_RESOURCES_STANDARD)));
   }
 
   static Stream<URI> uriSortingProvider() {
@@ -587,7 +588,7 @@ class ResourceClientTest {
   @Test
   void withOrganizationDoWork() throws BadRequestException, UnauthorizedException {
     var requestInfo = mock(RequestInfo.class);
-    when(requestInfo.getAccessRights()).thenReturn(List.of(MANAGE_CUSTOMERS));
+    when(requestInfo.getAccessRights()).thenReturn(List.of(MANAGE_RESOURCES_ALL));
     when(requestInfo.getTopLevelOrgCristinId())
         .thenReturn(
             Optional.of(
