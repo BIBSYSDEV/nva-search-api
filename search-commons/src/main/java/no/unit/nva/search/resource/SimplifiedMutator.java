@@ -64,11 +64,10 @@ import no.unit.nva.search.resource.response.Identity;
 import no.unit.nva.search.resource.response.NodeUtils;
 import no.unit.nva.search.resource.response.OtherIdentifiers;
 import no.unit.nva.search.resource.response.PublicationDate;
-import no.unit.nva.search.resource.response.Publisher;
 import no.unit.nva.search.resource.response.PublishingDetails;
 import no.unit.nva.search.resource.response.RecordMetadata;
 import no.unit.nva.search.resource.response.ResourceSearchResponse;
-import no.unit.nva.search.resource.response.Series;
+import no.unit.nva.search.resource.response.ScientificRating;
 
 public class SimplifiedMutator implements JsonNodeMutator {
 
@@ -242,42 +241,20 @@ public class SimplifiedMutator implements JsonNodeMutator {
   }
 
   private PublishingDetails fromNodePublishingDetails(JsonNode source) {
+    var publicationContext =
+        source.path(ENTITY_DESCRIPTION).path(REFERENCE).path(PUBLICATION_CONTEXT);
+
     return new PublishingDetails(
-        NodeUtils.toUri(
-            source.path(ENTITY_DESCRIPTION).path(REFERENCE).path(PUBLICATION_CONTEXT).path(ID)),
-        fromNodePublicationContextType(source),
-        fromNodeSeries(source),
-        source
-            .path(ENTITY_DESCRIPTION)
-            .path(REFERENCE)
-            .path(PUBLICATION_CONTEXT)
-            .path(NAME)
-            .textValue(),
+        NodeUtils.toUri(publicationContext.path(ID)),
+        publicationContext.path(TYPE).textValue(),
+        publicationContext.path(NAME).textValue(),
         NodeUtils.toUri(source.path(ENTITY_DESCRIPTION).path(REFERENCE).path(DOI)),
-        fromNodePublisher(source));
+        fromNodeRating(publicationContext.path(SERIES)),
+        fromNodeRating(publicationContext.path(PUBLISHER)));
   }
 
-  private String fromNodePublicationContextType(JsonNode source) {
-    return source
-        .path(ENTITY_DESCRIPTION)
-        .path(REFERENCE)
-        .path(PUBLICATION_CONTEXT)
-        .path(TYPE)
-        .textValue();
-  }
-
-  private Series fromNodeSeries(JsonNode source) {
-    var series =
-        source.path(ENTITY_DESCRIPTION).path(REFERENCE).path(PUBLICATION_CONTEXT).path(SERIES);
-
-    return series.isMissingNode() ? null : new Series(series);
-  }
-
-  private Publisher fromNodePublisher(JsonNode source) {
-    var publisher =
-        source.path(ENTITY_DESCRIPTION).path(REFERENCE).path(PUBLICATION_CONTEXT).path(PUBLISHER);
-
-    return publisher.isMissingNode() ? null : new Publisher(publisher);
+  private ScientificRating fromNodeRating(JsonNode node) {
+    return node.isMissingNode() ? null : new ScientificRating(node);
   }
 
   private List<Contributor> fromNodeContributorPreviews(JsonNode source) {

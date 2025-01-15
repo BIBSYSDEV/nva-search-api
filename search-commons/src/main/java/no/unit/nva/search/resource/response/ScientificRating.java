@@ -7,8 +7,8 @@ import static no.unit.nva.constants.Words.SCIENTIFIC_VALUE;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URI;
 
-public record Series(URI id, String name, String scientificValue) {
-  public Series(JsonNode series) {
+public record ScientificRating(URI id, String name, String scientificValue) {
+  public ScientificRating(JsonNode series) {
     this(
         NodeUtils.toUri(series.path(ID)),
         series.path(NAME).textValue(),
