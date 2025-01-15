@@ -3,7 +3,9 @@ plugins {
 }
 
 xjc {
-    defaultPackage.set('org.openarchives.oai.v2.generated')
+    useJakarta = true
+    markGenerated = true
+    defaultPackage.set('org.openarchives.oai.pmh.v2')
 }
 
 // effectively skip all tests and verifications for this module
