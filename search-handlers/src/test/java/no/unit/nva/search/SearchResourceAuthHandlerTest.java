@@ -124,6 +124,7 @@ class SearchResourceAuthHandlerTest {
         .withCurrentCustomer(currentCustomer)
         .withTopLevelCristinOrgId(topLevelCristinOrgId)
         .withAccessRights(currentCustomer, accessRight)
+        .withHeaders(Map.of("Authorization", "Bearer " + randomString()))
         .build();
   }
 

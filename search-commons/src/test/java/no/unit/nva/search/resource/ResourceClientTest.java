@@ -316,6 +316,7 @@ class ResourceClientTest {
     when(mockedRequestInfoLocal.getPersonAffiliation())
         .thenReturn(URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0"));
     when(mockedRequestInfoLocal.getAccessRights()).thenReturn(accessRights);
+    when(mockedRequestInfoLocal.getHeaders()).thenReturn(Map.of("Authorization", "Bearer token"));
 
     var result =
         ResourceSearchQuery.builder()
@@ -543,6 +544,7 @@ class ResourceClientTest {
     when(requestInfo.getAccessRights()).thenReturn(accessRights);
     when(requestInfo.getPersonAffiliation())
         .thenReturn(URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"));
+    when(requestInfo.getHeaders()).thenReturn(Map.of("Authorization", "Bearer token"));
 
     var response =
         ResourceSearchQuery.builder()
@@ -592,6 +594,8 @@ class ResourceClientTest {
         .thenReturn(
             Optional.of(
                 URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0")));
+    when(requestInfo.getHeaders()).thenReturn(Map.of("Authorization", "Bearer token"));
+
     var response =
         ResourceSearchQuery.builder()
             .fromRequestInfo(requestInfo)
