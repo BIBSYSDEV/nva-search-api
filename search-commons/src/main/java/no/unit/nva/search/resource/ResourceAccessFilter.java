@@ -16,8 +16,6 @@ import static nva.commons.apigateway.AccessRight.MANAGE_RESOURCES_STANDARD;
 
 import java.net.URI;
 import java.util.Arrays;
-import java.util.Map;
-import java.util.Set;
 import java.util.stream.Stream;
 import no.unit.nva.search.common.enums.PublicationStatus;
 import no.unit.nva.search.common.records.FilterBuilder;
@@ -44,14 +42,6 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
   private static final String EDITOR_CURATOR_FILTER = "EditorCuratorFilter";
   private static final String EDITOR_FILTER = "EditorFilter";
   private static final String CURATOR_FILTER = "CuratorFilter";
-
-
-  private final static Map<PublicationStatus, Set<String>> STATUS_ACCESS_MAP = Map.of(
-      PUBLISHED,Set.of(MANAGE_CUSTOMERS, MANAGE_RESOURCES_STANDARD, MANAGE_RESOURCES_ALL),
-      DELETED, Set.of(MANAGE_CUSTOMERS, MANAGE_RESOURCES_STANDARD, MANAGE_RESOURCES_ALL),
-      UNPUBLISHED, Set.of(MANAGE_CUSTOMERS, MANAGE_RESOURCES_ALL)
-  };
-
 
 
   private final ResourceSearchQuery searchQuery;
