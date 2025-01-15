@@ -1,7 +1,7 @@
 package no.unit.nva.search.resource;
 
-import static no.unit.nva.constants.Words.ID;
 import static no.unit.nva.constants.Words.ENTITY_DESCRIPTION;
+import static no.unit.nva.constants.Words.ID;
 import static no.unit.nva.constants.Words.ISBN_LIST;
 import static no.unit.nva.constants.Words.PUBLICATION_INSTANCE;
 import static no.unit.nva.constants.Words.REFERENCE;

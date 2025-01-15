@@ -1,6 +1,6 @@
 package no.unit.nva.search.resource.response;
 
-import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static no.unit.nva.constants.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.constants.Words.PUBLICATION_INSTANCE;
 import static no.unit.nva.constants.Words.REFERENCE;
@@ -63,7 +63,9 @@ public record ResourceSearchResponse(
     }
 
     public Builder withIdentifier(JsonNode identifier) {
-      this.identifier = isNull(identifier) ? null : identifier.textValue();
+      if (nonNull(identifier)) {
+        this.identifier = identifier.textValue();
+      }
       return this;
     }
 
