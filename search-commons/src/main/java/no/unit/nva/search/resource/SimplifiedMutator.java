@@ -4,7 +4,6 @@ import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 import static no.unit.nva.constants.Words.ABSTRACT;
 import static no.unit.nva.constants.Words.AFFILIATIONS;
 import static no.unit.nva.constants.Words.CREATED_DATE;
-import static no.unit.nva.constants.Words.DAY;
 import static no.unit.nva.constants.Words.DOI;
 import static no.unit.nva.constants.Words.DOT;
 import static no.unit.nva.constants.Words.ENTITY_DESCRIPTION;
@@ -14,7 +13,6 @@ import static no.unit.nva.constants.Words.IDENTITY;
 import static no.unit.nva.constants.Words.ISBN_LIST;
 import static no.unit.nva.constants.Words.MAIN_TITLE;
 import static no.unit.nva.constants.Words.MODIFIED_DATE;
-import static no.unit.nva.constants.Words.MONTH;
 import static no.unit.nva.constants.Words.NAME;
 import static no.unit.nva.constants.Words.ONLINE_ISSN;
 import static no.unit.nva.constants.Words.ORC_ID;
@@ -23,14 +21,12 @@ import static no.unit.nva.constants.Words.PUBLICATION_CONTEXT;
 import static no.unit.nva.constants.Words.PUBLICATION_DATE;
 import static no.unit.nva.constants.Words.PUBLICATION_INSTANCE;
 import static no.unit.nva.constants.Words.PUBLISHED_DATE;
-import static no.unit.nva.constants.Words.PUBLISHER;
 import static no.unit.nva.constants.Words.REFERENCE;
 import static no.unit.nva.constants.Words.ROLE;
 import static no.unit.nva.constants.Words.SERIES;
 import static no.unit.nva.constants.Words.STATUS;
 import static no.unit.nva.constants.Words.TYPE;
 import static no.unit.nva.constants.Words.VALUE;
-import static no.unit.nva.constants.Words.YEAR;
 import static no.unit.nva.search.resource.Constants.ADDITIONAL_IDENTIFIERS;
 import static no.unit.nva.search.resource.Constants.ALTERNATIVE_TITLES;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_COUNT;
@@ -47,6 +43,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,17 +55,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search.common.records.JsonNodeMutator;
-import no.unit.nva.search.resource.response.Affiliation;
 import no.unit.nva.search.resource.response.Contributor;
-import no.unit.nva.search.resource.response.Identity;
 import no.unit.nva.search.resource.response.NodeUtils;
-import no.unit.nva.search.resource.response.OtherIdentifiers;
 import no.unit.nva.search.resource.response.PublicationDate;
-import no.unit.nva.search.resource.response.Publisher;
 import no.unit.nva.search.resource.response.PublishingDetails;
 import no.unit.nva.search.resource.response.RecordMetadata;
 import no.unit.nva.search.resource.response.ResourceSearchResponse;
-import no.unit.nva.search.resource.response.Series;
+import no.unit.nva.search.resource.response.ResourceSearchResponse.OtherIdentifiers;
 
 public class SimplifiedMutator implements JsonNodeMutator {
 
@@ -78,12 +71,11 @@ public class SimplifiedMutator implements JsonNodeMutator {
 
   public SimplifiedMutator() {
     objectMapper
+        .registerModule(new JodaModule())
         .configOverride(Map.class)
         .setInclude(
             JsonInclude.Value.construct(
                 JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL));
-
-    //        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
   }
 
   public static String path(String... path) {
@@ -130,10 +122,8 @@ public class SimplifiedMutator implements JsonNodeMutator {
   }
 
   private PublicationDate fromNodePublicationDate(JsonNode source) {
-    return new PublicationDate(
-        source.path(ENTITY_DESCRIPTION).path(PUBLICATION_DATE).path(YEAR).textValue(),
-        source.path(ENTITY_DESCRIPTION).path(PUBLICATION_DATE).path(MONTH).textValue(),
-        source.path(ENTITY_DESCRIPTION).path(PUBLICATION_DATE).path(DAY).textValue());
+    var path = source.path(ENTITY_DESCRIPTION).path(PUBLICATION_DATE);
+    return path.isMissingNode() ? null : new PublicationDate(path);
   }
 
   private ResourceSearchResponse transformToDto(JsonNode source) {
@@ -167,12 +157,13 @@ public class SimplifiedMutator implements JsonNodeMutator {
     var isbnsInManifestations = isbnsInManifestations(source);
     var isbnsInPublicationContext = extractIsbnsInPublicationContext(source);
     var isbns =
-        Stream.concat(isbnsInPublicationContext.stream(), isbnsInManifestations.stream()).toList();
+        Stream.concat(isbnsInPublicationContext.stream(), isbnsInManifestations.stream())
+            .collect(Collectors.toUnmodifiableSet());
     var issns = fromNodeIssns(source);
 
-    var handleIdentifiers = new ArrayList<String>();
-    var cristinIdentifiers = new ArrayList<String>();
-    var scopusIdentifiers = new ArrayList<String>();
+    var handleIdentifiers = new HashSet<String>();
+    var cristinIdentifiers = new HashSet<String>();
+    var scopusIdentifiers = new HashSet<String>();
     source
         .path(ADDITIONAL_IDENTIFIERS)
         .iterator()
@@ -187,11 +178,7 @@ public class SimplifiedMutator implements JsonNodeMutator {
             });
 
     return new OtherIdentifiers(
-        new HashSet<>(scopusIdentifiers),
-        new HashSet<>(cristinIdentifiers),
-        new HashSet<>(handleIdentifiers),
-        new HashSet<>(issns),
-        new HashSet<>(isbns));
+        scopusIdentifiers, cristinIdentifiers, handleIdentifiers, issns, isbns);
   }
 
   private List<String> isbnsInManifestations(JsonNode source) {
@@ -216,12 +203,12 @@ public class SimplifiedMutator implements JsonNodeMutator {
     return isbnsInManifestations;
   }
 
-  private List<String> extractIsbnsInPublicationContext(JsonNode source) {
+  private Set<String> extractIsbnsInPublicationContext(JsonNode source) {
     var isbnsInSourceNode =
         source.path(ENTITY_DESCRIPTION).path(REFERENCE).path(PUBLICATION_CONTEXT).path(ISBN_LIST);
     return isbnsInSourceNode.isMissingNode()
-        ? Collections.emptyList()
-        : nodeAsListOf(isbnsInSourceNode);
+        ? Collections.emptySet()
+        : nodeAsListOf(isbnsInSourceNode).stream().collect(Collectors.toUnmodifiableSet());
   }
 
   private Set<String> fromNodeIssns(JsonNode source) {
@@ -237,49 +224,14 @@ public class SimplifiedMutator implements JsonNodeMutator {
 
   private RecordMetadata fromNodeRecordMetadata(JsonNode source) {
     return new RecordMetadata(
-        source.path(STATUS).textValue(),
-        source.path(CREATED_DATE).textValue(),
-        source.path(MODIFIED_DATE).textValue(),
-        source.path(PUBLISHED_DATE).textValue());
+        source.path(STATUS),
+        source.path(CREATED_DATE),
+        source.path(MODIFIED_DATE),
+        source.path(PUBLISHED_DATE));
   }
 
   private PublishingDetails fromNodePublishingDetails(JsonNode source) {
-    return new PublishingDetails(
-        NodeUtils.toUri(
-            source.path(ENTITY_DESCRIPTION).path(REFERENCE).path(PUBLICATION_CONTEXT).path(ID)),
-        fromNodePublicationContextType(source),
-        fromNodeSeries(source),
-        source
-            .path(ENTITY_DESCRIPTION)
-            .path(REFERENCE)
-            .path(PUBLICATION_CONTEXT)
-            .path(NAME)
-            .textValue(),
-        NodeUtils.toUri(source.path(ENTITY_DESCRIPTION).path(REFERENCE).path(DOI)),
-        fromNodePublisher(source));
-  }
-
-  private String fromNodePublicationContextType(JsonNode source) {
-    return source
-        .path(ENTITY_DESCRIPTION)
-        .path(REFERENCE)
-        .path(PUBLICATION_CONTEXT)
-        .path(TYPE)
-        .textValue();
-  }
-
-  private Series fromNodeSeries(JsonNode source) {
-    var series =
-        source.path(ENTITY_DESCRIPTION).path(REFERENCE).path(PUBLICATION_CONTEXT).path(SERIES);
-
-    return series.isMissingNode() ? null : new Series(series);
-  }
-
-  private Publisher fromNodePublisher(JsonNode source) {
-    var publisher =
-        source.path(ENTITY_DESCRIPTION).path(REFERENCE).path(PUBLICATION_CONTEXT).path(PUBLISHER);
-
-    return publisher.isMissingNode() ? null : new Publisher(publisher);
+    return new PublishingDetails(source.path(ENTITY_DESCRIPTION).path(REFERENCE));
   }
 
   private List<Contributor> fromNodeContributorPreviews(JsonNode source) {
@@ -288,24 +240,7 @@ public class SimplifiedMutator implements JsonNodeMutator {
         .path(ENTITY_DESCRIPTION)
         .path(CONTRIBUTORS_PREVIEW)
         .iterator()
-        .forEachRemaining(
-            contributorNode -> {
-              var affiliationNode = contributorNode.path(AFFILIATIONS);
-              var affiliations = new HashSet<Affiliation>();
-              if (!affiliationNode.isMissingNode()) {
-                affiliationNode
-                    .iterator()
-                    .forEachRemaining(node -> affiliations.add(new Affiliation(node)));
-              }
-
-              contributors.add(
-                  new Contributor(
-                      affiliations,
-                      contributorNode.path(CORRESPONDING_AUTHOR).asBoolean(),
-                      new Identity(contributorNode.path(IDENTITY)),
-                      contributorNode.path(ROLE).path(TYPE).textValue(),
-                      contributorNode.path(SEQUENCE).asInt()));
-            });
+        .forEachRemaining(node -> contributors.add(new Contributor(node)));
     return contributors;
   }
 
