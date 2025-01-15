@@ -173,7 +173,9 @@ public class SimplifiedMutator implements JsonNodeMutator {
                 case HANDLE_IDENTIFIER -> handleIdentifiers.add(i.path(VALUE).textValue());
                 case SCOPUS_IDENTIFIER -> scopusIdentifiers.add(i.path(VALUE).textValue());
                 case CRISTIN_IDENTIFIER -> cristinIdentifiers.add(i.path(VALUE).textValue());
-                default -> {}
+                default -> {
+                  /* Do nothing */
+                }
               }
             });
 
