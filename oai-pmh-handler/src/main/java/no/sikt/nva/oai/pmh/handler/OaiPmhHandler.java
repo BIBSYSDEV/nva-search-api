@@ -19,7 +19,7 @@ public class OaiPmhHandler extends ApiGatewayHandler<Void, String> {
 
   @JacocoGenerated
   public OaiPmhHandler() throws JAXBException {
-    super(Void.class);
+    super(Void.class, new Environment());
 
     var context = JAXBContext.newInstance(OAIPMHtype.class);
     var marshaller = context.createMarshaller();
