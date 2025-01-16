@@ -25,10 +25,6 @@ Globals:
       AllowOrigin: "'*'"
 
 Parameters:
-  AwsRegion:
-    Type: String
-    Description: AWS Region
-    Default: ${AWS::Region}
   CognitoUri:
     Type: AWS::SSM::Parameter::Value<String>
     Description: Reference to Cognito Auth URI
@@ -398,8 +394,6 @@ Resources:
   # ------------------------------------------------------
 
   TriggerExecutionRole:
-    DependsOn:
-      - ResourcesIndexerDLQ
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -458,7 +452,6 @@ Resources:
   IndexResources:
     DependsOn:
       - ResourcesIndexerDLQ
-      - TriggerExecutionRole
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: indexing-handlers
@@ -499,7 +492,6 @@ Resources:
   IndexImportCandidates:
     DependsOn:
       - ResourcesIndexerDLQ
-      - TriggerExecutionRole
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: indexing-handlers
@@ -526,7 +518,6 @@ Resources:
   DeleteResources:
     DependsOn:
       - ResourcesIndexerDLQ
-      - TriggerExecutionRole
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: indexing-handlers
@@ -550,7 +541,6 @@ Resources:
   DeleteImportCandidates:
     DependsOn:
       - ResourcesIndexerDLQ
-      - TriggerExecutionRole
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: indexing-handlers
@@ -742,3 +732,70 @@ Resources:
       AlarmActions:
         - !Ref SlackSnsArn
 
+  #============================ OAI-PMH ============================================================
+
+  PublicationOaiPmhApiAccessLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 90
+
+  PublicationOaiPmhApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      AccessLogSetting:
+        DestinationArn: !GetAtt PublicationOaiPmhApiAccessLogGroup.Arn
+        Format: '{ "apiId": "$context.apiId", "requestId": "$context.requestId", "requestTime": "$context.requestTime", "requestTimeEpoch": "$context.requestTimeEpoch", "httpMethod": "$context.httpMethod", "path": "$context.path", "status": "$context.status",  "error.message": "$context.error.message" }'
+      StageName: Prod
+      EndpointConfiguration:
+        Type: REGIONAL
+      DefinitionBody:
+        'Fn::Transform':
+          Name: 'AWS::Include'
+          Parameters:
+            Location: ./docs/oai-pmh-openapi.yaml
+
+  BasicLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: [ lambda.amazonaws.com ]
+            Action: [ 'sts:AssumeRole' ]
+      Policies:
+        - PolicyName: writeLog
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:*:*'
+
+  PublicationOaiPmhFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Lambda for handling OAI-PMH requests
+      CodeUri: oai-pmh-handler
+      Handler: no.sikt.nva.oai.pmh.handler.OaiPmhHandler::handleRequest
+      Role: !GetAtt BasicLambdaRole.Arn
+      Environment:
+        Variables:
+          ALLOWED_ORIGIN: !Ref AllowedOrigins
+      Events:
+        OaiPmhGetRequest:
+          Type: Api
+          Properties:
+            Path: /
+            Method: get
+            RestApiId: !Ref PublicationOaiPmhApi
+        OaiPmhPostRequest:
+          Type: Api
+          Properties:
+            Path: /
+            Method: post
+            RestApiId: !Ref PublicationOaiPmhApi
