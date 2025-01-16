@@ -6,12 +6,6 @@ info:
 
 paths:
   /publication-oai-pmh:
-    #    parameters:
-    #    - in: path
-    #      required: true
-    #      name: identifier
-    #      schema:
-    #        type: string
     get:
       summary: Invoke an operation.
       parameters:
@@ -66,19 +60,6 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/OaiPmhResponseType'
-              example:
-                responseDate: '2024-01-01T12:00:00'
-                request:
-                  verb: ListSets
-                error:
-                  - code: noSetHierarchy
-                  - code: cannotDisseminateFormat
-                Identify:
-                ListMetadataFormats:
-                ListSets:
-                GetRecord:
-                ListIdentifiers:
-                ListRecords:
     post:
       summary: Invoke an operation
       requestBody:
