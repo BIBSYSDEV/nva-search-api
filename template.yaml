@@ -754,35 +754,12 @@ Resources:
           Parameters:
             Location: ./docs/oai-pmh-openapi.yaml
 
-  BasicLambdaRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: [ lambda.amazonaws.com ]
-            Action: [ 'sts:AssumeRole' ]
-      Policies:
-        - PolicyName: writeLog
-          PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-              - Effect: Allow
-                Action:
-                  - logs:CreateLogGroup
-                  - logs:CreateLogStream
-                  - logs:PutLogEvents
-                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:*:*'
-
   PublicationOaiPmhFunction:
     Type: AWS::Serverless::Function
     Properties:
       Description: Lambda for handling OAI-PMH requests
       CodeUri: oai-pmh-handler
       Handler: no.sikt.nva.oai.pmh.handler.OaiPmhHandler::handleRequest
-      Role: !GetAtt BasicLambdaRole.Arn
       Environment:
         Variables:
           ALLOWED_ORIGIN: !Ref AllowedOrigins
