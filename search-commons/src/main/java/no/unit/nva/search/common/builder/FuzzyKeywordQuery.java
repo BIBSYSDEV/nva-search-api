@@ -1,7 +1,7 @@
 package no.unit.nva.search.common.builder;
 
-import static no.unit.nva.constants.Words.KEYWORD_FALSE;
-import static no.unit.nva.constants.Words.KEYWORD_TRUE;
+import static no.unit.nva.constants.Words.EXCLUDE_KEYWORD;
+import static no.unit.nva.constants.Words.INCLUDE_KEYWORD;
 
 import java.util.Arrays;
 import java.util.Map.Entry;
@@ -48,7 +48,7 @@ public class FuzzyKeywordQuery<K extends Enum<K> & ParameterKey<K>> extends Abst
   }
 
   private DisMaxQueryBuilder buildMatchAnyKeyword(K key, String... values) {
-    return key.searchFields(KEYWORD_TRUE)
+    return key.searchFields(INCLUDE_KEYWORD)
         .map(searchField -> new TermsQueryBuilder(searchField, values))
         .collect(DisMaxQueryBuilder::new, DisMaxQueryBuilder::add, DisMaxQueryBuilder::add)
         .boost(key.fieldBoost());
@@ -61,7 +61,7 @@ public class FuzzyKeywordQuery<K extends Enum<K> & ParameterKey<K>> extends Abst
   }
 
   private QueryBuilder getMultiMatchQueryBuilder(String value, K key) {
-    final var searchFields = key.searchFields(KEYWORD_FALSE).toArray(String[]::new);
+    final var searchFields = key.searchFields(EXCLUDE_KEYWORD).toArray(String[]::new);
     return QueryBuilders.multiMatchQuery(value, searchFields)
         .fuzziness(Fuzziness.ZERO)
         .maxExpansions(10)
@@ -72,7 +72,7 @@ public class FuzzyKeywordQuery<K extends Enum<K> & ParameterKey<K>> extends Abst
     return Arrays.stream(values)
         .map(
             value ->
-                key.searchFields(KEYWORD_TRUE)
+                key.searchFields(INCLUDE_KEYWORD)
                     .map(searchField -> new TermQueryBuilder(searchField, value))
                     .collect(
                         DisMaxQueryBuilder::new, DisMaxQueryBuilder::add, DisMaxQueryBuilder::add)
@@ -89,7 +89,7 @@ public class FuzzyKeywordQuery<K extends Enum<K> & ParameterKey<K>> extends Abst
   }
 
   private Stream<QueryBuilder> getMatchPhrasePrefixBuilderStream(String singleValue, K key) {
-    return key.searchFields(KEYWORD_FALSE)
+    return key.searchFields(EXCLUDE_KEYWORD)
         .map(
             fieldName ->
                 QueryBuilders.matchPhrasePrefixQuery(fieldName, singleValue).maxExpansions(10));
