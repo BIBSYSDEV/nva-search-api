@@ -1,27 +1,32 @@
 package no.unit.nva.search.resource;
 
+import static no.unit.nva.constants.Words.AUTHORIZATION;
 import static no.unit.nva.constants.Words.CURATING_INSTITUTIONS;
 import static no.unit.nva.constants.Words.DOT;
 import static no.unit.nva.constants.Words.KEYWORD;
 import static no.unit.nva.constants.Words.STATUS;
+import static no.unit.nva.search.common.enums.PublicationStatus.DELETED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
-import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
 import static no.unit.nva.search.common.enums.PublicationStatus.UNPUBLISHED;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTOR_ORG_KEYWORD;
 import static no.unit.nva.search.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search.resource.ResourceParameter.STATISTICS;
 import static nva.commons.apigateway.AccessRight.MANAGE_CUSTOMERS;
 import static nva.commons.apigateway.AccessRight.MANAGE_RESOURCES_ALL;
+import static nva.commons.apigateway.AccessRight.MANAGE_RESOURCES_STANDARD;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.stream.Stream;
 import no.unit.nva.search.common.enums.PublicationStatus;
 import no.unit.nva.search.common.records.FilterBuilder;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
+import org.opensearch.index.query.DisMaxQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
-import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermsQueryBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ResourceAccessFilter is a class that filters tickets based on access rights.
@@ -41,6 +46,7 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
   private static final String EDITOR_FILTER = "EditorFilter";
   private static final String CURATOR_FILTER = "CuratorFilter";
 
+  protected static final Logger logger = LoggerFactory.getLogger(ResourceAccessFilter.class);
   private final ResourceSearchQuery searchQuery;
 
   public ResourceAccessFilter(ResourceSearchQuery query) {
@@ -62,10 +68,11 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
 
   @Override
   public ResourceSearchQuery fromRequestInfo(RequestInfo requestInfo) throws UnauthorizedException {
-
-    return customerCurationInstitutions(requestInfo)
-        .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
-        .apply();
+    if (isAuthorized(requestInfo)) {
+      return customerCurationInstitutions(requestInfo).apply();
+    } else {
+      return requiredStatus(PUBLISHED).apply();
+    }
   }
 
   /**
@@ -82,12 +89,8 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
    */
   public ResourceAccessFilter requiredStatus(PublicationStatus... publicationStatus) {
     final var values =
-        Arrays.stream(publicationStatus)
-            .filter(this::isStatusAllowed)
-            .map(PublicationStatus::toString)
-            .toArray(String[]::new);
-    final var filter = new TermsQueryBuilder(STATUS_KEYWORD, values).queryName(STATUS);
-    this.searchQuery.filters().add(filter);
+        Arrays.stream(publicationStatus).map(PublicationStatus::toString).toArray(String[]::new);
+    this.searchQuery.filters().add(new TermsQueryBuilder(STATUS_KEYWORD, values).queryName(STATUS));
     return this;
   }
 
@@ -101,31 +104,50 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
    */
   public ResourceAccessFilter customerCurationInstitutions(RequestInfo requestInfo)
       throws UnauthorizedException {
-    if (isCurator() && isStatisticsQuery()) {
+    if (isAppAdmin() && isStatisticsQuery()) {
       return this;
     }
-    final var filter =
-        QueryBuilders.boolQuery().minimumShouldMatch(1).queryName(EDITOR_CURATOR_FILTER);
+
+    final var statuses =
+        Stream.of(PUBLISHED, DELETED, UNPUBLISHED)
+            .filter(this::isStatusAllowed)
+            .toArray(PublicationStatus[]::new);
+
+    requiredStatus(statuses);
+
     var curationInstitutionId = getCurationInstitutionId(requestInfo).toString();
     if (isCurator()) {
-      filter.should(getCuratingInstitutionAccessFilter(curationInstitutionId));
-      filter.should(getContributingOrganisationAccessFilter(curationInstitutionId));
+      this.searchQuery.filters().add(buildMatchBoth(curationInstitutionId));
     } else if (isEditor()) {
-      filter.should(getContributingOrganisationAccessFilter(curationInstitutionId));
+      this.searchQuery.filters().add(filterByContributingOrg(curationInstitutionId));
     }
-    if (!filter.hasClauses()) {
+    if (statusOrOrgfilterIsMissing() && !isAppAdmin()) {
       throw new UnauthorizedException();
     }
-    this.searchQuery.filters().add(filter);
     return this;
   }
 
-  private QueryBuilder getContributingOrganisationAccessFilter(String institutionId) {
-    return QueryBuilders.termQuery(CONTRIBUTOR_ORG_KEYWORD, institutionId).queryName(EDITOR_FILTER);
+  private boolean statusOrOrgfilterIsMissing() {
+    return this.searchQuery.filters().size() < 2;
   }
 
-  private QueryBuilder getCuratingInstitutionAccessFilter(String institutionId) {
-    return QueryBuilders.termQuery(CURATING_INST_KEYWORD, institutionId).queryName(CURATOR_FILTER);
+  private QueryBuilder filterByContributingOrg(String institutionId) {
+    return new TermsQueryBuilder(CONTRIBUTOR_ORG_KEYWORD, institutionId).queryName(EDITOR_FILTER);
+  }
+
+  private QueryBuilder filterByCuratingOrg(String institutionId) {
+    return new TermsQueryBuilder(CURATING_INST_KEYWORD, institutionId).queryName(CURATOR_FILTER);
+  }
+
+  private DisMaxQueryBuilder buildMatchBoth(String institutionId) {
+    return new DisMaxQueryBuilder()
+        .add(filterByContributingOrg(institutionId))
+        .add(filterByCuratingOrg(institutionId))
+        .queryName(EDITOR_CURATOR_FILTER);
+  }
+
+  private boolean isAuthorized(RequestInfo requestInfo) {
+    return requestInfo.getHeaders().containsKey(AUTHORIZATION);
   }
 
   /**
@@ -135,15 +157,22 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
    * @return true if allowed
    */
   private boolean isStatusAllowed(PublicationStatus publicationStatus) {
-    return isEditor() || publicationStatus != UNPUBLISHED;
+    return isAppAdmin()
+        || (isEditor() && publicationStatus == DELETED)
+        || publicationStatus == PUBLISHED
+        || publicationStatus == UNPUBLISHED;
   }
 
   private boolean isStatisticsQuery() {
     return searchQuery.parameters().isPresent(STATISTICS);
   }
 
-  private boolean isCurator() {
+  private boolean isAppAdmin() {
     return searchQuery.hasAccessRights(MANAGE_CUSTOMERS);
+  }
+
+  private boolean isCurator() {
+    return searchQuery.hasAccessRights(MANAGE_RESOURCES_STANDARD);
   }
 
   private boolean isEditor() {

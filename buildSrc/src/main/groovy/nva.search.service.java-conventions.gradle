@@ -81,7 +81,7 @@ spotless {
 
     format 'misc', {
         target '.gitignore', '.gitattributes', '.editorconfig', '**/*.gradle'
-        indentWithSpaces(4)
+        leadingTabsToSpaces(4)
         trimTrailingWhitespace()
         endWithNewline()
     }
@@ -96,12 +96,16 @@ tasks.named('test').configure {
     dependsOn 'spotlessApply'
 }
 
-
 pmd {
     toolVersion = '7.5.0'
     ruleSetConfig = rootProject.resources.text.fromFile('config/pmd/ruleset.xml')
     ruleSets = []
     ignoreFailures = false
+    pmdMain {
+        excludes = [
+                '**/generated/.*'
+        ]
+    }
 }
 
 checkstyle {

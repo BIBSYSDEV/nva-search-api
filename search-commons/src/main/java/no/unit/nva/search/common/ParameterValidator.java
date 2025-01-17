@@ -180,7 +180,9 @@ public abstract class ParameterValidator<
     var contentType = extractContentTypeFromRequestInfo(requestInfo);
     query.setMediaType(isNull(contentType) ? null : contentType.getMimeType());
     var uri = URI.create(HTTPS + requestInfo.getDomainName() + requestInfo.getPath());
-    query.setAccessRights(requestInfo.getAccessRights());
+    if (requestInfo.getHeaders().containsKey("Authorization")) {
+      query.setAccessRights(requestInfo.getAccessRights());
+    }
     query.setNvaSearchApiUri(uri);
     return fromMultiValueParameters(requestInfo.getMultiValueQueryStringParameters());
   }

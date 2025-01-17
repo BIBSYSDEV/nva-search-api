@@ -331,8 +331,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
 
   private void handleSorting(SearchSourceBuilder builder) {
     if (hasSortBy(RELEVANCE_KEY_NAME)) {
-      // Not very well documented.
-      // This allows sorting on relevance together with other fields.
+      // This allows sorting on relevance together with other fields. (Not very well documented)
       builder.trackScores(true);
     }
     builderStreamFieldSort().forEach(builder::sort);
