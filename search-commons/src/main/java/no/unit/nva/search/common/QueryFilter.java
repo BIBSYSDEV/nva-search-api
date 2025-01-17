@@ -39,8 +39,8 @@ public class QueryFilter {
     Arrays.stream(filters).forEach(this::add);
   }
 
-  public boolean hasContent() {
-    return !filters.isEmpty();
+  public int size() {
+    return filters.size();
   }
 
   public QueryFilter add(QueryBuilder builder) {

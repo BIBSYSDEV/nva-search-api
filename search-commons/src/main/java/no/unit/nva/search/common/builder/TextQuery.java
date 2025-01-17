@@ -1,6 +1,6 @@
 package no.unit.nva.search.common.builder;
 
-import static no.unit.nva.constants.Words.KEYWORD_FALSE;
+import static no.unit.nva.constants.Words.EXCLUDE_KEYWORD;
 import static org.opensearch.index.query.QueryBuilders.matchPhrasePrefixQuery;
 import static org.opensearch.index.query.QueryBuilders.matchQuery;
 
@@ -60,9 +60,9 @@ public class TextQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBuil
 
   private Stream<QueryBuilder> phrasePrefixBuilder(String singleValue, K key) {
     return Stream.concat(
-        key.searchFields(KEYWORD_FALSE)
+        key.searchFields(EXCLUDE_KEYWORD)
             .map(fieldName -> matchPhrasePrefixBuilder(singleValue, key, fieldName)),
-        key.searchFields(KEYWORD_FALSE)
+        key.searchFields(EXCLUDE_KEYWORD)
             .map(fieldName -> matchQueryBuilder(singleValue, key, fieldName)));
   }
 

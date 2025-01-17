@@ -7,6 +7,7 @@ import static no.unit.nva.common.MockedHttpResponse.mockedFutureFailed;
 import static no.unit.nva.common.MockedHttpResponse.mockedFutureHttpResponse;
 import static no.unit.nva.common.MockedHttpResponse.mockedHttpResponse;
 import static no.unit.nva.constants.Words.ALL;
+import static no.unit.nva.constants.Words.AUTHORIZATION;
 import static no.unit.nva.constants.Words.COLON;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.CONTRIBUTOR;
@@ -224,8 +225,9 @@ class ResourceClientTest {
   static Stream<Arguments> roleProvider() {
     return Stream.of(
         Arguments.of(5, List.of(MANAGE_RESOURCES_STANDARD)),
-        Arguments.of(22, List.of(MANAGE_RESOURCES_ALL)),
-        Arguments.of(22, List.of(MANAGE_RESOURCES_ALL, MANAGE_RESOURCES_STANDARD)));
+        Arguments.of(6, List.of(MANAGE_RESOURCES_ALL)),
+        Arguments.of(23, List.of(MANAGE_CUSTOMERS)),
+        Arguments.of(6, List.of(MANAGE_RESOURCES_STANDARD, MANAGE_RESOURCES_ALL)));
   }
 
   static Stream<URI> uriSortingProvider() {
@@ -276,7 +278,7 @@ class ResourceClientTest {
         .fromTestParameterMap(Map.of(ID, indexDocument.getDocumentIdentifier()))
         .build()
         .withFilter()
-        .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+        .requiredStatus(PUBLISHED, UNPUBLISHED)
         .apply()
         .doSearch(searchClient);
   }
@@ -312,11 +314,12 @@ class ResourceClientTest {
     AtomicReference<URI> uri = new AtomicReference<>();
     uriSortingProvider().findFirst().ifPresent(uri::set);
 
-    var accessRights = List.of(MANAGE_CUSTOMERS);
+    var accessRights = List.of(MANAGE_RESOURCES_STANDARD);
     var mockedRequestInfoLocal = mock(RequestInfo.class);
     when(mockedRequestInfoLocal.getPersonAffiliation())
         .thenReturn(URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0"));
     when(mockedRequestInfoLocal.getAccessRights()).thenReturn(accessRights);
+    when(mockedRequestInfoLocal.getHeaders()).thenReturn(Map.of(AUTHORIZATION, "Bearer token"));
 
     var result =
         ResourceSearchQuery.builder()
@@ -344,7 +347,7 @@ class ResourceClientTest {
             .withRequiredParameters(FROM, SIZE, AGGREGATION)
             .build()
             .withFilter()
-            .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+            .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
             .doSearch(searchClient);
 
@@ -387,7 +390,7 @@ class ResourceClientTest {
             .withRequiredParameters(FROM, SIZE)
             .build()
             .withFilter()
-            .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+            .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
             .doSearch(searchClient);
 
@@ -416,7 +419,7 @@ class ResourceClientTest {
             .withRequiredParameters(FROM, SIZE, SORT)
             .build()
             .withFilter()
-            .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+            .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
             .doSearch(searchClient);
 
@@ -444,7 +447,7 @@ class ResourceClientTest {
             .withRequiredParameters(FROM, SIZE)
             .build()
             .withFilter()
-            .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+            .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
             .doSearch(searchClient);
 
@@ -473,7 +476,7 @@ class ResourceClientTest {
             .withRequiredParameters(FROM, SIZE)
             .build()
             .withFilter()
-            .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+            .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
             .doSearch(searchClient);
 
@@ -492,7 +495,7 @@ class ResourceClientTest {
             .build()
             .withFilter()
             .requiredStatus(
-                NEW, DRAFT, PUBLISHED_METADATA, PUBLISHED, DELETED, UNPUBLISHED, DRAFT_FOR_DELETION)
+                NEW, DRAFT, UNPUBLISHED, PUBLISHED, DELETED, UNPUBLISHED, DRAFT_FOR_DELETION)
             .apply()
             .doSearch(searchClient)
             .toString();
@@ -528,7 +531,7 @@ class ResourceClientTest {
             .build()
             .withFilter()
             .requiredStatus(
-                NEW, DRAFT, PUBLISHED_METADATA, PUBLISHED, DELETED, UNPUBLISHED, DRAFT_FOR_DELETION)
+                NEW, DRAFT, UNPUBLISHED, PUBLISHED, DELETED, UNPUBLISHED, DRAFT_FOR_DELETION)
             .apply()
             .doSearch(searchClient);
 
@@ -544,6 +547,7 @@ class ResourceClientTest {
     when(requestInfo.getAccessRights()).thenReturn(accessRights);
     when(requestInfo.getPersonAffiliation())
         .thenReturn(URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"));
+    when(requestInfo.getHeaders()).thenReturn(Map.of(AUTHORIZATION, "Bearer token"));
 
     var response =
         ResourceSearchQuery.builder()
@@ -569,6 +573,7 @@ class ResourceClientTest {
     when(requestInfo.getAccessRights()).thenReturn(List.of(MANAGE_DEGREE));
     when(requestInfo.getPersonAffiliation())
         .thenReturn(URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/"));
+    when(requestInfo.getHeaders()).thenReturn(Map.of(AUTHORIZATION, "Bearer token"));
 
     assertThrows(
         UnauthorizedException.class,
@@ -586,18 +591,19 @@ class ResourceClientTest {
   }
 
   @Test
-  void withOrganizationDoWork() throws BadRequestException, UnauthorizedException {
+  void withIsEditorAndOrganizationDoWork() throws BadRequestException, UnauthorizedException {
     var requestInfo = mock(RequestInfo.class);
     when(requestInfo.getAccessRights()).thenReturn(List.of(MANAGE_RESOURCES_ALL));
     when(requestInfo.getTopLevelOrgCristinId())
         .thenReturn(
             Optional.of(
-                URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0")));
+                URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0")));
+    when(requestInfo.getHeaders()).thenReturn(Map.of(AUTHORIZATION, "Bearer token"));
+
     var response =
         ResourceSearchQuery.builder()
             .fromRequestInfo(requestInfo)
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-            .withParameter(NODES_EXCLUDED, META_INFO)
             .withRequiredParameters(FROM, SIZE)
             .build()
             .withFilter()
@@ -607,7 +613,7 @@ class ResourceClientTest {
     assertNotNull(response);
 
     var pagedSearchResourceDto = response.toPagedResponse();
-    assertEquals(3, pagedSearchResourceDto.totalHits());
+    assertEquals(6, pagedSearchResourceDto.totalHits());
   }
 
   @Test
@@ -651,7 +657,7 @@ class ResourceClientTest {
             .validate()
             .build()
             .withFilter()
-            .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+            .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
             .doSearch(searchClient);
 
@@ -677,7 +683,7 @@ class ResourceClientTest {
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .build()
             .withFilter()
-            .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+            .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
             .doSearch(searchClient);
 
@@ -716,7 +722,7 @@ class ResourceClientTest {
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .build()
             .withFilter()
-            .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+            .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
             .doSearch(searchClient);
 
@@ -748,7 +754,7 @@ class ResourceClientTest {
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .build()
             .withFilter()
-            .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+            .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
             .doSearch(searchClient);
 
@@ -780,7 +786,7 @@ class ResourceClientTest {
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .build()
             .withFilter()
-            .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+            .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
             .doSearch(searchClient);
 
@@ -819,7 +825,7 @@ class ResourceClientTest {
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .build()
             .withFilter()
-            .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+            .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
             .doSearch(searchClient);
 
@@ -875,7 +881,7 @@ class ResourceClientTest {
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .build()
             .withFilter()
-            .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+            .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
             .doSearch(searchClient);
 
@@ -931,7 +937,7 @@ class ResourceClientTest {
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .build()
             .withFilter()
-            .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+            .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
             .doSearch(searchClient);
 
@@ -953,7 +959,7 @@ class ResourceClientTest {
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .build()
             .withFilter()
-            .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+            .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
             .doSearch(searchClient);
     var pagedSearchResourceDto = response.toPagedResponse();
@@ -980,7 +986,7 @@ class ResourceClientTest {
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .build()
             .withFilter()
-            .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+            .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
             .doSearch(searchClient);
 
@@ -1011,7 +1017,7 @@ class ResourceClientTest {
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .build()
             .withFilter()
-            .requiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED)
+            .requiredStatus(PUBLISHED, UNPUBLISHED, DELETED)
             .apply()
             .doSearch(searchClient);
 
@@ -1022,7 +1028,7 @@ class ResourceClientTest {
 
     assertThat(pagedSearchResourceDto.toJsonString(), containsString(includedSubunitI));
     assertThat(pagedSearchResourceDto.toJsonString(), containsString(includedSubunitII));
-    assertThat(pagedSearchResourceDto.hits(), hasSize(2));
+    assertThat(pagedSearchResourceDto.hits(), hasSize(3));
   }
 
   @Test
@@ -1035,7 +1041,7 @@ class ResourceClientTest {
             .withAlwaysExcludedFields("entityDescription.contributors")
             .build()
             .withFilter()
-            .requiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED)
+            .requiredStatus(PUBLISHED, UNPUBLISHED, DELETED)
             .apply()
             .doSearch(searchClient);
 
@@ -1057,7 +1063,7 @@ class ResourceClientTest {
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .build()
             .withFilter()
-            .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+            .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
             .doSearch(searchClient);
 
