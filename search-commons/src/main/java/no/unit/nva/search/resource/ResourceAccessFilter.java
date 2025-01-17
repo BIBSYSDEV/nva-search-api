@@ -121,10 +121,14 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
     } else if (isEditor()) {
       this.searchQuery.filters().add(filterByContributingOrg(curationInstitutionId));
     }
-    if (this.searchQuery.filters().size() < 2 && !isAppAdmin()) {
+    if (statusOrOrgfilterIsMissing() && !isAppAdmin()) {
       throw new UnauthorizedException();
     }
     return this;
+  }
+
+  private boolean statusOrOrgfilterIsMissing() {
+    return this.searchQuery.filters().size() < 2;
   }
 
   private QueryBuilder filterByContributingOrg(String institutionId) {

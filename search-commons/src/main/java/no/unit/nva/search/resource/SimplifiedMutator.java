@@ -153,7 +153,7 @@ public class SimplifiedMutator implements JsonNodeMutator {
 
   private Map<String, String> fromNodeAlternativeTitles(JsonNode source) {
     var path = source.path(ENTITY_DESCRIPTION).path(ALTERNATIVE_TITLES);
-    return path.isMissingNode() ? Map.of() : jsonNodeMapToMap(path);
+    return path.isMissingNode() ? Collections.emptyMap() : jsonNodeMapToMap(path);
   }
 
   private Map<String, String> jsonNodeMapToMap(JsonNode source) {
