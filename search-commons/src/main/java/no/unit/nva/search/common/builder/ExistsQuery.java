@@ -1,6 +1,6 @@
 package no.unit.nva.search.common.builder;
 
-import static no.unit.nva.constants.Words.KEYWORD_FALSE;
+import static no.unit.nva.constants.Words.EXCLUDE_KEYWORD;
 import static no.unit.nva.search.common.constant.Functions.queryToEntry;
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
 import static org.opensearch.index.query.QueryBuilders.existsQuery;
@@ -37,7 +37,7 @@ public class ExistsQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBu
 
   private Stream<Entry<K, QueryBuilder>> buildExistsQuery(K key, Boolean exists) {
     var builder = boolQuery().queryName(EXISTS_ANY);
-    key.searchFields(KEYWORD_FALSE)
+    key.searchFields(EXCLUDE_KEYWORD)
         .map(fieldName -> createExistsQuery(key, fieldName))
         .forEach(existsQueryBuilder -> mustOrNot(exists, builder, existsQueryBuilder));
     return queryToEntry(key, builder);

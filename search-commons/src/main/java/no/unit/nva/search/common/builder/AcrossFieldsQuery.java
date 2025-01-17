@@ -1,6 +1,6 @@
 package no.unit.nva.search.common.builder;
 
-import static no.unit.nva.constants.Words.KEYWORD_FALSE;
+import static no.unit.nva.constants.Words.EXCLUDE_KEYWORD;
 
 import java.util.Arrays;
 import java.util.Map.Entry;
@@ -49,7 +49,7 @@ public class AcrossFieldsQuery<K extends Enum<K> & ParameterKey<K>> extends Abst
   }
 
   private QueryBuilder getMultiMatchQueryBuilder(String value, K key) {
-    final var searchFields = key.searchFields(KEYWORD_FALSE).toArray(String[]::new);
+    final var searchFields = key.searchFields(EXCLUDE_KEYWORD).toArray(String[]::new);
     return QueryBuilders.multiMatchQuery(value, searchFields)
         .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
         .operator(Operator.AND);
