@@ -1,10 +1,10 @@
-package no.unit.nva.search.resource.response;
+package no.unit.nva.search.service.resource.response;
 
-import static java.util.Objects.nonNull;
-import static no.unit.nva.constants.Words.ENTITY_DESCRIPTION;
-import static no.unit.nva.constants.Words.PUBLICATION_INSTANCE;
-import static no.unit.nva.constants.Words.REFERENCE;
-import static no.unit.nva.constants.Words.TYPE;
+import static java.util.Objects.isNull;
+import static no.unit.nva.search.model.constant.Words.ENTITY_DESCRIPTION;
+import static no.unit.nva.search.model.constant.Words.PUBLICATION_INSTANCE;
+import static no.unit.nva.search.model.constant.Words.REFERENCE;
+import static no.unit.nva.search.model.constant.Words.TYPE;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -63,9 +63,7 @@ public record ResourceSearchResponse(
     }
 
     public Builder withIdentifier(JsonNode identifier) {
-      if (nonNull(identifier)) {
-        this.identifier = identifier.textValue();
-      }
+      this.identifier = isNull(role) ? null : identifier.textValue();
       return this;
     }
 

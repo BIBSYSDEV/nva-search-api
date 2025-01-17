@@ -1,6 +1,12 @@
 package no.unit.nva.search.resource;
 
-import static no.unit.nva.testutils.RandomDataGenerator.objectMapper;
+import static no.unit.nva.constants.Words.ENTITY_DESCRIPTION;
+import static no.unit.nva.constants.Words.ID;
+import static no.unit.nva.constants.Words.ISBN_LIST;
+import static no.unit.nva.constants.Words.PUBLICATION_INSTANCE;
+import static no.unit.nva.constants.Words.REFERENCE;
+import static no.unit.nva.search.resource.Constants.ALTERNATIVE_TITLES;
+import static no.unit.nva.search.resource.Constants.MANIFESTATIONS;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -9,6 +15,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -18,9 +25,15 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import java.nio.file.Path;
 import no.unit.nva.search.resource.response.ResourceSearchResponse;
+import no.unit.nva.testutils.RandomDataGenerator;
 import org.junit.jupiter.api.Test;
 
 class SimplifiedMutatorTest {
+
+  public static final String RESOURCE_DATASOURCE_JSON = "resource_datasource.json";
+
+  public static final ObjectMapper objectMapper =
+      RandomDataGenerator.objectMapper.copy().findAndRegisterModules();
 
   @Test
   void shouldNotThrowOnEmptyBody() {
@@ -41,18 +54,16 @@ class SimplifiedMutatorTest {
         .forEachRemaining(
             jsonNode -> {
               if (jsonNode.isTextual()) {
-                assertFalse(jsonNode.textValue().isEmpty());
+                assertNotEquals("", jsonNode.textValue());
               }
             });
-    assertFalse(input.path("id").isMissingNode());
+    assertFalse(input.path(ID).isMissingNode());
   }
 
   @Test
   void shouldKeepAllContributorsOMutating() throws JsonProcessingException {
     var json =
-        new ObjectMapper()
-            .readTree(stringFromResources(Path.of("resource_datasource.json")))
-            .get(0);
+        new ObjectMapper().readTree(stringFromResources(Path.of(RESOURCE_DATASOURCE_JSON))).get(0);
 
     var contributorsInSampleJson = 1;
 
@@ -70,8 +81,8 @@ class SimplifiedMutatorTest {
     var entityDescription = new ObjectMapper().createObjectNode();
     var alternativeTitles = new ObjectMapper().createObjectNode();
     alternativeTitles.put(language, expectedAlternativeTitle);
-    entityDescription.set("alternativeTitles", alternativeTitles);
-    input.set("entityDescription", entityDescription);
+    entityDescription.set(ALTERNATIVE_TITLES, alternativeTitles);
+    input.set(ENTITY_DESCRIPTION, entityDescription);
 
     var mutated = new SimplifiedMutator().transform(input);
     var asDto = objectMapper.treeToValue(mutated, ResourceSearchResponse.class);
@@ -92,12 +103,12 @@ class SimplifiedMutatorTest {
     var isbnList = new ObjectMapper().createArrayNode();
     isbnList.add(new TextNode(isbn1));
     isbnList.add(new TextNode(isbn2));
-    manifistation.set("isbnList", isbnList);
+    manifistation.set(ISBN_LIST, isbnList);
     manifistations.add(manifistation);
-    publicationInstance.set("manifestations", manifistations);
-    reference.set("publicationInstance", publicationInstance);
-    entityDescription.set("reference", reference);
-    input.set("entityDescription", entityDescription);
+    publicationInstance.set(MANIFESTATIONS, manifistations);
+    reference.set(PUBLICATION_INSTANCE, publicationInstance);
+    entityDescription.set(REFERENCE, reference);
+    input.set(ENTITY_DESCRIPTION, entityDescription);
 
     var mutated = new SimplifiedMutator().transform(input);
     var asDto = objectMapper.treeToValue(mutated, ResourceSearchResponse.class);
@@ -109,9 +120,7 @@ class SimplifiedMutatorTest {
   @Test
   void shouldParseSampleFileWithNoExceptions() throws JsonProcessingException {
     var json =
-        new ObjectMapper()
-            .readTree(stringFromResources(Path.of("resource_datasource.json")))
-            .get(0);
+        new ObjectMapper().readTree(stringFromResources(Path.of(RESOURCE_DATASOURCE_JSON))).get(0);
     var result = new SimplifiedMutator().transform(json);
     assertNotNull(result);
   }

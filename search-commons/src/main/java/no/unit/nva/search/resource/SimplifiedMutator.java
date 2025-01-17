@@ -4,7 +4,6 @@ import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 import static no.unit.nva.constants.Words.ABSTRACT;
 import static no.unit.nva.constants.Words.AFFILIATIONS;
 import static no.unit.nva.constants.Words.CREATED_DATE;
-import static no.unit.nva.constants.Words.DAY;
 import static no.unit.nva.constants.Words.DOI;
 import static no.unit.nva.constants.Words.DOT;
 import static no.unit.nva.constants.Words.ENTITY_DESCRIPTION;
@@ -14,7 +13,6 @@ import static no.unit.nva.constants.Words.IDENTITY;
 import static no.unit.nva.constants.Words.ISBN_LIST;
 import static no.unit.nva.constants.Words.MAIN_TITLE;
 import static no.unit.nva.constants.Words.MODIFIED_DATE;
-import static no.unit.nva.constants.Words.MONTH;
 import static no.unit.nva.constants.Words.NAME;
 import static no.unit.nva.constants.Words.ONLINE_ISSN;
 import static no.unit.nva.constants.Words.ORC_ID;
@@ -23,15 +21,12 @@ import static no.unit.nva.constants.Words.PUBLICATION_CONTEXT;
 import static no.unit.nva.constants.Words.PUBLICATION_DATE;
 import static no.unit.nva.constants.Words.PUBLICATION_INSTANCE;
 import static no.unit.nva.constants.Words.PUBLISHED_DATE;
-import static no.unit.nva.constants.Words.PUBLISHER;
 import static no.unit.nva.constants.Words.REFERENCE;
 import static no.unit.nva.constants.Words.ROLE;
-import static no.unit.nva.constants.Words.SCIENTIFIC_VALUE;
 import static no.unit.nva.constants.Words.SERIES;
 import static no.unit.nva.constants.Words.STATUS;
 import static no.unit.nva.constants.Words.TYPE;
 import static no.unit.nva.constants.Words.VALUE;
-import static no.unit.nva.constants.Words.YEAR;
 import static no.unit.nva.search.resource.Constants.ADDITIONAL_IDENTIFIERS;
 import static no.unit.nva.search.resource.Constants.ALTERNATIVE_TITLES;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_COUNT;
@@ -41,31 +36,15 @@ import static no.unit.nva.search.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
 import static no.unit.nva.search.resource.Constants.MANIFESTATIONS;
 import static no.unit.nva.search.resource.Constants.SCOPUS_IDENTIFIER;
 import static no.unit.nva.search.resource.Constants.SEQUENCE;
-
+import static no.unit.nva.search.resource.response.ResourceSearchResponse.responseBuilder;
 import static nva.commons.core.attempt.Try.attempt;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import no.unit.nva.search.common.records.JsonNodeMutator;
-import no.unit.nva.search.resource.response.Affiliation;
-import no.unit.nva.search.resource.response.Contributor;
-import no.unit.nva.search.resource.response.Identity;
-import no.unit.nva.search.resource.response.OtherIdentifiers;
-import no.unit.nva.search.resource.response.PublicationDate;
-import no.unit.nva.search.resource.response.Publisher;
-import no.unit.nva.search.resource.response.PublishingDetails;
-import no.unit.nva.search.resource.response.RecordMetadata;
-import no.unit.nva.search.resource.response.ResourceSearchResponse;
-import no.unit.nva.search.resource.response.ResourceSearchResponse.Builder;
-import no.unit.nva.search.resource.response.Series;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -75,6 +54,14 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import no.unit.nva.search.common.records.JsonNodeMutator;
+import no.unit.nva.search.resource.response.Contributor;
+import no.unit.nva.search.resource.response.NodeUtils;
+import no.unit.nva.search.resource.response.PublicationDate;
+import no.unit.nva.search.resource.response.PublishingDetails;
+import no.unit.nva.search.resource.response.RecordMetadata;
+import no.unit.nva.search.resource.response.ResourceSearchResponse;
+import no.unit.nva.search.resource.response.ResourceSearchResponse.OtherIdentifiers;
 
 public class SimplifiedMutator implements JsonNodeMutator {
 
@@ -83,7 +70,12 @@ public class SimplifiedMutator implements JsonNodeMutator {
   private final ObjectMapper objectMapper = dtoObjectMapper.copy();
 
   public SimplifiedMutator() {
-    objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    objectMapper
+        .registerModule(new JodaModule())
+        .configOverride(Map.class)
+        .setInclude(
+            JsonInclude.Value.construct(
+                JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL));
   }
 
   public static String path(String... path) {
@@ -124,60 +116,74 @@ public class SimplifiedMutator implements JsonNodeMutator {
         path(ADDITIONAL_IDENTIFIERS, VALUE));
   }
 
-  @NotNull
-  private static PublicationDate mutatePublicationDate(JsonNode source) {
-    return new PublicationDate(
-        source.path(ENTITY_DESCRIPTION).path(PUBLICATION_DATE).path(YEAR).textValue(),
-        source.path(ENTITY_DESCRIPTION).path(PUBLICATION_DATE).path(MONTH).textValue(),
-        source.path(ENTITY_DESCRIPTION).path(PUBLICATION_DATE).path(DAY).textValue());
-  }
-
   @Override
   public JsonNode transform(JsonNode source) {
     return (JsonNode) attempt(() -> objectMapper.valueToTree(transformToDto(source))).orElseThrow();
   }
 
-  private ResourceSearchResponse transformToDto(JsonNode source) throws IOException {
-    return new Builder()
-        .withId(uriFromText(source.path(ID).textValue()))
-        .withIdentifier(source.path(IDENTIFIER).textValue())
-        .withType(
-            source
-                .path(ENTITY_DESCRIPTION)
-                .path(REFERENCE)
-                .path(PUBLICATION_INSTANCE)
-                .path(TYPE)
-                .textValue())
-        .withMainTitle(source.path(ENTITY_DESCRIPTION).path(MAIN_TITLE).textValue())
-        .withMainLanguageAbstract(source.path(ENTITY_DESCRIPTION).path(ABSTRACT).textValue())
-        .withDescription(source.path(ENTITY_DESCRIPTION).path(Constants.DESCRIPTION).textValue())
-        .withAlternativeTitles(mutateAlternativeTitles(source))
-        .withPublicationDate(mutatePublicationDate(source))
-        .withContributorsPreview(mutateContributorsPreview(source))
-        .withContributorsCount(source.path(ENTITY_DESCRIPTION).path(CONTRIBUTORS_COUNT).asInt())
-        .withPublishingDetails(mutatePublishingDetails(source))
-        .withOtherIdentifiers(mutateOtherIdentifiers(source))
-        .withRecordMetadata(mutateRecordMetadata(source))
+  private PublicationDate fromNodePublicationDate(JsonNode source) {
+    var path = source.path(ENTITY_DESCRIPTION).path(PUBLICATION_DATE);
+    return path.isMissingNode() ? null : new PublicationDate(path);
+  }
+
+  private ResourceSearchResponse transformToDto(JsonNode source) {
+    return responseBuilder()
+        .withId(NodeUtils.toUri(source.path(ID)))
+        .withIdentifier(source.path(IDENTIFIER))
+        .withMainTitle(source.path(ENTITY_DESCRIPTION).path(MAIN_TITLE))
+        .withMainLanguageAbstract(source.path(ENTITY_DESCRIPTION).path(ABSTRACT))
+        .withDescription(source.path(ENTITY_DESCRIPTION).path(Constants.DESCRIPTION))
+        .withContributorsCount(source.path(ENTITY_DESCRIPTION).path(CONTRIBUTORS_COUNT))
+        .withType(source)
+        .withAlternativeTitles(fromNodeAlternativeTitles(source))
+        .withPublicationDate(fromNodePublicationDate(source))
+        .withContributorsPreview(fromNodeContributorPreviews(source))
+        .withPublishingDetails(fromNodePublishingDetails(source))
+        .withOtherIdentifiers(fromNodeOtherIdentifiers(source))
+        .withRecordMetadata(fromNodeRecordMetadata(source))
         .build();
   }
 
-  @Nullable
-  private Map<String, String> mutateAlternativeTitles(JsonNode source) {
-    return source.path(ENTITY_DESCRIPTION).has(ALTERNATIVE_TITLES)
-        ? jsonNodeMapToMap(source.path(ENTITY_DESCRIPTION).path(ALTERNATIVE_TITLES))
-        : null;
+  private Map<String, String> fromNodeAlternativeTitles(JsonNode source) {
+    var path = source.path(ENTITY_DESCRIPTION).path(ALTERNATIVE_TITLES);
+    return path.isMissingNode() ? Map.of() : jsonNodeMapToMap(path);
   }
 
   private Map<String, String> jsonNodeMapToMap(JsonNode source) {
-    return objectMapper.convertValue(source, Map.class);
+    return objectMapper.convertValue(source, new TypeReference<>() {});
   }
 
-  private OtherIdentifiers mutateOtherIdentifiers(JsonNode source) throws IOException {
-    var issns = getIssns(source);
+  private OtherIdentifiers fromNodeOtherIdentifiers(JsonNode source) {
+    var isbnsInManifestations = isbnsInManifestations(source);
+    var isbnsInPublicationContext = extractIsbnsInPublicationContext(source);
+    var isbns =
+        Stream.concat(isbnsInPublicationContext.stream(), isbnsInManifestations.stream())
+            .collect(Collectors.toUnmodifiableSet());
+    var issns = fromNodeIssns(source);
 
-    var isbnsInSourceNode =
-        source.path(ENTITY_DESCRIPTION).path(REFERENCE).path(PUBLICATION_CONTEXT).path(ISBN_LIST);
+    var handleIdentifiers = new HashSet<String>();
+    var cristinIdentifiers = new HashSet<String>();
+    var scopusIdentifiers = new HashSet<String>();
+    source
+        .path(ADDITIONAL_IDENTIFIERS)
+        .iterator()
+        .forEachRemaining(
+            i -> {
+              switch (i.path(TYPE).textValue()) {
+                case HANDLE_IDENTIFIER -> handleIdentifiers.add(i.path(VALUE).textValue());
+                case SCOPUS_IDENTIFIER -> scopusIdentifiers.add(i.path(VALUE).textValue());
+                case CRISTIN_IDENTIFIER -> cristinIdentifiers.add(i.path(VALUE).textValue());
+                default -> {
+                  /* Do nothing */
+                }
+              }
+            });
 
+    return new OtherIdentifiers(
+        scopusIdentifiers, cristinIdentifiers, handleIdentifiers, issns, isbns);
+  }
+
+  private List<String> isbnsInManifestations(JsonNode source) {
     List<String> isbnsInManifestations = new ArrayList<>();
     var manifestations =
         source
@@ -192,174 +198,59 @@ public class SimplifiedMutator implements JsonNodeMutator {
           .forEachRemaining(
               manifest -> {
                 if (!manifest.path(ISBN_LIST).isMissingNode()) {
-                  manifest
-                      .get(ISBN_LIST)
-                      .elements()
-                      .forEachRemaining(isbn -> isbnsInManifestations.add(isbn.textValue()));
+                  isbnsInManifestations.addAll(nodeAsListOf(manifest.path(ISBN_LIST)));
                 }
               });
     }
-
-    List<String> isbnsInSource =
-        isbnsInSourceNode.isMissingNode()
-            ? Collections.emptyList()
-            : objectMapper.readerForListOf(String.class).readValue(isbnsInSourceNode);
-
-    var isbns = Stream.concat(isbnsInSource.stream(), isbnsInManifestations.stream()).toList();
-
-    var handleIdentifiers = new ArrayList<String>();
-    var cristinIdentifiers = new ArrayList<String>();
-    var scopusIdentifiers = new ArrayList<String>();
-    source
-        .path(ADDITIONAL_IDENTIFIERS)
-        .iterator()
-        .forEachRemaining(
-            i -> {
-              switch (i.path(TYPE).textValue()) {
-                case HANDLE_IDENTIFIER -> handleIdentifiers.add(i.path(VALUE).textValue());
-                case SCOPUS_IDENTIFIER -> scopusIdentifiers.add(i.path(VALUE).textValue());
-                case CRISTIN_IDENTIFIER -> cristinIdentifiers.add(i.path(VALUE).textValue());
-                default -> {}
-              }
-            });
-
-    return new OtherIdentifiers(
-        new HashSet<>(scopusIdentifiers),
-        new HashSet<>(cristinIdentifiers),
-        new HashSet<>(handleIdentifiers),
-        new HashSet<>(issns),
-        new HashSet<>(isbns));
+    return isbnsInManifestations;
   }
 
-  private Set<String> getIssns(JsonNode source) {
+  private Set<String> extractIsbnsInPublicationContext(JsonNode source) {
+    var isbnsInSourceNode =
+        source.path(ENTITY_DESCRIPTION).path(REFERENCE).path(PUBLICATION_CONTEXT).path(ISBN_LIST);
+    return isbnsInSourceNode.isMissingNode()
+        ? Collections.emptySet()
+        : nodeAsListOf(isbnsInSourceNode).stream().collect(Collectors.toUnmodifiableSet());
+  }
+
+  private Set<String> fromNodeIssns(JsonNode source) {
+    var context = source.path(ENTITY_DESCRIPTION).path(REFERENCE).path(PUBLICATION_CONTEXT);
     return Stream.of(
-            source
-                .path(ENTITY_DESCRIPTION)
-                .path(REFERENCE)
-                .path(PUBLICATION_CONTEXT)
-                .path(ONLINE_ISSN)
-                .textValue(),
-            source
-                .path(ENTITY_DESCRIPTION)
-                .path(REFERENCE)
-                .path(PUBLICATION_CONTEXT)
-                .path(PRINT_ISSN)
-                .textValue(),
-            source
-                .path(ENTITY_DESCRIPTION)
-                .path(REFERENCE)
-                .path(PUBLICATION_CONTEXT)
-                .path(SERIES)
-                .path(ONLINE_ISSN)
-                .textValue(),
-            source
-                .path(ENTITY_DESCRIPTION)
-                .path(REFERENCE)
-                .path(PUBLICATION_CONTEXT)
-                .path(SERIES)
-                .path(PRINT_ISSN)
-                .textValue())
+            context.path(ONLINE_ISSN).textValue(),
+            context.path(PRINT_ISSN).textValue(),
+            context.path(SERIES).path(ONLINE_ISSN).textValue(),
+            context.path(SERIES).path(PRINT_ISSN).textValue())
         .filter(Objects::nonNull)
         .collect(Collectors.toSet());
   }
 
-  private RecordMetadata mutateRecordMetadata(JsonNode source) {
+  private RecordMetadata fromNodeRecordMetadata(JsonNode source) {
     return new RecordMetadata(
-        source.path(STATUS).textValue(), source.path(CREATED_DATE).textValue(),
-        source.path(MODIFIED_DATE).textValue(), source.path(PUBLISHED_DATE).textValue());
+        source.path(STATUS),
+        source.path(CREATED_DATE),
+        source.path(MODIFIED_DATE),
+        source.path(PUBLISHED_DATE));
   }
 
-  private PublishingDetails mutatePublishingDetails(JsonNode source) {
-    return new PublishingDetails(
-        uriFromText(
-            source
-                .path(ENTITY_DESCRIPTION)
-                .path(REFERENCE)
-                .path(PUBLICATION_CONTEXT)
-                .path(ID)
-                .textValue()),
-        mutatePublicationContextType(source),
-        mutateSeries(source),
-        source
-            .path(ENTITY_DESCRIPTION)
-            .path(REFERENCE)
-            .path(PUBLICATION_CONTEXT)
-            .path(NAME)
-            .textValue(),
-        uriFromText(source.path(ENTITY_DESCRIPTION).path(REFERENCE).path(DOI).textValue()),
-        mutatePublisher(source));
+  private PublishingDetails fromNodePublishingDetails(JsonNode source) {
+    return new PublishingDetails(source.path(ENTITY_DESCRIPTION).path(REFERENCE));
   }
 
-  private String mutatePublicationContextType(JsonNode source) {
-    return source
-        .path(ENTITY_DESCRIPTION)
-        .path(REFERENCE)
-        .path(PUBLICATION_CONTEXT)
-        .path(TYPE)
-        .textValue();
-  }
-
-  private Series mutateSeries(JsonNode source) {
-    var series =
-        source.path(ENTITY_DESCRIPTION).path(REFERENCE).path(PUBLICATION_CONTEXT).path(SERIES);
-
-    if (series.isMissingNode()) {
-      return null;
-    }
-    return new Series(
-        uriFromText(series.path(ID).textValue()),
-        series.path(NAME).textValue(),
-        series.path(SCIENTIFIC_VALUE).textValue());
-  }
-
-  private Publisher mutatePublisher(JsonNode source) {
-    var publisher =
-        source.path(ENTITY_DESCRIPTION).path(REFERENCE).path(PUBLICATION_CONTEXT).path(PUBLISHER);
-
-    if (publisher.isMissingNode()) {
-      return null;
-    }
-    return new Publisher(
-        uriFromText(publisher.path(ID).textValue()),
-        publisher.path(NAME).textValue(),
-        publisher.path(SCIENTIFIC_VALUE).textValue());
-  }
-
-  private List<Contributor> mutateContributorsPreview(JsonNode source) {
+  private List<Contributor> fromNodeContributorPreviews(JsonNode source) {
     var contributors = new ArrayList<Contributor>();
     source
         .path(ENTITY_DESCRIPTION)
         .path(CONTRIBUTORS_PREVIEW)
         .iterator()
-        .forEachRemaining(
-            contributorNode -> {
-              var affiliationNode = contributorNode.path(AFFILIATIONS);
-              var affiliations = new HashSet<Affiliation>();
-              if (!affiliationNode.isMissingNode()) {
-                affiliationNode
-                    .iterator()
-                    .forEachRemaining(
-                        aff ->
-                            affiliations.add(
-                                new Affiliation(
-                                    aff.path(ID).textValue(), aff.path(TYPE).textValue())));
-              }
-
-              contributors.add(
-                  new Contributor(
-                      affiliations,
-                      contributorNode.path(CORRESPONDING_AUTHOR).asBoolean(),
-                      new Identity(
-                          uriFromText(contributorNode.path(IDENTITY).path(ID).textValue()),
-                          contributorNode.path(IDENTITY).path(NAME).textValue(),
-                          uriFromText(contributorNode.path(IDENTITY).path(ORC_ID).textValue())),
-                      contributorNode.path(ROLE).path(TYPE).textValue(),
-                      contributorNode.path(SEQUENCE).asInt()));
-            });
+        .forEachRemaining(node -> contributors.add(new Contributor(node)));
     return contributors;
   }
 
-  private URI uriFromText(String text) {
-    return Objects.isNull(text) ? null : URI.create(text);
+  private List<String> nodeAsListOf(JsonNode jsonNode) {
+    try {
+      return objectMapper.readerForListOf(String.class).readValue(jsonNode);
+    } catch (IOException e) {
+      return Collections.emptyList();
+    }
   }
 }

@@ -33,6 +33,7 @@ dependencies {
 
     testImplementation libs.bundles.logging
     testImplementation libs.bundles.testing
+    testImplementation libs.bundles.jackson
     testImplementation project(':search-testing')
 
 }
