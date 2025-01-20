@@ -696,7 +696,6 @@ Resources:
   KeyBatchesBucket:
     Type: AWS::S3::Bucket
     Properties:
-      AccessControl: Private
       BucketName: !Sub "${KeyBatchesBucketName}-${AWS::AccountId}"
       LifecycleConfiguration:
         Rules:
@@ -707,14 +706,12 @@ Resources:
   IndexingErrorsBucket:
     Type: AWS::S3::Bucket
     Properties:
-      AccessControl: Private
       BucketName: !Sub "${IndexingErrorsBucketName}-${AWS::AccountId}"
       LifecycleConfiguration:
         Rules:
           - Id: DeleteContentAfter100Days
             Status: Enabled
             ExpirationInDays: 100
-
 
   #============================Alarms===============================================================
 
