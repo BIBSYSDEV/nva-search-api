@@ -5,7 +5,7 @@ import static no.unit.nva.constants.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.constants.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.constants.ErrorMessages.TOO_MANY_ARGUMENTS;
 import static no.unit.nva.constants.Words.COMMA;
-import static no.unit.nva.constants.Words.KEYWORD_FALSE;
+import static no.unit.nva.constants.Words.EXCLUDE_KEYWORD;
 import static no.unit.nva.constants.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.constants.Words.NONE;
 import static no.unit.nva.constants.Words.POST_FILTER;
@@ -215,7 +215,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
 
   private MultiMatchQueryBuilder assigneeQuery(String searchByUserName) {
     return multiMatchQuery(
-            searchByUserName, ASSIGNEE.searchFields(KEYWORD_FALSE).toArray(String[]::new))
+            searchByUserName, ASSIGNEE.searchFields(EXCLUDE_KEYWORD).toArray(String[]::new))
         .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
         .autoGenerateSynonymsPhraseQuery(false)
         .fuzzyTranspositions(false)

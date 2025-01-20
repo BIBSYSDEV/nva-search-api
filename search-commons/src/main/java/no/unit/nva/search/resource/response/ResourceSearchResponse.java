@@ -1,6 +1,12 @@
 package no.unit.nva.search.resource.response;
 
+import static no.unit.nva.constants.Words.ENTITY_DESCRIPTION;
+import static no.unit.nva.constants.Words.PUBLICATION_INSTANCE;
+import static no.unit.nva.constants.Words.REFERENCE;
+import static no.unit.nva.constants.Words.TYPE;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +26,10 @@ public record ResourceSearchResponse(
     int contributorsCount,
     PublishingDetails publishingDetails) {
 
+  public static Builder responseBuilder() {
+    return new Builder();
+  }
+
   public static final class Builder {
 
     private URI id;
@@ -36,24 +46,26 @@ public record ResourceSearchResponse(
     private int contributorsCount;
     private PublishingDetails publishingDetails;
 
-    public Builder() {}
-
-    public static Builder aResourceSearchResponse() {
-      return new Builder();
-    }
+    private Builder() {}
 
     public Builder withId(URI id) {
       this.id = id;
       return this;
     }
 
-    public Builder withIdentifier(String identifier) {
-      this.identifier = identifier;
+    public Builder withIdentifier(JsonNode identifier) {
+      this.identifier = identifier.textValue();
       return this;
     }
 
-    public Builder withType(String type) {
-      this.type = type;
+    public Builder withType(JsonNode source) {
+      this.type =
+          source
+              .path(ENTITY_DESCRIPTION)
+              .path(REFERENCE)
+              .path(PUBLICATION_INSTANCE)
+              .path(TYPE)
+              .textValue();
       return this;
     }
 
@@ -67,18 +79,18 @@ public record ResourceSearchResponse(
       return this;
     }
 
-    public Builder withMainTitle(String mainTitle) {
-      this.mainTitle = mainTitle;
+    public Builder withMainTitle(JsonNode mainTitle) {
+      this.mainTitle = mainTitle.textValue();
       return this;
     }
 
-    public Builder withMainLanguageAbstract(String mainLanguageAbstract) {
-      this.mainLanguageAbstract = mainLanguageAbstract;
+    public Builder withMainLanguageAbstract(JsonNode mainLanguageAbstract) {
+      this.mainLanguageAbstract = mainLanguageAbstract.textValue();
       return this;
     }
 
-    public Builder withDescription(String description) {
-      this.description = description;
+    public Builder withDescription(JsonNode description) {
+      this.description = description.textValue();
       return this;
     }
 
@@ -97,8 +109,8 @@ public record ResourceSearchResponse(
       return this;
     }
 
-    public Builder withContributorsCount(int contributorsCount) {
-      this.contributorsCount = contributorsCount;
+    public Builder withContributorsCount(JsonNode contributorsCount) {
+      this.contributorsCount = contributorsCount.asInt();
       return this;
     }
 

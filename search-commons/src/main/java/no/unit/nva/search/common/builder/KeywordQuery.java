@@ -1,6 +1,6 @@
 package no.unit.nva.search.common.builder;
 
-import static no.unit.nva.constants.Words.KEYWORD_TRUE;
+import static no.unit.nva.constants.Words.INCLUDE_KEYWORD;
 
 import java.util.Arrays;
 import java.util.Map.Entry;
@@ -46,13 +46,13 @@ public class KeywordQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractB
     return Arrays.stream(values)
         .flatMap(
             value ->
-                key.searchFields(KEYWORD_TRUE)
+                key.searchFields(INCLUDE_KEYWORD)
                     .map(searchField -> getTermQueryBuilder(key, value, searchField)));
   }
 
   private Stream<DisMaxQueryBuilder> buildMatchAnyKeywordStream(K key, String... values) {
     var disMax = QueryBuilders.disMaxQuery().queryName(KEYWORD_ANY + key.asCamelCase());
-    key.searchFields(KEYWORD_TRUE)
+    key.searchFields(INCLUDE_KEYWORD)
         .forEach(field -> disMax.add(new TermsQueryBuilder(field, values).boost(key.fieldBoost())));
     return Stream.of(disMax);
   }

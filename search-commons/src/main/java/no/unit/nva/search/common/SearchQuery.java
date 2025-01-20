@@ -8,7 +8,7 @@ import static no.unit.nva.constants.Defaults.ZERO_RESULTS_AGGREGATION_ONLY;
 import static no.unit.nva.constants.Words.ALL;
 import static no.unit.nva.constants.Words.ASTERISK;
 import static no.unit.nva.constants.Words.COMMA;
-import static no.unit.nva.constants.Words.KEYWORD_FALSE;
+import static no.unit.nva.constants.Words.EXCLUDE_KEYWORD;
 import static no.unit.nva.constants.Words.POST_FILTER;
 import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.constants.Words.SORT_LAST;
@@ -331,15 +331,14 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
 
   private void handleSorting(SearchSourceBuilder builder) {
     if (hasSortBy(RELEVANCE_KEY_NAME)) {
-      // Not very well documented.
-      // This allows sorting on relevance together with other fields.
+      // This allows sorting on relevance together with other fields. (Not very well documented)
       builder.trackScores(true);
     }
     builderStreamFieldSort().forEach(builder::sort);
   }
 
   private Stream<Entry<String, Float>> entryStreamOfPathAndBoost(K key) {
-    return key.searchFields(KEYWORD_FALSE).map(jsonPath -> entryOfPathAndBoost(key, jsonPath));
+    return key.searchFields(EXCLUDE_KEYWORD).map(jsonPath -> entryOfPathAndBoost(key, jsonPath));
   }
 
   private Entry<String, Float> entryOfPathAndBoost(K key, String jsonPath) {

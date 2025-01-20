@@ -15,8 +15,8 @@ public final class Words {
 
   public static final int NAME_AND_SORT_LENGTH = 2;
 
-  public static final boolean KEYWORD_TRUE = true;
-  public static final boolean KEYWORD_FALSE = false;
+  public static final boolean INCLUDE_KEYWORD = true;
+  public static final boolean EXCLUDE_KEYWORD = false;
 
   public static final char CHAR_UNDERSCORE = '_';
 
