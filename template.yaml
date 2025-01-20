@@ -49,6 +49,10 @@ Parameters:
     Type: String
     Description: Base path mapping in CustomDomain
     Default: search
+  PublicationOaiPmhBasePath:
+    Type: String
+    Description: Base path mapping for Publication OAI-PMH
+    Default: publication-oai-pmh
   EventBusName:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /NVA/Events/EventsBusName
@@ -753,6 +757,17 @@ Resources:
           Name: 'AWS::Include'
           Parameters:
             Location: ./docs/oai-pmh-openapi.yaml
+
+  PublicationOaiPmhBasePathMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    Properties:
+      BasePath: !If
+        - WithSuffix
+        - !Sub ${PublicationOaiPmhBasePath}-${Suffix}
+        - !Sub ${PublicationOaiPmhBasePath}
+      DomainName: !Sub api.${CustomDomain}
+      RestApiId: !Ref PublicationOaiPmhApi
+      Stage: !Ref PublicationOaiPmhApi.Stage
 
   PublicationOaiPmhFunction:
     Type: AWS::Serverless::Function
