@@ -1,0 +1,252 @@
+openapi: 3.0.0
+info:
+  title: Publication OAI-PMH API
+  description: Endpoint supporting The Open Archives Initiative Protocol for Metadata Harvesting for publications.
+  version: '1.0.0'
+
+paths:
+  /:
+    get:
+      summary: Invoke an operation.
+      parameters:
+        - in: query
+          required: true
+          name: 'verb'
+          schema:
+            $ref: '#/components/schemas/VerbType'
+        - in: query
+          required: false
+          name: 'identifier'
+          schema:
+            $ref: '#/components/schemas/IdentifierType'
+        - in: query
+          required: false
+          name: 'metadataPrefix'
+          schema:
+            $ref: '#/components/schemas/MetadataPrefixType'
+        - in: query
+          required: false
+          name: 'from'
+          schema:
+            type: string
+            format: datetime
+        - in: query
+          required: false
+          name: 'until'
+          schema:
+            type: string
+            format: datetime
+        - in: query
+          required: false
+          name: 'set'
+          schema:
+            type: string
+            pattern: '([A-Za-z0-9\-_\.!~\*''\(\)])+(:[A-Za-z0-9\-_\.!~\*''\(\)]+)*'
+        - in: query
+          required: false
+          name: 'resumptionToken'
+          schema:
+            type: string
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PublicationOaiPmhFunction.Arn}/invocations
+        responses: { }
+        httpMethod: POST
+        type: AWS_PROXY
+      responses:
+        "200": # status code
+          description: A response object
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/OaiPmhResponseType'
+    post:
+      summary: Invoke an operation
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OaiPmhRequestForm'
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PublicationOaiPmhFunction.Arn}/invocations
+        responses: { }
+        httpMethod: POST
+        type: AWS_PROXY
+      responses:
+        "200": # status code
+          description: A response object
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/OaiPmhResponseType'
+components:
+  schemas:
+    OaiPmhRequestForm:
+      type: object
+      properties:
+        verb:
+          $ref: '#/components/schemas/VerbType'
+        identifier:
+          $ref: '#/components/schemas/IdentifierType'
+        metadataPrefix:
+          $ref: '#/components/schemas/MetadataPrefixType'
+        from:
+          type: string
+          format: datetime
+        until:
+          type: string
+          format: datetime
+        set:
+          type: string
+        resumptionToken:
+          type: string
+      required:
+        - verb
+    OaiPmhResponseType:
+      type: object
+      properties:
+        responseDate:
+          type: string
+          format: datetime
+        request:
+          $ref: '#/components/schemas/RequestType'
+        error:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorType'
+          xml:
+            wrapped: false
+        Identify:
+          $ref: '#/components/schemas/IdentifyType'
+        ListMetadataFormats:
+          $ref: '#/components/schemas/ListMetadataFormatsType'
+        ListSets:
+          $ref: '#/components/schemas/ListSetsType'
+      xml:
+        namespace: "http://www.openarchives.org/OAI/2.0/"
+        name: OAI-PMH
+
+    ListSetsType:
+      type: object
+      properties:
+        set:
+          type: array
+          items:
+            $ref: '#/components/schemas/SetType'
+          xml:
+            name: 'set'
+            wrapped: false
+        resumptionToken:
+          $ref: '#/components/schemas/ResumptionTokenType'
+      xml:
+        name: 'ListSets'
+
+    ResumptionTokenType:
+      type: object
+      properties:
+        expirationDate:
+          type: string
+          format: datetime
+          xml:
+            attribute: true
+        completeListSize:
+          type: integer
+          minimum: 0
+          xml:
+            attribute: true
+        cursor:
+          type: integer
+          minimum: 0
+          xml:
+            attribute: true
+
+    SetType:
+      type: object
+      properties:
+        setSpec:
+          type: string
+          pattern: '([A-Za-z0-9\-_\.!~\*''\(\)])+(:[A-Za-z0-9\-_\.!~\*''\(\)]+)*'
+        setName:
+          type: string
+        setDescription:
+          type: array
+          items:
+            $ref: '#/components/schemas/DescriptionType'
+          xml:
+            wrapped: false
+
+    DescriptionType:
+      type: object
+
+    ListMetadataFormatsType:
+      type: array
+      items:
+        $ref: '#/components/schemas/ListMetadataFormatType'
+      xml:
+        name: 'ListMetadataFormats'
+        wrapped: false
+
+    ListMetadataFormatType:
+      type: object
+      properties:
+        metadataPrefix:
+          $ref: '#/components/schemas/MetadataPrefixType'
+        schema:
+          type: string
+          format: uri
+        metadataNamespace:
+          type: string
+          format: uri
+
+    IdentifyType:
+      type: object
+      xml:
+        name: 'Identify'
+
+    ErrorType:
+      type: object
+      xml:
+        name: error
+      properties:
+        code:
+          type: string
+          enum:
+            - 'cannotDisseminateFormat'
+            - 'idDoesNotExist'
+            - 'badArgument'
+            - 'badVerb'
+            - 'noMetadataFormats'
+            - 'noRecordsMatch'
+            - 'badResumptionToken'
+            - 'noSetHierarchy'
+          xml:
+            attribute: true
+
+    RequestType:
+      type: object
+      xml:
+        name: request
+      properties:
+        verb:
+          $ref: '#/components/schemas/VerbType'
+    VerbType:
+      type: string
+      enum:
+        - 'Identify'
+        - 'ListMetadataFormats'
+        - 'ListSets'
+        - 'GetRecord'
+        - 'ListIdentifiers'
+        - 'ListRecords'
+      xml:
+        attribute: true
+
+    IdentifierType:
+      type: string
+      format: uri
+
+    MetadataPrefixType:
+      type: string
+      pattern: '[A-Za-z0-9\-_\.!~\*''\(\)]+'

@@ -25,10 +25,6 @@ Globals:
       AllowOrigin: "'*'"
 
 Parameters:
-  AwsRegion:
-    Type: String
-    Description: AWS Region
-    Default: AWS::Region
   CognitoUri:
     Type: AWS::SSM::Parameter::Value<String>
     Description: Reference to Cognito Auth URI
@@ -53,6 +49,10 @@ Parameters:
     Type: String
     Description: Base path mapping in CustomDomain
     Default: search
+  PublicationOaiPmhBasePath:
+    Type: String
+    Description: Base path mapping for Publication OAI-PMH
+    Default: publication-oai-pmh
   EventBusName:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /NVA/Events/EventsBusName
@@ -733,3 +733,58 @@ Resources:
       AlarmActions:
         - !Ref SlackSnsArn
 
+  #============================ OAI-PMH ============================================================
+
+  PublicationOaiPmhApiAccessLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 90
+
+  PublicationOaiPmhApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      AccessLogSetting:
+        DestinationArn: !GetAtt PublicationOaiPmhApiAccessLogGroup.Arn
+        Format: '{ "apiId": "$context.apiId", "requestId": "$context.requestId", "requestTime": "$context.requestTime", "requestTimeEpoch": "$context.requestTimeEpoch", "httpMethod": "$context.httpMethod", "path": "$context.path", "status": "$context.status",  "error.message": "$context.error.message" }'
+      StageName: Prod
+      EndpointConfiguration:
+        Type: REGIONAL
+      DefinitionBody:
+        'Fn::Transform':
+          Name: 'AWS::Include'
+          Parameters:
+            Location: ./docs/oai-pmh-openapi.yaml
+
+  PublicationOaiPmhBasePathMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    Properties:
+      BasePath: !If
+        - WithSuffix
+        - !Sub ${PublicationOaiPmhBasePath}-${Suffix}
+        - !Sub ${PublicationOaiPmhBasePath}
+      DomainName: !Sub api.${CustomDomain}
+      RestApiId: !Ref PublicationOaiPmhApi
+      Stage: !Ref PublicationOaiPmhApi.Stage
+
+  PublicationOaiPmhFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Lambda for handling OAI-PMH requests
+      CodeUri: oai-pmh-handler
+      Handler: no.sikt.nva.oai.pmh.handler.OaiPmhHandler::handleRequest
+      Environment:
+        Variables:
+          ALLOWED_ORIGIN: !Ref AllowedOrigins
+      Events:
+        OaiPmhGetRequest:
+          Type: Api
+          Properties:
+            Path: /
+            Method: get
+            RestApiId: !Ref PublicationOaiPmhApi
+        OaiPmhPostRequest:
+          Type: Api
+          Properties:
+            Path: /
+            Method: post
+            RestApiId: !Ref PublicationOaiPmhApi
