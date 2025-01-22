@@ -1,6 +1,7 @@
 package no.sikt.nva.oai.pmh.handler;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableWithSize.iterableWithSize;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -15,6 +16,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+import javax.xml.transform.Source;
 import no.unit.nva.stubs.FakeContext;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
@@ -23,13 +27,85 @@ import nva.commons.logutils.LogUtils;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
+import org.openarchives.oai.pmh.v2.OAIPMHerrorcodeType;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
+import org.openarchives.oai.pmh.v2.VerbType;
+import org.w3c.dom.Node;
 import org.xmlunit.builder.Input;
 import org.xmlunit.xpath.JAXPXPathEngine;
 
 public class OaiPmhHandlerTest {
+  private static final String OAI_PMH_NAMESPACE_PREFIX = "oai";
+  private static final String OAI_PMH_NAMESPACE = "http://www.openarchives.org/OAI/2.0/";
 
+  private static final String[] EXPECTED_SET_SPECS = {
+    "PublicationInstanceType",
+    "PublicationInstanceType:Architecture",
+    "PublicationInstanceType:ArtisticDesign",
+    "PublicationInstanceType:MovingPicture",
+    "PublicationInstanceType:PerformingArts",
+    "PublicationInstanceType:AcademicArticle",
+    "PublicationInstanceType:AcademicLiteratureReview",
+    "PublicationInstanceType:CaseReport",
+    "PublicationInstanceType:StudyProtocol",
+    "PublicationInstanceType:ProfessionalArticle",
+    "PublicationInstanceType:PopularScienceArticle",
+    "PublicationInstanceType:JournalCorrigendum",
+    "PublicationInstanceType:JournalLetter",
+    "PublicationInstanceType:JournalLeader",
+    "PublicationInstanceType:JournalReview",
+    "PublicationInstanceType:AcademicMonograph",
+    "PublicationInstanceType:PopularScienceMonograph",
+    "PublicationInstanceType:Encyclopedia",
+    "PublicationInstanceType:ExhibitionCatalog",
+    "PublicationInstanceType:NonFictionMonograph",
+    "PublicationInstanceType:Textbook",
+    "PublicationInstanceType:BookAnthology",
+    "PublicationInstanceType:DegreeBachelor",
+    "PublicationInstanceType:DegreeMaster",
+    "PublicationInstanceType:DegreePhd",
+    "PublicationInstanceType:DegreeLicentiate",
+    "PublicationInstanceType:ReportBasic",
+    "PublicationInstanceType:ReportPolicy",
+    "PublicationInstanceType:ReportResearch",
+    "PublicationInstanceType:ReportWorkingPaper",
+    "PublicationInstanceType:ConferenceReport",
+    "PublicationInstanceType:ReportBookOfAbstract",
+    "PublicationInstanceType:AcademicChapter",
+    "PublicationInstanceType:EncyclopediaChapter",
+    "PublicationInstanceType:ExhibitionCatalogChapter",
+    "PublicationInstanceType:Introduction",
+    "PublicationInstanceType:NonFictionChapter",
+    "PublicationInstanceType:PopularScienceChapter",
+    "PublicationInstanceType:TextbookChapter",
+    "PublicationInstanceType:ChapterConferenceAbstract",
+    "PublicationInstanceType:ChapterInReport",
+    "PublicationInstanceType:OtherStudentWork",
+    "PublicationInstanceType:ConferenceLecture",
+    "PublicationInstanceType:ConferencePoster",
+    "PublicationInstanceType:Lecture",
+    "PublicationInstanceType:OtherPresentation",
+    "PublicationInstanceType:JournalIssue",
+    "PublicationInstanceType:ConferenceAbstract",
+    "PublicationInstanceType:MediaFeatureArticle",
+    "PublicationInstanceType:MediaBlogPost",
+    "PublicationInstanceType:MediaInterview",
+    "PublicationInstanceType:MediaParticipationInRadioOrTv",
+    "PublicationInstanceType:MediaPodcast",
+    "PublicationInstanceType:MediaReaderOpinion",
+    "PublicationInstanceType:MusicPerformance",
+    "PublicationInstanceType:DataManagementPlan",
+    "PublicationInstanceType:DataSet",
+    "PublicationInstanceType:VisualArts",
+    "PublicationInstanceType:Map",
+    "PublicationInstanceType:LiteraryArts",
+    "PublicationInstanceType:ExhibitionProduction",
+    "PublicationInstanceType:AcademicCommentary",
+    "PublicationInstanceType:ArtisticDegreePhd"
+  };
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
   private Environment environment;
 
@@ -41,7 +117,7 @@ public class OaiPmhHandlerTest {
 
   @Test
   void shouldReturnInternalServerErrorWithProperLoggingWhenXmlMarshallingFails()
-      throws IOException, JAXBException {
+      throws IOException {
     final var appender = LogUtils.getTestingAppenderForRootLogger();
 
     var inputStream = emptyRequest();
@@ -56,32 +132,103 @@ public class OaiPmhHandlerTest {
   }
 
   @Test
-  void shouldReturnKnownResponseWhenNotImplemented() throws IOException, JAXBException {
-    var environment = Mockito.mock(Environment.class);
-    when(environment.readEnv("ALLOWED_ORIGIN")).thenReturn("*");
-
+  void shouldReturnErrorResponseWhenNoVerbIsSupplied() throws IOException, JAXBException {
     var inputStream = emptyRequest();
 
-    var context = JAXBContext.newInstance(OAIPMHtype.class);
-    var marshaller = context.createMarshaller();
-    var gatewayResponse =
-        invokeHandler(environment, new JaxbXmlSerializer(marshaller), inputStream);
-    assertThat(gatewayResponse.getStatusCode(), is(equalTo(HttpURLConnection.HTTP_OK)));
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    assertXmlResponseWithError(
+        response, OAIPMHerrorcodeType.BAD_VERB, "Unknown or no verb supplied.");
+  }
 
-    var response = gatewayResponse.getBody();
+  @ParameterizedTest
+  @ValueSource(
+      strings = {"Identify", "ListMetadataFormats", "GetRecord", "ListIdentifiers", "ListRecords"})
+  void shouldReturnErrorResponseWhenVerbIsKnownButNotSupported(final String verb)
+      throws IOException, JAXBException {
+    var inputStream = request(verb);
 
-    var xpathEngine = new JAXPXPathEngine();
-    xpathEngine.setNamespaceContext(Map.of("oai", "http://www.openarchives.org/OAI/2.0/"));
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    assertXmlResponseWithError(response, OAIPMHerrorcodeType.BAD_VERB, "Unsupported verb.");
+  }
 
-    var errorNodes =
-        xpathEngine.selectNodes("/oai:OAI-PMH/oai:error", Input.fromString(response).build());
+  private static void assertXmlResponseWithError(
+      Source response, OAIPMHerrorcodeType errorCode, String message) {
+    var xpathEngine = getXpathEngine();
+    var errorNodes = xpathEngine.selectNodes("/oai:OAI-PMH/oai:error", response);
 
     assertThat(errorNodes, iterableWithSize(1));
 
     var errorNode = errorNodes.iterator().next();
     assertThat(
-        errorNode.getAttributes().getNamedItem("code").getNodeValue(), is(equalTo("badVerb")));
-    assertThat(errorNode.getFirstChild().getNodeValue(), is(equalTo("Not implemented yet!")));
+        errorNode.getAttributes().getNamedItem("code").getNodeValue(),
+        is(equalTo(errorCode.value())));
+    assertThat(errorNode.getFirstChild().getNodeValue(), is(equalTo(message)));
+  }
+
+  @Test
+  void shouldReturnErrorResponseWhenVerbIsUnknown() throws IOException, JAXBException {
+    var inputStream = request("Unknown");
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+
+    assertXmlResponseWithError(
+        response, OAIPMHerrorcodeType.BAD_VERB, "Unknown or no verb supplied.");
+  }
+
+  @Test
+  void shouldReturnExpectedSetsWhenAskingForListSets() throws IOException, JAXBException {
+    var inputStream = request(VerbType.LIST_SETS.value());
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    assertResponseRequestContains(VerbType.LIST_SETS, response, xpathEngine);
+
+    var listSetSpecNodes =
+        xpathEngine.selectNodes("/oai:OAI-PMH/oai:ListSets/oai:set/oai:setSpec", response);
+    var actualSetSpecs =
+        StreamSupport.stream(listSetSpecNodes.spliterator(), false)
+            .map(Node::getFirstChild)
+            .map(Node::getNodeValue)
+            .collect(Collectors.toSet());
+    assertThat(actualSetSpecs, containsInAnyOrder(EXPECTED_SET_SPECS));
+  }
+
+  private Source invokeHandlerAndAssertHttpStatusCodeOk(InputStream inputStream)
+      throws JAXBException, IOException {
+    var context = JAXBContext.newInstance(OAIPMHtype.class);
+    var marshaller = context.createMarshaller();
+    var gatewayResponse =
+        invokeHandler(environment, new JaxbXmlSerializer(marshaller), inputStream);
+    assertThat(gatewayResponse.getStatusCode(), is(equalTo(HttpURLConnection.HTTP_OK)));
+    return Input.fromString(gatewayResponse.getBody()).build();
+  }
+
+  private void assertResponseRequestContains(
+      VerbType verbType, Source source, JAXPXPathEngine xpathEngine) {
+    var requestNodes = xpathEngine.selectNodes("/oai:OAI-PMH/oai:request", source);
+    assertThat(requestNodes, iterableWithSize(1));
+
+    var verb = requestNodes.iterator().next().getAttributes().getNamedItem("verb").getNodeValue();
+    assertThat(verb, is(equalTo(verbType.value())));
+  }
+
+  private static JaxbXmlSerializer createXmlSerializer() throws JAXBException {
+    var context = JAXBContext.newInstance(OAIPMHtype.class);
+    var marshaller = context.createMarshaller();
+    return new JaxbXmlSerializer(marshaller);
+  }
+
+  private static JAXPXPathEngine getXpathEngine() {
+    var xpathEngine = new JAXPXPathEngine();
+    xpathEngine.setNamespaceContext(Map.of(OAI_PMH_NAMESPACE_PREFIX, OAI_PMH_NAMESPACE));
+    return xpathEngine;
+  }
+
+  private static InputStream request(String verb) throws JsonProcessingException {
+    return new HandlerRequestBuilder<Void>(new ObjectMapper())
+        .withQueryParameters(Map.of("verb", verb))
+        .build();
   }
 
   private GatewayResponse<String> invokeHandler(
