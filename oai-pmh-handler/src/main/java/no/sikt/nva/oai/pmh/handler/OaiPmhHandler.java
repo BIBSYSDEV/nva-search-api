@@ -14,6 +14,9 @@ import nva.commons.core.JacocoGenerated;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
 
 public class OaiPmhHandler extends ApiGatewayHandler<Void, String> {
+
+  private static final String QUERY_PARAM_VERB = "verb";
+
   private final XmlSerializer xmlSerializer;
   private final OaiPmhDataProvider dataProvider = new DefaultOaiPmhDataProvider();
 
@@ -33,16 +36,16 @@ public class OaiPmhHandler extends ApiGatewayHandler<Void, String> {
   }
 
   @Override
-  protected void validateRequest(Void unused, RequestInfo requestInfo, Context context)
-      throws ApiGatewayException {
+  protected void validateRequest(Void unused, RequestInfo requestInfo, Context context) {
     // no-op
   }
 
   @Override
   protected String processInput(Void unused, RequestInfo requestInfo, Context context)
       throws ApiGatewayException {
+    var verb = requestInfo.getQueryParameterOpt(QUERY_PARAM_VERB).orElse("null");
 
-    return xmlSerializer.serialize(dataProvider.handleRequest());
+    return xmlSerializer.serialize(dataProvider.handleRequest(verb));
   }
 
   @Override
