@@ -137,7 +137,7 @@ public class OaiPmhHandlerTest {
 
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
     assertXmlResponseWithError(
-        response, OAIPMHerrorcodeType.BAD_VERB, "Unknown or no verb supplied!");
+        response, OAIPMHerrorcodeType.BAD_VERB, "Unknown or no verb supplied.");
   }
 
   @ParameterizedTest
@@ -148,7 +148,7 @@ public class OaiPmhHandlerTest {
     var inputStream = request(verb);
 
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
-    assertXmlResponseWithError(response, OAIPMHerrorcodeType.BAD_VERB, "Not supported verb!");
+    assertXmlResponseWithError(response, OAIPMHerrorcodeType.BAD_VERB, "Unsupported verb.");
   }
 
   private static void assertXmlResponseWithError(
@@ -172,7 +172,7 @@ public class OaiPmhHandlerTest {
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
 
     assertXmlResponseWithError(
-        response, OAIPMHerrorcodeType.BAD_VERB, "Unknown or no verb supplied!");
+        response, OAIPMHerrorcodeType.BAD_VERB, "Unknown or no verb supplied.");
   }
 
   @Test

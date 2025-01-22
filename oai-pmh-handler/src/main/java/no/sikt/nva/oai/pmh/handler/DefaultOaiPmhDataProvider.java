@@ -6,6 +6,7 @@ import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import javax.xml.datatype.DatatypeFactory;
 import org.openarchives.oai.pmh.v2.OAIPMHerrorcodeType;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
@@ -16,8 +17,8 @@ import org.openarchives.oai.pmh.v2.VerbType;
 public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
   private static final String PUBLICATION_INSTANCE_TYPE_SET = "PublicationInstanceType";
   private static final String COLON = ":";
-  private static final List<String> INSTANCE_TYPES =
-      List.of(
+  private static final Set<String> INSTANCE_TYPES =
+      Set.of(
           "Architecture",
           "ArtisticDesign",
           "MovingPicture",
@@ -81,6 +82,8 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
           "AcademicCommentary",
           "ArtisticDegreePhd");
 
+  private final ObjectFactory objectFactory = new ObjectFactory();
+
   @Override
   public JAXBElement<OAIPMHtype> handleRequest(final String verb) {
     Optional<VerbType> verbType;
@@ -95,12 +98,12 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
             type ->
                 switch (type) {
                   case LIST_SETS -> listSets();
-                  default -> badVerb("Not supported verb!");
+                  default -> badVerb("Unsupported verb.");
                 })
-        .orElseGet(() -> badVerb("Unknown or no verb supplied!"));
+        .orElseGet(() -> badVerb("Unknown or no verb supplied."));
   }
 
-  private JAXBElement<OAIPMHtype> baseResponse(ObjectFactory objectFactory) {
+  private JAXBElement<OAIPMHtype> baseResponse() {
     var responseDate =
         DatatypeFactory.newDefaultInstance()
             .newXMLGregorianCalendar(GregorianCalendar.from(ZonedDateTime.now()));
@@ -113,9 +116,7 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
   }
 
   private JAXBElement<OAIPMHtype> listSets() {
-    var objectFactory = new ObjectFactory();
-
-    var response = baseResponse(objectFactory);
+    var response = baseResponse();
     var value = response.getValue();
     value.getRequest().setVerb(VerbType.LIST_SETS);
 
@@ -127,25 +128,29 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
   }
 
   private List<SetType> generateSets(ObjectFactory objectFactory) {
-    List<SetType> sets = new LinkedList<>();
+    var setTypes = new LinkedList<SetType>();
     var setQualifier = objectFactory.createSetType();
     setQualifier.setSetSpec(PUBLICATION_INSTANCE_TYPE_SET);
     setQualifier.setSetName(PUBLICATION_INSTANCE_TYPE_SET);
 
-    sets.add(setQualifier);
+    setTypes.add(setQualifier);
 
-    for (var instanceType : INSTANCE_TYPES) {
-      var setType = objectFactory.createSetType();
-      setType.setSetSpec(PUBLICATION_INSTANCE_TYPE_SET + COLON + instanceType);
-      setType.setSetName(instanceType);
-      sets.add(setType);
-    }
-    return sets;
+    var subSetTypes = INSTANCE_TYPES.stream().map(this::wrap).toList();
+
+    setTypes.addAll(subSetTypes);
+    return setTypes;
+  }
+
+  private SetType wrap(String instanceType) {
+    var setType = objectFactory.createSetType();
+    setType.setSetSpec(PUBLICATION_INSTANCE_TYPE_SET + COLON + instanceType);
+    setType.setSetName(instanceType);
+
+    return setType;
   }
 
   private JAXBElement<OAIPMHtype> badVerb(String message) {
-    var objectFactory = new ObjectFactory();
-    var response = baseResponse(objectFactory);
+    var response = baseResponse();
     var value = response.getValue();
     var error = objectFactory.createOAIPMHerrorType();
     error.setCode(OAIPMHerrorcodeType.BAD_VERB);
