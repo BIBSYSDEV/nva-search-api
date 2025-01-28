@@ -1,6 +1,7 @@
 package no.unit.nva.search.ticket;
 
 import static java.util.Objects.isNull;
+import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.search.ticket.Constants.CANNOT_SEARCH_AS_BOTH_ASSIGNEE_AND_OWNER_AT_THE_SAME_TIME;
 import static no.unit.nva.search.ticket.Constants.FILTER_BY_ORGANIZATION;
 import static no.unit.nva.search.ticket.Constants.FILTER_BY_OWNER;
@@ -21,10 +22,14 @@ import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import no.unit.nva.search.common.records.FilterBuilder;
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
@@ -57,12 +62,13 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
 
   private final TicketSearchQuery query;
   private String currentUser;
-  private URI organizationId;
+  private Set<URI> organizationIds;
   private Set<AccessRight> accessRightEnumSet = EnumSet.noneOf(AccessRight.class);
 
   public TicketAccessFilter(TicketSearchQuery query) {
     this.query = query;
     this.query.filters().set();
+    this.organizationIds = Set.of();
   }
 
   public String getCurrentUser() {
@@ -106,11 +112,11 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
   /**
    * Filter on organization.
    *
-   * @param organization organization id
+   * @param organizations organization ids
    * @apiNote ONLY USE IN TESTS, in handlers use: {@link #fromRequestInfo(RequestInfo)}
    */
-  public TicketAccessFilter organization(URI organization) {
-    this.organizationId = organization;
+  public TicketAccessFilter organizations(URI... organizations) {
+    Stream.of(organizations).filter(Objects::nonNull).forEach(organizationIds::add);
     return this;
   }
 
@@ -129,11 +135,27 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
 
     var organization =
         requestInfo.getTopLevelOrgCristinId().orElse(requestInfo.getPersonAffiliation());
+    var viewScopes = getViewingScope(requestInfo);
 
     return user(requestInfo.getUserName())
         .accessRights(requestInfo.getAccessRights())
-        .organization(organization)
+        .organizations(viewScopes)
+        .organizations(organization)
         .apply();
+  }
+
+  /**
+   * Old method to get viewing scope.
+   *
+   * @param requestInfo request info
+   * @return viewing scope
+   */
+  private URI[] getViewingScope(RequestInfo requestInfo) {
+    /// TODO: Change this method to use the new viewscope.
+    return requestInfo
+        .getQueryParameterOpt("viewingScope")
+        .map(s -> Arrays.stream(s.split(COMMA)).map(URI::create).toArray(URI[]::new))
+        .orElse(new URI[0]);
   }
 
   @Override
@@ -156,7 +178,7 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
 
     this.query
         .filters()
-        .add(filterByOrganization(organizationId))
+        .add(filterByOrganizations(organizationIds))
         .add(filterByUserAndTicketTypes(currentUser, curatorTicketTypes))
         .add(filterByDeniedUnpublishRequest());
     return query;
@@ -188,11 +210,18 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
     return allowed;
   }
 
+  private BoolQueryBuilder filterByOrganizations(Set<URI> organizationIds) {
+    return organizationIds.stream()
+        .map(this::filterByOrganization)
+        .reduce(boolQuery(), BoolQueryBuilder::should, (a, b) -> a)
+        .minimumShouldMatch(1)
+        .queryName(FILTER_BY_ORGANIZATION);
+  }
+
   private MultiMatchQueryBuilder filterByOrganization(URI organizationId) {
     return QueryBuilders.multiMatchQuery(organizationId.toString(), ORGANIZATION_PATHS)
         .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
-        .operator(Operator.AND)
-        .queryName(FILTER_BY_ORGANIZATION);
+        .operator(Operator.AND);
   }
 
   private BoolQueryBuilder filterByUserAndTicketTypes(
@@ -223,7 +252,7 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
   }
 
   private void validateOrganization() throws UnauthorizedException {
-    if (isNull(organizationId)) {
+    if (isNull(organizationIds)) {
       throw new UnauthorizedException(ORGANIZATION_IS_REQUIRED);
     }
   }

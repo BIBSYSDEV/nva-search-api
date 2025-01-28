@@ -241,7 +241,7 @@ class TicketClientTest {
             .withRequiredParameters(FROM, SIZE)
             .build()
             .withFilter()
-            .organization(testOrganizationId)
+            .organizations(testOrganizationId)
             .user(CURRENT_USERNAME)
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
             .apply()
@@ -277,7 +277,7 @@ class TicketClientTest {
             .withFilter()
             .user(CURRENT_USERNAME)
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
-            .organization(testOrganizationId)
+            .organizations(testOrganizationId)
             .apply()
             .doSearch(searchClient);
     assertNotNull(pagedResult.swsResponse());
@@ -299,7 +299,7 @@ class TicketClientTest {
             .withFilter()
             .user(CURRENT_USERNAME)
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
-            .organization(testOrganizationId)
+            .organizations(testOrganizationId)
             .apply()
             .doSearch(searchClient)
             .toPagedResponse();
@@ -320,7 +320,7 @@ class TicketClientTest {
             .withFilter()
             .user(CURRENT_USERNAME)
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
-            .organization(testOrganizationId)
+            .organizations(testOrganizationId)
             .apply()
             .doSearch(searchClient)
             .toPagedResponse();
@@ -341,7 +341,7 @@ class TicketClientTest {
             .withFilter()
             .user("1492596@20754.0.0.0")
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
-            .organization(testOrganizationId)
+            .organizations(testOrganizationId)
             .apply()
             .doSearch(searchClient)
             .toPagedResponse();
@@ -361,7 +361,7 @@ class TicketClientTest {
             .withFilter()
             .user("1492596@20754.0.0.0")
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
-            .organization(testOrganizationId)
+            .organizations(testOrganizationId)
             .apply()
             .doSearch(searchClient)
             .toPagedResponse();
@@ -384,7 +384,7 @@ class TicketClientTest {
             .withFilter()
             .user(CURRENT_USERNAME)
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
-            .organization(testOrganizationId)
+            .organizations(testOrganizationId)
             .apply()
             .doSearch(searchClient)
             .toPagedResponse();
@@ -406,7 +406,7 @@ class TicketClientTest {
             .withFilter()
             .user(CURRENT_USERNAME)
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
-            .organization(testOrganizationId)
+            .organizations(testOrganizationId)
             .apply()
             .doSearch(searchClient);
 
@@ -431,7 +431,7 @@ class TicketClientTest {
             .withFilter()
             .user(CURRENT_USERNAME)
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT, MANAGE_CUSTOMERS)
-            .organization(testOrganizationId)
+            .organizations(testOrganizationId)
             .apply()
             .doSearch(searchClient);
 
@@ -496,7 +496,7 @@ class TicketClientTest {
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .build()
             .withFilter()
-            .organization(testOrganizationId)
+            .organizations(testOrganizationId)
             .user(userName)
             .accessRights(accessRights)
             .apply()
@@ -571,7 +571,7 @@ class TicketClientTest {
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .build()
             .withFilter()
-            .organization(testOrganizationId)
+            .organizations(testOrganizationId)
             .user(CURRENT_USERNAME)
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
             .apply()
