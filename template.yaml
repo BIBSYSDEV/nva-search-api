@@ -109,6 +109,18 @@ Resources:
   ApiAccessLogGroup:
     Type: AWS::Logs::LogGroup
 
+  ReadSearchInfrastructureSecretsManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: 'Managed IAM policy to get access to read search infrastructure secrets from Secrets manager'
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - secretsmanager:GetSecretValue
+            Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:SearchInfrastructureCredentials*'
+
   ReadOnlySearchInfrastructureRole:
     Type: AWS::IAM::Role
     Properties:
@@ -119,6 +131,8 @@ Resources:
             Principal:
               Service: [ lambda.amazonaws.com ]
             Action: [ 'sts:AssumeRole' ]
+      ManagedPolicyArns:
+        - !Ref ReadSearchInfrastructureSecretsManagedPolicy
       Policies:
         - PolicyName: writeLog
           PolicyDocument:
@@ -138,14 +152,6 @@ Resources:
                 Action:
                   - secretsmanager:GetSecretValue
                 Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:IdentityServiceSecret*'
-        - PolicyName: readSearchInfrastructureSecret
-          PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-              - Effect: Allow
-                Action:
-                  - secretsmanager:GetSecretValue
-                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:SearchInfrastructureCredentials*'
         - PolicyName: readBackendCognitoClientCredentialsSecret
           PolicyDocument:
             Version: 2012-10-17
@@ -775,6 +781,8 @@ Resources:
       Environment:
         Variables:
           ALLOWED_ORIGIN: !Ref AllowedOrigins
+      Policies:
+        - !Ref ReadSearchInfrastructureSecretsManagedPolicy
       Events:
         OaiPmhGetRequest:
           Type: Api
