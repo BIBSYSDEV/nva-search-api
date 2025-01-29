@@ -4,10 +4,12 @@ plugins {
 
 dependencies {
     implementation project(':oai-pmh')
+    implementation project(':search-commons')
 
     implementation libs.aws.lambda.java.core
     implementation libs.bundles.logging
     implementation libs.nva.core
+    implementation libs.nva.json
     implementation libs.nva.apigateway
     implementation libs.guava
     implementation libs.jakarta.xml.bind.api
@@ -16,8 +18,11 @@ dependencies {
 
     testImplementation libs.xml.unit.core
     testImplementation libs.xml.unit.matchers
+    testImplementation libs.bundles.testcontainers
+    testImplementation project(':search-testing')
 }
 
 test {
     useJUnitPlatform()
+    environment("SEARCH_INFRASTRUCTURE_API_URI", "https://localhost/search")
 }
