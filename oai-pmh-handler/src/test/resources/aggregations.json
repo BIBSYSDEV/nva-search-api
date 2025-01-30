@@ -1,0 +1,97 @@
+{
+  "withAppliedFilter": {
+    "doc_count": 2,
+    "entityDescription": {
+      "doc_count": 2,
+      "reference": {
+        "doc_count": 2,
+        "publicationInstance": {
+          "doc_count": 2,
+          "type": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": [
+              {
+                "key": "AcademicChapter",
+                "doc_count": 1
+              },
+              {
+                "key": "AcademicArticle",
+                "doc_count": 1
+              }
+            ]
+          }
+        },
+        "publicationContext": {
+          "doc_count": 2,
+          "journal": {
+            "doc_count": 0,
+            "id": {
+              "doc_count_error_upper_bound": 0,
+              "sum_other_doc_count": 0,
+              "buckets": []
+            }
+          },
+          "series": {
+            "doc_count": 0,
+            "id": {
+              "doc_count_error_upper_bound": 0,
+              "sum_other_doc_count": 0,
+              "buckets": []
+            }
+          },
+          "publisher": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          }
+        }
+      },
+      "contributor": {
+        "doc_count": 9,
+        "id": {
+          "doc_count_error_upper_bound": 0,
+          "sum_other_doc_count": 0,
+          "buckets": []
+        }
+      }
+    },
+    "files": {
+      "doc_count_error_upper_bound": 0,
+      "sum_other_doc_count": 0,
+      "buckets": []
+    },
+    "scientificIndex": {
+      "doc_count": 0,
+      "year": {
+        "doc_count_error_upper_bound": 0,
+        "sum_other_doc_count": 0,
+        "buckets": []
+      }
+    },
+    "associatedArtifacts": {
+      "doc_count": 0,
+      "license": {
+        "doc_count_error_upper_bound": 0,
+        "sum_other_doc_count": 0,
+        "buckets": []
+      }
+    },
+    "fundings": {
+      "doc_count": 2,
+      "id": {
+        "doc_count_error_upper_bound": 0,
+        "sum_other_doc_count": 0,
+        "buckets": []
+      }
+    },
+    "topLevelOrganization": {
+      "doc_count": 0,
+      "id": {
+        "doc_count_error_upper_bound": 0,
+        "sum_other_doc_count": 0,
+        "buckets": []
+      }
+    }
+  }
+}

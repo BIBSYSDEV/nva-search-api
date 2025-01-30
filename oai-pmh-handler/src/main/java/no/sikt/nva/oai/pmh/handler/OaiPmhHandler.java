@@ -6,6 +6,7 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import java.net.HttpURLConnection;
 import java.util.List;
+import no.unit.nva.search.resource.ResourceClient;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
@@ -18,7 +19,7 @@ public class OaiPmhHandler extends ApiGatewayHandler<Void, String> {
   private static final String QUERY_PARAM_VERB = "verb";
 
   private final XmlSerializer xmlSerializer;
-  private final OaiPmhDataProvider dataProvider = new DefaultOaiPmhDataProvider();
+  private final OaiPmhDataProvider dataProvider;
 
   @JacocoGenerated
   public OaiPmhHandler() throws JAXBException {
@@ -28,11 +29,14 @@ public class OaiPmhHandler extends ApiGatewayHandler<Void, String> {
     var marshaller = context.createMarshaller();
 
     this.xmlSerializer = new JaxbXmlSerializer(marshaller);
+    this.dataProvider = new DefaultOaiPmhDataProvider(ResourceClient.defaultClient());
   }
 
-  public OaiPmhHandler(Environment environment, XmlSerializer xmlSerializer) {
+  public OaiPmhHandler(
+      Environment environment, XmlSerializer xmlSerializer, ResourceClient resourceClient) {
     super(Void.class, environment);
     this.xmlSerializer = xmlSerializer;
+    this.dataProvider = new DefaultOaiPmhDataProvider(resourceClient);
   }
 
   @Override
