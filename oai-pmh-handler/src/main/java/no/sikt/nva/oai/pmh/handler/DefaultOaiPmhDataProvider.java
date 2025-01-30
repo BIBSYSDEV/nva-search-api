@@ -75,15 +75,15 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
 
     var instanceTypes = doSearchAndExtractInstanceTypesFromTypeAggregation(query);
 
-    var uaiResponse = baseResponse();
-    var value = uaiResponse.getValue();
+    var oaiResponse = baseResponse();
+    var value = oaiResponse.getValue();
     value.getRequest().setVerb(VerbType.LIST_SETS);
 
     var listSets = objectFactory.createListSetsType();
     listSets.getSet().addAll(generateSets(objectFactory, instanceTypes));
     value.setListSets(listSets);
 
-    return uaiResponse;
+    return oaiResponse;
   }
 
   private Set<String> doSearchAndExtractInstanceTypesFromTypeAggregation(
