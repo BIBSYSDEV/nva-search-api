@@ -15,7 +15,6 @@ import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 import no.unit.nva.search.common.ContentTypeUtils;
 import no.unit.nva.search.common.records.JsonNodeMutator;
 import no.unit.nva.search.resource.LegacyMutator;
@@ -63,6 +62,8 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
       throws BadRequestException {
     var version = ContentTypeUtils.extractVersionFromRequestInfo(requestInfo);
 
+    addAdditionalHeaders(() -> Map.of(HttpHeaders.VARY, HttpHeaders.ACCEPT));
+
     return ResourceSearchQuery.builder()
         .fromRequestInfo(requestInfo)
         .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
@@ -75,11 +76,6 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
         .doSearch(opensearchClient)
         .withMutators(getMutator(version))
         .toString();
-  }
-
-  @Override
-  protected void addAdditionalHeaders(Supplier<Map<String, String>> additionalHeaders) {
-    super.addAdditionalHeaders(() -> Map.of(HttpHeaders.VARY, HttpHeaders.ACCEPT));
   }
 
   private List<String> getIncludedFields(String version) {

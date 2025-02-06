@@ -1,6 +1,7 @@
 package no.sikt.nva.oai.pmh.handler;
 
 import jakarta.xml.bind.JAXBElement;
+import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.GregorianCalendar;
@@ -16,6 +17,8 @@ import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.ResourceParameter;
 import no.unit.nva.search.resource.ResourceSearchQuery;
 import nva.commons.apigateway.exceptions.BadRequestException;
+import org.openarchives.oai.pmh.v2.DeletedRecordType;
+import org.openarchives.oai.pmh.v2.GranularityType;
 import org.openarchives.oai.pmh.v2.OAIPMHerrorcodeType;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
 import org.openarchives.oai.pmh.v2.ObjectFactory;
@@ -25,18 +28,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
+
   private static final Logger LOGGER = LoggerFactory.getLogger(DefaultOaiPmhDataProvider.class);
   private static final String PUBLICATION_INSTANCE_TYPE_SET = "PublicationInstanceType";
   private static final String COLON = ":";
   private static final String INSTANCE_TYPE_AGGREGATION_NAME = "type";
   private static final String ZERO = "0";
   private static final String AGGREGATION_ALL = "all";
+  private static final String PROTOCOL_VERSION = "2.0";
+  private static final String REPOSITORY_NAME = "NVA-OAI-PMH";
+  private static final String EARLIEST_DATESTAMP = "2016-01-01";
+  private static final String CONTACT_AT_SIKT_NO = "kontakt@sikt.no";
+  private static final String UNSUPPORTED_VERB = "Unsupported verb.";
+  private static final String UNKNOWN_OR_NO_VERB_SUPPLIED = "Unknown or no verb supplied.";
 
   private final ObjectFactory objectFactory = new ObjectFactory();
   private final ResourceClient opensearchClient;
+  private final URI endpointUri;
 
-  public DefaultOaiPmhDataProvider(ResourceClient opensearchClient) {
+  public DefaultOaiPmhDataProvider(ResourceClient opensearchClient, URI endpointUri) {
     this.opensearchClient = opensearchClient;
+    this.endpointUri = endpointUri;
   }
 
   @Override
@@ -53,9 +65,29 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
             type ->
                 switch (type) {
                   case LIST_SETS -> listSets();
-                  default -> badVerb("Unsupported verb.");
+                  case IDENTIFY -> identify();
+                  default -> badVerb(UNSUPPORTED_VERB);
                 })
-        .orElseGet(() -> badVerb("Unknown or no verb supplied."));
+        .orElseGet(() -> badVerb(UNKNOWN_OR_NO_VERB_SUPPLIED));
+  }
+
+  private JAXBElement<OAIPMHtype> identify() {
+    var oaiResponse = baseResponse();
+    var value = oaiResponse.getValue();
+    value.getRequest().setVerb(VerbType.IDENTIFY);
+
+    var identify = objectFactory.createIdentifyType();
+    identify.setBaseURL(endpointUri.toString());
+    identify.setProtocolVersion(PROTOCOL_VERSION);
+    identify.setEarliestDatestamp(EARLIEST_DATESTAMP);
+    identify.setRepositoryName(REPOSITORY_NAME);
+    identify.setGranularity(GranularityType.YYYY_MM_DD);
+    identify.setDeletedRecord(DeletedRecordType.NO);
+    identify.getAdminEmail().add(CONTACT_AT_SIKT_NO);
+
+    value.setIdentify(identify);
+
+    return oaiResponse;
   }
 
   private JAXBElement<OAIPMHtype> baseResponse() {

@@ -26,6 +26,7 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.xml.transform.Source;
 import no.unit.nva.commons.json.JsonUtils;
@@ -42,13 +43,17 @@ import nva.commons.logutils.LogUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.openarchives.oai.pmh.v2.DeletedRecordType;
 import org.openarchives.oai.pmh.v2.OAIPMHerrorcodeType;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
 import org.openarchives.oai.pmh.v2.VerbType;
 import org.w3c.dom.Node;
 import org.xmlunit.builder.Input;
 import org.xmlunit.xpath.JAXPXPathEngine;
+import org.xmlunit.xpath.XPathEngine;
 
 public class OaiPmhHandlerTest {
 
@@ -61,6 +66,16 @@ public class OaiPmhHandlerTest {
     "PublicationInstanceType:AcademicChapter"
   };
   private static final String EMPTY_STRING = "";
+  private static final String PROTOCOL_VERSION_NODE_NAME = "protocolVersion";
+  private static final String EARLIEST_DATESTAMP_NODE_NAME = "earliestDatestamp";
+  private static final String DELETED_RECORD_NODE_NAME = "deletedRecord";
+  private static final String GRANULARITY_NODE_NAME = "granularity";
+  private static final String CONTACT_AT_SIKT_NO = "kontakt@sikt.no";
+  private static final String CODE_ATTRIBUTE_NAME = "code";
+  private static final String VERB_ATTRIBUTE_NAME = "verb";
+  private static final String GET_METHOD = "get";
+  private static final String POST_METHOD = "post";
+
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
   private Environment environment;
   private ResourceClient resourceClient;
@@ -71,7 +86,8 @@ public class OaiPmhHandlerTest {
     when(environment.readEnv("ALLOWED_ORIGIN")).thenReturn("*");
     when(environment.readEnv("SEARCH_INFRASTRUCTURE_API_URI"))
         .thenReturn("https://example.com/search");
-
+    when(environment.readEnv("API_HOST")).thenReturn("localhost");
+    when(environment.readEnv("OAI_BASE_PATH")).thenReturn("publication-oai-pmh");
     this.resourceClient = mock(ResourceClient.class);
   }
 
@@ -101,19 +117,19 @@ public class OaiPmhHandlerTest {
   }
 
   @ParameterizedTest
-  @ValueSource(
-      strings = {"Identify", "ListMetadataFormats", "GetRecord", "ListIdentifiers", "ListRecords"})
-  void shouldReturnErrorResponseWhenVerbIsKnownButNotSupported(final String verb)
-      throws IOException, JAXBException {
-    var inputStream = request(verb);
+  @MethodSource("verbsAndMethodCombinations")
+  void shouldReturnErrorResponseWhenVerbIsKnownButNotSupported(
+      final VerbType verb, final String method) throws IOException, JAXBException {
+    var inputStream = request(verb.value(), method);
 
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
     assertXmlResponseWithError(response, OAIPMHerrorcodeType.BAD_VERB, "Unsupported verb.");
   }
 
-  @Test
-  void shouldReturnErrorResponseWhenVerbIsUnknown() throws IOException, JAXBException {
-    var inputStream = request("Unknown");
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldReturnErrorResponseWhenVerbIsUnknown(String method) throws IOException, JAXBException {
+    var inputStream = request("Unknown", method);
 
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
 
@@ -121,12 +137,14 @@ public class OaiPmhHandlerTest {
         response, OAIPMHerrorcodeType.BAD_VERB, "Unknown or no verb supplied.");
   }
 
-  @Test
-  void shouldReturnExpectedSetsWhenAskingForListSets() throws IOException, JAXBException {
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldReturnExpectedSetsWhenAskingForListSets(String method)
+      throws IOException, JAXBException {
     when(resourceClient.doSearch(argThat(new ResourceSearchQueryMatcher(0, 0, "all"))))
         .thenReturn(swsResponse());
 
-    var inputStream = request(VerbType.LIST_SETS.value());
+    var inputStream = request(VerbType.LIST_SETS.value(), method);
 
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
     var xpathEngine = getXpathEngine();
@@ -143,14 +161,15 @@ public class OaiPmhHandlerTest {
     assertThat(actualSetSpecs, containsInAnyOrder(EXPECTED_SET_SPECS));
   }
 
-  @Test
-  void shouldReturnExpectedErrorAndLogWhenSearchFailsForListSets()
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldReturnExpectedErrorAndLogWhenSearchFailsForListSets(String method)
       throws IOException, JAXBException {
     final var appender = LogUtils.getTestingAppenderForRootLogger();
 
     doThrow(new RuntimeException(EMPTY_STRING)).when(resourceClient).doSearch(any());
 
-    var inputStream = request(VerbType.LIST_SETS.value());
+    var inputStream = request(VerbType.LIST_SETS.value(), method);
 
     invokeHandlerAndAssertHttpStatus(inputStream, HTTP_INTERNAL_ERROR);
 
@@ -158,6 +177,125 @@ public class OaiPmhHandlerTest {
         appender.getMessages(),
         containsString(
             "Failed to search for publication instance types using 'type' aggregation."));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldIdentifyWithRepositoryName(String method) throws IOException, JAXBException {
+    var inputStream = request(VerbType.IDENTIFY.value(), method);
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    assertResponseRequestContains(VerbType.IDENTIFY, response, xpathEngine);
+
+    var repositoryName = getIdentifyChildNodeText(xpathEngine, response, "repositoryName");
+    assertThat(repositoryName, is(equalTo("NVA-OAI-PMH")));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldIdentifyWithBaseURL(String method) throws IOException, JAXBException {
+    var inputStream = request(VerbType.IDENTIFY.value(), method);
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    assertResponseRequestContains(VerbType.IDENTIFY, response, xpathEngine);
+
+    var baseURL = getIdentifyChildNodeText(xpathEngine, response, "baseURL");
+
+    assertThat(baseURL, is(equalTo("https://localhost/publication-oai-pmh")));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldIdentifyWithProtocolVersion(String method) throws IOException, JAXBException {
+    var inputStream = request(VerbType.IDENTIFY.value(), method);
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    assertResponseRequestContains(VerbType.IDENTIFY, response, xpathEngine);
+
+    var protocolVersion =
+        getIdentifyChildNodeText(xpathEngine, response, PROTOCOL_VERSION_NODE_NAME);
+
+    assertThat(protocolVersion, is(equalTo("2.0")));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldIdentifyWithEarliestDatestamp(String method) throws IOException, JAXBException {
+    var inputStream = request(VerbType.IDENTIFY.value(), method);
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    assertResponseRequestContains(VerbType.IDENTIFY, response, xpathEngine);
+
+    var earliestDatestamp =
+        getIdentifyChildNodeText(xpathEngine, response, EARLIEST_DATESTAMP_NODE_NAME);
+
+    assertThat(earliestDatestamp, is(equalTo("2016-01-01")));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldIdentifyWithDeletedRecord(String method) throws IOException, JAXBException {
+    var inputStream = request(VerbType.IDENTIFY.value(), method);
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    assertResponseRequestContains(VerbType.IDENTIFY, response, xpathEngine);
+
+    var deletedRecord = getIdentifyChildNodeText(xpathEngine, response, DELETED_RECORD_NODE_NAME);
+
+    assertThat(deletedRecord, is(equalTo(DeletedRecordType.NO.value())));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldIdentifyWithGranularity(String method) throws IOException, JAXBException {
+    var inputStream = request(VerbType.IDENTIFY.value(), method);
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    assertResponseRequestContains(VerbType.IDENTIFY, response, xpathEngine);
+
+    var granularity = getIdentifyChildNodeText(xpathEngine, response, GRANULARITY_NODE_NAME);
+
+    assertThat(granularity, is(equalTo("YYYY-MM-DD")));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldIdentifyWithAdminEmail(String method) throws IOException, JAXBException {
+    var inputStream = request(VerbType.IDENTIFY.value(), method);
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    assertResponseRequestContains(VerbType.IDENTIFY, response, xpathEngine);
+
+    var adminEmailNodes =
+        xpathEngine.selectNodes("/oai:OAI-PMH/oai:Identify/oai:adminEmail", response);
+    assertThat(adminEmailNodes, iterableWithSize(1));
+
+    var adminEmail = adminEmailNodes.iterator().next().getFirstChild().getNodeValue();
+    assertThat(adminEmail, is(equalTo(CONTACT_AT_SIKT_NO)));
+  }
+
+  private static String getIdentifyChildNodeText(
+      XPathEngine xpathEngine, Source source, String childNodeName) {
+    return xpathEngine
+        .selectNodes("/oai:OAI-PMH/oai:Identify/oai:" + childNodeName, source)
+        .iterator()
+        .next()
+        .getFirstChild()
+        .getNodeValue();
   }
 
   private static void assertXmlResponseWithError(
@@ -169,7 +307,7 @@ public class OaiPmhHandlerTest {
 
     var errorNode = errorNodes.iterator().next();
     assertThat(
-        errorNode.getAttributes().getNamedItem("code").getNodeValue(),
+        errorNode.getAttributes().getNamedItem(CODE_ATTRIBUTE_NAME).getNodeValue(),
         is(equalTo(errorCode.value())));
     assertThat(errorNode.getFirstChild().getNodeValue(), is(equalTo(message)));
   }
@@ -209,14 +347,14 @@ public class OaiPmhHandlerTest {
     var requestNodes = xpathEngine.selectNodes("/oai:OAI-PMH/oai:request", source);
     assertThat(requestNodes, iterableWithSize(1));
 
-    var verb = requestNodes.iterator().next().getAttributes().getNamedItem("verb").getNodeValue();
+    var verb =
+        requestNodes
+            .iterator()
+            .next()
+            .getAttributes()
+            .getNamedItem(VERB_ATTRIBUTE_NAME)
+            .getNodeValue();
     assertThat(verb, is(equalTo(verbType.value())));
-  }
-
-  private static JaxbXmlSerializer createXmlSerializer() throws JAXBException {
-    var context = JAXBContext.newInstance(OAIPMHtype.class);
-    var marshaller = context.createMarshaller();
-    return new JaxbXmlSerializer(marshaller);
   }
 
   private static JAXPXPathEngine getXpathEngine() {
@@ -225,10 +363,16 @@ public class OaiPmhHandlerTest {
     return xpathEngine;
   }
 
-  private static InputStream request(String verb) throws JsonProcessingException {
-    return new HandlerRequestBuilder<Void>(new ObjectMapper())
-        .withQueryParameters(Map.of("verb", verb))
-        .build();
+  private static InputStream request(String verb, String method) throws JsonProcessingException {
+    var handlerRequestBuilder =
+        new HandlerRequestBuilder<String>(new ObjectMapper()).withHttpMethod(method);
+
+    if ("get".equalsIgnoreCase(method)) {
+      handlerRequestBuilder.withQueryParameters(Map.of("verb", verb));
+    } else if ("post".equalsIgnoreCase(method)) {
+      handlerRequestBuilder.withBody("verb=" + verb);
+    }
+    return handlerRequestBuilder.build();
   }
 
   private GatewayResponse<String> invokeHandler(
@@ -242,5 +386,17 @@ public class OaiPmhHandlerTest {
 
   private static InputStream emptyRequest() throws JsonProcessingException {
     return new HandlerRequestBuilder<Void>(new ObjectMapper()).build();
+  }
+
+  private static Stream<Arguments> verbsAndMethodCombinations() {
+    return Stream.of(
+        Arguments.of(VerbType.LIST_METADATA_FORMATS, GET_METHOD),
+        Arguments.of(VerbType.GET_RECORD, GET_METHOD),
+        Arguments.of(VerbType.LIST_IDENTIFIERS, GET_METHOD),
+        Arguments.of(VerbType.LIST_RECORDS, GET_METHOD),
+        Arguments.of(VerbType.LIST_METADATA_FORMATS, POST_METHOD),
+        Arguments.of(VerbType.GET_RECORD, POST_METHOD),
+        Arguments.of(VerbType.LIST_IDENTIFIERS, POST_METHOD),
+        Arguments.of(VerbType.LIST_RECORDS, POST_METHOD));
   }
 }

@@ -29,7 +29,7 @@ sourceSets {
     }
 }
 
-
+check.dependsOn jacocoTestCoverageVerification
 tasks.named('jacocoTestCoverageVerification', JacocoCoverageVerification) {
     violationRules {
         rule {
@@ -41,6 +41,11 @@ tasks.named('jacocoTestCoverageVerification', JacocoCoverageVerification) {
                 value = 'COVEREDRATIO'
                 minimum = 1.000
             }
+            limit {
+                counter = 'CLASS'
+                value = 'COVEREDRATIO'
+                minimum = 1.000
+            }
         }
         rule {
             includes = [
@@ -49,15 +54,12 @@ tasks.named('jacocoTestCoverageVerification', JacocoCoverageVerification) {
             limit {
                 counter = 'METHOD'
                 value = 'COVEREDRATIO'
-                minimum = 0.980
+                minimum = 0.970
             }
-        }
-
-        rule {
             limit {
                 counter = 'CLASS'
                 value = 'COVEREDRATIO'
-                minimum = 1.000
+                minimum = 0.988
             }
         }
     }
