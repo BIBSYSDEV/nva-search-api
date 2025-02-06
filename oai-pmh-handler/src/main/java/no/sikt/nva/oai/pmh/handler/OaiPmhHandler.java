@@ -6,16 +6,14 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import no.unit.nva.search.resource.ResourceClient;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
+import nva.commons.core.StringUtils;
 import nva.commons.core.paths.UriWrapper;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
 
@@ -72,18 +70,12 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
   }
 
   private String extractVerb(RequestInfo requestInfo, String body) {
-    if (body == null || NULL_STRING.equals(body)) {
+    if (StringUtils.isEmpty(body) || NULL_STRING.equals(body)) {
       return requestInfo.getQueryParameterOpt(QUERY_PARAM_VERB).orElse(EMPTY_VERB);
     } else {
-      return toBodyMap(body).get(QUERY_PARAM_VERB);
+      var bodyParser = FormUrlencodedBodyParser.from(body);
+      return bodyParser.getValue(QUERY_PARAM_VERB).orElse(EMPTY_VERB);
     }
-  }
-
-  private Map<String, String> toBodyMap(String body) {
-    var entries = body.split("&");
-    return Arrays.stream(entries)
-        .map(entry -> entry.split("="))
-        .collect(Collectors.toMap(e -> e[0], e -> e[1]));
   }
 
   @Override
