@@ -5,7 +5,7 @@ import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.indexingclient.models.RestHighLevelClientWrapper.defaultRestHighLevelClientWrapper;
 import static nva.commons.core.attempt.Try.attempt;
-
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.UnmodifiableIterator;
@@ -39,6 +39,7 @@ import org.opensearch.client.indices.GetMappingsRequest;
 import org.opensearch.cluster.metadata.MappingMetadata;
 import org.opensearch.common.compress.CompressedXContent;
 import org.opensearch.core.common.bytes.BytesReference;
+import org.opensearch.index.reindex.ReindexRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,6 +76,22 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
     return new IndexingClient(defaultRestHighLevelClientWrapper(), cachedJwtProvider);
   }
 
+  public void reindex(String oldIndex, String newIndex, String mappings) {
+    var newIndexMappings =
+        attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappings, new TypeReference<Map<String, Object>>() {}))
+            .orElseThrow(failure -> new ReindexingException("Failed to parse mappings"));
+
+    attempt(() -> createIndex(newIndex, newIndexMappings))
+        .orElseThrow(failure -> new ReindexingException("Failed to create new index"));
+
+    var request = new ReindexRequest();
+    request.setSourceIndices(oldIndex);
+    request.setDestIndex(newIndex);
+
+    attempt(() -> openSearchClient.getClient().reindex(request, getRequestOptions()))
+        .orElseThrow(failure -> new ReindexingException("Reindexing failed"));
+  }
+
   private static DeleteRequest deleteDocumentRequest(String index, String identifier) {
     return new DeleteRequest(index, identifier).routing(DEFAULT_SHARD_ID);
   }
@@ -103,10 +120,9 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
     loggWarningIfNotFound(identifier, deleteResponse);
   }
 
-  public Void createIndex(String indexName) throws IOException {
+  public void createIndex(String indexName) throws IOException {
     var createRequest = new CreateIndexRequest(indexName);
     openSearchClient.indices().create(createRequest, getRequestOptions());
-    return null;
   }
 
   public Void createIndex(String indexName, Map<String, ?> mappings) throws IOException {

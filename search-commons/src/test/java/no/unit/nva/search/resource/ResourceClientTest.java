@@ -112,6 +112,7 @@ import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
+import nva.commons.core.ioutils.IoUtils;
 import nva.commons.core.paths.UriWrapper;
 import org.apache.http.HttpHost;
 import org.junit.jupiter.api.BeforeAll;
@@ -163,12 +164,6 @@ class ResourceClientTest {
     indexingClient = initiateIndexingClient(cachedJwtProvider);
   }
 
-  private static IndexingClient initiateIndexingClient(CachedJwtProvider cachedJwtProvider) {
-    var restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
-    var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
-    return new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
-  }
-
   static Stream<Arguments> uriPagingProvider() {
     return Stream.of(
         createArgument("page=0&aggregation=all", 22),
@@ -184,10 +179,6 @@ class ResourceClientTest {
         createArgument("offset=15&aggregation=all&per_page=2", 2),
         createArgument("OFFSET=15&aggregation=all&PER_PAGE=2", 2),
         createArgument("offset=15&aggregation=all&perPage=2", 2));
-  }
-
-  private static Arguments createArgument(String searchUri, int expectedCount) {
-    return Arguments.of(URI.create(BASE_URL + searchUri), expectedCount);
   }
 
   static Stream<URI> uriInvalidProvider() {
@@ -261,41 +252,6 @@ class ResourceClientTest {
                 + "query=year+project&orderBy=RELEVANCE,created_date:asc,modifiedDate:desc"
                 + "&searchAfter=3.4478912,1241234,23412,123"),
         URI.create(BASE_URL + "query=year+project&sort=published_date+asc&sort=category+desc"));
-  }
-
-  private static int pageNodeToInt(JsonNode hit) {
-    return hit.at(
-            String.join(
-                SLASH, SLASH + ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, PAGES, PAGES))
-        .asInt();
-  }
-
-  private static HttpResponseFormatter<ResourceParameter> fetchDocumentWithId(
-      IndexDocument indexDocument) throws BadRequestException {
-    return ResourceSearchQuery.builder()
-        .withRequiredParameters(FROM, SIZE, AGGREGATION)
-        .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-        .fromTestParameterMap(Map.of(ID, indexDocument.getDocumentIdentifier()))
-        .build()
-        .withFilter()
-        .requiredStatus(PUBLISHED, UNPUBLISHED)
-        .apply()
-        .doSearch(searchClient);
-  }
-
-  private static IndexDocument indexDocumentWithIdentifier() throws JsonProcessingException {
-    var identifier = SortableIdentifier.next();
-    var document =
-        """
-        {
-             "type": "Publication",
-             "status": "PUBLISHED",
-             "identifier": "__ID__"
-        }
-        """
-            .replace("__ID__", identifier.toString());
-    var jsonNode = JsonUtils.dtoObjectMapper.readTree(document);
-    return new IndexDocument(new EventConsumptionAttributes(RESOURCES, identifier), jsonNode);
   }
 
   @Test
@@ -905,10 +861,6 @@ class ResourceClientTest {
     assertTrue(pagedSearchResourceDto.totalHits() >= 0);
   }
 
-  private String trimKeyword(String path) {
-    return path.substring(0, path.indexOf(KEYWORD) - 1);
-  }
-
   @ParameterizedTest
   @MethodSource("uriInvalidProvider")
   void failToSearchUri(URI uri) {
@@ -929,10 +881,8 @@ class ResourceClientTest {
         ResourceSearchQuery.builder()
             .fromTestParameterMap(
                 Map.of(
-                    SCIENTIFIC_REPORT_PERIOD_SINCE.asCamelCase(),
-                    Y2019,
-                    SCIENTIFIC_REPORT_PERIOD_BEFORE.asCamelCase(),
-                    Y2022))
+                    SCIENTIFIC_REPORT_PERIOD_SINCE.asCamelCase(), Y2019,
+                    SCIENTIFIC_REPORT_PERIOD_BEFORE.asCamelCase(), Y2022))
             .withRequiredParameters(FROM, SIZE, AGGREGATION)
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .build()
@@ -951,10 +901,8 @@ class ResourceClientTest {
         ResourceSearchQuery.builder()
             .fromTestParameterMap(
                 Map.of(
-                    SCIENTIFIC_REPORT_PERIOD_SINCE.asCamelCase(),
-                    Y2019,
-                    SCIENTIFIC_REPORT_PERIOD_BEFORE.asCamelCase(),
-                    Y2020))
+                    SCIENTIFIC_REPORT_PERIOD_SINCE.asCamelCase(), Y2019,
+                    SCIENTIFIC_REPORT_PERIOD_BEFORE.asCamelCase(), Y2020))
             .withRequiredParameters(FROM, SIZE, AGGREGATION)
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .build()
@@ -1095,5 +1043,67 @@ class ResourceClientTest {
     var responseAfterDeletion = fetchDocumentWithId(indexDocument);
 
     assertThat(responseAfterDeletion.toPagedResponse().hits(), is(emptyIterable()));
+  }
+
+  @Test
+  void shouldReindexOldIndexToNewIndexWithProvidedMappings() throws IOException {
+    var newIndex = "new_index";
+    var mappings = IoUtils.stringFromResources(Path.of("resource_mappings_dev.json"));
+
+    indexingClient.reindex(RESOURCES, newIndex, mappings);
+
+    var newIndexMapping = indexingClient.getMapping(newIndex);
+    var expectedMapping = indexingClient.getMapping(RESOURCES);
+
+    assertEquals(expectedMapping, newIndexMapping);
+  }
+
+  private static IndexingClient initiateIndexingClient(CachedJwtProvider cachedJwtProvider) {
+    var restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
+    var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
+    return new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
+  }
+
+  private static Arguments createArgument(String searchUri, int expectedCount) {
+    return Arguments.of(URI.create(BASE_URL + searchUri), expectedCount);
+  }
+
+  private static int pageNodeToInt(JsonNode hit) {
+    return hit.at(
+            String.join(
+                SLASH, SLASH + ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, PAGES, PAGES))
+        .asInt();
+  }
+
+  private static HttpResponseFormatter<ResourceParameter> fetchDocumentWithId(
+      IndexDocument indexDocument) throws BadRequestException {
+    return ResourceSearchQuery.builder()
+        .withRequiredParameters(FROM, SIZE, AGGREGATION)
+        .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+        .fromTestParameterMap(Map.of(ID, indexDocument.getDocumentIdentifier()))
+        .build()
+        .withFilter()
+        .requiredStatus(PUBLISHED, UNPUBLISHED)
+        .apply()
+        .doSearch(searchClient);
+  }
+
+  private static IndexDocument indexDocumentWithIdentifier() throws JsonProcessingException {
+    var identifier = SortableIdentifier.next();
+    var document =
+        """
+        {
+             "type": "Publication",
+             "status": "PUBLISHED",
+             "identifier": "__ID__"
+        }
+        """
+            .replace("__ID__", identifier.toString());
+    var jsonNode = JsonUtils.dtoObjectMapper.readTree(document);
+    return new IndexDocument(new EventConsumptionAttributes(RESOURCES, identifier), jsonNode);
+  }
+
+  private String trimKeyword(String path) {
+    return path.substring(0, path.indexOf(KEYWORD) - 1);
   }
 }
