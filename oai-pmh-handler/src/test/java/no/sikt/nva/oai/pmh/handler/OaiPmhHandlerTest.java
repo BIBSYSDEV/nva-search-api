@@ -25,6 +25,7 @@ import java.net.HttpURLConnection;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -288,6 +289,44 @@ public class OaiPmhHandlerTest {
     assertThat(adminEmail, is(equalTo(CONTACT_AT_SIKT_NO)));
   }
 
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldListMetadataFormatsOnlyOaiDc(String method) throws IOException, JAXBException {
+    var inputStream = request(VerbType.LIST_METADATA_FORMATS.value(), method);
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    assertResponseRequestContains(VerbType.LIST_METADATA_FORMATS, response, xpathEngine);
+
+    var metadataFormatNodes =
+        xpathEngine.selectNodes(
+            "/oai:OAI-PMH/oai:ListMetadataFormats/oai:metadataFormat", response);
+    assertThat(metadataFormatNodes, iterableWithSize(1));
+
+    var metadataFormatNode = metadataFormatNodes.iterator().next();
+    var metadataPrefix = getTextValueOfNamedChild(metadataFormatNode, "metadataPrefix");
+    var schema = getTextValueOfNamedChild(metadataFormatNode, "schema");
+    var metadataNamespace = getTextValueOfNamedChild(metadataFormatNode, "metadataNamespace");
+
+    assertThat(metadataPrefix.orElseThrow(), is(equalTo("oai-dc")));
+    assertThat(schema.orElseThrow(), is(equalTo("http://www.openarchives.org/OAI/2.0/oai_dc.xsd")));
+    assertThat(
+        metadataNamespace.orElseThrow(),
+        is(equalTo("http://www.openarchives.org/OAI/2.0/oai_dc/")));
+  }
+
+  private Optional<String> getTextValueOfNamedChild(Node node, String childName) {
+    var children = node.getChildNodes();
+    for (var index = 0; index < children.getLength(); index++) {
+      var child = children.item(index);
+      if (child.getNodeName().equals(childName)) {
+        return Optional.of(child.getFirstChild().getNodeValue());
+      }
+    }
+    return Optional.empty();
+  }
+
   private static String getIdentifyChildNodeText(
       XPathEngine xpathEngine, Source source, String childNodeName) {
     return xpathEngine
@@ -390,11 +429,9 @@ public class OaiPmhHandlerTest {
 
   private static Stream<Arguments> verbsAndMethodCombinations() {
     return Stream.of(
-        Arguments.of(VerbType.LIST_METADATA_FORMATS, GET_METHOD),
         Arguments.of(VerbType.GET_RECORD, GET_METHOD),
         Arguments.of(VerbType.LIST_IDENTIFIERS, GET_METHOD),
         Arguments.of(VerbType.LIST_RECORDS, GET_METHOD),
-        Arguments.of(VerbType.LIST_METADATA_FORMATS, POST_METHOD),
         Arguments.of(VerbType.GET_RECORD, POST_METHOD),
         Arguments.of(VerbType.LIST_IDENTIFIERS, POST_METHOD),
         Arguments.of(VerbType.LIST_RECORDS, POST_METHOD));

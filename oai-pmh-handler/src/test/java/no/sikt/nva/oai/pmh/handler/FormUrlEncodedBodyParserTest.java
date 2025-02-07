@@ -5,8 +5,11 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 public class FormUrlEncodedBodyParserTest {
@@ -21,10 +24,19 @@ public class FormUrlEncodedBodyParserTest {
     assertThrows(IllegalArgumentException.class, () -> FormUrlencodedBodyParser.from(source));
   }
 
-  @ParameterizedTest(name = "should URL decode {0}")
-  @ValueSource(strings = {"name=Ola%20Nordmann", "name=Ola+Nordmann"})
-  void shouldUrlDecodeValues(String source) {
-    var value = FormUrlencodedBodyParser.from(source).getValue("name");
-    assertThat(value.orElseThrow(), is(equalTo(("Ola Nordmann"))));
+  @ParameterizedTest(name = "should URL decode query value {0} to {1}")
+  @MethodSource("urlDecodeInputAndOutput")
+  void shouldUrlDecodeValues(String input, String expected) {
+    var value = FormUrlencodedBodyParser.from(input).getValue("query");
+    assertThat(value.orElseThrow(), is(equalTo((expected))));
+  }
+
+  private static Stream<Arguments> urlDecodeInputAndOutput() {
+    return Stream.of(
+        Arguments.of("query=Ola%20Nordmann", "Ola Nordmann"), // space as %20
+        Arguments.of("query=Ola+Nordmann", "Ola Nordmann"), // space as plus
+        Arguments.of("query=hello%26world%3Dtest", "hello&world=test"), // special characters
+        Arguments.of("query=%40%23%24%25%5E%26%2A%28%29", "@#$%^&*()"), // symbols
+        Arguments.of("query=%E4%BD%A0%E5%A5%BD", "你好")); // non-ascii
   }
 }
