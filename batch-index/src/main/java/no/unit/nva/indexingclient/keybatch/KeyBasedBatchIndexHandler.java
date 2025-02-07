@@ -159,7 +159,6 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
         .toList();
   }
 
-  @JacocoGenerated
   private void sendDocumentsToIndexInBatches(List<IndexDocument> indexDocuments) {
     var documents = new ArrayList<IndexDocument>();
     var totalSize = 0;
@@ -189,7 +188,6 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     return List.of();
   }
 
-  @JacocoGenerated
   private List<BulkResponse> indexBatch(List<IndexDocument> indexDocuments) {
     return indexingClient.batchInsert(indexDocuments.stream()).toList();
   }

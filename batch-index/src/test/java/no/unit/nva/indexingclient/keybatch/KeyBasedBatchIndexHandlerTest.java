@@ -16,6 +16,9 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -46,7 +49,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mockito;
 import org.opensearch.action.bulk.BulkResponse;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 import software.amazon.awssdk.services.eventbridge.model.PutEventsRequest;
@@ -110,7 +112,7 @@ class KeyBasedBatchIndexHandlerTest {
     var batchKey = randomString();
     s3BatchesDriver.insertFile(UnixPath.of(batchKey), batch);
 
-    handler.handleRequest(eventStream(null), outputStream, Mockito.mock(Context.class));
+    handler.handleRequest(eventStream(null), outputStream, mock(Context.class));
 
     var documentsFromIndex = openSearchClient.getIndexedDocuments();
 
@@ -122,7 +124,7 @@ class KeyBasedBatchIndexHandlerTest {
     var batchKey = randomString();
     s3BatchesDriver.insertFile(UnixPath.of(batchKey), StringUtils.EMPTY_STRING);
 
-    handler.handleRequest(eventStream(null), outputStream, Mockito.mock(Context.class));
+    handler.handleRequest(eventStream(null), outputStream, mock(Context.class));
 
     var documentsFromIndex = openSearchClient.getIndexedDocuments();
 
@@ -139,7 +141,7 @@ class KeyBasedBatchIndexHandlerTest {
     var batchKey = randomString();
     s3BatchesDriver.insertFile(UnixPath.of(batchKey), batch);
 
-    handler.handleRequest(eventStream(null), outputStream, Mockito.mock(Context.class));
+    handler.handleRequest(eventStream(null), outputStream, mock(Context.class));
 
     var emittedEvent = ((StubEventBridgeClient) eventBridgeClient).getLatestEvent();
     assertThat(emittedEvent, is(nullValue()));
@@ -162,7 +164,7 @@ class KeyBasedBatchIndexHandlerTest {
     list.add(expectedStarMarkerFromEmittedEvent);
 
     for (String s : list) {
-      handler.handleRequest(eventStream(s), outputStream, Mockito.mock(Context.class));
+      handler.handleRequest(eventStream(s), outputStream, mock(Context.class));
 
       var emittedEvent = ((StubEventBridgeClient) eventBridgeClient).getLatestEvent();
 
@@ -184,7 +186,7 @@ class KeyBasedBatchIndexHandlerTest {
     var batchKey = randomString();
     s3BatchesDriver.insertFile(UnixPath.of(batchKey), batch);
 
-    handler.handleRequest(eventStream(randomString()), outputStream, Mockito.mock(Context.class));
+    handler.handleRequest(eventStream(randomString()), outputStream, mock(Context.class));
 
     var documentsFromIndex = openSearchClient.getIndexedDocuments();
 
@@ -204,7 +206,7 @@ class KeyBasedBatchIndexHandlerTest {
     var batchKey = randomString();
     s3BatchesDriver.insertFile(UnixPath.of(batchKey), batch);
 
-    handler.handleRequest(eventStream(randomString()), outputStream, Mockito.mock(Context.class));
+    handler.handleRequest(eventStream(randomString()), outputStream, mock(Context.class));
 
     var documentsFromIndex = openSearchClient.getIndexedDocuments();
 
@@ -230,7 +232,7 @@ class KeyBasedBatchIndexHandlerTest {
     var batchKey = randomString();
     s3BatchesDriver.insertFile(UnixPath.of(batchKey), batch);
 
-    handler.handleRequest(eventStream(randomString()), outputStream, Mockito.mock(Context.class));
+    handler.handleRequest(eventStream(randomString()), outputStream, mock(Context.class));
 
     var documentsFromIndex = openSearchClient.getIndexedDocuments();
 
@@ -238,6 +240,33 @@ class KeyBasedBatchIndexHandlerTest {
     assertThat(logToString(appender), containsString(field));
     assertThat(documentsFromIndex, containsInAnyOrder(expectedDocuments.toArray()));
     assertThat(documentsFromIndex, not(hasItem(notExpectedDocument)));
+  }
+
+  @Test
+  void shouldReportErrorOnFailingIndexingClient() throws IOException {
+    var failingIndexingClient = mock(IndexingClient.class);
+    doThrow(new RuntimeException()).when(failingIndexingClient).batchInsert(any());
+
+    var s3ResourcesClient = new FakeS3Client();
+    s3ResourcesDriver = new S3Driver(s3ResourcesClient, "resources");
+    var s3BatchesClient = new FakeS3Client();
+    s3BatchesDriver = new S3Driver(s3BatchesClient, "batchesBucket");
+
+    var failingHandler =
+        new KeyBasedBatchIndexHandler(
+            failingIndexingClient, s3ResourcesClient, s3BatchesClient, eventBridgeClient);
+
+    var expectedDocuments = createExpectedDocuments(10);
+    var batch =
+        expectedDocuments.stream()
+            .map(IndexDocument::getDocumentIdentifier)
+            .collect(Collectors.joining(LINE_BREAK));
+    var batchKey = randomString();
+    s3BatchesDriver.insertFile(UnixPath.of(batchKey), batch);
+
+    failingHandler.handleRequest(eventStream(null), outputStream, mock(Context.class));
+
+    assertThat(logToString(appender), containsString("Bulk has failed: "));
   }
 
   private InputStream eventStream(String startMarker) throws JsonProcessingException {
@@ -295,7 +324,7 @@ class KeyBasedBatchIndexHandlerTest {
     public Stream<BulkResponse> batchInsert(Stream<IndexDocument> contents) {
       List<IndexDocument> list = contents.toList();
       documents.addAll(list);
-      return null;
+      return Stream.empty();
     }
 
     public List<IndexDocument> getIndexedDocuments() {
