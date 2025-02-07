@@ -5,6 +5,7 @@ import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.indexingclient.models.RestHighLevelClientWrapper.defaultRestHighLevelClientWrapper;
 import static nva.commons.core.attempt.Try.attempt;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Iterators;
@@ -78,7 +79,10 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
 
   public void reindex(String oldIndex, String newIndex, String mappings) {
     var newIndexMappings =
-        attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappings, new TypeReference<Map<String, Object>>() {}))
+        attempt(
+                () ->
+                    JsonUtils.dtoObjectMapper.readValue(
+                        mappings, new TypeReference<Map<String, Object>>() {}))
             .orElseThrow(failure -> new ReindexingException("Failed to parse mappings"));
 
     attempt(() -> createIndex(newIndex, newIndexMappings))

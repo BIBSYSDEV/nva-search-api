@@ -56,6 +56,7 @@ import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
 import static no.unit.nva.search.resource.ResourceParameter.STATISTICS;
 import static no.unit.nva.search.resource.ResourceParameter.UNIT;
+import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.apigateway.AccessRight.MANAGE_CUSTOMERS;
 import static nva.commons.apigateway.AccessRight.MANAGE_DEGREE;
 import static nva.commons.apigateway.AccessRight.MANAGE_RESOURCES_ALL;
@@ -99,6 +100,7 @@ import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.constants.Words;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexingclient.IndexingClient;
+import no.unit.nva.indexingclient.ReindexingException;
 import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
 import no.unit.nva.indexingclient.models.IndexDocument;
 import no.unit.nva.indexingclient.models.RestHighLevelClientWrapper;
@@ -1046,7 +1048,7 @@ class ResourceClientTest {
   }
 
   @Test
-  void shouldReindexOldIndexToNewIndexWithProvidedMappings() throws IOException {
+  void shouldReindexOldIndexToNewIndexWithProvidedMappings() {
     var newIndex = "new_index";
     var mappings = IoUtils.stringFromResources(Path.of("resource_mappings_dev.json"));
 
@@ -1056,6 +1058,23 @@ class ResourceClientTest {
     var expectedMapping = indexingClient.getMapping(RESOURCES);
 
     assertEquals(expectedMapping, newIndexMapping);
+  }
+
+  @Test
+  void shouldThrowReindexingExceptionWhenCreatingNewIndexFailsWhenReindexing() {
+    var mappings = IoUtils.stringFromResources(Path.of("resource_mappings_dev.json"));
+    assertThrows(
+        ReindexingException.class, () -> indexingClient.reindex(RESOURCES, RESOURCES, mappings));
+  }
+
+  @Test
+  void shouldThrowReindexingExceptionWhenReindexingFails() {
+    var newIndex = "new_index";
+    var mappings = IoUtils.stringFromResources(Path.of("resource_mappings_dev.json"));
+
+    assertThrows(
+        ReindexingException.class,
+        () -> indexingClient.reindex(randomString(), newIndex, mappings));
   }
 
   private static IndexingClient initiateIndexingClient(CachedJwtProvider cachedJwtProvider) {
