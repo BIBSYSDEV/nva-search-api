@@ -41,6 +41,9 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
   private static final String CONTACT_AT_SIKT_NO = "kontakt@sikt.no";
   private static final String UNSUPPORTED_VERB = "Unsupported verb.";
   private static final String UNKNOWN_OR_NO_VERB_SUPPLIED = "Unknown or no verb supplied.";
+  private static final String OAI_DC = "oai-dc";
+  private static final String OAI_DC_SCHEMA = "http://www.openarchives.org/OAI/2.0/oai_dc.xsd";
+  private static final String OAI_DC_NAMESPACE = "http://www.openarchives.org/OAI/2.0/oai_dc/";
 
   private final ObjectFactory objectFactory = new ObjectFactory();
   private final ResourceClient opensearchClient;
@@ -66,6 +69,7 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
                 switch (type) {
                   case LIST_SETS -> listSets();
                   case IDENTIFY -> identify();
+                  case LIST_METADATA_FORMATS -> listMetadataFormats();
                   default -> badVerb(UNSUPPORTED_VERB);
                 })
         .orElseGet(() -> badVerb(UNKNOWN_OR_NO_VERB_SUPPLIED));
@@ -86,6 +90,25 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
     identify.getAdminEmail().add(CONTACT_AT_SIKT_NO);
 
     value.setIdentify(identify);
+
+    return oaiResponse;
+  }
+
+  private JAXBElement<OAIPMHtype> listMetadataFormats() {
+    var oaiResponse = baseResponse();
+    var value = oaiResponse.getValue();
+    value.getRequest().setVerb(VerbType.LIST_METADATA_FORMATS);
+
+    var listMetadataFormatsType = objectFactory.createListMetadataFormatsType();
+
+    var metadataFormatType = objectFactory.createMetadataFormatType();
+    metadataFormatType.setMetadataPrefix(OAI_DC);
+    metadataFormatType.setSchema(OAI_DC_SCHEMA);
+    metadataFormatType.setMetadataNamespace(OAI_DC_NAMESPACE);
+
+    listMetadataFormatsType.getMetadataFormat().add(metadataFormatType);
+
+    value.setListMetadataFormats(listMetadataFormatsType);
 
     return oaiResponse;
   }
