@@ -1,15 +1,16 @@
 package no.sikt.nva.oai.pmh.handler;
 
+import java.util.Objects;
 import no.unit.nva.search.resource.ResourceParameter;
 import no.unit.nva.search.resource.ResourceSearchQuery;
 import org.mockito.ArgumentMatcher;
 
 public class ResourceSearchQueryMatcher implements ArgumentMatcher<ResourceSearchQuery> {
-  private final int from;
+  private final Integer from;
   private final int size;
   private final String aggregation;
 
-  public ResourceSearchQueryMatcher(int from, int size, String aggregation) {
+  public ResourceSearchQueryMatcher(Integer from, int size, String aggregation) {
     this.from = from;
     this.size = size;
     this.aggregation = aggregation;
@@ -29,7 +30,8 @@ public class ResourceSearchQueryMatcher implements ArgumentMatcher<ResourceSearc
   }
 
   private boolean hasSameOffset(ResourceSearchQuery actual) {
-    return from == actual.parameters().get(ResourceParameter.FROM).asNumber().intValue();
+    var actualFrom = actual.parameters().get(ResourceParameter.FROM);
+    return Objects.isNull(from) ? actualFrom.isEmpty() : from.equals(actualFrom.asNumber());
   }
 
   @Override

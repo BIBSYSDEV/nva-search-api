@@ -4,5 +4,6 @@ import jakarta.xml.bind.JAXBElement;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
 
 public interface OaiPmhDataProvider {
-  JAXBElement<OAIPMHtype> handleRequest(String verb);
+  JAXBElement<OAIPMHtype> handleRequest(
+      String verb, String from, String until, String metadataPrefix, String resumptionToken);
 }

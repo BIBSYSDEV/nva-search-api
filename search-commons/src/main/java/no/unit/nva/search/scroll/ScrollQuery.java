@@ -6,9 +6,7 @@ import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import static org.opensearch.core.xcontent.XContentHelper.toXContent;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URI;
-import java.util.Objects;
 import java.util.stream.Stream;
 import no.unit.nva.search.common.OpenSearchClient;
 import no.unit.nva.search.common.Query;
@@ -19,18 +17,10 @@ import org.opensearch.action.search.SearchScrollRequest;
 import org.opensearch.common.xcontent.XContentType;
 import org.opensearch.core.xcontent.ToXContent;
 
-/**
- * ScrollQuery is a class that sends a request to the search index.
- *
- * @author Sondre Vestad
- */
 public final class ScrollQuery extends Query<ScrollParameter> {
-
-  private static final int MAX_PAGES = 4;
   private static final String SEARCH_SCROLL = "_search/scroll";
   private final String ttl;
-  private String scrollId;
-  private SwsResponse firstResponse;
+  private final String scrollId;
 
   public ScrollQuery(String scrollId, String ttl) {
     super();
@@ -38,13 +28,16 @@ public final class ScrollQuery extends Query<ScrollParameter> {
     this.scrollId = scrollId;
   }
 
-  ScrollQuery(String ttl, SwsResponse firstResponse) {
-    this(firstResponse._scroll_id(), ttl);
-    this.firstResponse = firstResponse;
+  public String getTtl() {
+    return ttl;
   }
 
-  public static ScrollBuilder builder() {
-    return new ScrollBuilder();
+  public String getScrollId() {
+    return scrollId;
+  }
+
+  public static ScrollQueryBuilder builder() {
+    return new ScrollQueryBuilder();
   }
 
   @Override
@@ -69,36 +62,13 @@ public final class ScrollQuery extends Query<ScrollParameter> {
   @Override
   public <R, Q extends Query<ScrollParameter>> HttpResponseFormatter<ScrollParameter> doSearch(
       OpenSearchClient<R, Q> queryClient) {
-    var response = buildSwsResponse(scrollFetch(firstResponse, 0, (ScrollClient) queryClient));
+    var response = scrollFetch((ScrollClient) queryClient);
     return new HttpResponseFormatter<>(response, CSV_UTF_8);
   }
 
-  private Stream<JsonNode> scrollFetch(
-      SwsResponse previousResponse, int level, ScrollClient scrollClient) {
+  private SwsResponse scrollFetch(ScrollClient scrollClient) {
 
-    if (shouldStopRecursion(level + 1, previousResponse)) {
-      return previousResponse.getSearchHits().stream();
-    }
-    scrollId = previousResponse._scroll_id();
-    var currentResponse = scrollClient.doSearch(this);
-
-    return Stream.concat(
-        previousResponse.getSearchHits().stream(),
-        scrollFetch(currentResponse, level + 1, scrollClient));
-  }
-
-  private SwsResponse buildSwsResponse(Stream<JsonNode> results) {
-    var hits =
-        results
-            .map(hit -> new SwsResponse.HitsInfo.Hit(null, null, null, 0, hit, null, null))
-            .toList();
-    return new SwsResponse(0, false, null, new SwsResponse.HitsInfo(null, 0, hits), null, "");
-  }
-
-  private boolean shouldStopRecursion(Integer level, SwsResponse previousResponse) {
-    return Objects.isNull(previousResponse._scroll_id())
-        || previousResponse.getSearchHits().isEmpty()
-        || level >= MAX_PAGES;
+    return scrollClient.doSearch(this);
   }
 
   private String scrollRequestToString(SearchScrollRequest request) {
@@ -109,27 +79,27 @@ public final class ScrollQuery extends Query<ScrollParameter> {
         .orElseThrow();
   }
 
-  public static class ScrollBuilder {
-    private SwsResponse firstResponse;
+  public static class ScrollQueryBuilder {
     private URI openSearchUri;
     private String ttl;
+    private String scrollId;
 
     public ScrollQuery build() {
-      return new ScrollQuery(ttl, firstResponse).withOpenSearchUri(openSearchUri);
+      return new ScrollQuery(scrollId, ttl).withOpenSearchUri(openSearchUri);
     }
 
-    public ScrollBuilder withDockerHostUri(URI uri) {
+    public ScrollQueryBuilder withDockerHostUri(URI uri) {
       this.openSearchUri = uri;
       return this;
     }
 
-    public ScrollBuilder withInitialResponse(SwsResponse initialResponse) {
-      this.firstResponse = initialResponse;
+    public ScrollQueryBuilder withScrollId(String scrollId) {
+      this.scrollId = scrollId;
       return this;
     }
 
-    public ScrollBuilder withScrollTime(String scrollTtl) {
-      this.ttl = scrollTtl;
+    public ScrollQueryBuilder withTtl(String ttl) {
+      this.ttl = ttl;
       return this;
     }
   }

@@ -1,12 +1,14 @@
 package no.sikt.nva.oai.pmh.handler;
 
 import static java.net.HttpURLConnection.HTTP_INTERNAL_ERROR;
+import static java.util.Objects.nonNull;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableWithSize.iterableWithSize;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsIterableContaining.hasItems;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doThrow;
@@ -16,6 +18,7 @@ import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import java.io.ByteArrayOutputStream;
@@ -23,9 +26,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -33,8 +41,10 @@ import javax.xml.transform.Source;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.common.records.SwsResponse.HitsInfo;
+import no.unit.nva.search.common.records.SwsResponse.HitsInfo.Hit;
 import no.unit.nva.search.common.records.SwsResponse.HitsInfo.TotalInfo;
 import no.unit.nva.search.resource.ResourceClient;
+import no.unit.nva.search.scroll.ScrollClient;
 import no.unit.nva.stubs.FakeContext;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
@@ -80,6 +90,7 @@ public class OaiPmhHandlerTest {
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
   private Environment environment;
   private ResourceClient resourceClient;
+  private ScrollClient scrollClient;
 
   @BeforeEach
   public void setUp() {
@@ -90,6 +101,7 @@ public class OaiPmhHandlerTest {
     when(environment.readEnv("API_HOST")).thenReturn("localhost");
     when(environment.readEnv("OAI_BASE_PATH")).thenReturn("publication-oai-pmh");
     this.resourceClient = mock(ResourceClient.class);
+    this.scrollClient = mock(ScrollClient.class);
   }
 
   @Test
@@ -143,7 +155,7 @@ public class OaiPmhHandlerTest {
   void shouldReturnExpectedSetsWhenAskingForListSets(String method)
       throws IOException, JAXBException {
     when(resourceClient.doSearch(argThat(new ResourceSearchQueryMatcher(0, 0, "all"))))
-        .thenReturn(swsResponse());
+        .thenReturn(aggregationsSwsResponse());
 
     var inputStream = request(VerbType.LIST_SETS.value(), method);
 
@@ -316,15 +328,140 @@ public class OaiPmhHandlerTest {
         is(equalTo("http://www.openarchives.org/OAI/2.0/oai_dc/")));
   }
 
-  private Optional<String> getTextValueOfNamedChild(Node node, String childName) {
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldListRecordsOnInitialQuery(String method) throws IOException, JAXBException {
+    var scrollId = "initialScrollId";
+    when(resourceClient.doSearch(argThat(new ResourceSearchQueryMatcher(null, 50, "none"))))
+        .thenReturn(firstPageSwsResponse(scrollId));
+
+    var from = "2016-01-01";
+    var until = "2016-01-02";
+    var metadataPrefix = "oai-dc";
+    String resumptionToken = null;
+    var inputStream =
+        request(
+            VerbType.LIST_RECORDS.value(), method, from, until, metadataPrefix, resumptionToken);
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    assertResponseRequestContains(VerbType.LIST_RECORDS, response, xpathEngine);
+
+    var recordNodes = xpathEngine.selectNodes("/oai:OAI-PMH/oai:ListRecords/oai:record", response);
+    assertThat(recordNodes, iterableWithSize(2));
+
+    var identifiers = extractRecordIdentifiers(recordNodes);
+
+    assertThat(
+        identifiers,
+        hasItems(
+            "https://api.test.nva.aws.unit.no/publication/019518f49973-545e98d7-d1e6-4d0d-8ed0-597ce29d7f45",
+            "https://api.test.nva.aws.unit.no/publication/019518f4917e-3f586fc5-072f-458f-9a49-d23c20855986"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldListRecordsWithResumptionToken(String method) throws IOException, JAXBException {
+    var scrollId = "nextScrollId";
+    var ttl = "10m";
+    when(scrollClient.doSearch(argThat(new ScrollingQueryMatcher(scrollId, ttl))))
+        .thenReturn(resumptionPageSwsResponse(scrollId));
+
+    var from = "2016-01-01";
+    var until = "2016-01-02";
+    var metadataPrefix = "oai-dc";
+    String resumptionToken = new ResumptionToken(from, until, metadataPrefix, scrollId).getValue();
+    var inputStream =
+        request(
+            VerbType.LIST_RECORDS.value(), method, from, until, metadataPrefix, resumptionToken);
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    assertResponseRequestContains(VerbType.LIST_RECORDS, response, xpathEngine);
+
+    var recordNodes = xpathEngine.selectNodes("/oai:OAI-PMH/oai:ListRecords/oai:record", response);
+    assertThat(recordNodes, iterableWithSize(2));
+
+    var identifiers = extractRecordIdentifiers(recordNodes);
+
+    assertThat(
+        identifiers,
+        hasItems(
+            "https://api.test.nva.aws.unit.no/publication/019518f49973-545e98d7-d1e6-4d0d-8ed0-597ce29d7f45",
+            "https://api.test.nva.aws.unit.no/publication/019518f4917e-3f586fc5-072f-458f-9a49-d23c20855986"));
+  }
+
+  private InputStream request(
+      String verb,
+      String method,
+      String from,
+      String until,
+      String metadataPrefix,
+      String resumptionToken)
+      throws JsonProcessingException {
+    var handlerRequestBuilder =
+        new HandlerRequestBuilder<String>(new ObjectMapper()).withHttpMethod(method);
+
+    if ("get".equalsIgnoreCase(method)) {
+      Map<String, String> queryParams = new HashMap<>();
+      queryParams.put("verb", verb);
+      queryParams.put("metadataPrefix", metadataPrefix);
+      if (nonNull(from)) {
+        queryParams.put("from", from);
+      }
+      if (nonNull(until)) {
+        queryParams.put("until", until);
+      }
+      if (nonNull(resumptionToken)) {
+        queryParams.put("resumptionToken", resumptionToken);
+      }
+      handlerRequestBuilder.withQueryParameters(queryParams);
+    } else if ("post".equalsIgnoreCase(method)) {
+      var bodyBuilder = new StringBuilder();
+      bodyBuilder.append("verb=").append(verb);
+      bodyBuilder.append("&metadataPrefix=").append(metadataPrefix);
+      if (nonNull(from)) {
+        bodyBuilder.append("&from=").append(from);
+      }
+      if (nonNull(until)) {
+        bodyBuilder.append("&until=").append(until);
+      }
+      if (nonNull(resumptionToken)) {
+        bodyBuilder.append("&resumptionToken=").append(resumptionToken);
+      }
+
+      handlerRequestBuilder.withBody(bodyBuilder.toString());
+    }
+    return handlerRequestBuilder.build();
+  }
+
+  private Set<String> extractRecordIdentifiers(Iterable<Node> recordNodes) {
+    var identifiers = new HashSet<String>();
+    recordNodes.forEach(
+        recordNode -> {
+          var headerNode = getNamedChildNode(recordNode, "header").orElseThrow();
+          var identifierNode = getNamedChildNode(headerNode, "identifier").orElseThrow();
+          identifiers.add(identifierNode.getFirstChild().getNodeValue());
+        });
+    return identifiers;
+  }
+
+  private Optional<Node> getNamedChildNode(Node node, String name) {
     var children = node.getChildNodes();
     for (var index = 0; index < children.getLength(); index++) {
       var child = children.item(index);
-      if (child.getNodeName().equals(childName)) {
-        return Optional.of(child.getFirstChild().getNodeValue());
+      if (child.getNodeName().equals(name)) {
+        return Optional.of(child);
       }
     }
     return Optional.empty();
+  }
+
+  private Optional<String> getTextValueOfNamedChild(Node node, String childName) {
+    var childNode = getNamedChildNode(node, childName).orElseThrow();
+    return Optional.ofNullable(childNode.getFirstChild().getNodeValue());
   }
 
   private static String getIdentifyChildNodeText(
@@ -351,7 +488,7 @@ public class OaiPmhHandlerTest {
     assertThat(errorNode.getFirstChild().getNodeValue(), is(equalTo(message)));
   }
 
-  private SwsResponse swsResponse() throws JsonProcessingException {
+  private SwsResponse aggregationsSwsResponse() throws JsonProcessingException {
     return new SwsResponse(
         0,
         false,
@@ -359,6 +496,35 @@ public class OaiPmhHandlerTest {
         new HitsInfo(new TotalInfo(0, ""), 1.0, Collections.emptyList()),
         aggregations(),
         null);
+  }
+
+  private SwsResponse firstPageSwsResponse(String scrollId) throws JsonProcessingException {
+    var hits = new ArrayList<Hit>();
+    var iterator = hits().elements();
+
+    while (iterator.hasNext()) {
+      var element = iterator.next();
+      hits.add(new Hit("", "", "", 1.0, element, null, List.of()));
+    }
+    return new SwsResponse(
+        0, false, null, new HitsInfo(new TotalInfo(3, ""), 1.0, hits), null, scrollId);
+  }
+
+  private SwsResponse resumptionPageSwsResponse(String scrollId) throws JsonProcessingException {
+    var hits = new ArrayList<Hit>();
+    var iterator = hits().elements();
+
+    while (iterator.hasNext()) {
+      var element = iterator.next();
+      hits.add(new Hit("", "", "", 1.0, element, null, List.of()));
+    }
+    return new SwsResponse(
+        0, false, null, new HitsInfo(new TotalInfo(3, ""), 1.0, hits), null, scrollId);
+  }
+
+  private ArrayNode hits() throws JsonProcessingException {
+    var json = IoUtils.stringFromResources(Path.of("hits.json"));
+    return (ArrayNode) JsonUtils.dtoObjectMapper.readTree(json);
   }
 
   private JsonNode aggregations() throws JsonProcessingException {
@@ -417,7 +583,7 @@ public class OaiPmhHandlerTest {
   private GatewayResponse<String> invokeHandler(
       Environment environment, JaxbXmlSerializer marshaller, InputStream inputStream)
       throws IOException {
-    var handler = new OaiPmhHandler(environment, marshaller, resourceClient);
+    var handler = new OaiPmhHandler(environment, marshaller, resourceClient, scrollClient);
     handler.handleRequest(inputStream, outputStream, new FakeContext());
 
     return GatewayResponse.fromOutputStream(outputStream, String.class);
@@ -431,9 +597,7 @@ public class OaiPmhHandlerTest {
     return Stream.of(
         Arguments.of(VerbType.GET_RECORD, GET_METHOD),
         Arguments.of(VerbType.LIST_IDENTIFIERS, GET_METHOD),
-        Arguments.of(VerbType.LIST_RECORDS, GET_METHOD),
         Arguments.of(VerbType.GET_RECORD, POST_METHOD),
-        Arguments.of(VerbType.LIST_IDENTIFIERS, POST_METHOD),
-        Arguments.of(VerbType.LIST_RECORDS, POST_METHOD));
+        Arguments.of(VerbType.LIST_IDENTIFIERS, POST_METHOD));
   }
 }

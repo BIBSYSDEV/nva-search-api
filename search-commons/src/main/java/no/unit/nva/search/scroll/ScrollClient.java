@@ -8,6 +8,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 import java.util.function.BinaryOperator;
 import no.unit.nva.search.common.OpenSearchClient;
+import no.unit.nva.search.common.Query;
 import no.unit.nva.search.common.jwt.CachedJwtProvider;
 import no.unit.nva.search.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
@@ -19,7 +20,7 @@ import nva.commons.secrets.SecretsReader;
  *
  * @author Sondre Vestad
  */
-public class ScrollClient extends OpenSearchClient<SwsResponse, ScrollQuery> {
+public class ScrollClient extends OpenSearchClient<SwsResponse, Query<ScrollParameter>> {
 
   public ScrollClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
     super(client, cachedJwtProvider);
@@ -32,7 +33,7 @@ public class ScrollClient extends OpenSearchClient<SwsResponse, ScrollQuery> {
   }
 
   @Override
-  public SwsResponse doSearch(ScrollQuery query) {
+  public SwsResponse doSearch(Query<ScrollParameter> query) {
     queryBuilderStart = query.getStartTime();
     return query
         .assemble()
