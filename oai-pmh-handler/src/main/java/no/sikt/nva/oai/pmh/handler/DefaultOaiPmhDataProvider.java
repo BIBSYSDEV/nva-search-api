@@ -263,6 +263,7 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
               .withParameter(ResourceParameter.AGGREGATION, AGGREGATION_NONE)
               .withParameter(ResourceParameter.MODIFIED_SINCE, from)
               .withParameter(ResourceParameter.MODIFIED_BEFORE, until)
+              .withParameter(ResourceParameter.FROM, ZERO)
               .withParameter(ResourceParameter.SIZE, "50")
               .withParameter(ResourceParameter.SORT, ResourceSort.MODIFIED_DATE.asCamelCase())
               .withParameter(ResourceParameter.SORT, ResourceSort.IDENTIFIER.asCamelCase())

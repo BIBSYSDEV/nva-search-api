@@ -332,7 +332,7 @@ public class OaiPmhHandlerTest {
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldListRecordsOnInitialQuery(String method) throws IOException, JAXBException {
     var scrollId = "initialScrollId";
-    when(resourceClient.doSearch(argThat(new ResourceSearchQueryMatcher(null, 50, "none"))))
+    when(resourceClient.doSearch(argThat(new ResourceSearchQueryMatcher(0, 50, "none"))))
         .thenReturn(firstPageSwsResponse(scrollId));
 
     var from = "2016-01-01";
