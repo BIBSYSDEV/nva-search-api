@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.xml.bind.JAXBElement;
 import java.nio.file.Path;
+import java.util.List;
 import nva.commons.core.ioutils.IoUtils;
 import org.junit.jupiter.api.Test;
 import org.openarchives.oai.pmh.v2.ElementType;
@@ -45,8 +46,27 @@ public class PrototypeTest {
       OaiDcType type = (OaiDcType) record.getMetadata().getAny();
       var title = extractTitle(type);
       assertThat(title, is(notNullValue()));
+      assertThat(extractCreators(type), is(not(emptyIterable())));
+      assertThat(extractDate(type), is(notNullValue()));
       assertWellFormedHeader(record);
     }
+  }
+
+  private String extractDate(OaiDcType type) {
+    return type.getTitleOrCreatorOrSubject().stream()
+        .filter(e -> e.getName().getLocalPart().equals("date"))
+        .findAny()
+        .map(JAXBElement::getValue)
+        .map(ElementType::getValue)
+        .orElse(null);
+  }
+
+  private List<String> extractCreators(OaiDcType type) {
+    return type.getTitleOrCreatorOrSubject().stream()
+        .filter(e -> e.getName().getLocalPart().equals("creator"))
+        .map(JAXBElement::getValue)
+        .map(ElementType::getValue)
+        .toList();
   }
 
   private String extractTitle(OaiDcType type) {

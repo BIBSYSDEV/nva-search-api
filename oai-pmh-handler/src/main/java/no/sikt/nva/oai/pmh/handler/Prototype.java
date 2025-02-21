@@ -28,9 +28,12 @@ public class Prototype {
   }
 
   private static void appendContributors(QuerySolution resultItem, OaiDcType oaiDcType) {
-    var creatorElement = OBJECT_FACTORY.createElementType();
-    creatorElement.setValue(resultItem.getLiteral("contributor").getString());
-    oaiDcType.getTitleOrCreatorOrSubject().addLast(OBJECT_FACTORY.createCreator(creatorElement));
+    String[] contributors = resultItem.getLiteral("contributor").getString().split("\\|");
+    for (String contributor : contributors) {
+      var creatorElement = OBJECT_FACTORY.createElementType();
+      creatorElement.setValue(contributor);
+      oaiDcType.getTitleOrCreatorOrSubject().addLast(OBJECT_FACTORY.createCreator(creatorElement));
+    }
   }
 
   private static void appendTitle(QuerySolution resultItem, OaiDcType oaiDcType) {
@@ -43,11 +46,21 @@ public class Prototype {
     var query =
         """
 PREFIX : <https://nva.sikt.no/ontology/publication#>
-SELECT * WHERE {
+SELECT ?id ?modifiedDate ?title ?date (GROUP_CONCAT(?name; separator="|") AS ?contributor) WHERE {
   ?id a :Publication ;
       :modifiedDate ?modifiedDate ;
-      (:|!:)*/:mainTitle ?title .
+      (:|!:)*/:mainTitle ?title ;
+      (:|!:)*/:publicationDate ?publicationDate ;
+      (:|!:)*/:contributor/:identity/:name ?name .
+
+  ?publicationDate :year ?year .
+  ?publicationDate :month ?month .
+  ?publicationDate :day ?day .
+
+  BIND (IF(BOUND(?day) && BOUND(?month) && BOUND(?year), CONCAT(?year, CONCAT("-", CONCAT(?month, CONCAT("-", ?day)))),?year) AS ?date)
+
 }
+GROUP BY ?id ?modifiedDate ?title ?date
 """;
     var model = ModelFactory.createDefaultModel();
     RDFDataMgr.read(model, new ByteArrayInputStream(node.toString().getBytes()), JSONLD);
@@ -61,7 +74,8 @@ SELECT * WHERE {
         var metadata = OBJECT_FACTORY.createMetadataType();
         var oaiDcType = OBJECT_FACTORY.createOaiDcType();
         appendTitle(resultItem, oaiDcType);
-        // appendContributors(resultItem, oaiDcType);
+        appendContributors(resultItem, oaiDcType);
+        appendDate(resultItem, oaiDcType);
         metadata.setAny(oaiDcType);
         var headerType =
             getHeaderType(
@@ -73,6 +87,12 @@ SELECT * WHERE {
       }
       return records;
     }
+  }
+
+  private static void appendDate(QuerySolution resultItem, OaiDcType oaiDcType) {
+    var dateElement = OBJECT_FACTORY.createElementType();
+    dateElement.setValue(resultItem.getLiteral("date").getString());
+    oaiDcType.getTitleOrCreatorOrSubject().addLast(OBJECT_FACTORY.createDate(dateElement));
   }
 
   private static HeaderType getHeaderType(URI id, String datestamp) {
