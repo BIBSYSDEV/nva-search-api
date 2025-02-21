@@ -1,6 +1,7 @@
 package no.sikt.nva.oai.pmh.handler;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.collection.IsEmptyIterable.emptyIterable;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -9,9 +10,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.xml.bind.JAXBElement;
 import java.nio.file.Path;
 import nva.commons.core.ioutils.IoUtils;
 import org.junit.jupiter.api.Test;
+import org.openarchives.oai.pmh.v2.ElementType;
+import org.openarchives.oai.pmh.v2.OaiDcType;
 import org.openarchives.oai.pmh.v2.RecordType;
 
 public class PrototypeTest {
@@ -20,9 +24,7 @@ public class PrototypeTest {
 
   @Test
   void shouldThrowIllegalArgumentExceptionWhenInputIsNotJsonArray() {
-    assertThrows(
-        IllegalArgumentException.class,
-        () -> Prototype.from(new ObjectMapper().createObjectNode()));
+    assertThrows(IllegalArgumentException.class, () -> Prototype.from(MAPPER.createObjectNode()));
   }
 
   @Test
@@ -38,10 +40,28 @@ public class PrototypeTest {
     var hits = getSearchHits();
 
     var records = Prototype.from(hits);
+    assertThat(records, is(not(emptyIterable())));
     for (RecordType record : records) {
-      var header = record.getHeader();
-      assertThat(header.getIdentifier(), notNullValue());
+      OaiDcType type = (OaiDcType) record.getMetadata().getAny();
+      var title = extractTitle(type);
+      assertThat(title, is(notNullValue()));
+      assertWellFormedHeader(record);
     }
+  }
+
+  private String extractTitle(OaiDcType type) {
+    return type.getTitleOrCreatorOrSubject().stream()
+        .filter(e -> e.getName().getLocalPart().equals("title"))
+        .findAny()
+        .map(JAXBElement::getValue)
+        .map(ElementType::getValue)
+        .orElse(null);
+  }
+
+  private static void assertWellFormedHeader(RecordType record) {
+    var header = record.getHeader();
+    assertThat(header.getIdentifier(), notNullValue());
+    assertThat(header.getDatestamp(), notNullValue());
   }
 
   private static JsonNode getSearchHits() throws JsonProcessingException {
