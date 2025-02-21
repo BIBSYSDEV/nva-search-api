@@ -4,14 +4,15 @@ awsLambdaEvents = { strictly = '3.13.0' }
 awsLambdaJavaCore = { strictly = '1.2.3' }
 awsSdk2 = { strictly = '2.27.24' }
 com-auth0-jwt = { strictly = '4.4.0' }
+glassfishJaxbRuntime = { strictly = '4.0.5' }
 guava = { strictly = '33.3.0-jre' }
 hamcrest = { strictly = '3.0' }
 jackson = { strictly = '2.17.2' }
 jakartaXmlBindApi = { strictly = '4.0.2' }
-glassfishJaxbRuntime = { strictly = '4.0.5' }
 javers = { strictly = '7.1.0' }
-jupiter = { strictly = '5.11.0' }
+jena = { strictly = '5.3.0' }
 junit = { strictly = '1.10.2' }
+jupiter = { strictly = '5.11.0' }
 log4j = { strictly = '2.24.0' }
 mockito = { strictly = '5.13.0' }
 nvaCommons = { prefer = '1.40.20' }
@@ -21,10 +22,9 @@ opensearch-testcontainer = { strictly = '2.0.0' }
 slf4j = { strictly = '2.0.16' }
 testContainers = { strictly = '1.19.7' }
 typesafe = { strictly = '1.4.1' }
-xraySdk = { strictly = '2.10.0' }
-jena = { strictly = '4.10.0' }
-zalandoProblem = { strictly = '0.27.1' }
 xmlUnit = { strictly = '2.10.0' }
+xraySdk = { strictly = '2.10.0' }
+zalandoProblem = { strictly = '0.27.1' }
 
 
 [libraries]
