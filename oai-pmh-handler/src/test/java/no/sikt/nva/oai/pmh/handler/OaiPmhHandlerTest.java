@@ -405,36 +405,57 @@ public class OaiPmhHandlerTest {
         new HandlerRequestBuilder<String>(new ObjectMapper()).withHttpMethod(method);
 
     if ("get".equalsIgnoreCase(method)) {
-      Map<String, String> queryParams = new HashMap<>();
-      queryParams.put("verb", verb);
-      queryParams.put("metadataPrefix", metadataPrefix);
-      if (nonNull(from)) {
-        queryParams.put("from", from);
-      }
-      if (nonNull(until)) {
-        queryParams.put("until", until);
-      }
-      if (nonNull(resumptionToken)) {
-        queryParams.put("resumptionToken", resumptionToken);
-      }
-      handlerRequestBuilder.withQueryParameters(queryParams);
+      addAsQueryParams(verb, from, until, metadataPrefix, resumptionToken, handlerRequestBuilder);
     } else if ("post".equalsIgnoreCase(method)) {
-      var bodyBuilder = new StringBuilder();
-      bodyBuilder.append("verb=").append(verb);
-      bodyBuilder.append("&metadataPrefix=").append(metadataPrefix);
-      if (nonNull(from)) {
-        bodyBuilder.append("&from=").append(from);
-      }
-      if (nonNull(until)) {
-        bodyBuilder.append("&until=").append(until);
-      }
-      if (nonNull(resumptionToken)) {
-        bodyBuilder.append("&resumptionToken=").append(resumptionToken);
-      }
-
-      handlerRequestBuilder.withBody(bodyBuilder.toString());
+      addAsBody(verb, from, until, metadataPrefix, resumptionToken, handlerRequestBuilder);
     }
     return handlerRequestBuilder.build();
+  }
+
+  private static void addAsBody(
+      String verb,
+      String from,
+      String until,
+      String metadataPrefix,
+      String resumptionToken,
+      HandlerRequestBuilder<String> handlerRequestBuilder)
+      throws JsonProcessingException {
+    var bodyBuilder = new StringBuilder();
+    bodyBuilder.append("verb=").append(verb);
+    bodyBuilder.append("&metadataPrefix=").append(metadataPrefix);
+    if (nonNull(from)) {
+      bodyBuilder.append("&from=").append(from);
+    }
+    if (nonNull(until)) {
+      bodyBuilder.append("&until=").append(until);
+    }
+    if (nonNull(resumptionToken)) {
+      bodyBuilder.append("&resumptionToken=").append(resumptionToken);
+    }
+
+    handlerRequestBuilder.withBody(bodyBuilder.toString());
+  }
+
+  private static void addAsQueryParams(
+      String verb,
+      String from,
+      String until,
+      String metadataPrefix,
+      String resumptionToken,
+      HandlerRequestBuilder<String> handlerRequestBuilder) {
+    Map<String, String> queryParams = new HashMap<>();
+    queryParams.put("verb", verb);
+    queryParams.put("metadataPrefix", metadataPrefix);
+    if (nonNull(from)) {
+      queryParams.put("from", from);
+    }
+    if (nonNull(until)) {
+      queryParams.put("until", until);
+    }
+    if (nonNull(resumptionToken)) {
+      queryParams.put("resumptionToken", resumptionToken);
+    }
+    handlerRequestBuilder.withQueryParameters(queryParams);
   }
 
   private Set<String> extractRecordIdentifiers(Iterable<Node> recordNodes) {

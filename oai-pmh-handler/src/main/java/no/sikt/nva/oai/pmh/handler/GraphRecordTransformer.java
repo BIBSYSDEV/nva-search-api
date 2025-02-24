@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -21,40 +22,40 @@ import org.openarchives.oai.pmh.v2.OaiDcType;
 import org.openarchives.oai.pmh.v2.ObjectFactory;
 import org.openarchives.oai.pmh.v2.RecordType;
 
-public final class Prototype {
+public final class GraphRecordTransformer implements RecordTransformer {
 
   private static final ObjectFactory OBJECT_FACTORY = new ObjectFactory();
-  public static final String JSON_LD_GRAPH = "@graph";
-  public static final String JSON_LD_CONTEXT = "@context";
+  private static final String JSON_LD_GRAPH = "@graph";
+  private static final String JSON_LD_CONTEXT = "@context";
 
-  private Prototype() {}
+  public GraphRecordTransformer() {}
 
-  public static List<RecordType> from(JsonNode node) {
-    if (node.isArray()) {
-      var arrayNode = (ArrayNode) node;
-      if (arrayNode.isEmpty()) {
-        return Collections.emptyList();
-      }
-    } else {
-      throw new IllegalArgumentException("JSON node must be an array");
+  @Override
+  public List<RecordType> transform(List<JsonNode> hits) {
+    if (Objects.isNull(hits) || hits.isEmpty()) {
+      return Collections.emptyList();
     }
-
-    var optimized = optimizeForGraph((ArrayNode) node);
+    var optimized = optimizeForGraph(hits);
     return getResult(optimized);
   }
 
-  private static JsonNode optimizeForGraph(ArrayNode node) {
-    var contextNode = collectContext(node);
+  private static JsonNode optimizeForGraph(List<JsonNode> hits) {
+    var contextNode = collectContext(hits);
+    var arrayNode = new ArrayNode(JsonNodeFactory.instance);
+    hits.forEach(arrayNode::add);
     return new ObjectNode(
-        JsonNodeFactory.instance, Map.of(JSON_LD_GRAPH, node, JSON_LD_CONTEXT, contextNode));
+        JsonNodeFactory.instance, Map.of(JSON_LD_GRAPH, arrayNode, JSON_LD_CONTEXT, contextNode));
   }
 
-  private static JsonNode collectContext(ArrayNode node) {
+  private static JsonNode collectContext(List<JsonNode> nodes) {
     JsonNode contextNode = null;
-    for (var nodeItem : node) {
-      if (nodeItem.isObject()) {
-        contextNode = nodeItem.get(JSON_LD_CONTEXT);
-        ((ObjectNode) nodeItem).remove(JSON_LD_CONTEXT);
+    for (var node : nodes) {
+      if (node.isObject()) {
+        contextNode = node.get(JSON_LD_CONTEXT);
+        ((ObjectNode) node).remove(JSON_LD_CONTEXT);
+      } else {
+        throw new IllegalArgumentException(
+            String.format("Expected only object nodes. Got %s\n", node.getNodeType().name()));
       }
     }
 
@@ -110,7 +111,7 @@ GROUP BY ?id ?modifiedDate ?title ?date
         appendTitle(resultItem, oaiDcType);
         appendContributors(resultItem, oaiDcType);
         appendDate(resultItem, oaiDcType);
-        metadata.setAny(oaiDcType);
+        metadata.setAny(OBJECT_FACTORY.createDc(oaiDcType));
         var headerType =
             getHeaderType(
                 URI.create(resultItem.getResource("id").getURI()),

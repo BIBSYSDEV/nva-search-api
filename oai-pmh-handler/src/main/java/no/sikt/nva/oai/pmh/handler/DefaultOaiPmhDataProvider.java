@@ -1,6 +1,5 @@
 package no.sikt.nva.oai.pmh.handler;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.xml.bind.JAXBElement;
 import java.net.URI;
 import java.time.ZonedDateTime;
@@ -27,7 +26,6 @@ import org.openarchives.oai.pmh.v2.GranularityType;
 import org.openarchives.oai.pmh.v2.OAIPMHerrorcodeType;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
 import org.openarchives.oai.pmh.v2.ObjectFactory;
-import org.openarchives.oai.pmh.v2.RecordType;
 import org.openarchives.oai.pmh.v2.SetType;
 import org.openarchives.oai.pmh.v2.VerbType;
 import org.slf4j.Logger;
@@ -57,12 +55,14 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
   private final ResourceClient resourceClient;
   private final ScrollClient scrollClient;
   private final URI endpointUri;
+  private final RecordTransformer recordTransformer;
 
   public DefaultOaiPmhDataProvider(
       ResourceClient resourceClient, ScrollClient scrollClient, URI endpointUri) {
     this.resourceClient = resourceClient;
     this.scrollClient = scrollClient;
     this.endpointUri = endpointUri;
+    this.recordTransformer = new GraphRecordTransformer();
   }
 
   @Override
@@ -167,16 +167,6 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
     }
   }
 
-  private RecordType convertToRecord(JsonNode jsonNode) {
-    String id = jsonNode.get("id").asText();
-    var record = objectFactory.createRecordType();
-    var header = objectFactory.createHeaderType();
-    header.setIdentifier(id);
-    record.setHeader(header);
-
-    return record;
-  }
-
   private JAXBElement<OAIPMHtype> listRecords(
       String from, String until, String resumptionToken, String metadataPrefix) {
 
@@ -200,7 +190,8 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
     value.getRequest().setMetadataPrefix(metadataPrefix);
 
     var scrollId = response._scroll_id();
-    var records = response.getSearchHits().stream().map(this::convertToRecord).toList();
+
+    var records = recordTransformer.transform(response.getSearchHits());
 
     var inTenMinutes =
         DatatypeFactory.newDefaultInstance()

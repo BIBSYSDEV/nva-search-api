@@ -5,32 +5,36 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.collection.IsEmptyIterable.emptyIterable;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import jakarta.xml.bind.JAXBElement;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 import nva.commons.core.ioutils.IoUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.openarchives.oai.pmh.v2.ElementType;
 import org.openarchives.oai.pmh.v2.OaiDcType;
 import org.openarchives.oai.pmh.v2.RecordType;
 
-public class PrototypeTest {
+public class GraphRecordTransformerTest {
 
   public static final ObjectMapper MAPPER = new ObjectMapper();
 
-  @Test
-  void shouldThrowIllegalArgumentExceptionWhenInputIsNotJsonArray() {
-    assertThrows(IllegalArgumentException.class, () -> Prototype.from(MAPPER.createObjectNode()));
-  }
+  private final GraphRecordTransformer recordTransformer = new GraphRecordTransformer();
 
-  @Test
-  void shouldReturnEmptyListWhenInputIsEmptyArray() {
-    var records = Prototype.from(MAPPER.createArrayNode());
+  @ParameterizedTest
+  @MethodSource("inputProvidingEmptyOutputProvider")
+  void shouldReturnEmptyListWhenInputIsNullOrEmpty(List<JsonNode> input) {
+    var records = recordTransformer.transform(input);
 
     assertThat(records, is(emptyIterable()));
   }
@@ -40,10 +44,10 @@ public class PrototypeTest {
       throws JsonProcessingException {
     var hits = getSearchHits();
 
-    var records = Prototype.from(hits);
+    var records = recordTransformer.transform(hits);
     assertThat(records, is(not(emptyIterable())));
     for (RecordType record : records) {
-      OaiDcType type = (OaiDcType) record.getMetadata().getAny();
+      JAXBElement<OaiDcType> type = (JAXBElement<OaiDcType>) record.getMetadata().getAny();
       var title = extractTitle(type);
       assertThat(title, is(notNullValue()));
       assertThat(extractCreators(type), is(not(emptyIterable())));
@@ -52,8 +56,8 @@ public class PrototypeTest {
     }
   }
 
-  private String extractDate(OaiDcType type) {
-    return type.getTitleOrCreatorOrSubject().stream()
+  private String extractDate(JAXBElement<OaiDcType> type) {
+    return type.getValue().getTitleOrCreatorOrSubject().stream()
         .filter(e -> e.getName().getLocalPart().equals("date"))
         .findAny()
         .map(JAXBElement::getValue)
@@ -61,16 +65,16 @@ public class PrototypeTest {
         .orElse(null);
   }
 
-  private List<String> extractCreators(OaiDcType type) {
-    return type.getTitleOrCreatorOrSubject().stream()
+  private List<String> extractCreators(JAXBElement<OaiDcType> type) {
+    return type.getValue().getTitleOrCreatorOrSubject().stream()
         .filter(e -> e.getName().getLocalPart().equals("creator"))
         .map(JAXBElement::getValue)
         .map(ElementType::getValue)
         .toList();
   }
 
-  private String extractTitle(OaiDcType type) {
-    return type.getTitleOrCreatorOrSubject().stream()
+  private String extractTitle(JAXBElement<OaiDcType> type) {
+    return type.getValue().getTitleOrCreatorOrSubject().stream()
         .filter(e -> e.getName().getLocalPart().equals("title"))
         .findAny()
         .map(JAXBElement::getValue)
@@ -84,8 +88,18 @@ public class PrototypeTest {
     assertThat(header.getDatestamp(), notNullValue());
   }
 
-  private static JsonNode getSearchHits() throws JsonProcessingException {
+  private static List<JsonNode> getSearchHits() throws JsonProcessingException {
     var json = IoUtils.stringFromResources(Path.of("hits.json"));
-    return MAPPER.readTree(json);
+    var arrayNode = (ArrayNode) MAPPER.readTree(json);
+
+    List<JsonNode> hitsList = new ArrayList<>();
+    for (JsonNode node : arrayNode) {
+      hitsList.add(node);
+    }
+    return hitsList;
+  }
+
+  static Stream<Arguments> inputProvidingEmptyOutputProvider() {
+    return Stream.of(Arguments.of(Collections.emptyList(), null));
   }
 }
