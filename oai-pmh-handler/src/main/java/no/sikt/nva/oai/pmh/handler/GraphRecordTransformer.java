@@ -21,9 +21,11 @@ import org.openarchives.oai.pmh.v2.HeaderType;
 import org.openarchives.oai.pmh.v2.OaiDcType;
 import org.openarchives.oai.pmh.v2.ObjectFactory;
 import org.openarchives.oai.pmh.v2.RecordType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class GraphRecordTransformer implements RecordTransformer {
-
+  private static final Logger LOGGER = LoggerFactory.getLogger(GraphRecordTransformer.class);
   private static final ObjectFactory OBJECT_FACTORY = new ObjectFactory();
   private static final String JSON_LD_GRAPH = "@graph";
   private static final String JSON_LD_CONTEXT = "@context";
@@ -32,6 +34,7 @@ public final class GraphRecordTransformer implements RecordTransformer {
 
   @Override
   public List<RecordType> transform(List<JsonNode> hits) {
+    LOGGER.info(String.format("Transforming %d hits!", Objects.isNull(hits) ? 0 : hits.size()));
     if (Objects.isNull(hits) || hits.isEmpty()) {
       return Collections.emptyList();
     }
@@ -121,6 +124,8 @@ GROUP BY ?id ?modifiedDate ?title ?date
         records.add(record);
       }
       return records;
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     }
   }
 
