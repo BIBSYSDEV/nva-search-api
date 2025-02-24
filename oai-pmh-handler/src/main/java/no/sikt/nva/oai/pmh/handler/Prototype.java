@@ -3,10 +3,15 @@ package no.sikt.nva.oai.pmh.handler;
 import static org.apache.jena.riot.Lang.JSONLD;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -16,15 +21,44 @@ import org.openarchives.oai.pmh.v2.OaiDcType;
 import org.openarchives.oai.pmh.v2.ObjectFactory;
 import org.openarchives.oai.pmh.v2.RecordType;
 
-public class Prototype {
+public final class Prototype {
+
   private static final ObjectFactory OBJECT_FACTORY = new ObjectFactory();
+  public static final String JSON_LD_GRAPH = "@graph";
+  public static final String JSON_LD_CONTEXT = "@context";
+
+  private Prototype() {}
 
   public static List<RecordType> from(JsonNode node) {
-    if (!node.isArray()) {
+    if (node.isArray()) {
+      var arrayNode = (ArrayNode) node;
+      if (arrayNode.isEmpty()) {
+        return Collections.emptyList();
+      }
+    } else {
       throw new IllegalArgumentException("JSON node must be an array");
     }
 
-    return getResult(node);
+    var optimized = optimizeForGraph((ArrayNode) node);
+    return getResult(optimized);
+  }
+
+  private static JsonNode optimizeForGraph(ArrayNode node) {
+    var contextNode = collectContext(node);
+    return new ObjectNode(
+        JsonNodeFactory.instance, Map.of(JSON_LD_GRAPH, node, JSON_LD_CONTEXT, contextNode));
+  }
+
+  private static JsonNode collectContext(ArrayNode node) {
+    JsonNode contextNode = null;
+    for (var nodeItem : node) {
+      if (nodeItem.isObject()) {
+        contextNode = nodeItem.get(JSON_LD_CONTEXT);
+        ((ObjectNode) nodeItem).remove(JSON_LD_CONTEXT);
+      }
+    }
+
+    return contextNode;
   }
 
   private static void appendContributors(QuerySolution resultItem, OaiDcType oaiDcType) {
