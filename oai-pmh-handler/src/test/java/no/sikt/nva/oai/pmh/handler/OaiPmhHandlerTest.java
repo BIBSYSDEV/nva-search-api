@@ -349,15 +349,16 @@ public class OaiPmhHandlerTest {
     assertResponseRequestContains(VerbType.LIST_RECORDS, response, xpathEngine);
 
     var recordNodes = xpathEngine.selectNodes("/oai:OAI-PMH/oai:ListRecords/oai:record", response);
-    assertThat(recordNodes, iterableWithSize(2));
+    assertThat(recordNodes, iterableWithSize(3));
 
     var identifiers = extractRecordIdentifiers(recordNodes);
 
     assertThat(
         identifiers,
         hasItems(
-            "https://api.test.nva.aws.unit.no/publication/019518f49973-545e98d7-d1e6-4d0d-8ed0-597ce29d7f45",
-            "https://api.test.nva.aws.unit.no/publication/019518f4917e-3f586fc5-072f-458f-9a49-d23c20855986"));
+            "https://api.sandbox.nva.aws.unit.no/publication/019527b847ad-ee78bdbe-3f70-4ff4-930c-b4ace492ea64",
+            "https://api.sandbox.nva.aws.unit.no/publication/019527b84693-a86c1cae-24da-4c9d-9bff-e097fd9be2f1",
+            "https://api.sandbox.nva.aws.unit.no/publication/019527b845e4-182ebbf0-9481-4a98-aad2-76b617cc1b0c"));
   }
 
   @ParameterizedTest
@@ -382,15 +383,16 @@ public class OaiPmhHandlerTest {
     assertResponseRequestContains(VerbType.LIST_RECORDS, response, xpathEngine);
 
     var recordNodes = xpathEngine.selectNodes("/oai:OAI-PMH/oai:ListRecords/oai:record", response);
-    assertThat(recordNodes, iterableWithSize(2));
+    assertThat(recordNodes, iterableWithSize(3));
 
     var identifiers = extractRecordIdentifiers(recordNodes);
 
     assertThat(
         identifiers,
         hasItems(
-            "https://api.test.nva.aws.unit.no/publication/019518f49973-545e98d7-d1e6-4d0d-8ed0-597ce29d7f45",
-            "https://api.test.nva.aws.unit.no/publication/019518f4917e-3f586fc5-072f-458f-9a49-d23c20855986"));
+            "https://api.sandbox.nva.aws.unit.no/publication/019527b847ad-ee78bdbe-3f70-4ff4-930c-b4ace492ea64",
+            "https://api.sandbox.nva.aws.unit.no/publication/019527b84693-a86c1cae-24da-4c9d-9bff-e097fd9be2f1",
+            "https://api.sandbox.nva.aws.unit.no/publication/019527b845e4-182ebbf0-9481-4a98-aad2-76b617cc1b0c"));
   }
 
   private InputStream request(
