@@ -2,6 +2,7 @@ package no.sikt.nva.oai.pmh.handler;
 
 import static org.apache.jena.riot.Lang.JSONLD;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -13,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import no.unit.nva.commons.json.JsonUtils;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -46,8 +48,17 @@ public final class GraphRecordTransformer implements RecordTransformer {
     var contextNode = collectContext(hits);
     var arrayNode = new ArrayNode(JsonNodeFactory.instance);
     hits.forEach(arrayNode::add);
-    return new ObjectNode(
-        JsonNodeFactory.instance, Map.of(JSON_LD_GRAPH, arrayNode, JSON_LD_CONTEXT, contextNode));
+    var jsonGraph =
+        new ObjectNode(
+            JsonNodeFactory.instance,
+            Map.of(JSON_LD_GRAPH, arrayNode, JSON_LD_CONTEXT, contextNode));
+      try {
+          LOGGER.info(JsonUtils.dtoObjectMapper.writeValueAsString(jsonGraph));
+      } catch (JsonProcessingException e) {
+          throw new RuntimeException(e);
+      }
+
+      return jsonGraph;
   }
 
   private static JsonNode collectContext(List<JsonNode> nodes) {
