@@ -1,134 +1,78 @@
 [
   {
-    "identifier": "019518f49973-545e98d7-d1e6-4d0d-8ed0-597ce29d7f45",
+    "@context": "https://api.sandbox.nva.aws.unit.no/publication/context",
+    "identifier": "019527b847ad-ee78bdbe-3f70-4ff4-930c-b4ace492ea64",
     "contributorOrganizations": [
-      "https://api.test.nva.aws.unit.no/cristin/organization/192.85.0.0"
+      "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.64.0.0",
+      "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.63.25.0",
+      "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.63.0.0",
+      "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.0.0.0",
+      "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.64.20.0"
     ],
     "modelVersion": "0.23.3",
     "resourceOwner": {
-      "owner": "thesis-integration@192.0.0.0",
-      "ownerAffiliation": "https://api.test.nva.aws.unit.no/cristin/organization/192.0.0.0"
+      "owner": "ntnu@194.0.0.0",
+      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.0.0.0"
     },
     "type": "Publication",
-    "associatedArtifacts": [
-      {
-        "identifier": "d135f3d2-3e03-4572-837c-959e9fe16d3d",
-        "license": {
-          "name": "RS-INC",
-          "type": "License",
-          "value": "http://rightsstatements.org/vocab/InC/1.0/",
-          "labels": {
-            "nb": "Rights Statements - Utgivers betingelser",
-            "en": "Rights Statements - In copyright"
-          }
-        },
-        "rightsRetentionStrategy": {
-          "configuredType": "Unknown",
-          "type": "NullRightsRetentionStrategy"
-        },
-        "size": "40339329",
-        "name": "no.nmbu:wiseflow:7265594:61741763.pdf",
-        "mimeType": "application/pdf",
-        "publishedDate": "2025-02-19T12:08:32.722622194Z",
-        "type": "OpenFile"
-      },
-      {
-        "identifier": "a64b1d97-3e7d-47a6-968e-4db22b5d57e7",
-        "license": {
-          "name": "RS-INC",
-          "type": "License",
-          "value": "http://rightsstatements.org/vocab/InC/1.0/",
-          "labels": {
-            "nb": "Rights Statements - Utgivers betingelser",
-            "en": "Rights Statements - In copyright"
-          }
-        },
-        "rightsRetentionStrategy": {
-          "configuredType": "Unknown",
-          "type": "NullRightsRetentionStrategy"
-        },
-        "size": "40339329",
-        "name": "no.nmbu:wiseflow:7265594:61741763.pdf",
-        "mimeType": "application/pdf",
-        "publishedDate": "2025-02-19T00:07:25.391814219Z",
-        "type": "OpenFile"
-      },
-      {
-        "identifier": "533a2983-a97f-445c-a7de-876fff00d995",
-        "license": {
-          "name": "RS-INC",
-          "type": "License",
-          "value": "http://rightsstatements.org/vocab/InC/1.0/",
-          "labels": {
-            "nb": "Rights Statements - Utgivers betingelser",
-            "en": "Rights Statements - In copyright"
-          }
-        },
-        "rightsRetentionStrategy": {
-          "configuredType": "Unknown",
-          "type": "NullRightsRetentionStrategy"
-        },
-        "size": "40339329",
-        "name": "no.nmbu:wiseflow:7265594:61741763.pdf",
-        "mimeType": "application/pdf",
-        "publishedDate": "2025-02-18T12:07:20.807054353Z",
-        "type": "OpenFile"
-      }
+    "curatingInstitutions": [
+      "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.0.0.0"
     ],
-    "@context": "https://api.test.nva.aws.unit.no/publication/context",
     "entityDescription": {
       "reference": {
         "type": "Reference",
         "publicationInstance": {
-          "type": "DegreeMaster",
-          "submittedDate": {
-            "month": "12",
-            "year": "2024",
-            "type": "PublicationDate",
-            "day": "13"
-          }
+          "pages": {
+            "type": "NullPages"
+          },
+          "type": "ConferenceLecture"
         },
         "publicationContext": {
-          "course": {
-            "code": "M-BYREG",
-            "type": "UnconfirmedCourse"
+          "name": "American Control Conference",
+          "place": {
+            "countryCode": "US",
+            "name": "Minneapolis",
+            "type": "UnconfirmedPlace"
           },
-          "publisher": {
-            "valid": "true",
-            "identifier": "8B9EC1FA-3C4A-4875-AA0A-C1E0219C840E",
-            "year": "2024",
-            "name": "NMBU",
-            "id": "https://api.test.nva.aws.unit.no/publication-channels-v2/publisher/8B9EC1FA-3C4A-4875-AA0A-C1E0219C840E/2024",
-            "type": "Publisher",
-            "scientificValue": "Unassigned",
-            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/nvakanal?pid=8B9EC1FA-3C4A-4875-AA0A-C1E0219C840E"
+          "time": {
+            "from": "2006-06-14T00:00:00Z",
+            "to": "2006-06-16T00:00:00Z",
+            "type": "Period"
           },
-          "type": "Degree"
+          "type": "Event"
         }
       },
-      "contributorsCount": 2,
-      "mainTitle": "Byantikvarens mandat og rolle i praksis: utviklingstrekk i Oslo kommune",
-      "alternativeAbstracts": {
-        "de": "\nIn line with strategies such as compact and project-based urban development, the pressure on available\nland is steadily increasing. This creates challenges for governing actors like the Cultural Heritage\nManagement Office (Byantikvaren) in Oslo Municipality. To realize the vision of a compact city,\ndensification is necessary, which entails transforming and intensifying the use of existing areas. This\nprocess demands balanced trade-offs between competing interests, where some are in sharp opposition\nto one another. In particular, the preservation of cultural heritage often conflicts with urgent\nconsiderations like housing development and societal progress. Byantikvaren is responsible for ensuring\nthat cultural heritage is safeguarded in planning and construction processes. But what exactly\ndoes Byantikvaren’s mandate entail, and how is it practiced in response to the pressures of compact\nand project-based urban development? This thesis investigates Byantikvaren’s mandate and role,\nhighlighting trends in Oslo Municipality.\n\nThe title, “Byantikvaren’s Mandate and Role in Practice: Development Trends in Oslo Municipality,”\nencapsulates the main themes of the thesis and has guided its coherent structure and focus. The\nthesis primarily examines Byantikvaren—a key cultural heritage advisor for the municipality, which\nalso holds an authoritative role as a county-level cultural heritage authority. By mandate, I refer to the\nresponsibility, authority, or tasks assigned to Byantikvaren to perform certain duties or achieve specific\nobjectives. This mandate involves the responsibility to preserve and carry forward cultural heritage\nusing regulatory tools. By role, I refer to the position Byantikvaren holds in a particular context\nor setting. The role encompasses both the expectations regarding how the actor should operate and\nthe tasks to be performed in line with its responsibilities. For Byantikvaren, this includes assessing\nproposals and providing advice on preserving cultural and historical values while balancing heritage\nconsiderations against other municipal priorities. By practice, I mean the actual actions, routines, and\nmethods employed in real-life situations—how Byantikvaren’s mandate and role are carried out in\nresponse to daily demands and challenges. These experiences can be examined from various perspectives,\nsuch as those of property developers or Byantikvaren itself. By development trends, I refer to\noverarching tendencies, patterns, or directions in how Byantikvaren carries out its mandate and role\nin practice. These trends are based on extensive data collection to identify key tendencies. Finally, by\nsituating the analysis in Oslo Municipality, the thesis is contextually anchored and delimits its focus\nto Norway’s capital city.\n\nThe main research question for this master’s thesis is: “How does Byantikvaren in Oslo Municipality\nexercise its mandate and role in practice?” To answer this question, the study is based on qualitative\ninterviews supplemented by document analysis. The study shows that the Heritage Management Office\nis a distinct agency with a clear mission to safeguard cultural heritage in Oslo municipality. While\nthe Heritage Management Office primarily assumes a steering role in certain contexts, the findings\nindicate tendencies toward a more producing role. The findings indicate, however, that the execution\nof the mandate can be perceived as unclear, particularly regarding the exercise of discretion and the\nextent of the mandate. Despite being regarded as professional and accessible, the study reveals a tension\nbetween the interests of developers and the Heritage Management Office. The study shows that\nthe practices of the Heritage Management Office are influenced by the impact of various measures on\ncultural heritage, with the agency taking on a steering role that becomes more pronounced in cases\nwhere cultural heritage considerations are not prioritized. In ideal processes at the Heritage Management\nOffice, heritage values are clarified early through knowledge-based and goal-oriented approaches,\nensured by close collaboration between the agency and the developer.\n"
-      },
-      "language": "http://lexvo.org/id/iso639-3/nob",
-      "abstract": "\nI takt med strategier som kompakt og prosjektbasert byutvikling blir presset på areal stadig større, og\ndette kan skape utfordringer for styrende aktører som Byantikvaren i Oslo kommune. For å realisere\nden kompakte byen må det fortettes, noe som også innebærer at eksisterende områder må transformeres\nog utvikles mer intensivt. Denne prosessen krever balanserte avveininger mellom ulike hensyn,\nder noen interesser står i skarp motsetning til hverandre. Særlig står bevaring av kulturminner\nofte i motstrid med hastende hensyn som boligbygging og samfunnsutvikling. Det er Byantikvaren\nsom har ansvar for at kulturminner ivaretas i plan- og byggeprosesser. Men hva innebærer egentlig\nByantikvarens mandat, og hvordan praktiseres det i møte med presset fra den kompakte og prosjektbaserte\nbyutviklingen? Denne oppgaven skal undersøke Byantikvarens mandat og rolle i praksis, og\npeke på utviklingstrekk fra Oslo kommune.\n\n\nTittelen «Byantikvarens mandat og rolle i praksis: utviklingstrekk i Oslo kommune» presenterer oppgavens\nhovedlinjer og har vært førende for at oppgavens skal ha en konsis oppbygning og rød tråd.\nOppgaven tar først og fremst for seg Byantikvaren – en viktig kulturminnefaglig rådgiver for kommunen,\nsom også har en myndighetsrolle som fylkeskommunal kulturminnemyndighet. Med mandat\nmener jeg ansvaret, fullmakten eller oppgaven som Byantikvaren er gitt for å utføre visse oppgaver\neller oppnå spesifikke mål. Mandatet vil altså innebære ansvaret for å bevare og videreføre kulturarven\nved bruk av styringsverktøy. Med rolle mener jeg den posisjonen Byantikvaren har i en bestemt\nkontekst eller sammenheng. Rollen innebærer både forventninger til hvordan aktøren skal opptre og\nhvilke oppgaver som skal utføres i tråd med det gitte ansvarsområdet. For Byantikvaren innebærer\nrollen blant annet å vurdere tiltak og gi råd om bevaring av kulturhistoriske verdier, samtidig som kulturminnehensynet\nbalanseres opp mot de hensynene som Oslo kommune som helhet ønsker å ivareta.\nMed praksis mener jeg de faktiske handlingene, rutinene og metodene som utføres i virkeligheten.\nAltså hvordan Byantikvarens mandat og rolle utspiller seg i møte med daglige krav og utfordringer.\nDisse erfaringene kan utdypes fra flere perspektiver, som for eksempel eiendomsutviklere eller Byantikvaren\nselv. Med utviklingstrekk mener jeg de overordnede tendensene, mønstrene eller retningene\ni hvordan Byantikvaren utøver sitt mandat og rolle i praksis. Utviklingstrekkene vil basere seg på en\nbred datainnsamling for å kunne peke på noen tendenser. Med Oslo kommune setter jeg tematikken i\nen kontekst, og avgrenser oppgavens tema til å kun gjelde i hovedstaden.\n\nHovedproblemstillingen for masteroppgaven er «Hvordan utøver Byantikvaren i Oslo kommune sitt\nmandat og rolle i praksis?». For å besvare oppgavens problemstilling har studien basert seg på kvalitative\nintervjuer, med supplerende dokumentgjennomgang. Studien viser at Byantikvaren er en tydelig\netat, med et tydelig mandat og sak i å ivareta kulturminnene i Oslo kommune. Byantikvaren innehar\nprimært en styrende rolle i enkelte sammenhenger, men funnene viser tendenser mot en produserende\nrolle. Funnene viser likevel at utøvelsen av mandatet kan oppfattes som utydelig, spesielt når\ndet gjelder skjønnsutøvelsen og hvor langt mandatet strekker seg. Til tross for at Byantikvaren oppfattes\nsom profesjonell og tilgjengelig, avdekker studien en spenning mellom utviklernes og Byantikvarens\ninteresser. Studien viser at Byantikvarens praksis er betinget av ulike tiltaks påvirkning på\nkulturminnet, hvor Byantikvaren har en styrende rolle som forsterkes i saker hvor hensynet til kulturminner\nikke prioriteres. I ideelle prosesser hos Byantikvaren avklares verneverdiene tidlig gjennom\nkunnskapsbaserte og målstyrte tilnærminger som sikres gjennom tett samarbeid mellom etaten og\nutvikleren.\n",
+      "contributorsCount": 3,
+      "mainTitle": "Crane feedback control in offshore moonpool operations",
+      "alternativeAbstracts": {},
+      "language": "http://lexvo.org/id/iso639-3/eng",
       "contributors": [
         {
           "sequence": "1",
           "role": {
-            "type": "Supervisor"
+            "type": "Creator"
           },
           "identity": {
-            "nameType": "Organizational",
-            "name": "Anja Standal",
+            "verificationStatus": "Verified",
+            "name": "Saverio Messineo",
+            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/35885",
             "type": "Identity"
           },
           "correspondingAuthor": "false",
           "affiliations": [
             {
-              "id": "https://api.test.nva.aws.unit.no/cristin/organization/192.85.0.0",
-              "type": "Organization"
+              "partOf": [
+                {
+                  "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.64.0.0"
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.64.20.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Institutt for marin teknikk",
+                "en": "Department of Marine Technology"
+              }
             }
           ],
           "type": "Contributor"
@@ -139,15 +83,40 @@
             "type": "Creator"
           },
           "identity": {
-            "nameType": "Organizational",
-            "name": "Mørch-Thoresen, Una",
+            "verificationStatus": "Verified",
+            "name": "Fabio Celani",
+            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/42640",
+            "type": "Identity"
+          },
+          "correspondingAuthor": "false",
+          "type": "Contributor"
+        },
+        {
+          "sequence": "3",
+          "role": {
+            "type": "Creator"
+          },
+          "identity": {
+            "verificationStatus": "Verified",
+            "name": "Olav Egeland",
+            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/41958",
             "type": "Identity"
           },
           "correspondingAuthor": "false",
           "affiliations": [
             {
-              "id": "https://api.test.nva.aws.unit.no/cristin/organization/192.85.0.0",
-              "type": "Organization"
+              "partOf": [
+                {
+                  "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.63.0.0"
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.63.25.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Institutt for teknisk kybernetikk",
+                "en": "Department of Engineering Cybernetics"
+              }
             }
           ],
           "type": "Contributor"
@@ -157,18 +126,29 @@
         {
           "sequence": "1",
           "role": {
-            "type": "Supervisor"
+            "type": "Creator"
           },
           "identity": {
-            "nameType": "Organizational",
-            "name": "Anja Standal",
+            "verificationStatus": "Verified",
+            "name": "Saverio Messineo",
+            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/35885",
             "type": "Identity"
           },
           "correspondingAuthor": "false",
           "affiliations": [
             {
-              "id": "https://api.test.nva.aws.unit.no/cristin/organization/192.85.0.0",
-              "type": "Organization"
+              "partOf": [
+                {
+                  "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.64.0.0"
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.64.20.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Institutt for marin teknikk",
+                "en": "Department of Marine Technology"
+              }
             }
           ],
           "type": "Contributor"
@@ -179,15 +159,40 @@
             "type": "Creator"
           },
           "identity": {
-            "nameType": "Organizational",
-            "name": "Mørch-Thoresen, Una",
+            "verificationStatus": "Verified",
+            "name": "Fabio Celani",
+            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/42640",
+            "type": "Identity"
+          },
+          "correspondingAuthor": "false",
+          "type": "Contributor"
+        },
+        {
+          "sequence": "3",
+          "role": {
+            "type": "Creator"
+          },
+          "identity": {
+            "verificationStatus": "Verified",
+            "name": "Olav Egeland",
+            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/41958",
             "type": "Identity"
           },
           "correspondingAuthor": "false",
           "affiliations": [
             {
-              "id": "https://api.test.nva.aws.unit.no/cristin/organization/192.85.0.0",
-              "type": "Organization"
+              "partOf": [
+                {
+                  "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.63.0.0"
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.63.25.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Institutt for teknisk kybernetikk",
+                "en": "Department of Engineering Cybernetics"
+              }
             }
           ],
           "type": "Contributor"
@@ -195,190 +200,193 @@
       ],
       "type": "EntityDescription",
       "publicationDate": {
-        "month": "12",
-        "year": "2024",
-        "type": "PublicationDate",
-        "day": "13"
-      },
-      "alternativeTitles": {
-        "eng": "The Mandate and Role of th Heritage Authority in Practice: Development Trends in Oslo Municipality"
+        "year": "2006",
+        "type": "PublicationDate"
       }
     },
-    "createdDate": "2025-02-18T12:07:18.131727330Z",
-    "publicationContextUris": [
-      "https://api.test.nva.aws.unit.no/publication-channels-v2/publisher/8B9EC1FA-3C4A-4875-AA0A-C1E0219C840E/2024"
-    ],
-    "modifiedDate": "2025-02-19T12:08:33.186339546Z",
+    "createdDate": "2025-02-21T08:55:43.277085824Z",
+    "publicationContextUris": [],
+    "modifiedDate": "2025-02-21T08:55:43.277085824Z",
     "additionalIdentifiers": [
       {
-        "sourceName": "inspera",
-        "type": "AdditionalIdentifier",
-        "value": "no.nmbu:wiseflow:7265594:61741763"
+        "sourceName": "cristin@ntnu",
+        "type": "CristinIdentifier",
+        "value": "215801"
       }
     ],
     "publisher": {
-      "id": "https://api.test.nva.aws.unit.no/customer/b8977f51-28bd-41b5-bb19-71c577be7c28",
+      "id": "https://api.sandbox.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
       "type": "Organization"
     },
-    "filesStatus": "hasPublicFiles",
-    "id": "https://api.test.nva.aws.unit.no/publication/019518f49973-545e98d7-d1e6-4d0d-8ed0-597ce29d7f45",
+    "filesStatus": "noFiles",
+    "id": "https://api.sandbox.nva.aws.unit.no/publication/019527b847ad-ee78bdbe-3f70-4ff4-930c-b4ace492ea64",
     "pendingOpenFileCount": "0",
+    "publishedDate": "2025-02-21T08:55:43.277085824Z",
     "scientificIndex": {},
     "topLevelOrganizations": [
       {
-        "id": "https://api.test.nva.aws.unit.no/cristin/organization/192.85.0.0",
-        "type": "Organization"
+        "hasPart": [
+          {
+            "partOf": [
+              {
+                "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.0.0.0"
+              }
+            ],
+            "hasPart": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.63.0.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.63.25.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for teknisk kybernetikk",
+                  "en": "Department of Engineering Cybernetics"
+                }
+              }
+            ],
+            "countryCode": "NO",
+            "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.63.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Fakultet for informasjonsteknologi og elektroteknikk",
+              "en": "Faculty of Information Technology and Electrical Engineering"
+            }
+          },
+          {
+            "partOf": [
+              {
+                "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.0.0.0"
+              }
+            ],
+            "hasPart": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.64.0.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.64.20.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for marin teknikk",
+                  "en": "Department of Marine Technology"
+                }
+              }
+            ],
+            "countryCode": "NO",
+            "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.64.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Fakultet for ingeniørvitenskap",
+              "en": "Faculty of Engineering"
+            }
+          }
+        ],
+        "countryCode": "NO",
+        "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.0.0.0",
+        "type": "Organization",
+        "contributorCristinIds": [
+          {
+            "verificationStatus": "Verified",
+            "name": "Saverio Messineo",
+            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/35885",
+            "type": "Identity"
+          },
+          {
+            "verificationStatus": "Verified",
+            "name": "Olav Egeland",
+            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/41958",
+            "type": "Identity"
+          }
+        ],
+        "labels": {
+          "nn": "Noregs teknisk-naturvitskaplege universitet",
+          "nb": "Norges teknisk-naturvitenskapelige universitet",
+          "en": "Norwegian University of Science and Technology"
+        }
       }
     ],
     "status": "PUBLISHED"
   },
   {
-    "identifier": "019518f4917e-3f586fc5-072f-458f-9a49-d23c20855986",
+    "@context": "https://api.sandbox.nva.aws.unit.no/publication/context",
+    "identifier": "019527b84693-a86c1cae-24da-4c9d-9bff-e097fd9be2f1",
     "contributorOrganizations": [
-      "https://api.test.nva.aws.unit.no/cristin/organization/192.85.0.0"
+      "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.0.0.0",
+      "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.65.20.0",
+      "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.65.0.0"
     ],
     "modelVersion": "0.23.3",
     "resourceOwner": {
-      "owner": "thesis-integration@192.0.0.0",
-      "ownerAffiliation": "https://api.test.nva.aws.unit.no/cristin/organization/192.0.0.0"
+      "owner": "ntnu@194.0.0.0",
+      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.0.0.0"
     },
     "type": "Publication",
-    "associatedArtifacts": [
-      {
-        "identifier": "7303935a-b08b-4258-a772-dd140f2ad438",
-        "license": {
-          "name": "RS-INC",
-          "type": "License",
-          "value": "http://rightsstatements.org/vocab/InC/1.0/",
-          "labels": {
-            "nb": "Rights Statements - Utgivers betingelser",
-            "en": "Rights Statements - In copyright"
-          }
-        },
-        "rightsRetentionStrategy": {
-          "configuredType": "Unknown",
-          "type": "NullRightsRetentionStrategy"
-        },
-        "size": "1169442",
-        "name": "no.nmbu:wiseflow:7109360:61764802.pdf",
-        "mimeType": "application/pdf",
-        "publishedDate": "2025-02-18T12:07:17.223747298Z",
-        "type": "OpenFile"
-      },
-      {
-        "identifier": "11258ea5-20b9-4f84-be18-440517deb682",
-        "license": {
-          "name": "RS-INC",
-          "type": "License",
-          "value": "http://rightsstatements.org/vocab/InC/1.0/",
-          "labels": {
-            "nb": "Rights Statements - Utgivers betingelser",
-            "en": "Rights Statements - In copyright"
-          }
-        },
-        "rightsRetentionStrategy": {
-          "configuredType": "Unknown",
-          "type": "NullRightsRetentionStrategy"
-        },
-        "size": "1169442",
-        "name": "no.nmbu:wiseflow:7109360:61764802.pdf",
-        "mimeType": "application/pdf",
-        "publishedDate": "2025-02-19T00:07:21.923012280Z",
-        "type": "OpenFile"
-      },
-      {
-        "identifier": "d33cb35e-bd35-4af2-8720-0895907e99a7",
-        "license": {
-          "name": "RS-INC",
-          "type": "License",
-          "value": "http://rightsstatements.org/vocab/InC/1.0/",
-          "labels": {
-            "nb": "Rights Statements - Utgivers betingelser",
-            "en": "Rights Statements - In copyright"
-          }
-        },
-        "rightsRetentionStrategy": {
-          "configuredType": "Unknown",
-          "type": "NullRightsRetentionStrategy"
-        },
-        "size": "1169442",
-        "name": "no.nmbu:wiseflow:7109360:61764802.pdf",
-        "mimeType": "application/pdf",
-        "publishedDate": "2025-02-19T12:08:29.270795179Z",
-        "type": "OpenFile"
-      }
+    "curatingInstitutions": [
+      "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.0.0.0"
     ],
-    "@context": "https://api.test.nva.aws.unit.no/publication/context",
     "entityDescription": {
       "reference": {
         "type": "Reference",
         "publicationInstance": {
-          "type": "DegreeBachelor",
-          "submittedDate": {
-            "month": "12",
-            "year": "2024",
-            "type": "PublicationDate",
-            "day": "15"
-          }
+          "pages": {
+            "type": "NullPages"
+          },
+          "type": "ConferenceLecture"
         },
         "publicationContext": {
-          "course": {
-            "code": "B-DS",
-            "type": "UnconfirmedCourse"
+          "agent": {
+            "name": "FYSAK",
+            "type": "UnconfirmedOrganization"
           },
-          "publisher": {
-            "valid": "true",
-            "identifier": "8B9EC1FA-3C4A-4875-AA0A-C1E0219C840E",
-            "year": "2024",
-            "name": "NMBU",
-            "id": "https://api.test.nva.aws.unit.no/publication-channels-v2/publisher/8B9EC1FA-3C4A-4875-AA0A-C1E0219C840E/2024",
-            "type": "Publisher",
-            "scientificValue": "Unassigned",
-            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/nvakanal?pid=8B9EC1FA-3C4A-4875-AA0A-C1E0219C840E"
+          "name": "Møte",
+          "place": {
+            "name": "Fylkets hus, Steinkjer",
+            "type": "UnconfirmedPlace"
           },
-          "type": "Degree"
+          "time": {
+            "from": "2006-09-06T00:00:00Z",
+            "type": "Period"
+          },
+          "type": "Event"
         }
       },
-      "contributorsCount": 2,
-      "mainTitle": "Evaluating the Viability of Norwegian Waste Management Techniques for Enhanced Recycling in Sri Lanka",
+      "contributorsCount": 1,
+      "mainTitle": "FYSAK og HUNT 3",
       "alternativeAbstracts": {},
-      "language": "http://lexvo.org/id/iso639-3/eng",
-      "abstract": "\nThe study was conducted to evaluate the viability of Norwegian waste management techniques for enhanced recycling in Sri Lanka. Reviews on the current waste management practices in Sri Lanka and that of Norwegian waste management techniques were carried out. Special interview with the manager, GLØR Waste Management, Lillehammer, Norway was also conducted. Waste management techniques, including recycling strategies, waste-to-energy systems, and extended producer responsibility (EPR) policies in both nations were compared to assess their applicability to Sri Lanka. Key barriers, such as policy gaps, infrastructure limitations, and socio-cultural factors, that may hinder the adoption of Norwegian waste management practices in Sri Lanka were identified. Based on these, policy recommendations and strategies to enhance recycling and waste management efficiency in Sri Lanka based on Norway’s best practice were proposed.\n",
+      "language": "http://lexvo.org/id/iso639-3/nob",
       "contributors": [
         {
           "sequence": "1",
           "role": {
-            "type": "Supervisor"
-          },
-          "identity": {
-            "nameType": "Organizational",
-            "name": "Dr. Shimbahri Mesfin",
-            "type": "Identity"
-          },
-          "correspondingAuthor": "false",
-          "affiliations": [
-            {
-              "id": "https://api.test.nva.aws.unit.no/cristin/organization/192.85.0.0",
-              "type": "Organization"
-            }
-          ],
-          "type": "Contributor"
-        },
-        {
-          "sequence": "2",
-          "role": {
             "type": "Creator"
           },
           "identity": {
-            "nameType": "Organizational",
-            "name": "Withana Wickramasinghe Arachch, Banuka Nimsith Wickramasinghe",
+            "verificationStatus": "Verified",
+            "name": "Kristian Midthjell",
+            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/43453",
             "type": "Identity"
           },
           "correspondingAuthor": "false",
           "affiliations": [
             {
-              "id": "https://api.test.nva.aws.unit.no/cristin/organization/192.85.0.0",
-              "type": "Organization"
+              "partOf": [
+                {
+                  "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.65.0.0"
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.65.20.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Institutt for samfunnsmedisin og sykepleie",
+                "en": "Department of Public Health and Nursing"
+              }
             }
           ],
           "type": "Contributor"
@@ -388,37 +396,29 @@
         {
           "sequence": "1",
           "role": {
-            "type": "Supervisor"
-          },
-          "identity": {
-            "nameType": "Organizational",
-            "name": "Dr. Shimbahri Mesfin",
-            "type": "Identity"
-          },
-          "correspondingAuthor": "false",
-          "affiliations": [
-            {
-              "id": "https://api.test.nva.aws.unit.no/cristin/organization/192.85.0.0",
-              "type": "Organization"
-            }
-          ],
-          "type": "Contributor"
-        },
-        {
-          "sequence": "2",
-          "role": {
             "type": "Creator"
           },
           "identity": {
-            "nameType": "Organizational",
-            "name": "Withana Wickramasinghe Arachch, Banuka Nimsith Wickramasinghe",
+            "verificationStatus": "Verified",
+            "name": "Kristian Midthjell",
+            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/43453",
             "type": "Identity"
           },
           "correspondingAuthor": "false",
           "affiliations": [
             {
-              "id": "https://api.test.nva.aws.unit.no/cristin/organization/192.85.0.0",
-              "type": "Organization"
+              "partOf": [
+                {
+                  "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.65.0.0"
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.65.20.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Institutt for samfunnsmedisin og sykepleie",
+                "en": "Department of Public Health and Nursing"
+              }
             }
           ],
           "type": "Contributor"
@@ -426,36 +426,270 @@
       ],
       "type": "EntityDescription",
       "publicationDate": {
-        "month": "12",
-        "year": "2024",
-        "type": "PublicationDate",
-        "day": "15"
+        "year": "2006",
+        "type": "PublicationDate"
       }
     },
-    "createdDate": "2025-02-18T12:07:16.094259960Z",
-    "publicationContextUris": [
-      "https://api.test.nva.aws.unit.no/publication-channels-v2/publisher/8B9EC1FA-3C4A-4875-AA0A-C1E0219C840E/2024"
-    ],
-    "modifiedDate": "2025-02-19T12:08:29.754140486Z",
+    "createdDate": "2025-02-21T08:55:42.995912178Z",
+    "publicationContextUris": [],
+    "modifiedDate": "2025-02-21T08:55:42.995912178Z",
     "additionalIdentifiers": [
       {
-        "sourceName": "inspera",
-        "type": "AdditionalIdentifier",
-        "value": "no.nmbu:wiseflow:7109360:61764802"
+        "sourceName": "cristin@ntnu",
+        "type": "CristinIdentifier",
+        "value": "215802"
       }
     ],
     "publisher": {
-      "id": "https://api.test.nva.aws.unit.no/customer/b8977f51-28bd-41b5-bb19-71c577be7c28",
+      "id": "https://api.sandbox.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
       "type": "Organization"
     },
-    "filesStatus": "hasPublicFiles",
-    "id": "https://api.test.nva.aws.unit.no/publication/019518f4917e-3f586fc5-072f-458f-9a49-d23c20855986",
+    "filesStatus": "noFiles",
+    "id": "https://api.sandbox.nva.aws.unit.no/publication/019527b84693-a86c1cae-24da-4c9d-9bff-e097fd9be2f1",
     "pendingOpenFileCount": "0",
+    "publishedDate": "2025-02-21T08:55:42.995912178Z",
     "scientificIndex": {},
     "topLevelOrganizations": [
       {
-        "id": "https://api.test.nva.aws.unit.no/cristin/organization/192.85.0.0",
-        "type": "Organization"
+        "hasPart": [
+          {
+            "partOf": [
+              {
+                "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.0.0.0"
+              }
+            ],
+            "hasPart": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.65.0.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.65.20.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for samfunnsmedisin og sykepleie",
+                  "en": "Department of Public Health and Nursing"
+                }
+              }
+            ],
+            "countryCode": "NO",
+            "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.65.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Fakultet for medisin og helsevitenskap",
+              "en": "Faculty of Medicine and Health Sciences"
+            }
+          }
+        ],
+        "countryCode": "NO",
+        "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.0.0.0",
+        "type": "Organization",
+        "contributorCristinIds": [
+          {
+            "verificationStatus": "Verified",
+            "name": "Kristian Midthjell",
+            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/43453",
+            "type": "Identity"
+          }
+        ],
+        "labels": {
+          "nn": "Noregs teknisk-naturvitskaplege universitet",
+          "nb": "Norges teknisk-naturvitenskapelige universitet",
+          "en": "Norwegian University of Science and Technology"
+        }
+      }
+    ],
+    "status": "PUBLISHED"
+  },
+  {
+    "@context": "https://api.sandbox.nva.aws.unit.no/publication/context",
+    "identifier": "019527b845e4-182ebbf0-9481-4a98-aad2-76b617cc1b0c",
+    "contributorOrganizations": [
+      "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.12.5.0",
+      "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.12.0.0",
+      "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
+    ],
+    "modelVersion": "0.23.3",
+    "resourceOwner": {
+      "owner": "uio@185.90.0.0",
+      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
+    },
+    "type": "Publication",
+    "curatingInstitutions": [
+      "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
+    ],
+    "entityDescription": {
+      "reference": {
+        "type": "Reference",
+        "publicationInstance": {
+          "pages": {
+            "type": "NullPages"
+          },
+          "type": "ConferenceLecture"
+        },
+        "publicationContext": {
+          "agent": {
+            "name": "University of Lund, Wallenberg Institute",
+            "type": "UnconfirmedOrganization"
+          },
+          "name": "Fordypningskurs i Folkerett",
+          "place": {
+            "countryCode": "SE",
+            "name": "Lund",
+            "type": "UnconfirmedPlace"
+          },
+          "time": {
+            "from": "2004-02-05T00:00:00Z",
+            "to": "2004-02-06T00:00:00Z",
+            "type": "Period"
+          },
+          "type": "Event"
+        }
+      },
+      "contributorsCount": 1,
+      "mainTitle": "International Environmental Law: Introduction, Principles and Concepts, International Environmental Law, Protection of the Marine Environment, Loss of Biodiversity and Climate Change",
+      "alternativeAbstracts": {},
+      "language": "http://lexvo.org/id/iso639-3/eng",
+      "contributors": [
+        {
+          "sequence": "1",
+          "role": {
+            "type": "Creator"
+          },
+          "identity": {
+            "verificationStatus": "Verified",
+            "name": "Christina Voigt",
+            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/22597",
+            "type": "Identity"
+          },
+          "correspondingAuthor": "false",
+          "affiliations": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.12.0.0"
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.12.5.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Institutt for offentlig rett",
+                "en": "Department of Public and International Law"
+              }
+            }
+          ],
+          "type": "Contributor"
+        }
+      ],
+      "contributorsPreview": [
+        {
+          "sequence": "1",
+          "role": {
+            "type": "Creator"
+          },
+          "identity": {
+            "verificationStatus": "Verified",
+            "name": "Christina Voigt",
+            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/22597",
+            "type": "Identity"
+          },
+          "correspondingAuthor": "false",
+          "affiliations": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.12.0.0"
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.12.5.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Institutt for offentlig rett",
+                "en": "Department of Public and International Law"
+              }
+            }
+          ],
+          "type": "Contributor"
+        }
+      ],
+      "type": "EntityDescription",
+      "publicationDate": {
+        "year": "2004",
+        "type": "PublicationDate"
+      }
+    },
+    "createdDate": "2025-02-21T08:55:42.820948672Z",
+    "publicationContextUris": [],
+    "modifiedDate": "2025-02-21T08:55:42.820948672Z",
+    "additionalIdentifiers": [
+      {
+        "sourceName": "cristin@uio",
+        "type": "CristinIdentifier",
+        "value": "215829"
+      }
+    ],
+    "publisher": {
+      "id": "https://api.sandbox.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+      "type": "Organization"
+    },
+    "filesStatus": "noFiles",
+    "id": "https://api.sandbox.nva.aws.unit.no/publication/019527b845e4-182ebbf0-9481-4a98-aad2-76b617cc1b0c",
+    "pendingOpenFileCount": "0",
+    "publishedDate": "2025-02-21T08:55:42.820948672Z",
+    "scientificIndex": {},
+    "topLevelOrganizations": [
+      {
+        "hasPart": [
+          {
+            "partOf": [
+              {
+                "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
+              }
+            ],
+            "hasPart": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.12.0.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.12.5.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for offentlig rett",
+                  "en": "Department of Public and International Law"
+                }
+              }
+            ],
+            "countryCode": "NO",
+            "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.12.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Det juridiske fakultet",
+              "en": "Faculty of Law"
+            }
+          }
+        ],
+        "countryCode": "NO",
+        "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0",
+        "type": "Organization",
+        "contributorCristinIds": [
+          {
+            "verificationStatus": "Verified",
+            "name": "Christina Voigt",
+            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/22597",
+            "type": "Identity"
+          }
+        ],
+        "labels": {
+          "nb": "Universitetet i Oslo",
+          "en": "University of Oslo"
+        }
       }
     ],
     "status": "PUBLISHED"

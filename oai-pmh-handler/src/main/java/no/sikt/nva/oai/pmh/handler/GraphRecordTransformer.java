@@ -52,13 +52,13 @@ public final class GraphRecordTransformer implements RecordTransformer {
         new ObjectNode(
             JsonNodeFactory.instance,
             Map.of(JSON_LD_GRAPH, arrayNode, JSON_LD_CONTEXT, contextNode));
-      try {
-          LOGGER.info(JsonUtils.dtoObjectMapper.writeValueAsString(jsonGraph));
-      } catch (JsonProcessingException e) {
-          throw new RuntimeException(e);
-      }
+    try {
+      LOGGER.info(JsonUtils.dtoObjectMapper.writeValueAsString(jsonGraph));
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
+    }
 
-      return jsonGraph;
+    return jsonGraph;
   }
 
   private static JsonNode collectContext(List<JsonNode> nodes) {
@@ -99,15 +99,15 @@ SELECT ?id ?modifiedDate ?title ?date (GROUP_CONCAT(?name; separator="|") AS ?co
   ?id a :Publication ;
       :modifiedDate ?modifiedDate ;
       (:|!:)*/:mainTitle ?title ;
-      (:|!:)*/:publicationDate ?publicationDate ;
-      (:|!:)*/:contributor/:identity/:name ?name .
+      (:|!:)*/:publicationDate ?publicationDate .
 
-  ?publicationDate :year ?year .
-  ?publicationDate :month ?month .
-  ?publicationDate :day ?day .
+  OPTIONAL { ?id (:|!:)*/:contributor/:identity/:name ?name . }
+
+  OPTIONAL { ?publicationDate :year ?year . }
+  OPTIONAL { ?publicationDate :month ?month . }
+  OPTIONAL { ?publicationDate :day ?day . }
 
   BIND (IF(BOUND(?day) && BOUND(?month) && BOUND(?year), CONCAT(?year, CONCAT("-", CONCAT(?month, CONCAT("-", ?day)))),?year) AS ?date)
-
 }
 GROUP BY ?id ?modifiedDate ?title ?date
 """;
