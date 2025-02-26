@@ -2,6 +2,7 @@ package no.sikt.nva.oai.pmh.handler;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.collection.IsEmptyIterable.emptyIterable;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -52,8 +53,19 @@ public class GraphRecordTransformerTest {
       assertThat(title, is(notNullValue()));
       assertThat(extractCreators(type), is(not(emptyIterable())));
       assertThat(extractDate(type), is(notNullValue()));
+      assertThat(extractType(type), is(notNullValue()));
+      assertThat(extractPublisher(type), is(nullValue()));
       assertWellFormedHeader(record);
     }
+  }
+
+  private String extractType(JAXBElement<OaiDcType> type) {
+    return type.getValue().getTitleOrCreatorOrSubject().stream()
+        .filter(e -> e.getName().getLocalPart().equals("type"))
+        .findAny()
+        .map(JAXBElement::getValue)
+        .map(ElementType::getValue)
+        .orElse(null);
   }
 
   private String extractDate(JAXBElement<OaiDcType> type) {
@@ -76,6 +88,15 @@ public class GraphRecordTransformerTest {
   private String extractTitle(JAXBElement<OaiDcType> type) {
     return type.getValue().getTitleOrCreatorOrSubject().stream()
         .filter(e -> e.getName().getLocalPart().equals("title"))
+        .findAny()
+        .map(JAXBElement::getValue)
+        .map(ElementType::getValue)
+        .orElse(null);
+  }
+
+  private String extractPublisher(JAXBElement<OaiDcType> type) {
+    return type.getValue().getTitleOrCreatorOrSubject().stream()
+        .filter(e -> e.getName().getLocalPart().equals("publisher"))
         .findAny()
         .map(JAXBElement::getValue)
         .map(ElementType::getValue)

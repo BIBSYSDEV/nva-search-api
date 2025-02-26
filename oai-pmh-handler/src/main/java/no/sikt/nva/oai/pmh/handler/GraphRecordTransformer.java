@@ -1,5 +1,6 @@
 package no.sikt.nva.oai.pmh.handler;
 
+import static java.util.Objects.nonNull;
 import static org.apache.jena.riot.Lang.JSONLD;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -95,21 +96,28 @@ public final class GraphRecordTransformer implements RecordTransformer {
     var query =
         """
 PREFIX : <https://nva.sikt.no/ontology/publication#>
-SELECT ?id ?modifiedDate ?title ?date (GROUP_CONCAT(?name; separator="|") AS ?contributor) WHERE {
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT ?id ?modifiedDate ?title ?date ?type ?publisher (GROUP_CONCAT(?name; separator="|") AS ?contributor) WHERE {
   ?id a :Publication ;
       :modifiedDate ?modifiedDate ;
       (:|!:)*/:mainTitle ?title ;
-      (:|!:)*/:publicationDate ?publicationDate .
+      (:|!:)*/:publicationDate ?publicationDate ;
+      (:|!:)*/:publicationInstance/rdf:type ?type .
 
   OPTIONAL { ?id (:|!:)*/:contributor/:identity/:name ?name . }
+
+  OPTIONAL { ?id (:|!:)*/:publicationContext/:type ?contextType . }
+  OPTIONAL { ?id (:|!:)*/:publicationContext/:name ?contextName . }
 
   OPTIONAL { ?publicationDate :year ?year . }
   OPTIONAL { ?publicationDate :month ?month . }
   OPTIONAL { ?publicationDate :day ?day . }
 
   BIND (IF(BOUND(?day) && BOUND(?month) && BOUND(?year), CONCAT(?year, CONCAT("-", CONCAT(?month, CONCAT("-", ?day)))),?year) AS ?date)
+  BIND(IF(BOUND(?contextType) && ?contextType = :Book, ?contextName, rdf:null) AS ?publisher)
 }
-GROUP BY ?id ?modifiedDate ?title ?date
+GROUP BY ?id ?modifiedDate ?title ?date ?type ?publisher
 """;
     var model = ModelFactory.createDefaultModel();
     RDFDataMgr.read(model, new ByteArrayInputStream(node.toString().getBytes()), JSONLD);
@@ -125,6 +133,8 @@ GROUP BY ?id ?modifiedDate ?title ?date
         appendTitle(resultItem, oaiDcType);
         appendContributors(resultItem, oaiDcType);
         appendDate(resultItem, oaiDcType);
+        appendType(resultItem, oaiDcType);
+        appendPublisher(resultItem, oaiDcType);
         metadata.setAny(OBJECT_FACTORY.createDc(oaiDcType));
         var headerType =
             getHeaderType(
@@ -140,10 +150,30 @@ GROUP BY ?id ?modifiedDate ?title ?date
     }
   }
 
+  private static void appendPublisher(QuerySolution resultItem, OaiDcType oaiDcType) {
+    var publisher =
+        resultItem.get("publisher").isResource()
+            ? null
+            : resultItem.getLiteral("publisher").getString();
+    if (nonNull(publisher)) {
+      var publisherElement = OBJECT_FACTORY.createElementType();
+      publisherElement.setValue(publisher);
+      oaiDcType
+          .getTitleOrCreatorOrSubject()
+          .addLast(OBJECT_FACTORY.createPublisher(publisherElement));
+    }
+  }
+
   private static void appendDate(QuerySolution resultItem, OaiDcType oaiDcType) {
     var dateElement = OBJECT_FACTORY.createElementType();
     dateElement.setValue(resultItem.getLiteral("date").getString());
     oaiDcType.getTitleOrCreatorOrSubject().addLast(OBJECT_FACTORY.createDate(dateElement));
+  }
+
+  private static void appendType(QuerySolution resultItem, OaiDcType oaiDcType) {
+    var typeElement = OBJECT_FACTORY.createElementType();
+    typeElement.setValue(resultItem.getResource("type").getLocalName());
+    oaiDcType.getTitleOrCreatorOrSubject().addLast(OBJECT_FACTORY.createType(typeElement));
   }
 
   private static HeaderType getHeaderType(URI id, String datestamp) {
