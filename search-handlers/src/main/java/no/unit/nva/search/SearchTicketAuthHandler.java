@@ -46,11 +46,11 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
       throws BadRequestException, UnauthorizedException {
 
     return TicketSearchQuery.builder()
-        .fromRequestInfo(requestInfo)
         .withRequiredParameters(FROM, SIZE, AGGREGATION)
         .build()
         .withFilter()
         .fromRequestInfo(requestInfo)
+        .adhereToOrgAccess(requestInfo)
         .doSearch(opensearchClient)
         .toString();
   }
