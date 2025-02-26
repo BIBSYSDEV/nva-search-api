@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.http.HttpClient;
 import java.nio.file.Path;
 import java.util.Map;
 import no.unit.nva.search.common.FakeGatewayResponse;
@@ -49,7 +50,9 @@ class SearchTicketAuthHandlerTest {
   void setUp() {
 
     mockedSearchClient = mock(TicketClient.class);
-    handler = new SearchTicketAuthHandler(new Environment(), mockedSearchClient);
+    handler =
+        new SearchTicketAuthHandler(
+            new Environment(), mockedSearchClient, HttpClient.newHttpClient());
     contextMock = mock(Context.class);
     outputStream = new ByteArrayOutputStream();
   }
@@ -74,6 +77,19 @@ class SearchTicketAuthHandlerTest {
 
   @Test
   void shouldReturnOkWhenUserIsEditor() throws IOException {
+    prepareRestHighLevelClientOkResponse();
+
+    var input = getInputStreamWithAccessRight(randomUri(), AccessRight.SUPPORT);
+    handler.handleRequest(input, outputStream, contextMock);
+
+    var gatewayResponse = FakeGatewayResponse.of(outputStream);
+
+    assertNotNull(gatewayResponse.headers());
+    assertEquals(HTTP_OK, gatewayResponse.statusCode());
+  }
+
+  @Test
+  void shouldFilterOnViewingScopeWhenNoOrgFilterIsSuppliedAsQueryParam() throws IOException {
     prepareRestHighLevelClientOkResponse();
 
     var input = getInputStreamWithAccessRight(randomUri(), AccessRight.SUPPORT);

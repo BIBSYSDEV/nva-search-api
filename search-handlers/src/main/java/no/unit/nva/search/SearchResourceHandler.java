@@ -13,6 +13,7 @@ import static no.unit.nva.search.resource.ResourceParameter.SORT;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
+import java.net.http.HttpClient;
 import java.util.List;
 import java.util.Map;
 import no.unit.nva.search.common.ContentTypeUtils;
@@ -39,11 +40,12 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
 
   @JacocoGenerated
   public SearchResourceHandler() {
-    this(new Environment(), defaultClient());
+    this(new Environment(), defaultClient(), HttpClient.newHttpClient());
   }
 
-  public SearchResourceHandler(Environment environment, ResourceClient resourceClient) {
-    super(Void.class, environment);
+  public SearchResourceHandler(
+      Environment environment, ResourceClient resourceClient, HttpClient httpClient) {
+    super(Void.class, environment, httpClient);
     this.opensearchClient = resourceClient;
   }
 

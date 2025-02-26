@@ -15,6 +15,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.http.HttpClient;
 import java.util.List;
 import java.util.Map;
 import no.unit.nva.indexing.testutils.FakeSearchResponse;
@@ -22,8 +23,10 @@ import no.unit.nva.search.common.csv.ExportCsv;
 import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.scroll.ScrollClient;
+import no.unit.nva.stubs.FakeContext;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.RequestInfo;
+import nva.commons.apigateway.exceptions.ApiIoException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,7 +67,7 @@ class ExportResourceHandlerTest {
   }
 
   @Test
-  void shouldReturnCsvWithTitleField() throws IOException, BadRequestException {
+  void shouldReturnCsvWithTitleField() throws IOException, BadRequestException, ApiIoException {
     var expectedTitle1 = randomString();
     var expectedTitle2 = randomString();
     var expectedTitle3 = randomString();
@@ -75,7 +78,9 @@ class ExportResourceHandlerTest {
 
     var s3data =
         handler.processS3Input(
-            null, RequestInfo.fromRequest(getRequestInputStreamAccepting()), null);
+            null,
+            RequestInfo.fromRequest(getRequestInputStreamAccepting(), HttpClient.newHttpClient()),
+            new FakeContext());
 
     assertThat(StringUtils.countMatches(s3data, expectedTitle1), is(1));
     assertThat(StringUtils.countMatches(s3data, expectedTitle2), is(1));

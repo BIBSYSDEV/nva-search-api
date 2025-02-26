@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.http.HttpClient;
 import java.nio.file.Path;
 import java.util.Map;
 import no.unit.nva.search.common.FakeGatewayResponse;
@@ -50,7 +51,9 @@ class SearchResourceAuthHandlerTest {
   void setUp() {
 
     mockedSearchClient = mock(ResourceClient.class);
-    handler = new SearchResourceAuthHandler(new Environment(), mockedSearchClient);
+    handler =
+        new SearchResourceAuthHandler(
+            new Environment(), mockedSearchClient, HttpClient.newHttpClient());
     contextMock = mock(Context.class);
     outputStream = new ByteArrayOutputStream();
   }

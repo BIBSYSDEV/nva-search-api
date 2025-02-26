@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.http.HttpClient;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -87,7 +88,9 @@ class SearchImportCandidateAuthHandlerTest {
   void setUp() {
 
     mockedSearchClient = mock(ImportCandidateClient.class);
-    handler = new SearchImportCandidateAuthHandler(new Environment(), mockedSearchClient);
+    handler =
+        new SearchImportCandidateAuthHandler(
+            new Environment(), mockedSearchClient, HttpClient.newHttpClient());
     contextMock = mock(Context.class);
     outputStream = new ByteArrayOutputStream();
   }
