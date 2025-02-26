@@ -15,7 +15,7 @@ Globals:
       Variables:
         SEARCH_INFRASTRUCTURE_API_URI: !Ref SearchInfrastructureApiUri
         SEARCH_INFRASTRUCTURE_AUTH_URI: !Ref SearchInfrastructureAuthUri
-        COGNITO_URI: !Ref CognitoUri
+        COGNITO_HOST: !Ref CognitoUri
         API_HOST: !Sub 'api.${CustomDomain}'
         LARGE_API_RESPONSES_BUCKET: !Ref LargeApiResponsesBucketName
   Api:
@@ -255,7 +255,7 @@ Resources:
       Environment:
         Variables:
           ALLOWED_ORIGIN: !Ref AllowedOrigins
-          COGNITO_URI: !Ref CognitoUri
+          COGNITO_HOST: !Ref CognitoUri
           BACKEND_CLIENT_SECRET_NAME: 'BackendCognitoClientCredentials'
       Events:
         GetTickets:
@@ -331,7 +331,7 @@ Resources:
       Environment:
         Variables:
           ALLOWED_ORIGIN: !Ref AllowedOrigins
-          COGNITO_URI: !Ref CognitoUri
+          COGNITO_HOST: !Ref CognitoUri
       Events:
         GetResources:
           Type: Api
@@ -357,7 +357,7 @@ Resources:
       Environment:
         Variables:
           ALLOWED_ORIGIN: !Ref AllowedOrigins
-          COGNITO_URI: !Ref CognitoUri
+          COGNITO_HOST: !Ref CognitoUri
       Events:
         GetResources:
           Type: Api
