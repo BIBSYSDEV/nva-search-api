@@ -115,10 +115,6 @@ class TicketClientTest {
         createArgument("offset=15&perPage=2", 2));
   }
 
-  private static Arguments createArgument(String searchUri, int expectedCount) {
-    return Arguments.of(URI.create(REQUEST_BASE_URL + searchUri), expectedCount);
-  }
-
   static Stream<Arguments> uriAccessRights() {
     final AccessRight[] accessRights = {MANAGE_DOI, SUPPORT, MANAGE_PUBLISHING_REQUESTS};
     final var statistics = STATISTICS.asCamelCase();
@@ -136,10 +132,6 @@ class TicketClientTest {
         accessRightArg(uri, 0, 7, USER_03, MANAGE_DOI, SUPPORT),
         accessRightArg(uri, 0, 20, AnetteOlli, accessRights),
         accessRightArg(uri, 0, 20, USER_03, accessRights));
-  }
-
-  private static URI uriWithParam(URI uri, String key, String value) {
-    return fromUri(uri).addQueryParameter(key, value).getUri();
   }
 
   static Arguments accessRightArg(
@@ -188,12 +180,6 @@ class TicketClientTest {
   static Stream<Arguments> uriProviderAsAdmin() {
     return loadMapFromResource(TICKETS_VALID_TEST_URL_JSON).entrySet().stream()
         .map(entry -> createArgument(entry.getKey(), entry.getValue()));
-  }
-
-  private static Map<String, Integer> loadMapFromResource(String resource) {
-    var mappingsJson = stringFromResources(Path.of(resource));
-    var type = new TypeReference<Map<String, Integer>>() {};
-    return attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
   }
 
   static Stream<URI> uriSortingProvider() {
@@ -682,5 +668,19 @@ class TicketClientTest {
                 .withFilter()
                 .fromRequestInfo(mockedRequestInfoLocal)
                 .doSearch(searchClient));
+  }
+
+  private static Arguments createArgument(String searchUri, int expectedCount) {
+    return Arguments.of(URI.create(REQUEST_BASE_URL + searchUri), expectedCount);
+  }
+
+  private static URI uriWithParam(URI uri, String key, String value) {
+    return fromUri(uri).addQueryParameter(key, value).getUri();
+  }
+
+  private static Map<String, Integer> loadMapFromResource(String resource) {
+    var mappingsJson = stringFromResources(Path.of(resource));
+    var type = new TypeReference<Map<String, Integer>>() {};
+    return attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
   }
 }

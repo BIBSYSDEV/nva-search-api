@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import no.unit.nva.search.common.AsType;
 import no.unit.nva.search.common.records.FilterBuilder;
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
@@ -116,15 +117,15 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
   @Override
   public TicketSearchQuery fromRequestInfo(RequestInfo requestInfo) throws UnauthorizedException {
     var viewingScopes = extractViewingScopes(requestInfo);
-
-    var queryOrg = requestInfo.getQueryParameterOpt(ORGANIZATION_ID.asLowerCase());
-
     final Set<URI> organizations = new HashSet<>();
-    if (viewingScopes.isEmpty() && queryOrg.isEmpty()) {
+    if (viewingScopes.isEmpty()) {
       organizations.add(
           requestInfo.getTopLevelOrgCristinId().orElse(requestInfo.getPersonAffiliation()));
-    } else if (!viewingScopes.isEmpty() && queryOrg.isEmpty()) {
+    } else {
       organizations.addAll(viewingScopes.stream().map(URI::create).collect(Collectors.toSet()));
+    }
+    if (query.parameters().isPresent(ORGANIZATION_ID)) {
+      validateAssigneeAndOwnerParameters();
     }
 
     return user(requestInfo.getUserName())
@@ -258,7 +259,10 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
   }
 
   private void validateAssigneeAndOwnerParameters() throws UnauthorizedException {
-    if (query.parameters().get(OWNER).as().equals(query.parameters().get(ASSIGNEE).as())) {
+    if (Optional.ofNullable(query.parameters().get(OWNER))
+        .map(AsType::as)
+        .map(v -> v.equals(query.parameters().get(ASSIGNEE).as()))
+        .orElse(false)) {
       throw new UnauthorizedException(CANNOT_SEARCH_AS_BOTH_ASSIGNEE_AND_OWNER_AT_THE_SAME_TIME);
     }
   }
