@@ -1,6 +1,5 @@
 package no.unit.nva.search.ticket;
 
-import static java.util.function.Predicate.not;
 import static no.unit.nva.constants.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.constants.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.constants.ErrorMessages.INVALID_VALUE_WITH_SORT;
@@ -42,17 +41,13 @@ import static no.unit.nva.search.ticket.TicketStatus.PENDING;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import static org.opensearch.index.query.QueryBuilders.multiMatchQuery;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search.common.AsType;
 import no.unit.nva.search.common.ParameterValidator;
@@ -61,9 +56,7 @@ import no.unit.nva.search.common.builder.AcrossFieldsQuery;
 import no.unit.nva.search.common.builder.KeywordQuery;
 import no.unit.nva.search.common.constant.Functions;
 import no.unit.nva.search.common.enums.SortKey;
-import nva.commons.apigateway.RequestInfo;
 import nva.commons.core.JacocoGenerated;
-import nva.commons.core.StringUtils;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.Operator;
@@ -96,6 +89,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
   public boolean hasOrganization(URI organizationId) {
     return accessFilter.hasOrganization(organizationId);
   }
+
   @Override
   protected TicketParameter keyAggregation() {
     return AGGREGATION;
