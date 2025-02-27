@@ -50,7 +50,6 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
         .build()
         .withFilter()
         .fromRequestInfo(requestInfo)
-        .adhereToOrgAccess(requestInfo)
         .doSearch(opensearchClient)
         .toString();
   }

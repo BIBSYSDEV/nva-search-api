@@ -52,6 +52,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search.common.AsType;
 import no.unit.nva.search.common.ParameterValidator;
@@ -92,37 +93,9 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
     return new TicketParameterValidator();
   }
 
-  public TicketSearchQuery adhereToOrgAccess(RequestInfo requestInfo) {
-    var viewingScopes = extractViewingScopes(requestInfo);
-
-    var queryOrg = requestInfo.getQueryParameterOpt("organization_id");
-
-    if (viewingScopes.isEmpty() && queryOrg.isEmpty()) {
-      parameters().set(ORGANIZATION_ID, extractTopLevelOrgId(requestInfo));
-    }
-
-    return this;
+  public boolean hasOrganization(URI organizationId) {
+    return accessFilter.hasOrganization(organizationId);
   }
-
-  private static String extractTopLevelOrgId(RequestInfo requestInfo) {
-    return Optional.of(
-            requestInfo.getRequestContext().at("/authorizer/claims/custom:topOrgCristinId"))
-        .map(JsonNode::textValue)
-        .orElseThrow();
-  }
-
-  private static List<String> extractViewingScopes(RequestInfo requestInfo) {
-    var node = requestInfo.getRequestContext().at("/authorizer/claims/custom:viewingScopeIncluded");
-    return Optional.of(node)
-        .filter(not(JsonNode::isMissingNode))
-        .map(JsonNode::textValue)
-        .filter(StringUtils::isNotEmpty)
-        .filter(value -> !"null".equalsIgnoreCase(value))
-        .map(i -> i.split(","))
-        .map(Arrays::asList)
-        .orElse(Collections.emptyList());
-  }
-
   @Override
   protected TicketParameter keyAggregation() {
     return AGGREGATION;
