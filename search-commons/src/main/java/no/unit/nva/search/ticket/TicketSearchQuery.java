@@ -86,6 +86,10 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
     return new TicketParameterValidator();
   }
 
+  public boolean hasOrganization(URI organizationId) {
+    return accessFilter.hasOrganization(organizationId);
+  }
+
   @Override
   protected TicketParameter keyAggregation() {
     return AGGREGATION;

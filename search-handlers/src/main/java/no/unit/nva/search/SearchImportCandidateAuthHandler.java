@@ -9,6 +9,7 @@ import static no.unit.nva.search.importcandidate.ImportCandidateParameter.SIZE;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
+import java.net.http.HttpClient;
 import java.util.List;
 import no.unit.nva.search.importcandidate.ImportCandidateClient;
 import no.unit.nva.search.importcandidate.ImportCandidateSearchQuery;
@@ -31,12 +32,12 @@ public class SearchImportCandidateAuthHandler extends ApiGatewayHandler<Void, St
 
   @JacocoGenerated
   public SearchImportCandidateAuthHandler() {
-    this(new Environment(), defaultClient());
+    this(new Environment(), defaultClient(), HttpClient.newHttpClient());
   }
 
   public SearchImportCandidateAuthHandler(
-      Environment environment, ImportCandidateClient candidateClient) {
-    super(Void.class, environment);
+      Environment environment, ImportCandidateClient candidateClient, HttpClient httpClient) {
+    super(Void.class, environment, httpClient);
     this.opensearchClient = candidateClient;
   }
 

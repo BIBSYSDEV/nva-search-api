@@ -1,20 +1,20 @@
 [versions]
 awsIon = { strictly = '1.11.9' }
-awsLambdaEvents = { strictly = '3.13.0' }
+awsLambdaEvents = { strictly = '3.14.0' }
 awsLambdaJavaCore = { strictly = '1.2.3' }
-awsSdk2 = { strictly = '2.27.24' }
+awsSdk2 = { strictly = '2.29.47' }
 com-auth0-jwt = { strictly = '4.4.0' }
-guava = { strictly = '33.3.0-jre' }
+guava = { strictly = '33.4.0-jre' }
 hamcrest = { strictly = '3.0' }
-jackson = { strictly = '2.17.2' }
+jackson = { strictly = '2.18.2' }
 jakartaXmlBindApi = { strictly = '4.0.2' }
 glassfishJaxbRuntime = { strictly = '4.0.5' }
 javers = { strictly = '7.1.0' }
 jupiter = { strictly = '5.11.0' }
 junit = { strictly = '1.10.2' }
-log4j = { strictly = '2.24.0' }
+log4j = { strictly = '2.24.3' }
 mockito = { strictly = '5.13.0' }
-nvaCommons = { prefer = '1.40.20' }
+nvaCommons = { prefer = '1.41.6' }
 open-csv = { strictly = '5.9' }
 opensearch = { strictly = '2.12.0' }
 opensearch-testcontainer = { strictly = '2.0.0' }

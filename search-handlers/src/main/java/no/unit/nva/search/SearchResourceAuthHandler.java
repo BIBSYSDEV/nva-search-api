@@ -11,6 +11,7 @@ import static no.unit.nva.search.resource.ResourceParameter.SORT;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
+import java.net.http.HttpClient;
 import java.util.List;
 import no.unit.nva.search.common.ContentTypeUtils;
 import no.unit.nva.search.common.records.JsonNodeMutator;
@@ -38,11 +39,12 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
 
   @JacocoGenerated
   public SearchResourceAuthHandler() {
-    this(new Environment(), defaultClient());
+    this(new Environment(), defaultClient(), HttpClient.newHttpClient());
   }
 
-  public SearchResourceAuthHandler(Environment environment, ResourceClient resourceClient) {
-    super(Void.class, environment);
+  public SearchResourceAuthHandler(
+      Environment environment, ResourceClient resourceClient, HttpClient httpClient) {
+    super(Void.class, environment, httpClient);
     this.opensearchClient = resourceClient;
   }
 
