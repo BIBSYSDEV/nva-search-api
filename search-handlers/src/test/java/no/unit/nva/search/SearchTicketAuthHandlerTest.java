@@ -172,6 +172,10 @@ class SearchTicketAuthHandlerTest {
             .withTopLevelCristinOrgId(TOP_LEVEL_CRISTIN_ID)
             .withAuthorizerClaim(personAffiliation, personAffiliationId)
             .withUserName(randomString())
+            .withAuthorizerClaim(
+                "custom:viewingScopeIncluded",
+                Arrays.stream(viewingScopes).map(URI::toString).collect(Collectors.joining(",")))
+            .withAuthorizerClaim("custom:viewingScopeExcluded", "null")
             .withCurrentCustomer(customer);
     if (nonNull(accessRights) && accessRights.length > 0) {
       handlerRequestBuilder.withAccessRights(customer, accessRights);

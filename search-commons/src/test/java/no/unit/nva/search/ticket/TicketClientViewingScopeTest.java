@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
 import java.net.URI;
@@ -29,12 +28,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
 import no.unit.nva.indexingclient.models.IndexDocument;
 import nva.commons.apigateway.RequestInfo;
+import nva.commons.apigateway.ViewingScope;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 import org.junit.jupiter.api.BeforeAll;
@@ -117,7 +116,7 @@ public class TicketClientViewingScopeTest {
       shouldReturnTicketsWhenQueryParamContainsSubUnitOfTopLevelAndTicketOrganizationItThatSubunit()
           throws BadRequestException, UnauthorizedException, IOException, InterruptedException {
     var topLevelOrg = randomUri();
-    var subunit = randomUri();
+    var subunit = randomString();
 
     var json =
         """
@@ -135,7 +134,7 @@ public class TicketClientViewingScopeTest {
           }
         }
         """
-            .replace("__SUBUNIT__", subunit.toString())
+            .replace("__SUBUNIT__", subunit)
             .replace("__TOP_LEVEL__", topLevelOrg.toString());
     var document =
         new IndexDocument(
@@ -146,8 +145,7 @@ public class TicketClientViewingScopeTest {
     Thread.sleep(DELAY_AFTER_INDEXING);
 
     var requestInfo =
-        requestInfoWithQueryParams(
-            topLevelOrg, Map.of("organizationId", List.of(subunit.toString())));
+        requestInfoWithQueryParams(topLevelOrg, Map.of("organizationId", List.of(subunit)));
 
     var response =
         TicketSearchQuery.builder()
@@ -167,7 +165,7 @@ public class TicketClientViewingScopeTest {
   void shouldNotReturnTicketsWhenOrganizationsNotMatch()
       throws BadRequestException, UnauthorizedException, IOException, InterruptedException {
 
-    var subunit = randomUri();
+    var subunit = randomString();
     var json =
         """
                     {
@@ -184,8 +182,8 @@ public class TicketClientViewingScopeTest {
           }
         }
         """
-            .replace("__SUBUNIT__", subunit.toString())
-            .replace("__TOP_LEVEL__", randomUri().toString());
+            .replace("__SUBUNIT__", subunit)
+            .replace("__TOP_LEVEL__", randomString());
     var document =
         new IndexDocument(
             new EventConsumptionAttributes(indexName, SortableIdentifier.next()),
@@ -195,8 +193,7 @@ public class TicketClientViewingScopeTest {
     Thread.sleep(DELAY_AFTER_INDEXING);
 
     var requestInfo =
-        requestInfoWithQueryParams(
-            randomUri(), Map.of("organizationId", List.of(subunit.toString())));
+        requestInfoWithQueryParams(randomUri(), Map.of("organizationId", List.of(subunit)));
 
     var response =
         TicketSearchQuery.builder()
@@ -217,8 +214,8 @@ public class TicketClientViewingScopeTest {
       throws BadRequestException, UnauthorizedException, IOException, InterruptedException {
     indexingClient.createIndex(indexName, loadMapFromResource(TICKET_MAPPING_DEV_JSON));
 
-    var subunit1 = randomUri();
-    var topLevel = randomUri();
+    var subunit1 = randomString();
+    var topLevel = randomString();
     var json1 =
         """
                     {
@@ -243,7 +240,7 @@ public class TicketClientViewingScopeTest {
             JsonUtils.dtoObjectMapper.readTree(json1));
     indexingClient.addDocumentToIndex(document1);
 
-    var subunit2 = randomUri();
+    var subunit2 = randomString();
     var json2 =
         """
                     {
@@ -260,8 +257,8 @@ public class TicketClientViewingScopeTest {
           }
         }
         """
-            .replace("__SUBUNIT__", subunit2.toString())
-            .replace("__TOP_LEVEL__", topLevel.toString());
+            .replace("__SUBUNIT__", subunit2)
+            .replace("__TOP_LEVEL__", topLevel);
 
     var document2 =
         new IndexDocument(
@@ -284,7 +281,7 @@ public class TicketClientViewingScopeTest {
             .toPagedResponse();
 
     assertEquals(1, response.hits().size());
-    assertTrue(response.hits().getFirst().toString().contains(subunit1.toString()));
+    assertTrue(response.hits().getFirst().toString().contains(subunit1));
   }
 
   @Test
@@ -292,7 +289,7 @@ public class TicketClientViewingScopeTest {
       throws BadRequestException, UnauthorizedException, IOException, InterruptedException {
     indexingClient.createIndex(indexName, loadMapFromResource(TICKET_MAPPING_DEV_JSON));
 
-    var viewingScope = randomUri();
+    var viewingScope = randomString();
     var toplevel = randomUri();
 
     var json1 =
@@ -317,7 +314,7 @@ public class TicketClientViewingScopeTest {
         """
             .replace("__SUBUNIT__", randomString())
             .replace("__TOP_LEVEL__", toplevel.toString())
-            .replace("__UNIT_FROM_VIEWING_SCOPE__", viewingScope.toString());
+            .replace("__UNIT_FROM_VIEWING_SCOPE__", viewingScope);
     var document1 =
         new IndexDocument(
             new EventConsumptionAttributes(indexName, SortableIdentifier.next()),
@@ -364,7 +361,7 @@ public class TicketClientViewingScopeTest {
             .toPagedResponse();
 
     assertEquals(1, response.hits().size());
-    assertTrue(response.hits().getFirst().toString().contains(viewingScope.toString()));
+    assertTrue(response.hits().getFirst().toString().contains(viewingScope));
   }
 
   @Test
@@ -372,9 +369,9 @@ public class TicketClientViewingScopeTest {
       throws BadRequestException, UnauthorizedException, IOException, InterruptedException {
     indexingClient.createIndex(indexName, loadMapFromResource(TICKET_MAPPING_DEV_JSON));
 
-    var viewingScope1 = randomUri();
+    var viewingScope1 = randomString();
     var toplevel = randomUri();
-    var viewingScope2 = randomUri();
+    var viewingScope2 = randomString();
 
     var json1 =
         """
@@ -398,7 +395,7 @@ public class TicketClientViewingScopeTest {
         """
             .replace("__SUBUNIT__", randomString())
             .replace("__TOP_LEVEL__", toplevel.toString())
-            .replace("__UNIT_FROM_VIEWING_SCOPE__", viewingScope1.toString());
+            .replace("__UNIT_FROM_VIEWING_SCOPE__", viewingScope1);
     var document1 =
         new IndexDocument(
             new EventConsumptionAttributes(indexName, SortableIdentifier.next()),
@@ -427,7 +424,7 @@ public class TicketClientViewingScopeTest {
         """
             .replace("__SUBUNIT__", randomString())
             .replace("__TOP_LEVEL__", toplevel.toString())
-            .replace("__UNIT_FROM_VIEWING_SCOPE__", viewingScope2.toString());
+            .replace("__UNIT_FROM_VIEWING_SCOPE__", viewingScope2);
     var document2 =
         new IndexDocument(
             new EventConsumptionAttributes(indexName, SortableIdentifier.next()),
@@ -439,7 +436,7 @@ public class TicketClientViewingScopeTest {
     var requestInfo =
         requestInfoWithQueryAndViewingScope(
             toplevel,
-            Map.of("organizationId", List.of(viewingScope1.toString())),
+            Map.of("organizationId", List.of(viewingScope1)),
             Set.of(viewingScope1, viewingScope2));
 
     var response =
@@ -462,7 +459,7 @@ public class TicketClientViewingScopeTest {
       throws BadRequestException, UnauthorizedException, IOException, InterruptedException {
     indexingClient.createIndex(indexName, loadMapFromResource(TICKET_MAPPING_DEV_JSON));
 
-    var viewingScope = randomUri();
+    var viewingScope = randomString();
     var toplevel = randomUri();
 
     var json1 =
@@ -512,7 +509,7 @@ public class TicketClientViewingScopeTest {
           throws BadRequestException, UnauthorizedException, IOException, InterruptedException {
     indexingClient.createIndex(indexName, loadMapFromResource(TICKET_MAPPING_DEV_JSON));
 
-    var viewingScope = randomUri();
+    var viewingScope = randomString();
     var toplevel = randomUri();
 
     var json1 =
@@ -582,38 +579,23 @@ public class TicketClientViewingScopeTest {
   }
 
   private static RequestInfo requestInfoViewingScope(
-      URI topLevelOrgIdentifier, Set<URI> viewingScopes)
-      throws UnauthorizedException, JsonProcessingException {
+      URI topLevelOrgIdentifier, Set<String> viewingScopes) throws UnauthorizedException {
     var requestInfo = mock(RequestInfo.class);
     when(requestInfo.getUserName()).thenReturn(randomString());
     when(requestInfo.getTopLevelOrgCristinId()).thenReturn(Optional.of(topLevelOrgIdentifier));
     when(requestInfo.getAccessRights())
         .thenReturn(List.of(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT));
     when(requestInfo.getHeaders()).thenReturn(Map.of("Authorization", randomString()));
-    when(requestInfo.getRequestContext())
-        .thenReturn(
-            JsonUtils.dtoObjectMapper.readTree(
-                """
-                                {
-                  "authorizer": {
-                    "claims": {
-                      "custom:viewingScopeIncluded": "__VIEWING_SCOPE__"
-                    }
-                  }
-                }
-                """
-                    .replace(
-                        "__VIEWING_SCOPE__",
-                        viewingScopes.stream()
-                            .map(URI::toString)
-                            .collect(Collectors.joining(",")))));
+    when(requestInfo.getViewingScope()).thenReturn(new ViewingScope(viewingScopes, Set.of()));
 
     return requestInfo;
   }
 
   private static RequestInfo requestInfoWithQueryAndViewingScope(
-      URI topLevelOrgIdentifier, Map<String, List<String>> queryParams, Set<URI> viewingScopes)
-      throws UnauthorizedException, JsonProcessingException {
+      URI topLevelOrgIdentifier,
+      Map<String, List<String>> queryParams,
+      Set<String> viewingScopeIncludes)
+      throws UnauthorizedException {
     var requestInfo = mock(RequestInfo.class);
     when(requestInfo.getUserName()).thenReturn(randomString());
     when(requestInfo.getTopLevelOrgCristinId()).thenReturn(Optional.of(topLevelOrgIdentifier));
@@ -622,23 +604,8 @@ public class TicketClientViewingScopeTest {
     when(requestInfo.getHeaders()).thenReturn(Map.of("Authorization", randomString()));
 
     when(requestInfo.getMultiValueQueryStringParameters()).thenReturn(queryParams);
-    when(requestInfo.getRequestContext())
-        .thenReturn(
-            JsonUtils.dtoObjectMapper.readTree(
-                """
-                                {
-                  "authorizer": {
-                    "claims": {
-                      "custom:viewingScopeIncluded": "__VIEWING_SCOPE__"
-                    }
-                  }
-                }
-                """
-                    .replace(
-                        "__VIEWING_SCOPE__",
-                        viewingScopes.stream()
-                            .map(URI::toString)
-                            .collect(Collectors.joining(",")))));
+    when(requestInfo.getViewingScope())
+        .thenReturn(new ViewingScope(viewingScopeIncludes, Set.of()));
 
     return requestInfo;
   }

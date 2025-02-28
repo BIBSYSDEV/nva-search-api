@@ -1,7 +1,6 @@
 package no.unit.nva.search.ticket;
 
 import static java.util.Objects.isNull;
-import static java.util.function.Predicate.not;
 import static no.unit.nva.search.ticket.Constants.CANNOT_SEARCH_AS_BOTH_ASSIGNEE_AND_OWNER_AT_THE_SAME_TIME;
 import static no.unit.nva.search.ticket.Constants.FILTER_BY_ORGANIZATION;
 import static no.unit.nva.search.ticket.Constants.FILTER_BY_OWNER;
@@ -20,12 +19,10 @@ import static no.unit.nva.search.ticket.TicketParameter.STATISTICS;
 import static nva.commons.apigateway.AccessRight.MANAGE_CUSTOMERS;
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
 import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
+import static nva.commons.core.attempt.Try.attempt;
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URI;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
@@ -36,8 +33,8 @@ import no.unit.nva.search.common.AsType;
 import no.unit.nva.search.common.records.FilterBuilder;
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
+import nva.commons.apigateway.ViewingScope;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
-import nva.commons.core.StringUtils;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.Operator;
@@ -116,8 +113,8 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
    */
   @Override
   public TicketSearchQuery fromRequestInfo(RequestInfo requestInfo) throws UnauthorizedException {
-    var viewingScopes = extractViewingScopes(requestInfo);
-    final Set<URI> organizations = new HashSet<>();
+    var viewingScopes = getViewingScopesToInclude(requestInfo);
+    final var organizations = new HashSet<URI>();
     if (viewingScopes.isEmpty()) {
       organizations.add(
           requestInfo.getTopLevelOrgCristinId().orElse(requestInfo.getPersonAffiliation()));
@@ -134,16 +131,10 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
         .apply();
   }
 
-  private static List<String> extractViewingScopes(RequestInfo requestInfo) {
-    return Optional.ofNullable(requestInfo.getRequestContext())
-        .map(node -> node.at("/authorizer/claims/custom:viewingScopeIncluded"))
-        .filter(not(JsonNode::isMissingNode))
-        .map(JsonNode::textValue)
-        .filter(StringUtils::isNotEmpty)
-        .filter(value -> !"null".equalsIgnoreCase(value))
-        .map(i -> i.split(","))
-        .map(Arrays::asList)
-        .orElse(Collections.emptyList());
+  private static Set<String> getViewingScopesToInclude(RequestInfo requestInfo) {
+    return attempt(requestInfo::getViewingScope)
+        .map(ViewingScope::includes)
+        .orElse(failure -> Set.<String>of());
   }
 
   @Override
