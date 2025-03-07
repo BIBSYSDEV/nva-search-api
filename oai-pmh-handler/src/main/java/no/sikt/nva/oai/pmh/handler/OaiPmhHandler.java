@@ -60,7 +60,7 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
       XmlSerializer xmlSerializer,
       ResourceClient resourceClient,
       ScrollClient scrollClient) {
-    super(String.class, environment);
+    super(String.class, environment, HttpClient.newHttpClient());
 
     var endpointUri = generateEndpointUri(environment);
 
