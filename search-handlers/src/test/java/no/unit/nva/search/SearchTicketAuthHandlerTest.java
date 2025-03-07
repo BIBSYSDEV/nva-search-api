@@ -1,6 +1,7 @@
 package no.unit.nva.search;
 
 import static java.net.HttpURLConnection.HTTP_OK;
+import static java.util.Objects.nonNull;
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
@@ -12,6 +13,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -23,8 +25,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.http.HttpClient;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.stream.Collectors;
 import no.unit.nva.search.common.FakeGatewayResponse;
 import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.ticket.TicketClient;
@@ -40,6 +45,8 @@ class SearchTicketAuthHandlerTest {
   public static final String SAMPLE_DOMAIN_NAME = "localhost";
   public static final String SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON =
       "sample_opensearch_response.json";
+  public static final URI TOP_LEVEL_CRISTIN_ID =
+      URI.create("https://api.dev.nva.aws.unit" + ".no/cristin/organization/20754.0.0.0");
   private SearchTicketAuthHandler handler;
   private Context contextMock;
   private ByteArrayOutputStream outputStream;
@@ -49,7 +56,9 @@ class SearchTicketAuthHandlerTest {
   void setUp() {
 
     mockedSearchClient = mock(TicketClient.class);
-    handler = new SearchTicketAuthHandler(new Environment(), mockedSearchClient);
+    handler =
+        new SearchTicketAuthHandler(
+            new Environment(), mockedSearchClient, HttpClient.newHttpClient());
     contextMock = mock(Context.class);
     outputStream = new ByteArrayOutputStream();
   }
@@ -59,8 +68,9 @@ class SearchTicketAuthHandlerTest {
       throws IOException, URISyntaxException {
     prepareRestHighLevelClientOkResponse();
 
-    var organization = new URI("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0");
-    var input = getInputStreamWithAccessRight(organization, AccessRight.MANAGE_DOI);
+    var input =
+        getInputStreamWithAccessRight(
+            randomUri(), new AccessRight[] {AccessRight.MANAGE_DOI}, new URI[] {});
 
     handler.handleRequest(input, outputStream, contextMock);
 
@@ -76,13 +86,70 @@ class SearchTicketAuthHandlerTest {
   void shouldReturnOkWhenUserIsEditor() throws IOException {
     prepareRestHighLevelClientOkResponse();
 
-    var input = getInputStreamWithAccessRight(randomUri(), AccessRight.SUPPORT);
+    var input =
+        getInputStreamWithAccessRight(
+            randomUri(), new AccessRight[] {AccessRight.SUPPORT}, new URI[] {});
     handler.handleRequest(input, outputStream, contextMock);
 
     var gatewayResponse = FakeGatewayResponse.of(outputStream);
 
     assertNotNull(gatewayResponse.headers());
     assertEquals(HTTP_OK, gatewayResponse.statusCode());
+  }
+
+  @Test
+  void shouldFilterOnUsersTopLevelOrgWhenNeitherViewingScopeOrQueryParamFilterIsInEffect()
+      throws IOException {
+
+    var jsonResponse =
+        stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
+    var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
+    when(mockedSearchClient.doSearch(
+            argThat(new TicketSearchQueryArgumentMatcher(TOP_LEVEL_CRISTIN_ID))))
+        .thenReturn(body);
+
+    var input =
+        getInputStreamWithAccessRight(
+            randomUri(),
+            new AccessRight[] {
+              AccessRight.SUPPORT, AccessRight.MANAGE_DOI, AccessRight.MANAGE_DEGREE
+            },
+            new URI[] {});
+
+    handler.handleRequest(input, outputStream, contextMock);
+
+    var gatewayResponse = FakeGatewayResponse.of(outputStream);
+
+    assertThat(gatewayResponse.statusCode(), is(equalTo(HTTP_OK)));
+  }
+
+  @Test
+  void shouldFilterOnViewingScopeOrgsIfPresentWhenQueryParamOrgFilterIsNotPresent()
+      throws IOException {
+
+    URI firstViewingScope = randomUri();
+    URI secondViewingScope = randomUri();
+
+    var jsonResponse =
+        stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
+    var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
+    when(mockedSearchClient.doSearch(
+            argThat(new TicketSearchQueryArgumentMatcher(firstViewingScope, secondViewingScope))))
+        .thenReturn(body);
+
+    var input =
+        getInputStreamWithAccessRight(
+            randomUri(),
+            new AccessRight[] {
+              AccessRight.SUPPORT, AccessRight.MANAGE_DOI, AccessRight.MANAGE_DEGREE
+            },
+            new URI[] {firstViewingScope, secondViewingScope});
+
+    handler.handleRequest(input, outputStream, contextMock);
+
+    var gatewayResponse = FakeGatewayResponse.of(outputStream);
+
+    assertThat(gatewayResponse.statusCode(), is(equalTo(HTTP_OK)));
   }
 
   private void prepareRestHighLevelClientOkResponse() throws IOException {
@@ -93,21 +160,34 @@ class SearchTicketAuthHandlerTest {
     when(mockedSearchClient.doSearch(any())).thenReturn(body);
   }
 
-  private InputStream getInputStreamWithAccessRight(URI organization, AccessRight accessRight)
+  private InputStream getInputStreamWithAccessRight(
+      URI customer, AccessRight[] accessRights, URI[] viewingScopes)
       throws JsonProcessingException {
     var personAffiliationId = "https://api.dev.nva.aws.unit.no/cristin/organization/20754.1.0.0";
     var personAffiliation = "custom:personAffiliation";
-    var topLevelOrgCristinId =
-        URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0");
-    return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-        .withHeaders(Map.of(ACCEPT, "application/json"))
-        .withRequestContext(getRequestContext())
-        .withTopLevelCristinOrgId(topLevelOrgCristinId)
-        .withAuthorizerClaim(personAffiliation, personAffiliationId)
-        .withUserName(randomString())
-        .withCurrentCustomer(organization)
-        .withAccessRights(organization, accessRight)
-        .build();
+    var handlerRequestBuilder =
+        new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
+            .withHeaders(Map.of(ACCEPT, "application/json"))
+            .withRequestContext(getRequestContext())
+            .withTopLevelCristinOrgId(TOP_LEVEL_CRISTIN_ID)
+            .withAuthorizerClaim(personAffiliation, personAffiliationId)
+            .withUserName(randomString())
+            .withAuthorizerClaim(
+                "custom:viewingScopeIncluded",
+                Arrays.stream(viewingScopes).map(URI::toString).collect(Collectors.joining(",")))
+            .withAuthorizerClaim("custom:viewingScopeExcluded", "null")
+            .withCurrentCustomer(customer);
+    if (nonNull(accessRights) && accessRights.length > 0) {
+      handlerRequestBuilder.withAccessRights(customer, accessRights);
+    }
+
+    if (nonNull(viewingScopes) && viewingScopes.length > 0) {
+      var viewingScopesIncluded =
+          Arrays.stream(viewingScopes).map(URI::toString).collect(Collectors.toSet());
+      handlerRequestBuilder.withAuthorizerClaim(
+          "custom:viewingScopeIncluded", String.join(",", viewingScopesIncluded));
+    }
+    return handlerRequestBuilder.build();
   }
 
   private ObjectNode getRequestContext() {

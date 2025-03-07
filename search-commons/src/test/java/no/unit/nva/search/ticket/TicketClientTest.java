@@ -49,6 +49,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -114,10 +115,6 @@ class TicketClientTest {
         createArgument("offset=15&perPage=2", 2));
   }
 
-  private static Arguments createArgument(String searchUri, int expectedCount) {
-    return Arguments.of(URI.create(REQUEST_BASE_URL + searchUri), expectedCount);
-  }
-
   static Stream<Arguments> uriAccessRights() {
     final AccessRight[] accessRights = {MANAGE_DOI, SUPPORT, MANAGE_PUBLISHING_REQUESTS};
     final var statistics = STATISTICS.asCamelCase();
@@ -135,10 +132,6 @@ class TicketClientTest {
         accessRightArg(uri, 0, 7, USER_03, MANAGE_DOI, SUPPORT),
         accessRightArg(uri, 0, 20, AnetteOlli, accessRights),
         accessRightArg(uri, 0, 20, USER_03, accessRights));
-  }
-
-  private static URI uriWithParam(URI uri, String key, String value) {
-    return fromUri(uri).addQueryParameter(key, value).getUri();
   }
 
   static Arguments accessRightArg(
@@ -189,12 +182,6 @@ class TicketClientTest {
         .map(entry -> createArgument(entry.getKey(), entry.getValue()));
   }
 
-  private static Map<String, Integer> loadMapFromResource(String resource) {
-    var mappingsJson = stringFromResources(Path.of(resource));
-    var type = new TypeReference<Map<String, Integer>>() {};
-    return attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
-  }
-
   static Stream<URI> uriSortingProvider() {
 
     return Stream.of(
@@ -241,7 +228,7 @@ class TicketClientTest {
             .withRequiredParameters(FROM, SIZE)
             .build()
             .withFilter()
-            .organization(testOrganizationId)
+            .organizations(Set.of(testOrganizationId))
             .user(CURRENT_USERNAME)
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
             .apply()
@@ -277,7 +264,7 @@ class TicketClientTest {
             .withFilter()
             .user(CURRENT_USERNAME)
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
-            .organization(testOrganizationId)
+            .organizations(Set.of(testOrganizationId))
             .apply()
             .doSearch(searchClient);
     assertNotNull(pagedResult.swsResponse());
@@ -299,7 +286,7 @@ class TicketClientTest {
             .withFilter()
             .user(CURRENT_USERNAME)
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
-            .organization(testOrganizationId)
+            .organizations(Set.of(testOrganizationId))
             .apply()
             .doSearch(searchClient)
             .toPagedResponse();
@@ -320,7 +307,7 @@ class TicketClientTest {
             .withFilter()
             .user(CURRENT_USERNAME)
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
-            .organization(testOrganizationId)
+            .organizations(Set.of(testOrganizationId))
             .apply()
             .doSearch(searchClient)
             .toPagedResponse();
@@ -341,7 +328,7 @@ class TicketClientTest {
             .withFilter()
             .user("1492596@20754.0.0.0")
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
-            .organization(testOrganizationId)
+            .organizations(Set.of(testOrganizationId))
             .apply()
             .doSearch(searchClient)
             .toPagedResponse();
@@ -361,7 +348,7 @@ class TicketClientTest {
             .withFilter()
             .user("1492596@20754.0.0.0")
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
-            .organization(testOrganizationId)
+            .organizations(Set.of(testOrganizationId))
             .apply()
             .doSearch(searchClient)
             .toPagedResponse();
@@ -384,7 +371,7 @@ class TicketClientTest {
             .withFilter()
             .user(CURRENT_USERNAME)
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
-            .organization(testOrganizationId)
+            .organizations(Set.of(testOrganizationId))
             .apply()
             .doSearch(searchClient)
             .toPagedResponse();
@@ -406,7 +393,7 @@ class TicketClientTest {
             .withFilter()
             .user(CURRENT_USERNAME)
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
-            .organization(testOrganizationId)
+            .organizations(Set.of(testOrganizationId))
             .apply()
             .doSearch(searchClient);
 
@@ -431,7 +418,7 @@ class TicketClientTest {
             .withFilter()
             .user(CURRENT_USERNAME)
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT, MANAGE_CUSTOMERS)
-            .organization(testOrganizationId)
+            .organizations(Set.of(testOrganizationId))
             .apply()
             .doSearch(searchClient);
 
@@ -496,7 +483,7 @@ class TicketClientTest {
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .build()
             .withFilter()
-            .organization(testOrganizationId)
+            .organizations(Set.of(testOrganizationId))
             .user(userName)
             .accessRights(accessRights)
             .apply()
@@ -571,7 +558,7 @@ class TicketClientTest {
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .build()
             .withFilter()
-            .organization(testOrganizationId)
+            .organizations(Set.of(testOrganizationId))
             .user(CURRENT_USERNAME)
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
             .apply()
@@ -681,5 +668,19 @@ class TicketClientTest {
                 .withFilter()
                 .fromRequestInfo(mockedRequestInfoLocal)
                 .doSearch(searchClient));
+  }
+
+  private static Arguments createArgument(String searchUri, int expectedCount) {
+    return Arguments.of(URI.create(REQUEST_BASE_URL + searchUri), expectedCount);
+  }
+
+  private static URI uriWithParam(URI uri, String key, String value) {
+    return fromUri(uri).addQueryParameter(key, value).getUri();
+  }
+
+  private static Map<String, Integer> loadMapFromResource(String resource) {
+    var mappingsJson = stringFromResources(Path.of(resource));
+    var type = new TypeReference<Map<String, Integer>>() {};
+    return attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
   }
 }

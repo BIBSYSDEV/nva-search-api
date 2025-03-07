@@ -9,6 +9,7 @@ import static no.unit.nva.search.ticket.TicketParameter.SIZE;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
+import java.net.http.HttpClient;
 import java.util.List;
 import no.unit.nva.search.ticket.TicketClient;
 import no.unit.nva.search.ticket.TicketSearchQuery;
@@ -31,12 +32,24 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
 
   @JacocoGenerated
   public SearchTicketAuthHandler() {
-    this(new Environment(), defaultClient());
+    this(new Environment(), defaultClient(), HttpClient.newHttpClient());
   }
 
-  public SearchTicketAuthHandler(Environment environment, TicketClient ticketClient) {
-    super(Void.class, environment);
+  public SearchTicketAuthHandler(
+      Environment environment, TicketClient ticketClient, HttpClient httpClient) {
+    super(Void.class, environment, httpClient);
     this.opensearchClient = ticketClient;
+  }
+
+  @Override
+  protected List<MediaType> listSupportedMediaTypes() {
+    return DEFAULT_RESPONSE_MEDIA_TYPES;
+  }
+
+  @Override
+  protected void validateRequest(Void unused, RequestInfo requestInfo, Context context)
+      throws ApiGatewayException {
+    requestInfo.getUserName();
   }
 
   @Override
@@ -56,16 +69,5 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
   @Override
   protected Integer getSuccessStatusCode(Void input, String output) {
     return HttpURLConnection.HTTP_OK;
-  }
-
-  @Override
-  protected List<MediaType> listSupportedMediaTypes() {
-    return DEFAULT_RESPONSE_MEDIA_TYPES;
-  }
-
-  @Override
-  protected void validateRequest(Void unused, RequestInfo requestInfo, Context context)
-      throws ApiGatewayException {
-    requestInfo.getUserName();
   }
 }

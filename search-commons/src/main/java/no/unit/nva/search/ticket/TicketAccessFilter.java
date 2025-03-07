@@ -13,21 +13,27 @@ import static no.unit.nva.search.ticket.Constants.TYPE_KEYWORD;
 import static no.unit.nva.search.ticket.Constants.USER_IS_NOT_ALLOWED_TO_SEARCH_FOR_TICKETS_NOT_OWNED_BY_THEMSELVES;
 import static no.unit.nva.search.ticket.Constants.USER_IS_REQUIRED;
 import static no.unit.nva.search.ticket.TicketParameter.ASSIGNEE;
+import static no.unit.nva.search.ticket.TicketParameter.ORGANIZATION_ID;
 import static no.unit.nva.search.ticket.TicketParameter.OWNER;
 import static no.unit.nva.search.ticket.TicketParameter.STATISTICS;
 import static nva.commons.apigateway.AccessRight.MANAGE_CUSTOMERS;
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
 import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
+import static nva.commons.core.attempt.Try.attempt;
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
 
 import java.net.URI;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import no.unit.nva.search.common.AsType;
 import no.unit.nva.search.common.records.FilterBuilder;
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
+import nva.commons.apigateway.ViewingScope;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
@@ -35,29 +41,12 @@ import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermsQueryBuilder;
 
-/**
- * TicketAccessFilter is a class that filters tickets based on access rights.
- *
- * <ul>
- *   <lh>Business Rules</lh>
- *   <li>MANAGE_DOI -> DoiRequest
- *   <li>SUPPORT -> GeneralSupportCase
- *   <li>MANAGE_PUBLISHING_REQUESTS -> PublishingRequest
- *   <li>MANAGE_CUSTOMERS -> DoiRequest, GeneralSupportCase, PublishingRequest
- *   <li>IS_OWNER -> ignore ticket TYPE, only show tickets owned by the user
- *   <li>IS_ASSIGNEE -> ignore OWNER, only show ticket types that user has access to
- * </ul>
- *
- * @author Stig Norland
- * @author Sondre Vestad
- * @author Lars-Olav Vågene
- * @author Kir Truhacev
- */
+@SuppressWarnings("PMD.GodClass")
 public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
 
   private final TicketSearchQuery query;
   private String currentUser;
-  private URI organizationId;
+  private Set<URI> organizationSet;
   private Set<AccessRight> accessRightEnumSet = EnumSet.noneOf(AccessRight.class);
 
   public TicketAccessFilter(TicketSearchQuery query) {
@@ -71,6 +60,10 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
 
   public Set<TicketType> getAccessRightAsTicketTypes() {
     return accessRightsToTicketTypes(accessRightEnumSet);
+  }
+
+  protected boolean hasOrganization(URI organizationId) {
+    return organizationSet.contains(organizationId);
   }
 
   /**
@@ -103,14 +96,8 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
     return this;
   }
 
-  /**
-   * Filter on organization.
-   *
-   * @param organization organization id
-   * @apiNote ONLY USE IN TESTS, in handlers use: {@link #fromRequestInfo(RequestInfo)}
-   */
-  public TicketAccessFilter organization(URI organization) {
-    this.organizationId = organization;
+  public TicketAccessFilter organizations(Set<URI> organizationSet) {
+    this.organizationSet = organizationSet;
     return this;
   }
 
@@ -126,14 +113,28 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
    */
   @Override
   public TicketSearchQuery fromRequestInfo(RequestInfo requestInfo) throws UnauthorizedException {
-
-    var organization =
-        requestInfo.getTopLevelOrgCristinId().orElse(requestInfo.getPersonAffiliation());
+    var viewingScopes = getViewingScopesToInclude(requestInfo);
+    final var organizations = new HashSet<URI>();
+    if (viewingScopes.isEmpty()) {
+      organizations.add(
+          requestInfo.getTopLevelOrgCristinId().orElse(requestInfo.getPersonAffiliation()));
+    } else {
+      organizations.addAll(viewingScopes.stream().map(URI::create).collect(Collectors.toSet()));
+    }
+    if (query.parameters().isPresent(ORGANIZATION_ID)) {
+      validateAssigneeAndOwnerParameters();
+    }
 
     return user(requestInfo.getUserName())
         .accessRights(requestInfo.getAccessRights())
-        .organization(organization)
+        .organizations(organizations)
         .apply();
+  }
+
+  private static Set<String> getViewingScopesToInclude(RequestInfo requestInfo) {
+    return attempt(requestInfo::getViewingScope)
+        .map(ViewingScope::includes)
+        .orElse(failure -> Set.<String>of());
   }
 
   @Override
@@ -156,7 +157,7 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
 
     this.query
         .filters()
-        .add(filterByOrganization(organizationId))
+        .add(filterByOrganization(organizationSet))
         .add(filterByUserAndTicketTypes(currentUser, curatorTicketTypes))
         .add(filterByDeniedUnpublishRequest());
     return query;
@@ -188,11 +189,24 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
     return allowed;
   }
 
-  private MultiMatchQueryBuilder filterByOrganization(URI organizationId) {
-    return QueryBuilders.multiMatchQuery(organizationId.toString(), ORGANIZATION_PATHS)
-        .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
-        .operator(Operator.AND)
-        .queryName(FILTER_BY_ORGANIZATION);
+  private BoolQueryBuilder filterByOrganization(Set<URI> organizationIds) {
+    BoolQueryBuilder boolQuery = boolQuery();
+
+    for (URI organizationId : organizationIds) {
+      MultiMatchQueryBuilder multiMatchQuery =
+          QueryBuilders.multiMatchQuery(organizationId.toString(), ORGANIZATION_PATHS)
+              .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
+              .operator(Operator.AND)
+              .queryName(FILTER_BY_ORGANIZATION);
+
+      boolQuery.should(multiMatchQuery); // At least one match required
+    }
+
+    return boolQuery.minimumShouldMatch(1); // Ensures at least one must match
+    //    return QueryBuilders.multiMatchQuery(organizationId.toString(), ORGANIZATION_PATHS)
+    //        .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
+    //        .operator(Operator.AND)
+    //        .queryName(FILTER_BY_ORGANIZATION);
   }
 
   private BoolQueryBuilder filterByUserAndTicketTypes(
@@ -223,7 +237,7 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
   }
 
   private void validateOrganization() throws UnauthorizedException {
-    if (isNull(organizationId)) {
+    if (isNull(organizationSet) || organizationSet.isEmpty()) {
       throw new UnauthorizedException(ORGANIZATION_IS_REQUIRED);
     }
   }
@@ -236,7 +250,10 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
   }
 
   private void validateAssigneeAndOwnerParameters() throws UnauthorizedException {
-    if (query.parameters().get(OWNER).as().equals(query.parameters().get(ASSIGNEE).as())) {
+    if (Optional.ofNullable(query.parameters().get(OWNER))
+        .map(AsType::as)
+        .map(v -> v.equals(query.parameters().get(ASSIGNEE).as()))
+        .orElse(false)) {
       throw new UnauthorizedException(CANNOT_SEARCH_AS_BOTH_ASSIGNEE_AND_OWNER_AT_THE_SAME_TIME);
     }
   }

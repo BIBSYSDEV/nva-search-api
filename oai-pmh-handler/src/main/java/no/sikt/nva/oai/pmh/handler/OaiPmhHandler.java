@@ -6,6 +6,7 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.http.HttpClient;
 import java.util.List;
 import java.util.Optional;
 import no.unit.nva.search.resource.ResourceClient;
@@ -35,7 +36,7 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
 
   @JacocoGenerated
   public OaiPmhHandler() throws JAXBException {
-    super(String.class, new Environment());
+    super(String.class, new Environment(), HttpClient.newHttpClient());
 
     var endpointUri = generateEndpointUri(environment);
 

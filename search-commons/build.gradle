@@ -42,7 +42,7 @@ test {
     environment "ALLOWED_ORIGIN", "*"
     environment "API_HOST", "localhost"
     environment "BACKEND_CLIENT_SECRET_NAME", "secret"
-    environment "COGNITO_URI", "https://example.org"
+    environment "COGNITO_HOST", "https://example.org"
     environment "EXPORT_SEARCH_RESULTS_SIZE", "100"
     environment "IDENTITY_SERVICE_SECRET_KEY", "secretKey"
     environment "IDENTITY_SERVICE_SECRET_NAME", "secretName"

@@ -33,7 +33,7 @@ test {
     environment "AWS_REGION", "eu-west-1"
     environment "LARGE_API_RESPONSES_BUCKET", "some-bucket"
     environment "ALLOWED_ORIGIN", "*"
-    environment "COGNITO_URI", "https://example.org"
+    environment "COGNITO_HOST", "https://example.org"
     environment "API_HOST", "https://example.org"
     environment "SEARCH_INFRASTRUCTURE_API_URI", "https://example.org"
     environment "SEARCH_INFRASTRUCTURE_AUTH_URI", "https://example.org"
