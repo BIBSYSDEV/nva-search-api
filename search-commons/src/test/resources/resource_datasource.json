@@ -148,6 +148,8 @@
             "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/series/B24919B5-5DC4-4787-8D84-7922852we373/2024",
             "identifier": "B24919B5-5DC4-4787-8D84-7922852we373",
             "name": "Some series nr2",
+            "onlineIssn": "2327-3461",
+            "printIssn": "2327-3453",
             "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/nvakanal?pid=B24919B5-5DC4-4787-8D84-7922852we373",
             "scientificValue": "Unassigned"
           }
@@ -707,6 +709,8 @@
             "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/series/B24919B5-5DC4-4787-8D84-7922852we373/2024",
             "identifier": "B24919B5-5DC4-4787-8D84-7922852we373",
             "name": "Some series nr2",
+            "onlineIssn": "2327-3461",
+            "printIssn": "2327-3453",
             "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/nvakanal?pid=B24919B5-5DC4-4787-8D84-7922852we373",
             "scientificValue": "Unassigned"
           }
@@ -1081,6 +1085,7 @@
           },
           "series": {
             "type": "UnconfirmedSeries",
+            "issn": "2535-6976",
             "title": "NGI-Rapport"
           },
           "seriesNumber": "20200017‐03‐TN"
@@ -1223,6 +1228,7 @@
           },
           "series": {
             "type": "UnconfirmedSeries",
+            "issn": "2535-6976",
             "title": "NGI-Rapport"
           },
           "seriesNumber": "20200017‐10‐TN"
@@ -1359,6 +1365,7 @@
           },
           "series": {
             "type": "UnconfirmedSeries",
+            "issn": "2535-6976",
             "title": "NGI-Rapport"
           },
           "seriesNumber": "20200431‐01‐TN"
@@ -1712,6 +1719,7 @@
           },
           "series": {
             "type": "UnconfirmedSeries",
+            "issn": "2535-6976",
             "title": "NGI-Rapport"
           },
           "seriesNumber": "20200017-02-R"
@@ -2001,6 +2009,7 @@
           },
           "series": {
             "type": "UnconfirmedSeries",
+            "issn": "2535-6976",
             "title": "NGI-Rapport"
           },
           "seriesNumber": "20200017-03-R"
@@ -3178,6 +3187,7 @@
           },
           "series": {
             "type": "UnconfirmedSeries",
+            "issn": "2535-6976",
             "title": "NGI-Rapport"
           },
           "seriesNumber": "20200017-09-TN"
@@ -3509,6 +3519,7 @@
           },
           "series": {
             "type": "UnconfirmedSeries",
+            "issn": "2535-6976",
             "title": "NGI-Rapport"
           },
           "seriesNumber": "20200017-01-R"
@@ -3656,6 +3667,7 @@
           },
           "series": {
             "type": "UnconfirmedSeries",
+            "issn": "2535-6976",
             "title": "NGI-Rapport"
           },
           "seriesNumber": "20200017-05-TN"

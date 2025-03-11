@@ -24,6 +24,7 @@ import static no.unit.nva.constants.Words.IDENTIFIER;
 import static no.unit.nva.constants.Words.IDENTITY;
 import static no.unit.nva.constants.Words.ISBN_LIST;
 import static no.unit.nva.constants.Words.ISBN_PREFIX;
+import static no.unit.nva.constants.Words.ISSN_FIELD;
 import static no.unit.nva.constants.Words.JOURNAL;
 import static no.unit.nva.constants.Words.JOURNAL_AS_TYPE;
 import static no.unit.nva.constants.Words.KEYWORD;
@@ -229,6 +230,7 @@ public final class Constants {
       multipleFields(
           jsonPath(PUBLICATION_CONTEXT_PATH, ONLINE_ISSN, KEYWORD),
           jsonPath(PUBLICATION_CONTEXT_PATH, PRINT_ISSN, KEYWORD),
+          jsonPath(PUBLICATION_CONTEXT_PATH, SERIES, ISSN_FIELD, KEYWORD),
           jsonPath(PUBLICATION_CONTEXT_PATH, SERIES, ONLINE_ISSN, KEYWORD),
           jsonPath(PUBLICATION_CONTEXT_PATH, SERIES, PRINT_ISSN, KEYWORD));
 

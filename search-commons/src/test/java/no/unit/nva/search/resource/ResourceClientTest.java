@@ -47,6 +47,7 @@ import static no.unit.nva.search.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
+import static no.unit.nva.search.resource.ResourceParameter.ISSN;
 import static no.unit.nva.search.resource.ResourceParameter.NODES_EXCLUDED;
 import static no.unit.nva.search.resource.ResourceParameter.NODES_INCLUDED;
 import static no.unit.nva.search.resource.ResourceParameter.PUBLICATION_PAGES;
@@ -62,6 +63,7 @@ import static nva.commons.apigateway.AccessRight.MANAGE_RESOURCES_ALL;
 import static nva.commons.apigateway.AccessRight.MANAGE_RESOURCES_STANDARD;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.equalTo;
@@ -77,6 +79,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.params.provider.Arguments.argumentSet;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -120,6 +123,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.opensearch.client.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1095,5 +1099,83 @@ class ResourceClientTest {
     var responseAfterDeletion = fetchDocumentWithId(indexDocument);
 
     assertThat(responseAfterDeletion.toPagedResponse().hits(), is(emptyIterable()));
+  }
+
+  @ParameterizedTest(name = "should find by journal issn {0}")
+  @ValueSource(strings = {"0003-4339", "1879-1840"})
+  void shouldFindByJournalIssn(final String issn) throws BadRequestException {
+    var response =
+        ResourceSearchQuery.builder()
+            .fromTestParameterMap(Map.of(ISSN.asCamelCase(), issn))
+            .withRequiredParameters(FROM, SIZE)
+            .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+            .build()
+            .withFilter()
+            .requiredStatus(PUBLISHED, UNPUBLISHED)
+            .apply()
+            .doSearch(searchClient);
+
+    var pagedResponse = response.toPagedResponse();
+
+    assertThat(pagedResponse.totalHits(), is(equalTo(1)));
+    assertThat(
+        pagedResponse.hits().getFirst().get("id").asText(),
+        containsString("018ba39aafd4-92dd290a-7c0e-4f37-98e7-a61a8d4e9a58"));
+  }
+
+  @ParameterizedTest()
+  @MethodSource(value = "seriesIssnArgumentsProvider")
+  void shouldFindBySeriesIssn(
+      final String issn, final int expectedHits, String[] expectedIdentifiers)
+      throws BadRequestException {
+    var response =
+        ResourceSearchQuery.builder()
+            .fromTestParameterMap(Map.of(ISSN.asCamelCase(), issn))
+            .withRequiredParameters(FROM, SIZE)
+            .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+            .build()
+            .withFilter()
+            .requiredStatus(PUBLISHED, UNPUBLISHED)
+            .apply()
+            .doSearch(searchClient);
+
+    var pagedResponse = response.toPagedResponse();
+
+    assertThat(pagedResponse.totalHits(), is(equalTo(expectedHits)));
+
+    var actualIdentifiers =
+        pagedResponse.hits().stream()
+            .map(node -> node.get("identifier").textValue())
+            .collect(Collectors.toSet());
+
+    assertThat(actualIdentifiers, containsInAnyOrder(expectedIdentifiers));
+  }
+
+  static Stream<Arguments> seriesIssnArgumentsProvider() {
+    return Stream.of(
+        argumentSet(
+            "matches issn in unconfirmed series",
+            "2535-6976",
+            8,
+            new String[] {
+              "018b857b28b5-25e3138f-5914-44e3-b322-5ed790a97f36",
+              "018b857af565-f63a53df-6c4f-4051-8686-8547f45ef726",
+              "018b858395d7-02aaf128-dc44-457e-b471-675a952e8cff",
+              "018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642",
+              "018b857a85ae-110bf68d-c0f7-42b5-b635-b154ed6208dd",
+              "018b8581b2d1-b46eec8b-01c0-409f-b609-1f1f3ad6fa4a",
+              "018b857b89d9-b5053ac9-fe14-4ea9-9922-8130b306b720",
+              "018b8579f0ad-db0bd29b-ad7c-4068-afa3-f300a1af61ef"
+            }),
+        argumentSet(
+            "matches onlineIssn for confirmed series",
+            "2327-3461",
+            1,
+            new String[] {"018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39"}),
+        argumentSet(
+            "matches printIssn for confirmed series",
+            "2327-3453",
+            1,
+            new String[] {"018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39"}));
   }
 }
