@@ -5,7 +5,7 @@
       "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2023"
     ],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
-    "id": "https://api.dev.nva.aws.unit.no/publication/018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619e3bbaf39",
     "filesStatus": "noFiles",
     "associatedArtifacts": [
       {
@@ -529,7 +529,7 @@
       "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2023"
     ],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
-    "id": "https://api.dev.nva.aws.unit.no/publication/018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39",
+    "id": "https://api.dev.nva.aws.unit.no/publication/019584817b67-0eb17fdc-fe45-4ff3-8173-ba7fb930176b",
     "scientificIndex": {
       "id": "https://api.dev.nva.aws.unit.no/scientific-index/period/2019",
       "type": "ScientificIndex",
@@ -725,7 +725,7 @@
         }
       }
     },
-    "identifier": "018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39",
+    "identifier": "019584817b67-0eb17fdc-fe45-4ff3-8173-ba7fb930176b",
     "modelVersion": "0.20.54",
     "modifiedDate": "2023-11-06T08:48:11.943422687Z",
     "nviType": "NonNviCandidate",

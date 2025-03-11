@@ -95,6 +95,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -108,6 +109,7 @@ import no.unit.nva.indexingclient.models.RestHighLevelClientWrapper;
 import no.unit.nva.search.common.csv.ResourceCsvTransformer;
 import no.unit.nva.search.common.jwt.CachedJwtProvider;
 import no.unit.nva.search.common.records.HttpResponseFormatter;
+import no.unit.nva.search.common.records.PagedSearch;
 import no.unit.nva.search.scroll.ScrollClient;
 import no.unit.nva.search.scroll.ScrollQuery;
 import nva.commons.apigateway.AccessRight;
@@ -117,13 +119,13 @@ import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.paths.UriWrapper;
 import org.apache.http.HttpHost;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.opensearch.client.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1101,9 +1103,11 @@ class ResourceClientTest {
     assertThat(responseAfterDeletion.toPagedResponse().hits(), is(emptyIterable()));
   }
 
-  @ParameterizedTest(name = "should find by journal issn {0}")
-  @ValueSource(strings = {"0003-4339", "1879-1840"})
-  void shouldFindByJournalIssn(final String issn) throws BadRequestException {
+  @ParameterizedTest
+  @MethodSource(value = "journalIssnArgumentsProvider")
+  void shouldFindByJournalIssn(
+      final String issn, final int expectedCount, String[] expectedIdentifiers)
+      throws BadRequestException {
     var response =
         ResourceSearchQuery.builder()
             .fromTestParameterMap(Map.of(ISSN.asCamelCase(), issn))
@@ -1117,13 +1121,14 @@ class ResourceClientTest {
 
     var pagedResponse = response.toPagedResponse();
 
-    assertThat(pagedResponse.totalHits(), is(equalTo(1)));
-    assertThat(
-        pagedResponse.hits().getFirst().get("id").asText(),
-        containsString("018ba39aafd4-92dd290a-7c0e-4f37-98e7-a61a8d4e9a58"));
+    assertThat(pagedResponse.totalHits(), is(equalTo(expectedCount)));
+
+    var actualIdentifiers = extractActualIdentifiersFromHits(pagedResponse);
+
+    assertThat(actualIdentifiers, containsInAnyOrder(expectedIdentifiers));
   }
 
-  @ParameterizedTest()
+  @ParameterizedTest
   @MethodSource(value = "seriesIssnArgumentsProvider")
   void shouldFindBySeriesIssn(
       final String issn, final int expectedHits, String[] expectedIdentifiers)
@@ -1143,12 +1148,29 @@ class ResourceClientTest {
 
     assertThat(pagedResponse.totalHits(), is(equalTo(expectedHits)));
 
-    var actualIdentifiers =
-        pagedResponse.hits().stream()
-            .map(node -> node.get("identifier").textValue())
-            .collect(Collectors.toSet());
+    var actualIdentifiers = extractActualIdentifiersFromHits(pagedResponse);
 
     assertThat(actualIdentifiers, containsInAnyOrder(expectedIdentifiers));
+  }
+
+  private static @NotNull Set<String> extractActualIdentifiersFromHits(PagedSearch pagedResponse) {
+    return pagedResponse.hits().stream()
+        .map(node -> node.get("identifier").textValue())
+        .collect(Collectors.toSet());
+  }
+
+  static Stream<Arguments> journalIssnArgumentsProvider() {
+    return Stream.of(
+        argumentSet(
+            "matches printIssn in journals",
+            "0003-4339",
+            1,
+            new String[] {"018ba39aafd4-92dd290a-7c0e-4f37-98e7-a61a8d4e9a58"}),
+        argumentSet(
+            "matches onlineIssn for journals",
+            "1879-1840",
+            1,
+            new String[] {"018ba39aafd4-92dd290a-7c0e-4f37-98e7-a61a8d4e9a58"}));
   }
 
   static Stream<Arguments> seriesIssnArgumentsProvider() {
@@ -1171,11 +1193,11 @@ class ResourceClientTest {
             "matches onlineIssn for confirmed series",
             "2327-3461",
             1,
-            new String[] {"018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39"}),
+            new String[] {"019584817b67-0eb17fdc-fe45-4ff3-8173-ba7fb930176b"}),
         argumentSet(
             "matches printIssn for confirmed series",
             "2327-3453",
             1,
-            new String[] {"018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39"}));
+            new String[] {"019584817b67-0eb17fdc-fe45-4ff3-8173-ba7fb930176b"}));
   }
 }
