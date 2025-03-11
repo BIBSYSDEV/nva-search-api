@@ -47,6 +47,7 @@ import static no.unit.nva.search.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
+import static no.unit.nva.search.resource.ResourceParameter.ISSN;
 import static no.unit.nva.search.resource.ResourceParameter.NODES_EXCLUDED;
 import static no.unit.nva.search.resource.ResourceParameter.NODES_INCLUDED;
 import static no.unit.nva.search.resource.ResourceParameter.PUBLICATION_PAGES;
@@ -62,6 +63,7 @@ import static nva.commons.apigateway.AccessRight.MANAGE_RESOURCES_ALL;
 import static nva.commons.apigateway.AccessRight.MANAGE_RESOURCES_STANDARD;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.equalTo;
@@ -77,6 +79,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.params.provider.Arguments.argumentSet;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -92,6 +95,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -105,6 +109,7 @@ import no.unit.nva.indexingclient.models.RestHighLevelClientWrapper;
 import no.unit.nva.search.common.csv.ResourceCsvTransformer;
 import no.unit.nva.search.common.jwt.CachedJwtProvider;
 import no.unit.nva.search.common.records.HttpResponseFormatter;
+import no.unit.nva.search.common.records.PagedSearch;
 import no.unit.nva.search.scroll.ScrollClient;
 import no.unit.nva.search.scroll.ScrollQuery;
 import nva.commons.apigateway.AccessRight;
@@ -114,6 +119,7 @@ import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.paths.UriWrapper;
 import org.apache.http.HttpHost;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -1095,5 +1101,103 @@ class ResourceClientTest {
     var responseAfterDeletion = fetchDocumentWithId(indexDocument);
 
     assertThat(responseAfterDeletion.toPagedResponse().hits(), is(emptyIterable()));
+  }
+
+  @ParameterizedTest
+  @MethodSource(value = "journalIssnArgumentsProvider")
+  void shouldFindByJournalIssn(
+      final String issn, final int expectedCount, String[] expectedIdentifiers)
+      throws BadRequestException {
+    var response =
+        ResourceSearchQuery.builder()
+            .fromTestParameterMap(Map.of(ISSN.asCamelCase(), issn))
+            .withRequiredParameters(FROM, SIZE)
+            .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+            .build()
+            .withFilter()
+            .requiredStatus(PUBLISHED, UNPUBLISHED)
+            .apply()
+            .doSearch(searchClient);
+
+    var pagedResponse = response.toPagedResponse();
+
+    assertThat(pagedResponse.totalHits(), is(equalTo(expectedCount)));
+
+    var actualIdentifiers = extractActualIdentifiersFromHits(pagedResponse);
+
+    assertThat(actualIdentifiers, containsInAnyOrder(expectedIdentifiers));
+  }
+
+  @ParameterizedTest
+  @MethodSource(value = "seriesIssnArgumentsProvider")
+  void shouldFindBySeriesIssn(
+      final String issn, final int expectedHits, String[] expectedIdentifiers)
+      throws BadRequestException {
+    var response =
+        ResourceSearchQuery.builder()
+            .fromTestParameterMap(Map.of(ISSN.asCamelCase(), issn))
+            .withRequiredParameters(FROM, SIZE)
+            .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+            .build()
+            .withFilter()
+            .requiredStatus(PUBLISHED, UNPUBLISHED)
+            .apply()
+            .doSearch(searchClient);
+
+    var pagedResponse = response.toPagedResponse();
+
+    assertThat(pagedResponse.totalHits(), is(equalTo(expectedHits)));
+
+    var actualIdentifiers = extractActualIdentifiersFromHits(pagedResponse);
+
+    assertThat(actualIdentifiers, containsInAnyOrder(expectedIdentifiers));
+  }
+
+  private static @NotNull Set<String> extractActualIdentifiersFromHits(PagedSearch pagedResponse) {
+    return pagedResponse.hits().stream()
+        .map(node -> node.get("identifier").textValue())
+        .collect(Collectors.toSet());
+  }
+
+  static Stream<Arguments> journalIssnArgumentsProvider() {
+    return Stream.of(
+        argumentSet(
+            "matches printIssn in journals",
+            "0003-4339",
+            1,
+            new String[] {"018ba39aafd4-92dd290a-7c0e-4f37-98e7-a61a8d4e9a58"}),
+        argumentSet(
+            "matches onlineIssn for journals",
+            "1879-1840",
+            1,
+            new String[] {"018ba39aafd4-92dd290a-7c0e-4f37-98e7-a61a8d4e9a58"}));
+  }
+
+  static Stream<Arguments> seriesIssnArgumentsProvider() {
+    return Stream.of(
+        argumentSet(
+            "matches issn in unconfirmed series",
+            "2535-6976",
+            8,
+            new String[] {
+              "018b857b28b5-25e3138f-5914-44e3-b322-5ed790a97f36",
+              "018b857af565-f63a53df-6c4f-4051-8686-8547f45ef726",
+              "018b858395d7-02aaf128-dc44-457e-b471-675a952e8cff",
+              "018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642",
+              "018b857a85ae-110bf68d-c0f7-42b5-b635-b154ed6208dd",
+              "018b8581b2d1-b46eec8b-01c0-409f-b609-1f1f3ad6fa4a",
+              "018b857b89d9-b5053ac9-fe14-4ea9-9922-8130b306b720",
+              "018b8579f0ad-db0bd29b-ad7c-4068-afa3-f300a1af61ef"
+            }),
+        argumentSet(
+            "matches onlineIssn for confirmed series",
+            "2327-3461",
+            1,
+            new String[] {"019584817b67-0eb17fdc-fe45-4ff3-8173-ba7fb930176b"}),
+        argumentSet(
+            "matches printIssn for confirmed series",
+            "2327-3453",
+            1,
+            new String[] {"019584817b67-0eb17fdc-fe45-4ff3-8173-ba7fb930176b"}));
   }
 }
