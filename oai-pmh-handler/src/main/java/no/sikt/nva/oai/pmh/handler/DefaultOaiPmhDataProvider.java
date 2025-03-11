@@ -26,6 +26,7 @@ import org.openarchives.oai.pmh.v2.GranularityType;
 import org.openarchives.oai.pmh.v2.OAIPMHerrorcodeType;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
 import org.openarchives.oai.pmh.v2.ObjectFactory;
+import org.openarchives.oai.pmh.v2.ResumptionTokenType;
 import org.openarchives.oai.pmh.v2.SetType;
 import org.openarchives.oai.pmh.v2.VerbType;
 import org.slf4j.Logger;
@@ -50,6 +51,7 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
   private static final String OAI_DC_SCHEMA = "http://www.openarchives.org/OAI/2.0/oai_dc.xsd";
   private static final String OAI_DC_NAMESPACE = "http://www.openarchives.org/OAI/2.0/oai_dc/";
   private static final String SCROLL_TTL = "10m";
+  private static final int RESUMPTION_TOKEN_TTL = 10;
 
   private final ObjectFactory objectFactory = new ObjectFactory();
   private final ResourceClient resourceClient;
@@ -168,11 +170,45 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
   }
 
   private JAXBElement<OAIPMHtype> listRecords(
-      String from, String until, String resumptionToken, String metadataPrefix) {
+      String from, String until, String incomingResumptionToken, String metadataPrefix) {
 
+    final SwsResponse response = doSearchForRecords(from, until, incomingResumptionToken);
+
+    var oaiResponse = baseResponse();
+    var oaiPmhType = oaiResponse.getValue();
+    populateListRecordsRequest(from, until, incomingResumptionToken, metadataPrefix, oaiPmhType);
+
+    var scrollId = response._scroll_id();
+
+    var records = recordTransformer.transform(response.getSearchHits());
+
+    var resumptionTokenType = generateResumptionToken(from, until, metadataPrefix, scrollId);
+    var listRecords = objectFactory.createListRecordsType();
+    listRecords.getRecord().addAll(records);
+    listRecords.setResumptionToken(resumptionTokenType);
+
+    oaiPmhType.setListRecords(listRecords);
+    return oaiResponse;
+  }
+
+  private static void populateListRecordsRequest(
+      String from,
+      String until,
+      String incomingResumptionToken,
+      String metadataPrefix,
+      OAIPMHtype oaiPmhType) {
+    oaiPmhType.getRequest().setVerb(VerbType.LIST_RECORDS);
+    oaiPmhType.getRequest().setResumptionToken(incomingResumptionToken);
+    oaiPmhType.getRequest().setFrom(from);
+    oaiPmhType.getRequest().setUntil(until);
+    oaiPmhType.getRequest().setMetadataPrefix(metadataPrefix);
+  }
+
+  private SwsResponse doSearchForRecords(
+      String from, String until, String incomingResumptionToken) {
     final SwsResponse response;
-    if (resumptionToken != null) {
-      var token = ResumptionToken.from(resumptionToken);
+    if (incomingResumptionToken != null) {
+      var token = ResumptionToken.from(incomingResumptionToken);
       var scrollQuery =
           ScrollQuery.builder().withScrollId(token.scrollId()).withTtl(SCROLL_TTL).build();
       response = scrollQuery.doSearch(scrollClient).swsResponse();
@@ -180,34 +216,22 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
       final ResourceSearchQuery query = buildListRecordsPageQuery(from, until);
       response = doSearch(query).swsResponse();
     }
+    return response;
+  }
 
-    var oaiResponse = baseResponse();
-    var value = oaiResponse.getValue();
-    value.getRequest().setVerb(VerbType.LIST_RECORDS);
-    value.getRequest().setResumptionToken(resumptionToken);
-    value.getRequest().setFrom(from);
-    value.getRequest().setUntil(until);
-    value.getRequest().setMetadataPrefix(metadataPrefix);
-
-    var scrollId = response._scroll_id();
-
-    var records = recordTransformer.transform(response.getSearchHits());
-
+  private ResumptionTokenType generateResumptionToken(
+      String from, String until, String metadataPrefix, String scrollId) {
     var inTenMinutes =
         DatatypeFactory.newDefaultInstance()
-            .newXMLGregorianCalendar(GregorianCalendar.from(ZonedDateTime.now().plusMinutes(10)));
+            .newXMLGregorianCalendar(
+                GregorianCalendar.from(ZonedDateTime.now().plusMinutes(RESUMPTION_TOKEN_TTL)));
 
     var resumptionTokenType = objectFactory.createResumptionTokenType();
     var newResumptionToken = new ResumptionToken(from, until, metadataPrefix, scrollId);
     resumptionTokenType.setValue(newResumptionToken.getValue());
     resumptionTokenType.setExpirationDate(inTenMinutes);
 
-    var listRecords = objectFactory.createListRecordsType();
-    listRecords.getRecord().addAll(records);
-    listRecords.setResumptionToken(resumptionTokenType);
-
-    value.setListRecords(listRecords);
-    return oaiResponse;
+    return resumptionTokenType;
   }
 
   private Set<String> doSearchAndExtractInstanceTypesFromTypeAggregation(
