@@ -70,6 +70,7 @@ public final class Words {
   public static final String IMPORT_CANDIDATES_INDEX = "import-candidates";
   public static final String ISBN_LIST = "isbnList";
   public static final String ISBN_PREFIX = "isbnPrefix";
+  public static final String ISSN_FIELD = "issn";
   public static final String JOURNAL = "journal";
   public static final String JOURNAL_AS_TYPE = "Journal";
   public static final String KEY = "key";
