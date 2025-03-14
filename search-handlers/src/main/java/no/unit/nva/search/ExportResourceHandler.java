@@ -14,8 +14,8 @@ import com.amazonaws.services.lambda.runtime.Context;
 import no.unit.nva.search.common.csv.ResourceCsvTransformer;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.ResourceSearchQuery;
+import no.unit.nva.search.scroll.RecursiveScrollQuery;
 import no.unit.nva.search.scroll.ScrollClient;
-import no.unit.nva.search.scroll.ScrollQuery;
 import nva.commons.apigateway.ApiS3GatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -76,7 +76,7 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
             .doSearch(opensearchClient)
             .swsResponse();
 
-    return ScrollQuery.builder()
+    return RecursiveScrollQuery.builder()
         .withInitialResponse(initialResponse)
         .withScrollTime(SCROLL_TTL)
         .build()
