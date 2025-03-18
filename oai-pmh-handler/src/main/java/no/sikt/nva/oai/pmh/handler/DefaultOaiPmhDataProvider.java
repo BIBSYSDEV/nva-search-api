@@ -1,6 +1,9 @@
 package no.sikt.nva.oai.pmh.handler;
 
+import static java.util.Objects.nonNull;
+
 import jakarta.xml.bind.JAXBElement;
+import java.math.BigInteger;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -182,7 +185,8 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
 
     var records = recordTransformer.transform(response.getSearchHits());
 
-    var resumptionTokenType = generateResumptionToken(from, until, metadataPrefix, scrollId);
+    var resumptionTokenType =
+        generateResumptionToken(from, until, metadataPrefix, scrollId, response.getTotalSize());
     var listRecords = objectFactory.createListRecordsType();
     listRecords.getRecord().addAll(records);
     listRecords.setResumptionToken(resumptionTokenType);
@@ -220,7 +224,7 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
   }
 
   private ResumptionTokenType generateResumptionToken(
-      String from, String until, String metadataPrefix, String scrollId) {
+      String from, String until, String metadataPrefix, String scrollId, Integer totalSize) {
     var inTenMinutes =
         DatatypeFactory.newDefaultInstance()
             .newXMLGregorianCalendar(
@@ -230,7 +234,9 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
     var newResumptionToken = new ResumptionToken(from, until, metadataPrefix, scrollId);
     resumptionTokenType.setValue(newResumptionToken.getValue());
     resumptionTokenType.setExpirationDate(inTenMinutes);
-
+    if (nonNull(totalSize)) {
+      resumptionTokenType.setCompleteListSize(BigInteger.valueOf(totalSize));
+    }
     return resumptionTokenType;
   }
 
@@ -281,7 +287,6 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
               .withParameter(ResourceParameter.FROM, ZERO)
               .withParameter(ResourceParameter.SIZE, "50")
               .withParameter(ResourceParameter.SORT, ResourceSort.MODIFIED_DATE.asCamelCase())
-              .withParameter(ResourceParameter.SORT, ResourceSort.IDENTIFIER.asCamelCase())
               .withParameter(ResourceParameter.SORT_ORDER, "desc")
               .build()
               .withScrollTime(SCROLL_TTL);
