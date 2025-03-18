@@ -2,7 +2,6 @@ package no.sikt.nva.oai.pmh.handler;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.collection.IsEmptyIterable.emptyIterable;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -54,7 +53,7 @@ public class GraphRecordTransformerTest {
       assertThat(extractCreators(type), is(not(emptyIterable())));
       assertThat(extractDate(type), is(notNullValue()));
       assertThat(extractType(type), is(notNullValue()));
-      assertThat(extractPublisher(type), is(nullValue()));
+      assertThat(extractPublisher(type), is(notNullValue()));
       assertWellFormedHeader(record);
     }
   }

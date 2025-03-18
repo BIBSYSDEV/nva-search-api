@@ -20,6 +20,7 @@ dependencies {
     testImplementation libs.xml.unit.core
     testImplementation libs.xml.unit.matchers
     testImplementation libs.bundles.testcontainers
+    testImplementation libs.wiremock
     testImplementation project(':search-testing')
 }
 

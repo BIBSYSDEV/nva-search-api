@@ -1,14 +1,20 @@
 package no.sikt.nva.oai.pmh.handler;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.ok;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static java.net.HttpURLConnection.HTTP_INTERNAL_ERROR;
 import static java.util.Objects.nonNull;
+import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableWithSize.iterableWithSize;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsIterableContaining.hasItems;
+import static org.hamcrest.core.IsNot.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doThrow;
@@ -19,6 +25,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import java.io.ByteArrayOutputStream;
@@ -66,10 +75,13 @@ import org.xmlunit.builder.Input;
 import org.xmlunit.xpath.JAXPXPathEngine;
 import org.xmlunit.xpath.XPathEngine;
 
+@WireMockTest
 public class OaiPmhHandlerTest {
 
   private static final String OAI_PMH_NAMESPACE_PREFIX = "oai";
   private static final String OAI_PMH_NAMESPACE = "http://www.openarchives.org/OAI/2.0/";
+  private static final String DC_NAMESPACE_PREFIX = "dc";
+  private static final String DC_NAMESPACE = "http://purl.org/dc/elements/1.1/";
 
   private static final String[] EXPECTED_SET_SPECS = {
     "PublicationInstanceType",
@@ -86,14 +98,17 @@ public class OaiPmhHandlerTest {
   private static final String VERB_ATTRIBUTE_NAME = "verb";
   private static final String GET_METHOD = "get";
   private static final String POST_METHOD = "post";
+  private static final String OAI_DC_NAMESPACE_PREFIX = "oai-dc";
+  private static final String OAI_DC_NAMESPACE = "http://www.openarchives.org/OAI/2.0/oai_dc/";
 
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
   private Environment environment;
   private ResourceClient resourceClient;
   private ScrollClient scrollClient;
+  private int port = 0;
 
   @BeforeEach
-  public void setUp() {
+  public void setUp(WireMockRuntimeInfo wireMockRuntimeInfo) {
     this.environment = mock(Environment.class);
     when(environment.readEnv("ALLOWED_ORIGIN")).thenReturn("*");
     when(environment.readEnv("SEARCH_INFRASTRUCTURE_API_URI"))
@@ -102,6 +117,11 @@ public class OaiPmhHandlerTest {
     when(environment.readEnv("OAI_BASE_PATH")).thenReturn("publication-oai-pmh");
     this.resourceClient = mock(ResourceClient.class);
     this.scrollClient = mock(ScrollClient.class);
+    var context = IoUtils.stringFromResources(Path.of("publication.context"));
+    stubFor(
+        get("/publication/context")
+            .willReturn(ok(context).withHeader("Content-Type", "application/json")));
+    this.port = wireMockRuntimeInfo.getHttpPort();
   }
 
   @Test
@@ -395,6 +415,200 @@ public class OaiPmhHandlerTest {
             "https://api.sandbox.nva.aws.unit.no/publication/019527b845e4-182ebbf0-9481-4a98-aad2-76b617cc1b0c"));
   }
 
+  @Test
+  void shouldUseIdAsRecordHeaderIdentifier() throws IOException, JAXBException {
+    var inputStream = setUpDefaultHitAndRequest();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    var identifier =
+        extractTextNodeValueFromResponse(
+            xpathEngine,
+            "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:header/oai:identifier",
+            response);
+
+    assertThat(identifier, is(equalTo("http://localhost/publication/1")));
+  }
+
+  @Test
+  void shouldPopulateRecordHeaderDatestamp() throws IOException, JAXBException {
+    var inputStream = setUpDefaultHitAndRequest();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    var datestamp =
+        extractTextNodeValueFromResponse(
+            xpathEngine,
+            "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:header/oai:datestamp",
+            response);
+
+    assertThat(datestamp, is(not(nullValue())));
+  }
+
+  @Test
+  void shouldUseTitleAsRecordMetadataDcTitle() throws IOException, JAXBException {
+    var inputStream = setUpDefaultHitAndRequest();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    var title =
+        extractTextNodeValueFromResponse(
+            xpathEngine,
+            "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:metadata/oai-dc:dc/dc:title",
+            response);
+    assertThat(title, is(equalTo("My title")));
+  }
+
+  @Test
+  void shouldUsePublicationDateAsRecordMetadataDcDate() throws IOException, JAXBException {
+    var inputStream = setUpDefaultHitAndRequest();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    var date =
+        extractTextNodeValueFromResponse(
+            xpathEngine,
+            "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:metadata/oai-dc:dc/dc:date",
+            response);
+    assertThat(date, is(equalTo("2020-01-01")));
+  }
+
+  @Test
+  void shouldUsePublicationInstanceTypeAsRecordMetadataDcType() throws IOException, JAXBException {
+    var inputStream = setUpDefaultHitAndRequest();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    var type =
+        extractTextNodeValueFromResponse(
+            xpathEngine,
+            "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:metadata/oai-dc:dc/dc:type",
+            response);
+    assertThat(type, is(equalTo("AcademicArticle")));
+  }
+
+  @Test
+  void
+      shouldUseNameOfPublicationContextIfTypeIsJournalAsRecordMetadataDcPublisherIfPublisherAndSeriesAreNotPresent()
+          throws IOException, JAXBException {
+    var inputStream = setUpDefaultHitAndRequest();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    var publisher =
+        extractTextNodeValueFromResponse(
+            xpathEngine,
+            "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:metadata/oai-dc:dc/dc:publisher",
+            response);
+    assertThat(publisher, is(equalTo("My journal")));
+  }
+
+  @Test
+  void shouldUseNameOfPublicationContextPublisherIfTypeNotJournalAsRecordMetadataDcPublisher()
+      throws IOException, JAXBException {
+    var inputStream = requestWithReportBasicHit();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    var publisher =
+        extractTextNodeValueFromResponse(
+            xpathEngine,
+            "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:metadata/oai-dc:dc/dc:publisher",
+            response);
+    assertThat(publisher, is(equalTo("My publisher name")));
+  }
+
+  private static String extractTextNodeValueFromResponse(
+      JAXPXPathEngine xpathEngine, String xpathExpression, Source response) {
+    return xpathEngine
+        .selectNodes(xpathExpression, response)
+        .iterator()
+        .next()
+        .getFirstChild()
+        .getNodeValue();
+  }
+
+  private InputStream setUpDefaultHitAndRequest() throws JsonProcessingException {
+    var hits =
+        new ArrayNode(
+            JsonNodeFactory.instance,
+            List.of(
+                HitBuilder.academicArticle(port, "My journal")
+                    .withIdentifier("1")
+                    .withTitle("My title")
+                    .build()));
+    return hitAndRequest(hits);
+  }
+
+  private InputStream hitAndRequest(ArrayNode hits) throws JsonProcessingException {
+    var scrollId = randomString();
+    when(resourceClient.doSearch(argThat(new ResourceSearchQueryMatcher(0, 50, "none"))))
+        .thenReturn(initialSwsResponse(hits, scrollId));
+
+    var from = "2016-01-01";
+    var until = "2016-01-02";
+    var metadataPrefix = "oai-dc";
+    String resumptionToken = null;
+    return request(
+        VerbType.LIST_RECORDS.value(), "GET", from, until, metadataPrefix, resumptionToken);
+  }
+
+  private InputStream requestWithReportBasicHit() throws JsonProcessingException {
+    var hits =
+        new ArrayNode(
+            JsonNodeFactory.instance,
+            List.of(
+                HitBuilder.reportBasic(port, "My publisher name", "My series name")
+                    .withIdentifier("1")
+                    .withTitle("My title")
+                    .build()));
+    return hitAndRequest(hits);
+  }
+
+  /*
+       "publicationContext" : {
+       "type" : "Report",
+       "series" : {
+         "type" : "Series",
+         "id" : "https://api.dev.nva.aws.unit.no/publication-channels/beb2ae40-63df-4ca0-a20c-374a236ae468"
+       },
+       "seriesNumber" : "GXyvFdqFAWGJk6ag6Rl",
+       "publisher" : {
+         "type" : "Publisher",
+         "id" : "https://api.dev.nva.aws.unit.no/publication-channels/0d392b44-e538-425b-92b7-3379ed3a8f78",
+         "valid" : true
+       },
+       "isbnList" : [ "9791776659110", "9781851966943" ],
+       "additionalIdentifiers" : [ {
+         "type" : "AdditionalIdentifier",
+         "sourceName" : "ISBN",
+         "value" : "1851966943"
+       } ]
+     },
+     "doi" : "https://www.example.org/734fedcb-abbb-42ab-b6d3-9f3dddcb6b86",
+     "publicationInstance" : {
+       "type" : "ReportBasic",
+       "pages" : {
+         "type" : "MonographPages",
+         "introduction" : {
+           "type" : "Range",
+           "begin" : "TAY2BDmwinXYD5n4t",
+           "end" : "WgjYjsfvlym5"
+         },
+         "pages" : "KEOWq6OxziLN3oDgU",
+         "illustrated" : false
+       }
+     }
+
+  */
+
   private InputStream request(
       String verb,
       String method,
@@ -521,6 +735,23 @@ public class OaiPmhHandlerTest {
         null);
   }
 
+  private SwsResponse initialSwsResponse(JsonNode hits, String scrollId) {
+    var hitList = new ArrayList<Hit>();
+    var iterator = hits.elements();
+
+    while (iterator.hasNext()) {
+      var element = iterator.next();
+      hitList.add(new Hit("", "", "", 1.0, element, null, List.of()));
+    }
+    return new SwsResponse(
+        0,
+        false,
+        null,
+        new HitsInfo(new TotalInfo(hitList.size(), ""), 1.0, hitList),
+        null,
+        scrollId);
+  }
+
   private SwsResponse firstPageSwsResponse(String scrollId) throws JsonProcessingException {
     var hits = new ArrayList<Hit>();
     var iterator = hits().elements();
@@ -587,7 +818,11 @@ public class OaiPmhHandlerTest {
 
   private static JAXPXPathEngine getXpathEngine() {
     var xpathEngine = new JAXPXPathEngine();
-    xpathEngine.setNamespaceContext(Map.of(OAI_PMH_NAMESPACE_PREFIX, OAI_PMH_NAMESPACE));
+    xpathEngine.setNamespaceContext(
+        Map.of(
+            OAI_PMH_NAMESPACE_PREFIX, OAI_PMH_NAMESPACE,
+            OAI_DC_NAMESPACE_PREFIX, OAI_DC_NAMESPACE,
+            DC_NAMESPACE_PREFIX, DC_NAMESPACE));
     return xpathEngine;
   }
 
