@@ -292,8 +292,9 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
               .withScrollTime(SCROLL_TTL);
     } catch (BadRequestException e) {
       // should never happen unless query validation code is changed!
-      LOGGER.error("Failed to search for publication instance types using 'type' aggregation.", e);
-      throw new ResourceSearchException("Error looking up instance types using aggregations.", e);
+      LOGGER.error("Failed to lookup initial page from OpenSearch during ListRecords.", e);
+      throw new ResourceSearchException(
+          "Error search for initial page of search results during ListRecords.", e);
     }
     return query;
   }
