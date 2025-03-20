@@ -13,7 +13,6 @@ import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInA
 import static org.hamcrest.collection.IsIterableWithSize.iterableWithSize;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.core.IsIterableContaining.hasItems;
 import static org.hamcrest.core.IsNot.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -359,11 +358,8 @@ public class OaiPmhHandlerTest {
     var until = "2016-01-02";
     var metadataPrefix = "oai-dc";
     String resumptionToken = null;
-    var inputStream =
-        request(
-            VerbType.LIST_RECORDS.value(), method, from, until, metadataPrefix, resumptionToken);
-
-    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var response =
+        performListRecordsOperation(method, from, until, metadataPrefix, resumptionToken);
     var xpathEngine = getXpathEngine();
 
     assertResponseRequestContains(VerbType.LIST_RECORDS, response, xpathEngine);
@@ -375,10 +371,20 @@ public class OaiPmhHandlerTest {
 
     assertThat(
         identifiers,
-        hasItems(
+        containsInAnyOrder(
             "https://api.sandbox.nva.aws.unit.no/publication/019527b847ad-ee78bdbe-3f70-4ff4-930c-b4ace492ea64",
             "https://api.sandbox.nva.aws.unit.no/publication/019527b84693-a86c1cae-24da-4c9d-9bff-e097fd9be2f1",
             "https://api.sandbox.nva.aws.unit.no/publication/019527b845e4-182ebbf0-9481-4a98-aad2-76b617cc1b0c"));
+  }
+
+  private Source performListRecordsOperation(
+      String method, String from, String until, String metadataPrefix, String resumptionToken)
+      throws JAXBException, IOException {
+    var inputStream =
+        request(
+            VerbType.LIST_RECORDS.value(), method, from, until, metadataPrefix, resumptionToken);
+
+    return invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
   }
 
   @ParameterizedTest
@@ -393,11 +399,8 @@ public class OaiPmhHandlerTest {
     var until = "2016-01-02";
     var metadataPrefix = "oai-dc";
     String resumptionToken = new ResumptionToken(from, until, metadataPrefix, scrollId).getValue();
-    var inputStream =
-        request(
-            VerbType.LIST_RECORDS.value(), method, from, until, metadataPrefix, resumptionToken);
-
-    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var response =
+        performListRecordsOperation(method, from, until, metadataPrefix, resumptionToken);
     var xpathEngine = getXpathEngine();
 
     assertResponseRequestContains(VerbType.LIST_RECORDS, response, xpathEngine);
@@ -409,7 +412,7 @@ public class OaiPmhHandlerTest {
 
     assertThat(
         identifiers,
-        hasItems(
+        containsInAnyOrder(
             "https://api.sandbox.nva.aws.unit.no/publication/019527b847ad-ee78bdbe-3f70-4ff4-930c-b4ace492ea64",
             "https://api.sandbox.nva.aws.unit.no/publication/019527b84693-a86c1cae-24da-4c9d-9bff-e097fd9be2f1",
             "https://api.sandbox.nva.aws.unit.no/publication/019527b845e4-182ebbf0-9481-4a98-aad2-76b617cc1b0c"));

@@ -1,8 +1,9 @@
 PREFIX : <https://nva.sikt.no/ontology/publication#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
-SELECT ?id ?modifiedDate ?title ?date ?type ?publisher (GROUP_CONCAT(?name; separator="|") AS ?contributor) WHERE {
+SELECT ?id ?identifier ?modifiedDate ?title ?date ?type ?publisher (GROUP_CONCAT(?name; separator="|") AS ?contributor) WHERE {
   ?id a :Publication ;
+  :identifier ?identifier ;
   :modifiedDate ?modifiedDate ;
   (:|!:)*/:mainTitle ?title ;
   (:|!:)*/:publicationDate ?publicationDate ;
@@ -22,4 +23,4 @@ SELECT ?id ?modifiedDate ?title ?date ?type ?publisher (GROUP_CONCAT(?name; sepa
 
   BIND (IF(BOUND(?contextType) && ?contextType = :Journal && BOUND(?contextName), ?contextName, IF(BOUND(?publisherName), ?publisherName, "Unknown")) AS ?publisher)
 }
-GROUP BY ?id ?modifiedDate ?title ?date ?type ?publisher
+GROUP BY ?id ?identifier ?modifiedDate ?title ?date ?type ?publisher ORDER BY DESC(?identifier) DESC(?modifiedDate)

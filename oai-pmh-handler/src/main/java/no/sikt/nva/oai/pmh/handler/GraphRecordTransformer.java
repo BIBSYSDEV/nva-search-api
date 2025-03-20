@@ -93,8 +93,8 @@ public final class GraphRecordTransformer implements RecordTransformer {
   private static void appendContributors(QuerySolution resultItem, OaiDcType oaiDcType) {
     var contributorsJoinedString = resultItem.getLiteral(CONTRIBUTOR);
     if (nonNull(contributorsJoinedString)) {
-      String[] contributors = resultItem.getLiteral(CONTRIBUTOR).getString().split("\\|");
-      for (String contributor : contributors) {
+      var contributors = resultItem.getLiteral(CONTRIBUTOR).getString().split("\\|");
+      for (var contributor : contributors) {
         var creatorElement = OBJECT_FACTORY.createElementType();
         creatorElement.setValue(contributor);
         oaiDcType
@@ -116,7 +116,7 @@ public final class GraphRecordTransformer implements RecordTransformer {
     try (var queryExecution = QueryExecutionFactory.create(SPARQL_QUERY, model)) {
       var result = queryExecution.execSelect();
 
-      List<RecordType> records = new ArrayList<>();
+      var records = new ArrayList<RecordType>();
       while (result.hasNext()) {
         var resultItem = result.next();
         var record = new RecordType();

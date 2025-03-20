@@ -175,7 +175,7 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
   private JAXBElement<OAIPMHtype> listRecords(
       String from, String until, String incomingResumptionToken, String metadataPrefix) {
 
-    final SwsResponse response = doSearchForRecords(from, until, incomingResumptionToken);
+    final var response = doSearchForRecords(from, until, incomingResumptionToken);
 
     var oaiResponse = baseResponse();
     var oaiPmhType = oaiResponse.getValue();
@@ -211,13 +211,13 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
   private SwsResponse doSearchForRecords(
       String from, String until, String incomingResumptionToken) {
     final SwsResponse response;
-    if (incomingResumptionToken != null) {
+    if (nonNull(incomingResumptionToken)) {
       var token = ResumptionToken.from(incomingResumptionToken);
       var scrollQuery =
           ScrollQuery.builder().withScrollId(token.scrollId()).withTtl(SCROLL_TTL).build();
       response = scrollQuery.doSearch(scrollClient).swsResponse();
     } else {
-      final ResourceSearchQuery query = buildListRecordsPageQuery(from, until);
+      var query = buildListRecordsPageQuery(from, until);
       response = doSearch(query).swsResponse();
     }
     return response;
