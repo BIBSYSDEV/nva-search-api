@@ -40,7 +40,7 @@ public class GraphRecordTransformerTest {
   }
 
   @Test
-  void shouldReturnRecordsWithHeadersContainingIdWhenValidContentIsPresent()
+  void shouldReturnRecordsWithRecordValuesAndHeadersContainingIdentifierWhenValidContentIsPresent()
       throws JsonProcessingException {
     var hits = getSearchHits();
 
@@ -48,58 +48,30 @@ public class GraphRecordTransformerTest {
     assertThat(records, is(not(emptyIterable())));
     for (RecordType record : records) {
       JAXBElement<OaiDcType> type = (JAXBElement<OaiDcType>) record.getMetadata().getAny();
-      var title = extractTitle(type);
-      assertThat(title, is(notNullValue()));
-      assertThat(extractCreators(type), is(not(emptyIterable())));
-      assertThat(extractDate(type), is(notNullValue()));
-      assertThat(extractType(type), is(notNullValue()));
-      assertThat(extractPublisher(type), is(notNullValue()));
+      assertThat(extractValue(type, "title"), is(notNullValue()));
+      assertThat(extractValues(type, "creator"), is(not(emptyIterable())));
+      assertThat(extractValue(type, "date"), is(notNullValue()));
+      assertThat(extractValue(type, "type"), is(notNullValue()));
+      assertThat(extractValue(type, "publisher"), is(notNullValue()));
       assertWellFormedHeader(record);
     }
   }
 
-  private String extractType(JAXBElement<OaiDcType> type) {
+  private String extractValue(JAXBElement<OaiDcType> type, String localPart) {
     return type.getValue().getTitleOrCreatorOrSubject().stream()
-        .filter(e -> e.getName().getLocalPart().equals("type"))
+        .filter(e -> e.getName().getLocalPart().equals(localPart))
         .findAny()
         .map(JAXBElement::getValue)
         .map(ElementType::getValue)
         .orElse(null);
   }
 
-  private String extractDate(JAXBElement<OaiDcType> type) {
+  private List<String> extractValues(JAXBElement<OaiDcType> type, String localPart) {
     return type.getValue().getTitleOrCreatorOrSubject().stream()
-        .filter(e -> e.getName().getLocalPart().equals("date"))
-        .findAny()
-        .map(JAXBElement::getValue)
-        .map(ElementType::getValue)
-        .orElse(null);
-  }
-
-  private List<String> extractCreators(JAXBElement<OaiDcType> type) {
-    return type.getValue().getTitleOrCreatorOrSubject().stream()
-        .filter(e -> e.getName().getLocalPart().equals("creator"))
+        .filter(e -> e.getName().getLocalPart().equals(localPart))
         .map(JAXBElement::getValue)
         .map(ElementType::getValue)
         .toList();
-  }
-
-  private String extractTitle(JAXBElement<OaiDcType> type) {
-    return type.getValue().getTitleOrCreatorOrSubject().stream()
-        .filter(e -> e.getName().getLocalPart().equals("title"))
-        .findAny()
-        .map(JAXBElement::getValue)
-        .map(ElementType::getValue)
-        .orElse(null);
-  }
-
-  private String extractPublisher(JAXBElement<OaiDcType> type) {
-    return type.getValue().getTitleOrCreatorOrSubject().stream()
-        .filter(e -> e.getName().getLocalPart().equals("publisher"))
-        .findAny()
-        .map(JAXBElement::getValue)
-        .map(ElementType::getValue)
-        .orElse(null);
   }
 
   private static void assertWellFormedHeader(RecordType record) {

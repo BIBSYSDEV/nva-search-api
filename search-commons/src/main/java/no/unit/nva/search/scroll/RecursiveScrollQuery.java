@@ -19,11 +19,6 @@ import org.opensearch.action.search.SearchScrollRequest;
 import org.opensearch.common.xcontent.XContentType;
 import org.opensearch.core.xcontent.ToXContent;
 
-/**
- * RecursiveScrollQuery is a class that sends a request to the search index.
- *
- * @author Sondre Vestad
- */
 public final class RecursiveScrollQuery extends Query<ScrollParameter> {
 
   private static final int MAX_PAGES = 4;
