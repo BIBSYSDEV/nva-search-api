@@ -41,6 +41,7 @@ public class HitBuilder {
     rootNode.put("type", "Publication");
     rootNode.put("@context", "http://localhost:" + port + "/publication/context");
     rootNode.put("id", "http://localhost/publication/" + this.identifier);
+    rootNode.put("identifier", this.identifier);
     var publicationDateNode = new ObjectNode(JsonNodeFactory.instance);
     publicationDateNode.put("year", "2020");
     publicationDateNode.put("month", "01");
