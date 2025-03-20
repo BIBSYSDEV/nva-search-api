@@ -151,7 +151,7 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
       SUCCESS,
       SIZE_LIMIT_EXCEEDED,
       OTHER_FAILURE
-    };
+    }
 
     public static AttemptResponse success(String result) {
       return new AttemptResponse(AttemptStatus.SUCCESS, result, null);
