@@ -3,6 +3,7 @@ package no.unit.nva.search.ticket;
 import static no.unit.nva.common.Containers.container;
 import static no.unit.nva.common.Containers.indexingClient;
 import static no.unit.nva.common.TestConstants.DELAY_AFTER_INDEXING;
+import static no.unit.nva.constants.IndexMappingsAndSettings.TICKET_MAPPINGS;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.ticket.TicketParameter.AGGREGATION;
 import static no.unit.nva.search.ticket.TicketParameter.FROM;
@@ -13,17 +14,14 @@ import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
 import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
 import static nva.commons.apigateway.AccessRight.SUPPORT;
 import static nva.commons.core.attempt.Try.attempt;
-import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -44,7 +42,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 public class TicketClientViewingScopeTest {
 
-  private static final String TICKET_MAPPING_DEV_JSON = "ticket_mappings_dev.json";
   private static final String indexName = "tickets";
   private static TicketClient searchClient;
 
@@ -52,12 +49,6 @@ public class TicketClientViewingScopeTest {
   public static void setUp() {
     var cachedJwtProvider = setupMockedCachedJwtProvider();
     searchClient = new TicketClient(HttpClient.newHttpClient(), cachedJwtProvider);
-  }
-
-  public static Map<String, Object> loadMapFromResource(String resource) {
-    var mappingsJson = stringFromResources(Path.of(resource));
-    var type = new TypeReference<Map<String, Object>>() {};
-    return attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
   }
 
   @BeforeEach
@@ -91,7 +82,7 @@ public class TicketClientViewingScopeTest {
         new IndexDocument(
             new EventConsumptionAttributes(indexName, SortableIdentifier.next()),
             JsonUtils.dtoObjectMapper.readTree(json));
-    indexingClient.createIndex(indexName, loadMapFromResource(TICKET_MAPPING_DEV_JSON));
+    indexingClient.createIndex(indexName, TICKET_MAPPINGS.asMap());
     indexingClient.addDocumentToIndex(document);
     Thread.sleep(DELAY_AFTER_INDEXING);
 
@@ -140,7 +131,7 @@ public class TicketClientViewingScopeTest {
         new IndexDocument(
             new EventConsumptionAttributes(indexName, SortableIdentifier.next()),
             JsonUtils.dtoObjectMapper.readTree(json));
-    indexingClient.createIndex(indexName, loadMapFromResource(TICKET_MAPPING_DEV_JSON));
+    indexingClient.createIndex(indexName, TICKET_MAPPINGS.asMap());
     indexingClient.addDocumentToIndex(document);
     Thread.sleep(DELAY_AFTER_INDEXING);
 
@@ -188,7 +179,7 @@ public class TicketClientViewingScopeTest {
         new IndexDocument(
             new EventConsumptionAttributes(indexName, SortableIdentifier.next()),
             JsonUtils.dtoObjectMapper.readTree(json));
-    indexingClient.createIndex(indexName, loadMapFromResource(TICKET_MAPPING_DEV_JSON));
+    indexingClient.createIndex(indexName, TICKET_MAPPINGS.asMap());
     indexingClient.addDocumentToIndex(document);
     Thread.sleep(DELAY_AFTER_INDEXING);
 
@@ -212,7 +203,7 @@ public class TicketClientViewingScopeTest {
   @Test
   void shouldReturnOnlyTicketsWithSubunitFromQueryParamsWhenProvided()
       throws BadRequestException, UnauthorizedException, IOException, InterruptedException {
-    indexingClient.createIndex(indexName, loadMapFromResource(TICKET_MAPPING_DEV_JSON));
+    indexingClient.createIndex(indexName, TICKET_MAPPINGS.asMap());
 
     var subunit1 = randomString();
     var topLevel = randomString();
@@ -287,7 +278,7 @@ public class TicketClientViewingScopeTest {
   @Test
   void shouldReturnOnlyTicketsWithViewingsWhenViewingScopeIsProvided()
       throws BadRequestException, UnauthorizedException, IOException, InterruptedException {
-    indexingClient.createIndex(indexName, loadMapFromResource(TICKET_MAPPING_DEV_JSON));
+    indexingClient.createIndex(indexName, TICKET_MAPPINGS.asMap());
 
     var viewingScope = randomString();
     var toplevel = randomUri();
@@ -367,7 +358,7 @@ public class TicketClientViewingScopeTest {
   @Test
   void shouldFilterOnQueryParamWithinViewingScopeWhenViewingScopeHasMultipleUnits()
       throws BadRequestException, UnauthorizedException, IOException, InterruptedException {
-    indexingClient.createIndex(indexName, loadMapFromResource(TICKET_MAPPING_DEV_JSON));
+    indexingClient.createIndex(indexName, TICKET_MAPPINGS.asMap());
 
     var viewingScope1 = randomString();
     var toplevel = randomUri();
@@ -457,7 +448,7 @@ public class TicketClientViewingScopeTest {
   @Test
   void shouldNotReturnDocumentWithTheSameTopLevelThatIsNotWithinViewingScope()
       throws BadRequestException, UnauthorizedException, IOException, InterruptedException {
-    indexingClient.createIndex(indexName, loadMapFromResource(TICKET_MAPPING_DEV_JSON));
+    indexingClient.createIndex(indexName, TICKET_MAPPINGS.asMap());
 
     var viewingScope = randomString();
     var toplevel = randomUri();
@@ -507,7 +498,7 @@ public class TicketClientViewingScopeTest {
   void
       shouldNotReturnDocumentWithTheSameTopLevelThatIsNotWithinViewingScopeWhenConsumingQueryParam()
           throws BadRequestException, UnauthorizedException, IOException, InterruptedException {
-    indexingClient.createIndex(indexName, loadMapFromResource(TICKET_MAPPING_DEV_JSON));
+    indexingClient.createIndex(indexName, TICKET_MAPPINGS.asMap());
 
     var viewingScope = randomString();
     var toplevel = randomUri();

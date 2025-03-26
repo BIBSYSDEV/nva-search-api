@@ -27,6 +27,7 @@ import nva.commons.core.attempt.Try;
 import nva.commons.secrets.SecretsReader;
 import org.opensearch.action.DocWriteResponse;
 import org.opensearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.opensearch.action.admin.indices.refresh.RefreshRequest;
 import org.opensearch.action.bulk.BulkRequest;
 import org.opensearch.action.bulk.BulkResponse;
 import org.opensearch.action.delete.DeleteRequest;
@@ -73,6 +74,11 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
         CognitoAuthenticator.prepareWithCognitoCredentials(cognitoCredentials);
     var cachedJwtProvider = CachedJwtProvider.prepareWithAuthenticator(cognitoAuthenticator);
     return new IndexingClient(defaultRestHighLevelClientWrapper(), cachedJwtProvider);
+  }
+
+  public void refreshIndex(String indexName) throws IOException {
+    var refreshRequest = new RefreshRequest(indexName);
+    openSearchClient.indices().refresh(refreshRequest, getRequestOptions());
   }
 
   private static DeleteRequest deleteDocumentRequest(String index, String identifier) {

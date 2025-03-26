@@ -17,6 +17,15 @@
       "type": "nested",
       "include_in_parent": true,
       "properties": {
+        "mainTitle": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "normalizer": "lowercase_normalizer"
+            }
+          }
+        },
         "abstract": {
           "type": "text"
         },

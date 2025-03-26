@@ -5,6 +5,8 @@ import static no.unit.nva.constants.Defaults.ENVIRONMENT;
 import java.io.IOException;
 import nva.commons.core.JacocoGenerated;
 import org.apache.http.HttpHost;
+import org.opensearch.action.admin.indices.refresh.RefreshRequest;
+import org.opensearch.action.admin.indices.refresh.RefreshResponse;
 import org.opensearch.action.bulk.BulkRequest;
 import org.opensearch.action.bulk.BulkResponse;
 import org.opensearch.action.delete.DeleteRequest;
@@ -93,5 +95,10 @@ public class RestHighLevelClientWrapper {
   @JacocoGenerated
   public BulkResponse bulk(BulkRequest request, RequestOptions requestOption) throws IOException {
     return client.bulk(request, requestOption);
+  }
+
+  public RefreshResponse refreshIndex(RefreshRequest refreshRequest, RequestOptions requestOptions)
+      throws IOException {
+    return client.indices().refresh(refreshRequest, requestOptions);
   }
 }

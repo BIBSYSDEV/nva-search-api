@@ -3,6 +3,10 @@ package no.unit.nva.common;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.common.TestConstants.DELAY_AFTER_INDEXING;
 import static no.unit.nva.common.TestConstants.OPEN_SEARCH_IMAGE;
+import static no.unit.nva.constants.IndexMappingsAndSettings.IMPORT_CANDIDATE_MAPPINGS;
+import static no.unit.nva.constants.IndexMappingsAndSettings.RESOURCE_MAPPINGS;
+import static no.unit.nva.constants.IndexMappingsAndSettings.RESOURCE_SETTINGS;
+import static no.unit.nva.constants.IndexMappingsAndSettings.TICKET_MAPPINGS;
 import static no.unit.nva.constants.Words.IDENTIFIER;
 import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.constants.Words.RESOURCES;
@@ -33,16 +37,11 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class Containers {
 
   public static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
-  public static final String IMPORT_CANDIDATE_MAPPING_DEV_JSON =
-      "import_candidate_mappings_dev.json";
   private static final Logger logger = LoggerFactory.getLogger(Containers.class);
 
   private static final String RESOURCE_DATASOURCE_JSON = "resource_datasource.json";
-  private static final String RESOURCE_MAPPING_DEV_JSON = "resource_mappings_dev.json";
-  private static final String RESOURCE_SETTING_DEV_JSON = "resource_settings_dev.json";
 
   private static final String TICKET_DATASOURCE_JSON = "ticket_datasource.json";
-  private static final String TICKET_MAPPING_DEV_JSON = "ticket_mappings_dev.json";
 
   private static final String IMPORT_CANDIDATE_DATASOURCE_JSON = "import_candidate_datasource.json";
   public static IndexingClient indexingClient;
@@ -57,9 +56,9 @@ public class Containers {
 
     logger.info("creating indexes");
 
-    createIndex(TICKETS, TICKET_MAPPING_DEV_JSON, null);
-    createIndex(IMPORT_CANDIDATES_INDEX, IMPORT_CANDIDATE_MAPPING_DEV_JSON, null);
-    createIndex(RESOURCES, RESOURCE_MAPPING_DEV_JSON, RESOURCE_SETTING_DEV_JSON);
+    createIndex(TICKETS, TICKET_MAPPINGS.asMap(), null);
+    createIndex(IMPORT_CANDIDATES_INDEX, IMPORT_CANDIDATE_MAPPINGS.asMap(), null);
+    createIndex(RESOURCES, RESOURCE_MAPPINGS.asMap(), RESOURCE_SETTINGS.asMap());
 
     logger.info("populating indexes");
 
@@ -107,11 +106,9 @@ public class Containers {
     }
   }
 
-  private static void createIndex(String indexName, String mappingsPath, String settingsPath)
+  private static void createIndex(
+      String indexName, Map<String, Object> mappings, Map<String, Object> settings)
       throws IOException {
-    var mappings = nonNull(mappingsPath) ? loadMapFromResource(mappingsPath) : null;
-    var settings = nonNull(settingsPath) ? loadMapFromResource(settingsPath) : null;
-
     if (nonNull(mappings) && nonNull(settings)) {
       indexingClient.createIndex(indexName, mappings, settings);
     } else if (nonNull(mappings)) {

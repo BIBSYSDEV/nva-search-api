@@ -3,6 +3,8 @@ package no.unit.nva.indexingclient.models;
 import java.io.IOException;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.opensearch.action.admin.indices.refresh.RefreshRequest;
+import org.opensearch.action.admin.indices.refresh.RefreshResponse;
 import org.opensearch.action.admin.indices.settings.put.UpdateSettingsRequest;
 import org.opensearch.action.support.master.AcknowledgedResponse;
 import org.opensearch.client.IndicesClient;
@@ -52,5 +54,10 @@ public class IndicesClientWrapper {
   public AcknowledgedResponse delete(
       DeleteIndexRequest deleteIndexRequest, RequestOptions requestOptions) throws IOException {
     return indicesClient.delete(deleteIndexRequest, requestOptions);
+  }
+
+  public RefreshResponse refresh(RefreshRequest refreshRequest, RequestOptions requestOptions)
+      throws IOException {
+    return indicesClient.refresh(refreshRequest, requestOptions);
   }
 }

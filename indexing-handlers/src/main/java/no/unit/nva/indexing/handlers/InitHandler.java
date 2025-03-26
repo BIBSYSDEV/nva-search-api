@@ -1,7 +1,8 @@
 package no.unit.nva.indexing.handlers;
 
-import static no.unit.nva.constants.Words.DOIREQUESTS_INDEX;
-import static no.unit.nva.constants.Words.MESSAGES_INDEX;
+import static no.unit.nva.constants.IndexMappingsAndSettings.RESOURCE_MAPPINGS;
+import static no.unit.nva.constants.IndexMappingsAndSettings.RESOURCE_SETTINGS;
+import static no.unit.nva.constants.IndexMappingsAndSettings.TICKET_MAPPINGS;
 import static no.unit.nva.constants.Words.PUBLISHING_REQUESTS_INDEX;
 import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.constants.Words.TICKETS;
@@ -10,14 +11,12 @@ import static nva.commons.core.attempt.Try.attempt;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import no.unit.nva.indexing.model.IndexRequest;
 import no.unit.nva.indexingclient.IndexingClient;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.Failure;
-import nva.commons.core.ioutils.IoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,19 +24,11 @@ public class InitHandler implements RequestHandler<Object, String> {
 
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED. See logs";
-  public static final String TICKET_MAPPINGS =
-      IoUtils.stringFromResources(Path.of("ticket_mappings.json"));
-  private static final String RESOURCE_MAPPINGS =
-      IoUtils.stringFromResources(Path.of("resource_mappings.json"));
-  private static final String RESOURCE_SETTINGS =
-      IoUtils.stringFromResources(Path.of("resource_settings.json"));
 
   private static final List<IndexRequest> INDEXES =
       List.of(
-          new IndexRequest(RESOURCES, RESOURCE_MAPPINGS, RESOURCE_SETTINGS),
-          new IndexRequest(DOIREQUESTS_INDEX),
-          new IndexRequest(MESSAGES_INDEX),
-          new IndexRequest(TICKETS, TICKET_MAPPINGS),
+          new IndexRequest(RESOURCES, RESOURCE_MAPPINGS.asJson(), RESOURCE_SETTINGS.asJson()),
+          new IndexRequest(TICKETS, TICKET_MAPPINGS.asJson()),
           new IndexRequest(PUBLISHING_REQUESTS_INDEX));
   private static final Logger logger = LoggerFactory.getLogger(InitHandler.class);
   private final IndexingClient indexingClient;
