@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.nio.file.Path;
+import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexingclient.IndexingClient;
@@ -36,7 +37,9 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.opensearch.client.RestClient;
 import org.opensearch.testcontainers.OpensearchContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -49,6 +52,11 @@ public class ResourceSearchContainerTests {
   private static final String INDEX_NAME = "resources";
   private static final String INDEX_DOCUMENT_TEMPLATE =
       IoUtils.stringFromResources(Path.of("indexDocumentTemplate.json"));
+  private static final String REQUEST_INFO_JSON_TEMPLATE =
+      IoUtils.stringFromResources(Path.of("requestInfoTemplate.json"));
+  private static final String TITLE_UPPERCASE_A = "A";
+  private static final String TITLE_LOWERCASE_A = "A";
+  private static final String TITLE_LOWERCASE_B = "b";
 
   private static IndexingClient indexingClient;
   private static ResourceClient resourceClient;
@@ -82,23 +90,14 @@ public class ResourceSearchContainerTests {
     indexingClient.deleteIndex(INDEX_NAME);
   }
 
-  @Test
-  void sortingByTitleIsCaseInsensitive() throws IOException, BadRequestException, ApiIoException {
-    var identifier1 = SortableIdentifier.next();
-    var title1 = "A";
-    indexingClient.addDocumentToIndex(indexDocument(identifier1, title1));
-    var identifier2 = SortableIdentifier.next();
-    var title2 = "b";
-    indexingClient.addDocumentToIndex(indexDocument(identifier2, title2));
-    var identifier3 = SortableIdentifier.next();
-    var title3 = "a";
-    indexingClient.addDocumentToIndex(indexDocument(identifier3, title3));
+  @ParameterizedTest
+  @MethodSource("sortOrderDataProvider")
+  void sortingByTitleIsCaseInsensitive(String sortOrder, String[] expectedOrderOfTitles)
+      throws IOException, BadRequestException, ApiIoException {
 
-    indexingClient.refreshIndex(INDEX_NAME);
+    populateAndRefreshIndex();
 
-    var requestInfo =
-        RequestInfo.fromString(
-            IoUtils.stringFromResources(Path.of("requestInfo.json")), HttpClient.newHttpClient());
+    var requestInfo = getRequestInfo(sortOrder);
     var result =
         ResourceSearchQuery.builder()
             .fromRequestInfo(requestInfo)
@@ -111,13 +110,37 @@ public class ResourceSearchContainerTests {
             .apply()
             .doSearch(resourceClient);
 
-    var expectedOrderOfTitles = new String[] {title3, title1, title2};
     var actualOrderOfTitles =
         result.toPagedResponse().hits().stream()
             .map(node -> node.at("/entityDescription/mainTitle").textValue())
             .toList();
 
     assertThat(actualOrderOfTitles, IsIterableContainingInOrder.contains(expectedOrderOfTitles));
+  }
+
+  private void populateAndRefreshIndex() throws IOException {
+    indexingClient.addDocumentToIndex(indexDocument(SortableIdentifier.next(), TITLE_UPPERCASE_A));
+    indexingClient.addDocumentToIndex(indexDocument(SortableIdentifier.next(), TITLE_LOWERCASE_B));
+    indexingClient.addDocumentToIndex(indexDocument(SortableIdentifier.next(), TITLE_LOWERCASE_A));
+
+    indexingClient.refreshIndex(INDEX_NAME);
+  }
+
+  static Stream<Arguments> sortOrderDataProvider() {
+    return Stream.of(
+        Arguments.argumentSet(
+            "sort order ascending",
+            "asc",
+            new String[] {TITLE_LOWERCASE_A, TITLE_UPPERCASE_A, TITLE_LOWERCASE_B}),
+        Arguments.argumentSet(
+            "sort order descending",
+            "desc",
+            new String[] {TITLE_LOWERCASE_B, TITLE_LOWERCASE_A, TITLE_UPPERCASE_A}));
+  }
+
+  private static RequestInfo getRequestInfo(String sortOrder) throws ApiIoException {
+    var actualJson = REQUEST_INFO_JSON_TEMPLATE.replaceAll("@@SORT_ORDER@@", sortOrder);
+    return RequestInfo.fromString(actualJson, HttpClient.newHttpClient());
   }
 
   private IndexDocument indexDocument(SortableIdentifier identifier, String title) {
