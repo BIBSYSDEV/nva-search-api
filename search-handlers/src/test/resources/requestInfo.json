@@ -1,0 +1,15 @@
+{
+  "multiValueQueryStringParameters": {
+    "aggregation": ["none"],
+    "from": ["0"],
+    "results": ["10"],
+    "order": ["title"],
+    "sort": ["asc"]
+  },
+  "headers": {
+    "Accept": "application/json; version=2024-12-01"
+  },
+  "requestContext": {
+    "domainName": "example.com"
+  }
+}

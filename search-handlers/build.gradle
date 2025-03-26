@@ -26,8 +26,13 @@ dependencies {
 
     implementation libs.problem
 
+    testImplementation libs.nva.identifiers
     testImplementation libs.bundles.logging
     testImplementation libs.bundles.testing
+    testImplementation libs.bundles.testcontainers
+//    testImplementation(libs.bundles.testcontainers) {
+//        exclude group: 'org.apache.commons', module: 'commons-compress'
+//    }
     testImplementation project(':search-testing')
     testImplementation project(':search-commons')
 }
