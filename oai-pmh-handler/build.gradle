@@ -24,5 +24,4 @@ dependencies {
 
 test {
     environment("SEARCH_INFRASTRUCTURE_API_URI", "https://localhost/search")
-    environment("ALLOWED_ORIGIN", "*")
 }
