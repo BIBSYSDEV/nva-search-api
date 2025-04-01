@@ -91,9 +91,7 @@ class ExportResourceHandlerTest {
 
     var s3data =
         handler.processS3Input(
-            null,
-            RequestInfo.fromRequest(getRequestInputStreamAccepting(), HttpClient.newHttpClient()),
-            new FakeContext());
+            null, RequestInfo.fromRequest(getRequestInputStreamAccepting()), new FakeContext());
 
     assertThat(StringUtils.countMatches(s3data, expectedTitle1), is(1));
     assertThat(StringUtils.countMatches(s3data, expectedTitle2), is(1));
@@ -118,8 +116,7 @@ class ExportResourceHandlerTest {
           () ->
               handler.processS3Input(
                   null,
-                  RequestInfo.fromRequest(
-                      getRequestInputStreamAccepting(), HttpClient.newHttpClient()),
+                  RequestInfo.fromRequest(getRequestInputStreamAccepting()),
                   new FakeContext()));
 
       // very 4 attempts (page size of 500, 250, 125, 65):

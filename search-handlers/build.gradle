@@ -35,7 +35,6 @@ dependencies {
 }
 
 test {
-    useJUnitPlatform()
     environment "AWS_REGION", "eu-west-1"
     environment "LARGE_API_RESPONSES_BUCKET", "some-bucket"
     environment "ALLOWED_ORIGIN", "*"

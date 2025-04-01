@@ -20,7 +20,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.http.HttpClient;
 import java.nio.file.Path;
 import java.util.Map;
 import no.unit.nva.search.common.FakeGatewayResponse;
@@ -28,7 +27,6 @@ import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.response.ResourceSearchResponse;
 import no.unit.nva.testutils.HandlerRequestBuilder;
-import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -49,9 +47,7 @@ class SearchResource20241201HandlerTest {
   void setUp() {
 
     mockedSearchClient = mock(ResourceClient.class);
-    handler =
-        new SearchResourceHandler(
-            new Environment(), mockedSearchClient, HttpClient.newHttpClient());
+    handler = new SearchResourceHandler(mockedSearchClient);
     contextMock = mock(Context.class);
     outputStream = new ByteArrayOutputStream();
   }
