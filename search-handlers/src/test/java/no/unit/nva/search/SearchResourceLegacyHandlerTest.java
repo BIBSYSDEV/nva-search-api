@@ -28,7 +28,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.http.HttpClient;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +40,6 @@ import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
-import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -87,9 +85,7 @@ class SearchResourceLegacyHandlerTest {
   void setUp() {
 
     mockedSearchClient = mock(ResourceClient.class);
-    handler =
-        new SearchResourceHandler(
-            new Environment(), mockedSearchClient, HttpClient.newHttpClient());
+    handler = new SearchResourceHandler(mockedSearchClient);
     contextMock = mock(Context.class);
     outputStream = new ByteArrayOutputStream();
   }

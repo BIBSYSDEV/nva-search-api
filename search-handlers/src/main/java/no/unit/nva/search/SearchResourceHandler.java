@@ -13,7 +13,6 @@ import static no.unit.nva.search.resource.ResourceParameter.SORT;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
-import java.net.http.HttpClient;
 import java.util.List;
 import java.util.Map;
 import no.unit.nva.search.common.ContentTypeUtils;
@@ -25,7 +24,6 @@ import no.unit.nva.search.resource.SimplifiedMutator;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
-import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 import org.apache.http.HttpHeaders;
 
@@ -40,12 +38,11 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
 
   @JacocoGenerated
   public SearchResourceHandler() {
-    this(new Environment(), defaultClient(), HttpClient.newHttpClient());
+    this(defaultClient());
   }
 
-  public SearchResourceHandler(
-      Environment environment, ResourceClient resourceClient, HttpClient httpClient) {
-    super(Void.class, environment, httpClient);
+  public SearchResourceHandler(ResourceClient resourceClient) {
+    super(Void.class);
     this.opensearchClient = resourceClient;
   }
 

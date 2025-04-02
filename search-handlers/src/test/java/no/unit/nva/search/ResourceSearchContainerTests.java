@@ -140,7 +140,7 @@ public class ResourceSearchContainerTests {
 
   private static RequestInfo getRequestInfo(String sortOrder) throws ApiIoException {
     var actualJson = REQUEST_INFO_JSON_TEMPLATE.replaceAll("@@SORT_ORDER@@", sortOrder);
-    return RequestInfo.fromString(actualJson, HttpClient.newHttpClient());
+    return RequestInfo.fromString(actualJson);
   }
 
   private IndexDocument indexDocument(SortableIdentifier identifier, String title) {
