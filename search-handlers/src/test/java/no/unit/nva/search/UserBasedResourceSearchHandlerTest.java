@@ -33,7 +33,6 @@ import no.unit.nva.stubs.FakeContext;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.Environment;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -125,7 +124,7 @@ public class UserBasedResourceSearchHandlerTest {
     verify(resourceClient, Mockito.times(1)).doSearch(argThat(matcher));
   }
 
-  private static @NotNull SwsResponse emptySwsResponse() {
+  private static SwsResponse emptySwsResponse() {
     return new SwsResponse(
         100,
         false,

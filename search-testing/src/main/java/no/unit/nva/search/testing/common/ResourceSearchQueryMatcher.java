@@ -32,28 +32,19 @@ public final class ResourceSearchQueryMatcher implements ArgumentMatcher<Resourc
   }
 
   private boolean hasNamedTermQuery(QueryFilter filters) {
-    var containsAll = true;
-    for (var entry : namedFilterQueries.entrySet()) {
-      if (!filters.hasTermsQuery(
-          entry.getKey(), entry.getValue().fieldName(), entry.getValue().values())) {
-        containsAll = false;
-        break;
-      }
-    }
-    return containsAll;
+    return namedFilterQueries.entrySet().stream().allMatch(entry -> hasTermsQuery(filters, entry));
+  }
+
+  private static boolean hasTermsQuery(
+      QueryFilter filters, Entry<String, TermsQueryBuilderExpectation> entry) {
+    return filters.hasTermsQuery(
+        entry.getKey(), entry.getValue().fieldName(), entry.getValue().values());
   }
 
   private boolean hasParameters(
       Set<Entry<ResourceParameter, String>> actualParameters,
       Map<ResourceParameter, String> expectedParameters) {
-    var containsAll = true;
-    for (Map.Entry<ResourceParameter, String> entry : expectedParameters.entrySet()) {
-      if (!actualParameters.contains(entry)) {
-        containsAll = false;
-        break;
-      }
-    }
-    return containsAll;
+    return actualParameters.containsAll(expectedParameters.entrySet());
   }
 
   @Override
