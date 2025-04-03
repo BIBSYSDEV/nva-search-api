@@ -35,6 +35,8 @@ import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.common.records.SwsResponse.HitsInfo;
 import no.unit.nva.search.common.records.SwsResponse.HitsInfo.TotalInfo;
 import no.unit.nva.search.resource.ResourceClient;
+import no.unit.nva.search.resource.ResourceParameter;
+import no.unit.nva.search.testing.common.ResourceSearchQueryMatcher;
 import no.unit.nva.stubs.FakeContext;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
@@ -142,8 +144,13 @@ public class OaiPmhHandlerTest {
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldReturnExpectedSetsWhenAskingForListSets(String method)
       throws IOException, JAXBException {
-    when(resourceClient.doSearch(argThat(new ResourceSearchQueryMatcher(0, 0, "all"))))
-        .thenReturn(swsResponse());
+    var matcher =
+        new ResourceSearchQueryMatcher.Builder()
+            .withPageParameter(ResourceParameter.FROM, "0")
+            .withPageParameter(ResourceParameter.SIZE, "0")
+            .withSearchParameter(ResourceParameter.AGGREGATION, "all")
+            .build();
+    when(resourceClient.doSearch(argThat(matcher))).thenReturn(swsResponse());
 
     var inputStream = request(VerbType.LIST_SETS.value(), method);
 
