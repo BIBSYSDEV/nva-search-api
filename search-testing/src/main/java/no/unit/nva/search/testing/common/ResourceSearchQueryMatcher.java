@@ -1,8 +1,6 @@
 package no.unit.nva.search.testing.common;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -30,22 +28,14 @@ public final class ResourceSearchQueryMatcher implements ArgumentMatcher<Resourc
   public boolean matches(ResourceSearchQuery actual) {
     return hasParameters(actual.parameters().getPageEntries(), pageParameters)
         && hasParameters(actual.parameters().getSearchEntries(), searchParameters)
-        && hasNamedFilterTermQuery(actual.filters());
+        && hasNamedTermQuery(actual.filters());
   }
 
-  private boolean hasNamedFilterTermQuery(QueryFilter filters) {
+  private boolean hasNamedTermQuery(QueryFilter filters) {
     var containsAll = true;
     for (var entry : namedFilterQueries.entrySet()) {
-      var actual = filters.getNamedTermsQuery(entry.getKey());
-      if (actual.isPresent()) {
-        var actualQuery = actual.get();
-        if (!actualQuery.fieldName().equals(entry.getValue().fieldName())
-            || !new HashSet<>(actualQuery.values())
-                .containsAll(Arrays.asList(entry.getValue().values()))) {
-          containsAll = false;
-          break;
-        }
-      } else {
+      if (!filters.hasTermsQuery(
+          entry.getKey(), entry.getValue().fieldName(), entry.getValue().values())) {
         containsAll = false;
         break;
       }
@@ -71,7 +61,7 @@ public final class ResourceSearchQueryMatcher implements ArgumentMatcher<Resourc
     return ResourceSearchQuery.class;
   }
 
-  public record TermsQueryBuilderExpectation(String fieldName, String... values) {}
+  public record TermsQueryBuilderExpectation(String fieldName, Object... values) {}
 
   public static class Builder {
     private final Map<ResourceParameter, String> pageParameters = new ConcurrentHashMap<>();
