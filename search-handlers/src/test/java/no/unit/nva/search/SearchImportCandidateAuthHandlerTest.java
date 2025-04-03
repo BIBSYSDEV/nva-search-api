@@ -26,7 +26,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.http.HttpClient;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +39,6 @@ import no.unit.nva.search.importcandidate.ImportCandidateClient;
 import no.unit.nva.search.testing.common.FakeGatewayResponse;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
-import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -88,9 +86,7 @@ class SearchImportCandidateAuthHandlerTest {
   void setUp() {
 
     mockedSearchClient = mock(ImportCandidateClient.class);
-    handler =
-        new SearchImportCandidateAuthHandler(
-            new Environment(), mockedSearchClient, HttpClient.newHttpClient());
+    handler = new SearchImportCandidateAuthHandler(mockedSearchClient);
     contextMock = mock(Context.class);
     outputStream = new ByteArrayOutputStream();
   }

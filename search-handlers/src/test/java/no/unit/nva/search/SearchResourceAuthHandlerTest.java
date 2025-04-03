@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.http.HttpClient;
 import java.nio.file.Path;
 import java.util.Map;
 import no.unit.nva.search.common.records.SwsResponse;
@@ -32,7 +31,6 @@ import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.testing.common.FakeGatewayResponse;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.AccessRight;
-import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -51,9 +49,7 @@ class SearchResourceAuthHandlerTest {
   void setUp() {
 
     mockedSearchClient = mock(ResourceClient.class);
-    handler =
-        new SearchResourceAuthHandler(
-            new Environment(), mockedSearchClient, HttpClient.newHttpClient());
+    handler = new SearchResourceAuthHandler(mockedSearchClient);
     contextMock = mock(Context.class);
     outputStream = new ByteArrayOutputStream();
   }

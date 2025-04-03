@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.http.HttpClient;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Map;
@@ -35,7 +34,6 @@ import no.unit.nva.search.testing.common.FakeGatewayResponse;
 import no.unit.nva.search.ticket.TicketClient;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.AccessRight;
-import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -56,9 +54,7 @@ class SearchTicketAuthHandlerTest {
   void setUp() {
 
     mockedSearchClient = mock(TicketClient.class);
-    handler =
-        new SearchTicketAuthHandler(
-            new Environment(), mockedSearchClient, HttpClient.newHttpClient());
+    handler = new SearchTicketAuthHandler(mockedSearchClient);
     contextMock = mock(Context.class);
     outputStream = new ByteArrayOutputStream();
   }

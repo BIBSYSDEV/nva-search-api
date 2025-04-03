@@ -9,7 +9,6 @@ import static no.unit.nva.search.ticket.TicketParameter.SIZE;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
-import java.net.http.HttpClient;
 import java.util.List;
 import no.unit.nva.search.ticket.TicketClient;
 import no.unit.nva.search.ticket.TicketSearchQuery;
@@ -18,7 +17,6 @@ import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
-import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
 /**
@@ -32,12 +30,11 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
 
   @JacocoGenerated
   public SearchTicketAuthHandler() {
-    this(new Environment(), defaultClient(), HttpClient.newHttpClient());
+    this(defaultClient());
   }
 
-  public SearchTicketAuthHandler(
-      Environment environment, TicketClient ticketClient, HttpClient httpClient) {
-    super(Void.class, environment, httpClient);
+  public SearchTicketAuthHandler(TicketClient ticketClient) {
+    super(Void.class);
     this.opensearchClient = ticketClient;
   }
 

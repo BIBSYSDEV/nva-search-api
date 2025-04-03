@@ -11,7 +11,6 @@ import static no.unit.nva.search.resource.ResourceParameter.SORT;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
-import java.net.http.HttpClient;
 import java.util.List;
 import no.unit.nva.search.common.ContentTypeUtils;
 import no.unit.nva.search.common.records.JsonNodeMutator;
@@ -25,7 +24,6 @@ import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
-import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
 /**
@@ -39,12 +37,11 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
 
   @JacocoGenerated
   public SearchResourceAuthHandler() {
-    this(new Environment(), defaultClient(), HttpClient.newHttpClient());
+    this(defaultClient());
   }
 
-  public SearchResourceAuthHandler(
-      Environment environment, ResourceClient resourceClient, HttpClient httpClient) {
-    super(Void.class, environment, httpClient);
+  public SearchResourceAuthHandler(ResourceClient resourceClient) {
+    super(Void.class);
     this.opensearchClient = resourceClient;
   }
 
