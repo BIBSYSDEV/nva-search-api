@@ -7,7 +7,6 @@ import static no.unit.nva.search.resource.ResourceParameter.SORT;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import java.net.HttpURLConnection;
-import java.net.http.HttpClient;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.ResourceSearchQuery;
 import no.unit.nva.search.resource.SimplifiedMutator;
@@ -25,12 +24,11 @@ public class UserBasedResourceSearchHandler extends ApiGatewayHandler<Void, Stri
 
   @JacocoGenerated
   public UserBasedResourceSearchHandler() {
-    this(new Environment(), HttpClient.newHttpClient(), ResourceClient.defaultClient());
+    this(new Environment(), ResourceClient.defaultClient());
   }
 
-  public UserBasedResourceSearchHandler(
-      Environment environment, HttpClient httpClient, ResourceClient resourceClient) {
-    super(Void.class, environment, httpClient);
+  public UserBasedResourceSearchHandler(Environment environment, ResourceClient resourceClient) {
+    super(Void.class, environment);
     this.resourceClient = resourceClient;
   }
 

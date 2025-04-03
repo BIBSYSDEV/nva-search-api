@@ -20,7 +20,6 @@ import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.http.HttpClient;
 import java.util.Collections;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.search.common.records.SwsResponse;
@@ -50,8 +49,7 @@ public class UserBasedResourceSearchHandlerTest {
     resourceClient = mock(ResourceClient.class);
     var environment = mock(Environment.class);
     when(environment.readEnv(ALLOWED_ORIGIN_ENV)).thenReturn("*");
-    handlerUnderTest =
-        new UserBasedResourceSearchHandler(environment, HttpClient.newHttpClient(), resourceClient);
+    handlerUnderTest = new UserBasedResourceSearchHandler(environment, resourceClient);
   }
 
   @Test
