@@ -30,15 +30,18 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class ResourceClientAllScientificValuesTest {
 
   private static final String indexName = "resources";
-  private static final URI SEARCH_URI = URI.create("https://x.org/?allScientificValues=Unassigned,LevelZero");
+  private static final URI ALL_SCIENTIFIC_VALUES_UNASSIGNED_AND_LEVEL_ZERO = URI.create(
+      "https://x.org/?allScientificValues=Unassigned,LevelZero");
   private static ResourceClient resourceClient;
 
   @BeforeAll
   public static void setUp() throws IOException {
     indexingClient.deleteIndex(indexName);
     var cachedJwtProvider = setupMockedCachedJwtProvider();
-    var userSettingsClient = new UserSettingsClient(mock(HttpClient.class), cachedJwtProvider);
-    resourceClient = new ResourceClient(HttpClient.newHttpClient(), cachedJwtProvider, userSettingsClient);
+    var mochedHttpClient = mock(HttpClient.class);
+    var userSettingsClient = new UserSettingsClient(mochedHttpClient, cachedJwtProvider);
+    resourceClient =
+        new ResourceClient(HttpClient.newHttpClient(), cachedJwtProvider, userSettingsClient);
   }
 
   @BeforeEach
@@ -72,10 +75,10 @@ public class ResourceClientAllScientificValuesTest {
         }
         """;
     createIndexAndIndexDocument(json);
-
+    
     var response =
         ResourceSearchQuery.builder()
-            .fromTestQueryParameters(queryToMapEntries(SEARCH_URI))
+            .fromTestQueryParameters(queryToMapEntries(ALL_SCIENTIFIC_VALUES_UNASSIGNED_AND_LEVEL_ZERO))
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .withRequiredParameters(FROM, SIZE)
             .build()
@@ -113,9 +116,10 @@ public class ResourceClientAllScientificValuesTest {
         """;
     createIndexAndIndexDocument(json);
 
+    
     var response =
         ResourceSearchQuery.builder()
-            .fromTestQueryParameters(queryToMapEntries(SEARCH_URI))
+            .fromTestQueryParameters(queryToMapEntries(ALL_SCIENTIFIC_VALUES_UNASSIGNED_AND_LEVEL_ZERO))
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .withRequiredParameters(FROM, SIZE)
             .build()
@@ -148,9 +152,10 @@ public class ResourceClientAllScientificValuesTest {
         """;
     createIndexAndIndexDocument(json);
 
+    
     var response =
         ResourceSearchQuery.builder()
-            .fromTestQueryParameters(queryToMapEntries(SEARCH_URI))
+            .fromTestQueryParameters(queryToMapEntries(ALL_SCIENTIFIC_VALUES_UNASSIGNED_AND_LEVEL_ZERO))
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .withRequiredParameters(FROM, SIZE)
             .build()
@@ -182,9 +187,10 @@ public class ResourceClientAllScientificValuesTest {
         """;
     createIndexAndIndexDocument(json);
 
+    
     var response =
         ResourceSearchQuery.builder()
-            .fromTestQueryParameters(queryToMapEntries(SEARCH_URI))
+            .fromTestQueryParameters(queryToMapEntries(ALL_SCIENTIFIC_VALUES_UNASSIGNED_AND_LEVEL_ZERO))
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .withRequiredParameters(FROM, SIZE)
             .build()
@@ -212,9 +218,10 @@ public class ResourceClientAllScientificValuesTest {
         """;
     createIndexAndIndexDocument(json);
 
+    
     var response =
         ResourceSearchQuery.builder()
-            .fromTestQueryParameters(queryToMapEntries(SEARCH_URI))
+            .fromTestQueryParameters(queryToMapEntries(ALL_SCIENTIFIC_VALUES_UNASSIGNED_AND_LEVEL_ZERO))
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .withRequiredParameters(FROM, SIZE)
             .build()
@@ -247,9 +254,10 @@ public class ResourceClientAllScientificValuesTest {
         """;
     createIndexAndIndexDocument(json);
 
+    
     var response =
         ResourceSearchQuery.builder()
-            .fromTestQueryParameters(queryToMapEntries(SEARCH_URI))
+            .fromTestQueryParameters(queryToMapEntries(ALL_SCIENTIFIC_VALUES_UNASSIGNED_AND_LEVEL_ZERO))
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .withRequiredParameters(FROM, SIZE)
             .build()
