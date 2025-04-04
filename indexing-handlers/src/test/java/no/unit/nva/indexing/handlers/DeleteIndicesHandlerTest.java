@@ -1,12 +1,12 @@
 package no.unit.nva.indexing.handlers;
 
-import static no.unit.nva.LogAppender.getAppender;
-import static no.unit.nva.LogAppender.logToString;
 import static no.unit.nva.constants.Words.DOIREQUESTS_INDEX;
 import static no.unit.nva.constants.Words.MESSAGES_INDEX;
 import static no.unit.nva.constants.Words.PUBLISHING_REQUESTS_INDEX;
 import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.constants.Words.TICKETS;
+import static no.unit.nva.search.testing.LogAppender.getAppender;
+import static no.unit.nva.search.testing.LogAppender.logToString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;

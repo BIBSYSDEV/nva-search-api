@@ -4,11 +4,13 @@ import static no.unit.nva.constants.Words.AUTHORIZATION;
 import static no.unit.nva.constants.Words.CURATING_INSTITUTIONS;
 import static no.unit.nva.constants.Words.DOT;
 import static no.unit.nva.constants.Words.KEYWORD;
+import static no.unit.nva.constants.Words.OWNER;
 import static no.unit.nva.constants.Words.STATUS;
 import static no.unit.nva.search.common.enums.PublicationStatus.DELETED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.common.enums.PublicationStatus.UNPUBLISHED;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTOR_ORG_KEYWORD;
+import static no.unit.nva.search.resource.Constants.RESOURCE_OWNER_OWNER_KEYWORD;
 import static no.unit.nva.search.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search.resource.ResourceParameter.STATISTICS;
 import static nva.commons.apigateway.AccessRight.MANAGE_CUSTOMERS;
@@ -52,6 +54,13 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
   public ResourceAccessFilter(ResourceSearchQuery query) {
     this.searchQuery = query;
     this.searchQuery.filters().set();
+  }
+
+  public ResourceAccessFilter ownResourcesOnly(String username) {
+    this.searchQuery
+        .filters()
+        .add(new TermsQueryBuilder(RESOURCE_OWNER_OWNER_KEYWORD, username).queryName(OWNER));
+    return this;
   }
 
   private static URI getCurationInstitutionId(RequestInfo requestInfo)

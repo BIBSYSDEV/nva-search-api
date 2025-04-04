@@ -1,4 +1,4 @@
-package no.unit.nva.search.common;
+package no.unit.nva.search.testing.common;
 
 import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 

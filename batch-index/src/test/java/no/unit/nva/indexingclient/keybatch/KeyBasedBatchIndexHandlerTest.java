@@ -1,10 +1,10 @@
 package no.unit.nva.indexingclient.keybatch;
 
 import static java.util.UUID.randomUUID;
-import static no.unit.nva.LogAppender.getAppender;
-import static no.unit.nva.LogAppender.logToString;
 import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.indexingclient.TestConstants.RESOURCE_INDEX_NAME;
+import static no.unit.nva.search.testing.LogAppender.getAppender;
+import static no.unit.nva.search.testing.LogAppender.logToString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.attempt.Try.attempt;
 import static org.hamcrest.MatcherAssert.assertThat;

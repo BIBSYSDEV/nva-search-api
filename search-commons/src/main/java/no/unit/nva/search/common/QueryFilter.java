@@ -1,14 +1,18 @@
 package no.unit.nva.search.common;
 
+import static java.util.Objects.nonNull;
 import static no.unit.nva.constants.Words.COMMA;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.index.query.TermsQueryBuilder;
 
 /**
  * QueryFilter is a class that represents a query filter to the search service.
@@ -41,6 +45,15 @@ public class QueryFilter {
 
   public int size() {
     return filters.size();
+  }
+
+  public boolean hasTermsQuery(String queryName, String fieldName, Object... values) {
+    var query = this.filters.get(queryName);
+    if (nonNull(query) && query instanceof TermsQueryBuilder termsQueryBuilder) {
+      return termsQueryBuilder.fieldName().equals(fieldName)
+          && new HashSet<>(termsQueryBuilder.values()).containsAll(List.of(values));
+    }
+    return false;
   }
 
   public QueryFilter add(QueryBuilder builder) {
