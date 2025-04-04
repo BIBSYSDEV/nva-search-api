@@ -5,7 +5,6 @@ import static no.unit.nva.common.Containers.indexingClient;
 import static no.unit.nva.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.common.MockedHttpResponse.mockedFutureFailed;
 import static no.unit.nva.common.MockedHttpResponse.mockedFutureHttpResponse;
-import static no.unit.nva.common.TestConstants.DELAY_AFTER_INDEXING;
 import static no.unit.nva.constants.IndexMappingsAndSettings.RESOURCE_MAPPINGS;
 import static no.unit.nva.constants.IndexMappingsAndSettings.RESOURCE_SETTINGS;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
@@ -63,7 +62,7 @@ public class ResourceClientAllScientificValuesTest {
 
   @Test
   void shouldReturnDocumentsWhereAllChannelsHaveOneOfProvidedScientificValues()
-      throws IOException, InterruptedException, BadRequestException {
+      throws IOException, BadRequestException {
 
     var json =
         """
@@ -104,7 +103,7 @@ public class ResourceClientAllScientificValuesTest {
 
   @Test
   void shouldNotReturnDocumentsWhereAOneOfScientificValuesIsNotAsProvidedInRequest()
-      throws IOException, InterruptedException, BadRequestException {
+      throws IOException, BadRequestException {
 
     var json =
         """
@@ -145,7 +144,7 @@ public class ResourceClientAllScientificValuesTest {
 
   @Test
   void shouldReturnDocumentsWhereOnlyOneScientificValuePresentAndMultipleProvidedInRequest()
-      throws IOException, InterruptedException, BadRequestException {
+      throws IOException, BadRequestException {
     var json =
         """
               {
@@ -182,7 +181,7 @@ public class ResourceClientAllScientificValuesTest {
   @Test
   void
       shouldReturnDocumentsWhereOnlyOneScientificValueInPublicationContextPresentAndMultipleProvidedInRequest()
-          throws IOException, InterruptedException, BadRequestException {
+          throws IOException, BadRequestException {
     var json =
         """
               {
@@ -216,7 +215,7 @@ public class ResourceClientAllScientificValuesTest {
 
   @Test
   void shouldNotReturnDocumentsWhereScientificValuesAreMissingWhenMultipleProvidedValuesInRequest()
-      throws IOException, InterruptedException, BadRequestException {
+      throws IOException, BadRequestException {
     var json =
         """
               {
@@ -247,7 +246,7 @@ public class ResourceClientAllScientificValuesTest {
 
   @Test
   void shouldNotReturnDocumentsWhereOnlyOneScientificValueAndIsNotAsOneOfValuesAsProvidedInRequest()
-      throws IOException, InterruptedException, BadRequestException {
+      throws IOException, BadRequestException {
     var json =
         """
                      {
@@ -281,8 +280,7 @@ public class ResourceClientAllScientificValuesTest {
     assertTrue(hits.isEmpty());
   }
 
-  private static void createIndexAndIndexDocument(String json)
-      throws IOException, InterruptedException {
+  private static void createIndexAndIndexDocument(String json) throws IOException {
     indexingClient.createIndex(indexName, RESOURCE_MAPPINGS.asMap(), RESOURCE_SETTINGS.asMap());
     indexingClient.refreshIndex(indexName);
     var document =
@@ -290,6 +288,6 @@ public class ResourceClientAllScientificValuesTest {
             new EventConsumptionAttributes(indexName, SortableIdentifier.next()),
             JsonUtils.dtoObjectMapper.readTree(json));
     indexingClient.addDocumentToIndex(document);
-    Thread.sleep(DELAY_AFTER_INDEXING);
+    indexingClient.refreshIndex(indexName);
   }
 }
