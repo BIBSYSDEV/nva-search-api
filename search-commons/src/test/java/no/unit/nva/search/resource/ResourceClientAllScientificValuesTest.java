@@ -27,19 +27,18 @@ import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
-public class ResourceClientV2Test {
+public class ResourceClientAllScientificValuesTest {
 
   private static final String indexName = "resources";
+  private static final URI SEARCH_URI = URI.create("https://x.org/?allScientificValues=Unassigned,LevelZero");
   private static ResourceClient resourceClient;
 
   @BeforeAll
   public static void setUp() throws IOException {
     indexingClient.deleteIndex(indexName);
     var cachedJwtProvider = setupMockedCachedJwtProvider();
-    var mochedHttpClient = mock(HttpClient.class);
-    var userSettingsClient = new UserSettingsClient(mochedHttpClient, cachedJwtProvider);
-    resourceClient =
-        new ResourceClient(HttpClient.newHttpClient(), cachedJwtProvider, userSettingsClient);
+    var userSettingsClient = new UserSettingsClient(mock(HttpClient.class), cachedJwtProvider);
+    resourceClient = new ResourceClient(HttpClient.newHttpClient(), cachedJwtProvider, userSettingsClient);
   }
 
   @BeforeEach
@@ -74,10 +73,9 @@ public class ResourceClientV2Test {
         """;
     createIndexAndIndexDocument(json);
 
-    var uri = URI.create("https://x.org/?allScientificValues=Unassigned,LevelZero");
     var response =
         ResourceSearchQuery.builder()
-            .fromTestQueryParameters(queryToMapEntries(uri))
+            .fromTestQueryParameters(queryToMapEntries(SEARCH_URI))
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .withRequiredParameters(FROM, SIZE)
             .build()
@@ -115,10 +113,9 @@ public class ResourceClientV2Test {
         """;
     createIndexAndIndexDocument(json);
 
-    var uri = URI.create("https://x.org/?allScientificValues=Unassigned,LevelZero");
     var response =
         ResourceSearchQuery.builder()
-            .fromTestQueryParameters(queryToMapEntries(uri))
+            .fromTestQueryParameters(queryToMapEntries(SEARCH_URI))
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .withRequiredParameters(FROM, SIZE)
             .build()
@@ -151,10 +148,9 @@ public class ResourceClientV2Test {
         """;
     createIndexAndIndexDocument(json);
 
-    var uri = URI.create("https://x.org/?allScientificValues=Unassigned,LevelZero");
     var response =
         ResourceSearchQuery.builder()
-            .fromTestQueryParameters(queryToMapEntries(uri))
+            .fromTestQueryParameters(queryToMapEntries(SEARCH_URI))
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .withRequiredParameters(FROM, SIZE)
             .build()
@@ -186,10 +182,9 @@ public class ResourceClientV2Test {
         """;
     createIndexAndIndexDocument(json);
 
-    var uri = URI.create("https://x.org/?allScientificValues=Unassigned,LevelZero");
     var response =
         ResourceSearchQuery.builder()
-            .fromTestQueryParameters(queryToMapEntries(uri))
+            .fromTestQueryParameters(queryToMapEntries(SEARCH_URI))
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .withRequiredParameters(FROM, SIZE)
             .build()
@@ -217,10 +212,44 @@ public class ResourceClientV2Test {
         """;
     createIndexAndIndexDocument(json);
 
-    var uri = URI.create("https://x.org/?allScientificValues=Unassigned,LevelZero");
     var response =
         ResourceSearchQuery.builder()
-            .fromTestQueryParameters(queryToMapEntries(uri))
+            .fromTestQueryParameters(queryToMapEntries(SEARCH_URI))
+            .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+            .withRequiredParameters(FROM, SIZE)
+            .build()
+            .withFilter()
+            .apply()
+            .doSearch(resourceClient);
+    var hits = response.toPagedResponse().hits();
+    assertTrue(hits.isEmpty());
+  }
+
+  @Test
+  void shouldNotReturnDocumentsWhereOnlyOneScientificValueAndIsNotAsOneOfValuesAsProvidedInRequest()
+      throws IOException, InterruptedException, BadRequestException {
+    var json =
+        """
+                     {
+          "type": "Publication",
+          "identifier": "018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619e3bbaf39",
+          "entityDescription": {
+            "reference": {
+              "publicationContext": {
+                "publisher": {
+                  "type": "Publisher",
+                  "scientificValue": "LevelOne"
+                }
+              }
+            }
+          }
+        }
+        """;
+    createIndexAndIndexDocument(json);
+
+    var response =
+        ResourceSearchQuery.builder()
+            .fromTestQueryParameters(queryToMapEntries(SEARCH_URI))
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .withRequiredParameters(FROM, SIZE)
             .build()
