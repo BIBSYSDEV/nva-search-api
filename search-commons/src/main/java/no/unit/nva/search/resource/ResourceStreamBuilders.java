@@ -203,6 +203,53 @@ public class ResourceStreamBuilders {
     return Functions.queryToEntry(key, parentChildQuery);
   }
 
+  public Stream<Map.Entry<ResourceParameter, QueryBuilder>> allScientificValuesQuery(
+      ResourceParameter key) {
+    var values = parameters.get(key).split(COMMA);
+
+    var seriesExistsWithValuesOrMissingQuery =
+        boolQuery()
+            .should(
+                boolQuery()
+                    .must(existsQuery(SCIENTIFIC_SERIES))
+                    .must(termsQuery(SCIENTIFIC_SERIES, values)))
+            .should(boolQuery().mustNot(existsQuery(SCIENTIFIC_SERIES)))
+            .minimumShouldMatch(1);
+
+    var publisherExistsWithValuesOrMissingQuery =
+        boolQuery()
+            .should(
+                boolQuery()
+                    .must(existsQuery(SCIENTIFIC_PUBLISHER))
+                    .must(termsQuery(SCIENTIFIC_PUBLISHER, values)))
+            .should(boolQuery().mustNot(existsQuery(SCIENTIFIC_PUBLISHER)))
+            .minimumShouldMatch(1);
+
+    var journalExistsWithValuesOrMissingQuery =
+        boolQuery()
+            .should(
+                boolQuery()
+                    .must(existsQuery(SCIENTIFIC_OTHER))
+                    .must(termsQuery(SCIENTIFIC_OTHER, values)))
+            .should(boolQuery().mustNot(existsQuery(SCIENTIFIC_OTHER)))
+            .minimumShouldMatch(1);
+
+    var atLeastOneScientificValueExistsQuery =
+        boolQuery()
+            .should(existsQuery(SCIENTIFIC_SERIES))
+            .should(existsQuery(SCIENTIFIC_PUBLISHER))
+            .should(existsQuery(SCIENTIFIC_OTHER));
+
+    var query =
+        boolQuery()
+            .must(seriesExistsWithValuesOrMissingQuery)
+            .must(publisherExistsWithValuesOrMissingQuery)
+            .must(journalExistsWithValuesOrMissingQuery)
+            .must(atLeastOneScientificValueExistsQuery);
+
+    return Functions.queryToEntry(key, query);
+  }
+
   private Boolean shouldSearchSpecifiedInstitutionOnly() {
     return parameters.get(EXCLUDE_SUBUNITS).asBoolean();
   }
