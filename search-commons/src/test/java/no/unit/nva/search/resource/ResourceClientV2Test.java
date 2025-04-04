@@ -3,8 +3,6 @@ package no.unit.nva.search.resource;
 import static no.unit.nva.common.Containers.container;
 import static no.unit.nva.common.Containers.indexingClient;
 import static no.unit.nva.common.EntrySetTools.queryToMapEntries;
-import static no.unit.nva.common.MockedHttpResponse.mockedFutureFailed;
-import static no.unit.nva.common.MockedHttpResponse.mockedFutureHttpResponse;
 import static no.unit.nva.common.TestConstants.DELAY_AFTER_INDEXING;
 import static no.unit.nva.constants.IndexMappingsAndSettings.RESOURCE_MAPPINGS;
 import static no.unit.nva.constants.IndexMappingsAndSettings.RESOURCE_SETTINGS;
@@ -14,14 +12,10 @@ import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static nva.commons.core.attempt.Try.attempt;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
-import java.nio.file.Path;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
@@ -35,7 +29,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 public class ResourceClientV2Test {
 
-  public static final String USER_SETTINGS_JSON = "user_settings.json";
   private static final String indexName = "resources";
   private static ResourceClient resourceClient;
 
@@ -45,11 +38,6 @@ public class ResourceClientV2Test {
     var cachedJwtProvider = setupMockedCachedJwtProvider();
     var mochedHttpClient = mock(HttpClient.class);
     var userSettingsClient = new UserSettingsClient(mochedHttpClient, cachedJwtProvider);
-    var response = mockedFutureHttpResponse(Path.of(USER_SETTINGS_JSON));
-    when(mochedHttpClient.sendAsync(any(), any()))
-        .thenReturn(response)
-        .thenReturn(mockedFutureHttpResponse(""))
-        .thenReturn(mockedFutureFailed());
     resourceClient =
         new ResourceClient(HttpClient.newHttpClient(), cachedJwtProvider, userSettingsClient);
   }
