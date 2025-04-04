@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import no.unit.nva.commons.json.JsonUtils;
+import no.unit.nva.constants.Words;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
 import no.unit.nva.indexingclient.models.IndexDocument;
@@ -96,7 +97,7 @@ public class TicketClientViewingScopeTest {
             .build()
             .withFilter()
             .fromRequestInfo(requestInfo)
-            .doSearch(searchClient)
+            .doSearch(searchClient, Words.RESOURCES)
             .toPagedResponse();
 
     assertEquals(1, response.hits().size());
@@ -146,7 +147,7 @@ public class TicketClientViewingScopeTest {
             .build()
             .withFilter()
             .fromRequestInfo(requestInfo)
-            .doSearch(searchClient)
+            .doSearch(searchClient, Words.RESOURCES)
             .toPagedResponse();
 
     assertEquals(1, response.hits().size());
@@ -194,7 +195,7 @@ public class TicketClientViewingScopeTest {
             .build()
             .withFilter()
             .fromRequestInfo(requestInfo)
-            .doSearch(searchClient)
+            .doSearch(searchClient, Words.RESOURCES)
             .toPagedResponse();
 
     assertEquals(0, response.hits().size());
@@ -268,7 +269,7 @@ public class TicketClientViewingScopeTest {
             .build()
             .withFilter()
             .fromRequestInfo(requestInfo)
-            .doSearch(searchClient)
+            .doSearch(searchClient, Words.RESOURCES)
             .toPagedResponse();
 
     assertEquals(1, response.hits().size());
@@ -348,7 +349,7 @@ public class TicketClientViewingScopeTest {
             .build()
             .withFilter()
             .fromRequestInfo(requestInfo)
-            .doSearch(searchClient)
+            .doSearch(searchClient, Words.RESOURCES)
             .toPagedResponse();
 
     assertEquals(1, response.hits().size());
@@ -438,7 +439,7 @@ public class TicketClientViewingScopeTest {
             .build()
             .withFilter()
             .fromRequestInfo(requestInfo)
-            .doSearch(searchClient)
+            .doSearch(searchClient, Words.RESOURCES)
             .toPagedResponse();
 
     assertEquals(1, response.hits().size());
@@ -488,7 +489,7 @@ public class TicketClientViewingScopeTest {
             .build()
             .withFilter()
             .fromRequestInfo(requestInfo)
-            .doSearch(searchClient)
+            .doSearch(searchClient, Words.RESOURCES)
             .toPagedResponse();
 
     assertEquals(0, response.hits().size());
@@ -540,7 +541,7 @@ public class TicketClientViewingScopeTest {
             .build()
             .withFilter()
             .fromRequestInfo(requestInfo)
-            .doSearch(searchClient)
+            .doSearch(searchClient, Words.RESOURCES)
             .toPagedResponse();
 
     assertEquals(0, response.hits().size());

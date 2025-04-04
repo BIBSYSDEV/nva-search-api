@@ -258,7 +258,7 @@ class SearchResourceLegacyHandlerTest {
     var jsonResponse = FakeSearchResponse.generateSearchResponseString(exportCsvs, null);
     var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
 
-    when(mockedSearchClient.doSearch(any())).thenReturn(body);
+    when(mockedSearchClient.doSearch(any(), any())).thenReturn(body);
     //        var searchResponse = createSearchResponseWithHits(json);
     //        when(restHighLevelClientMock.search(any(), any())).thenReturn(searchResponse);
   }
@@ -268,20 +268,20 @@ class SearchResourceLegacyHandlerTest {
         stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
     var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
 
-    when(mockedSearchClient.doSearch(any())).thenReturn(body);
+    when(mockedSearchClient.doSearch(any(), any())).thenReturn(body);
   }
 
   private void prepareRestHighLevelClientEmptyResponse() throws IOException {
     var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
     var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
 
-    when(mockedSearchClient.doSearch(any())).thenReturn(body);
+    when(mockedSearchClient.doSearch(any(), Words.RESOURCES)).thenReturn(body);
   }
 
   private void prepareRestHighLevelClientEmptyResponseForSortOrder() throws IOException {
     var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
     var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
 
-    when(mockedSearchClient.doSearch(any())).thenReturn(body);
+    when(mockedSearchClient.doSearch(any(), Words.RESOURCES)).thenReturn(body);
   }
 }

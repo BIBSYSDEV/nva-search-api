@@ -10,6 +10,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
 import java.util.List;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.importcandidate.ImportCandidateClient;
 import no.unit.nva.search.importcandidate.ImportCandidateSearchQuery;
 import nva.commons.apigateway.ApiGatewayHandler;
@@ -46,7 +47,7 @@ public class SearchImportCandidateAuthHandler extends ApiGatewayHandler<Void, St
         .withRequiredParameters(FROM, SIZE, AGGREGATION)
         .validate()
         .build()
-        .doSearch(opensearchClient)
+        .doSearch(opensearchClient, Words.IMPORT_CANDIDATES_INDEX)
         .toString();
   }
 

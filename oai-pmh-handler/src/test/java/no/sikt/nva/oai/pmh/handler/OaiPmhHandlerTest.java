@@ -31,6 +31,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.xml.transform.Source;
 import no.unit.nva.commons.json.JsonUtils;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.common.records.SwsResponse.HitsInfo;
 import no.unit.nva.search.common.records.SwsResponse.HitsInfo.TotalInfo;
@@ -142,7 +143,8 @@ public class OaiPmhHandlerTest {
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldReturnExpectedSetsWhenAskingForListSets(String method)
       throws IOException, JAXBException {
-    when(resourceClient.doSearch(argThat(new ResourceSearchQueryMatcher(0, 0, "all"))))
+    when(resourceClient.doSearch(
+            argThat(new ResourceSearchQueryMatcher(0, 0, "all")), Words.RESOURCES))
         .thenReturn(swsResponse());
 
     var inputStream = request(VerbType.LIST_SETS.value(), method);
@@ -168,7 +170,9 @@ public class OaiPmhHandlerTest {
       throws IOException, JAXBException {
     final var appender = LogUtils.getTestingAppenderForRootLogger();
 
-    doThrow(new RuntimeException(EMPTY_STRING)).when(resourceClient).doSearch(any());
+    doThrow(new RuntimeException(EMPTY_STRING))
+        .when(resourceClient)
+        .doSearch(any(), Words.RESOURCES);
 
     var inputStream = request(VerbType.LIST_SETS.value(), method);
 

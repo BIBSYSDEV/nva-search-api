@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URI;
 import java.util.Objects;
 import java.util.stream.Stream;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.OpenSearchClient;
 import no.unit.nva.search.common.Query;
 import no.unit.nva.search.common.records.HttpResponseFormatter;
@@ -48,7 +49,7 @@ public final class ScrollQuery extends Query<ScrollParameter> {
   }
 
   @Override
-  protected URI openSearchUri() {
+  protected URI openSearchUri(String indexName) {
     return fromUri(infrastructureApiUri).addChild(SEARCH_SCROLL).getUri();
   }
 
@@ -60,15 +61,16 @@ public final class ScrollQuery extends Query<ScrollParameter> {
   }
 
   @Override
-  public Stream<QueryContentWrapper> assemble() {
+  public Stream<QueryContentWrapper> assemble(String indexName) {
     var scrollRequest = new SearchScrollRequest(scrollId).scroll(ttl);
     return Stream.of(
-        new QueryContentWrapper(scrollRequestToString(scrollRequest), this.openSearchUri()));
+        new QueryContentWrapper(
+            scrollRequestToString(scrollRequest), this.openSearchUri(indexName)));
   }
 
   @Override
   public <R, Q extends Query<ScrollParameter>> HttpResponseFormatter<ScrollParameter> doSearch(
-      OpenSearchClient<R, Q> queryClient) {
+      OpenSearchClient<R, Q> queryClient, String indexName) {
     var response = buildSwsResponse(scrollFetch(firstResponse, 0, (ScrollClient) queryClient));
     return new HttpResponseFormatter<>(response, CSV_UTF_8);
   }
@@ -80,7 +82,7 @@ public final class ScrollQuery extends Query<ScrollParameter> {
       return previousResponse.getSearchHits().stream();
     }
     scrollId = previousResponse._scroll_id();
-    var currentResponse = scrollClient.doSearch(this);
+    var currentResponse = scrollClient.doSearch(this, Words.RESOURCES);
 
     return Stream.concat(
         previousResponse.getSearchHits().stream(),

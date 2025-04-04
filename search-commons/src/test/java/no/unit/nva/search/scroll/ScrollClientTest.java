@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.net.http.HttpClient;
 import java.nio.file.Path;
+import no.unit.nva.constants.Words;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -34,7 +35,7 @@ class ScrollClientTest {
   void searchWithUriReturnsOpenSearchAwsResponse() {
     var scrollId = randomString();
     var resourceAwsQuery = new ScrollQuery(scrollId, "1m");
-    var result = scrollClient.doSearch(resourceAwsQuery);
+    var result = scrollClient.doSearch(resourceAwsQuery, Words.RESOURCES);
     logger.debug(result.toString());
     assertNotNull(result);
     assertNotNull(ScrollParameter.INVALID.asCamelCase());

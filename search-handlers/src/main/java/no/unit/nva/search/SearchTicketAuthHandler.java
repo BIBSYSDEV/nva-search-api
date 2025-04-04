@@ -10,6 +10,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
 import java.util.List;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.ticket.TicketClient;
 import no.unit.nva.search.ticket.TicketSearchQuery;
 import nva.commons.apigateway.ApiGatewayHandler;
@@ -59,7 +60,7 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
         .build()
         .withFilter()
         .fromRequestInfo(requestInfo)
-        .doSearch(opensearchClient)
+        .doSearch(opensearchClient, Words.TICKETS)
         .toString();
   }
 

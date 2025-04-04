@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.Map;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.FakeGatewayResponse;
 import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.resource.ResourceClient;
@@ -57,7 +58,7 @@ class SearchResource20241201HandlerTest {
         stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
     var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
 
-    when(mockedSearchClient.doSearch(any())).thenReturn(body);
+    when(mockedSearchClient.doSearch(any(), Words.RESOURCES)).thenReturn(body);
   }
 
   @Test

@@ -162,7 +162,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
   }
 
   @Override
-  public Stream<QueryContentWrapper> assemble() {
+  public Stream<QueryContentWrapper> assemble(String indexName) {
     // TODO extract builderDefaultSearchSource() and this content into a separate class?
     var contentWrappers = new ArrayList<QueryContentWrapper>(numberOfRequests());
     var builder = builderDefaultSearchSource();
@@ -171,15 +171,15 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     handleAggregation(builder, contentWrappers);
     handleSearchAfter(builder);
     handleSorting(builder);
-    contentWrappers.add(new QueryContentWrapper(builder.toString(), this.openSearchUri()));
+    contentWrappers.add(new QueryContentWrapper(builder.toString(), this.openSearchUri(indexName)));
     return contentWrappers.stream();
   }
 
   @Override
   public <R, Q extends Query<K>> HttpResponseFormatter<K> doSearch(
-      OpenSearchClient<R, Q> queryClient) {
+      OpenSearchClient<R, Q> queryClient, String indexName) {
     return new HttpResponseFormatter<>(
-        (SwsResponse) queryClient.doSearch((Q) this),
+        (SwsResponse) queryClient.doSearch((Q) this, indexName),
         getMediaType(),
         getNvaSearchApiUri(),
         from().as(),
@@ -310,7 +310,8 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
       aggregationBuilder.size(ZERO_RESULTS_AGGREGATION_ONLY);
       aggregationBuilder.aggregation(builderAggregationsWithFilter());
       contentWrappers.add(
-          new QueryContentWrapper(aggregationBuilder.toString(), this.openSearchUri()));
+          new QueryContentWrapper(
+              aggregationBuilder.toString(), this.openSearchUri(Words.RESOURCES)));
     }
   }
 
