@@ -168,7 +168,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     var builder = builderDefaultSearchSource();
 
     handleFetchSource(builder);
-    handleAggregation(builder, contentWrappers);
+    handleAggregation(builder, contentWrappers, indexName);
     handleSearchAfter(builder);
     handleSorting(builder);
     contentWrappers.add(new QueryContentWrapper(builder.toString(), this.openSearchUri(indexName)));
@@ -304,14 +304,13 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
   }
 
   private void handleAggregation(
-      SearchSourceBuilder builder, List<QueryContentWrapper> contentWrappers) {
+      SearchSourceBuilder builder, List<QueryContentWrapper> contentWrappers, String indexName) {
     if (hasAggregation()) {
       var aggregationBuilder = builder.shallowCopy();
       aggregationBuilder.size(ZERO_RESULTS_AGGREGATION_ONLY);
       aggregationBuilder.aggregation(builderAggregationsWithFilter());
       contentWrappers.add(
-          new QueryContentWrapper(
-              aggregationBuilder.toString(), this.openSearchUri(Words.RESOURCES)));
+          new QueryContentWrapper(aggregationBuilder.toString(), this.openSearchUri(indexName)));
     }
   }
 

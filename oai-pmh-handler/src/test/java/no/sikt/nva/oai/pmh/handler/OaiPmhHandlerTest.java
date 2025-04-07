@@ -9,6 +9,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -144,7 +145,7 @@ public class OaiPmhHandlerTest {
   void shouldReturnExpectedSetsWhenAskingForListSets(String method)
       throws IOException, JAXBException {
     when(resourceClient.doSearch(
-            argThat(new ResourceSearchQueryMatcher(0, 0, "all")), Words.RESOURCES))
+            argThat(new ResourceSearchQueryMatcher(0, 0, "all")), eq(Words.RESOURCES)))
         .thenReturn(swsResponse());
 
     var inputStream = request(VerbType.LIST_SETS.value(), method);
@@ -172,7 +173,7 @@ public class OaiPmhHandlerTest {
 
     doThrow(new RuntimeException(EMPTY_STRING))
         .when(resourceClient)
-        .doSearch(any(), Words.RESOURCES);
+        .doSearch(any(), eq(Words.RESOURCES));
 
     var inputStream = request(VerbType.LIST_SETS.value(), method);
 

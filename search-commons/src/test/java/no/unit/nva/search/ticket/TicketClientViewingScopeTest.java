@@ -23,11 +23,11 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import no.unit.nva.commons.json.JsonUtils;
-import no.unit.nva.constants.Words;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
 import no.unit.nva.indexingclient.models.IndexDocument;
@@ -43,7 +43,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 public class TicketClientViewingScopeTest {
 
-  private static final String indexName = "tickets";
+  private static final String indexName = randomString().toLowerCase(Locale.ROOT);
   private static TicketClient searchClient;
 
   @BeforeAll
@@ -97,7 +97,7 @@ public class TicketClientViewingScopeTest {
             .build()
             .withFilter()
             .fromRequestInfo(requestInfo)
-            .doSearch(searchClient, Words.RESOURCES)
+            .doSearch(searchClient, indexName)
             .toPagedResponse();
 
     assertEquals(1, response.hits().size());
@@ -147,7 +147,7 @@ public class TicketClientViewingScopeTest {
             .build()
             .withFilter()
             .fromRequestInfo(requestInfo)
-            .doSearch(searchClient, Words.RESOURCES)
+            .doSearch(searchClient, indexName)
             .toPagedResponse();
 
     assertEquals(1, response.hits().size());
@@ -195,7 +195,7 @@ public class TicketClientViewingScopeTest {
             .build()
             .withFilter()
             .fromRequestInfo(requestInfo)
-            .doSearch(searchClient, Words.RESOURCES)
+            .doSearch(searchClient, indexName)
             .toPagedResponse();
 
     assertEquals(0, response.hits().size());
@@ -224,8 +224,8 @@ public class TicketClientViewingScopeTest {
           }
         }
         """
-            .replace("__SUBUNIT__", subunit1.toString())
-            .replace("__TOP_LEVEL__", topLevel.toString());
+            .replace("__SUBUNIT__", subunit1)
+            .replace("__TOP_LEVEL__", topLevel);
     var document1 =
         new IndexDocument(
             new EventConsumptionAttributes(indexName, SortableIdentifier.next()),
@@ -269,7 +269,7 @@ public class TicketClientViewingScopeTest {
             .build()
             .withFilter()
             .fromRequestInfo(requestInfo)
-            .doSearch(searchClient, Words.RESOURCES)
+            .doSearch(searchClient, indexName)
             .toPagedResponse();
 
     assertEquals(1, response.hits().size());
@@ -349,7 +349,7 @@ public class TicketClientViewingScopeTest {
             .build()
             .withFilter()
             .fromRequestInfo(requestInfo)
-            .doSearch(searchClient, Words.RESOURCES)
+            .doSearch(searchClient, indexName)
             .toPagedResponse();
 
     assertEquals(1, response.hits().size());
@@ -439,11 +439,11 @@ public class TicketClientViewingScopeTest {
             .build()
             .withFilter()
             .fromRequestInfo(requestInfo)
-            .doSearch(searchClient, Words.RESOURCES)
+            .doSearch(searchClient, indexName)
             .toPagedResponse();
 
     assertEquals(1, response.hits().size());
-    assertTrue(response.hits().getFirst().toString().contains(viewingScope1.toString()));
+    assertTrue(response.hits().getFirst().toString().contains(viewingScope1));
   }
 
   @Test
@@ -489,7 +489,7 @@ public class TicketClientViewingScopeTest {
             .build()
             .withFilter()
             .fromRequestInfo(requestInfo)
-            .doSearch(searchClient, Words.RESOURCES)
+            .doSearch(searchClient, indexName)
             .toPagedResponse();
 
     assertEquals(0, response.hits().size());
@@ -541,7 +541,7 @@ public class TicketClientViewingScopeTest {
             .build()
             .withFilter()
             .fromRequestInfo(requestInfo)
-            .doSearch(searchClient, Words.RESOURCES)
+            .doSearch(searchClient, indexName)
             .toPagedResponse();
 
     assertEquals(0, response.hits().size());

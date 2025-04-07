@@ -214,7 +214,7 @@ class TicketClientTest {
                 .withRequiredParameters(SIZE, FROM)
                 .fromTestQueryParameters(toMapEntries)
                 .build()
-                .doSearch(resourceClient2, Words.RESOURCES));
+                .doSearch(resourceClient2, Words.TICKETS));
   }
 
   @Test
@@ -232,7 +232,7 @@ class TicketClientTest {
             .user(CURRENT_USERNAME)
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
             .apply()
-            .doSearch(searchClient, Words.RESOURCES);
+            .doSearch(searchClient, Words.TICKETS);
 
     assertNotNull(response1);
 
@@ -266,7 +266,7 @@ class TicketClientTest {
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
             .organizations(Set.of(testOrganizationId))
             .apply()
-            .doSearch(searchClient, Words.RESOURCES);
+            .doSearch(searchClient, Words.TICKETS);
     assertNotNull(pagedResult.swsResponse());
     assertTrue(pagedResult.toString().contains("\"hits\":["));
   }
@@ -288,7 +288,7 @@ class TicketClientTest {
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
             .organizations(Set.of(testOrganizationId))
             .apply()
-            .doSearch(searchClient, Words.RESOURCES)
+            .doSearch(searchClient, Words.TICKETS)
             .toPagedResponse();
 
     assertEquals(7, pagedResult.hits().size());
@@ -309,7 +309,7 @@ class TicketClientTest {
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
             .organizations(Set.of(testOrganizationId))
             .apply()
-            .doSearch(searchClient, Words.RESOURCES)
+            .doSearch(searchClient, Words.TICKETS)
             .toPagedResponse();
 
     assertEquals(7, pagedResult.hits().size());
@@ -330,7 +330,7 @@ class TicketClientTest {
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
             .organizations(Set.of(testOrganizationId))
             .apply()
-            .doSearch(searchClient, Words.RESOURCES)
+            .doSearch(searchClient, Words.TICKETS)
             .toPagedResponse();
 
     assertEquals(9, pagedResult.hits().size());
@@ -350,7 +350,7 @@ class TicketClientTest {
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
             .organizations(Set.of(testOrganizationId))
             .apply()
-            .doSearch(searchClient, Words.RESOURCES)
+            .doSearch(searchClient, Words.TICKETS)
             .toPagedResponse();
 
     assertEquals(1, pagedResult.hits().size());
@@ -373,7 +373,7 @@ class TicketClientTest {
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
             .organizations(Set.of(testOrganizationId))
             .apply()
-            .doSearch(searchClient, Words.RESOURCES)
+            .doSearch(searchClient, Words.TICKETS)
             .toPagedResponse();
 
     assertEquals(8, pagedResult.hits().size());
@@ -395,7 +395,7 @@ class TicketClientTest {
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
             .organizations(Set.of(testOrganizationId))
             .apply()
-            .doSearch(searchClient, Words.RESOURCES);
+            .doSearch(searchClient, Words.TICKETS);
 
     var pagedSearchResourceDto = response.toPagedResponse();
 
@@ -420,7 +420,7 @@ class TicketClientTest {
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT, MANAGE_CUSTOMERS)
             .organizations(Set.of(testOrganizationId))
             .apply()
-            .doSearch(searchClient, Words.RESOURCES);
+            .doSearch(searchClient, Words.TICKETS);
 
     var pagedSearchResourceDto = response.toPagedResponse();
 
@@ -462,7 +462,7 @@ class TicketClientTest {
             .build()
             .withFilter()
             .fromRequestInfo(mockedRequestInfoLocal)
-            .doSearch(searchClient, Words.RESOURCES);
+            .doSearch(searchClient, Words.TICKETS);
 
     var pagedSearchResourceDto = response.toPagedResponse();
 
@@ -487,7 +487,7 @@ class TicketClientTest {
             .user(userName)
             .accessRights(accessRights)
             .apply()
-            .doSearch(searchClient, Words.RESOURCES);
+            .doSearch(searchClient, Words.TICKETS);
 
     var aggregations = response.toPagedResponse().aggregations();
     assertNotNull(aggregations);
@@ -520,7 +520,7 @@ class TicketClientTest {
                 .build()
                 .withFilter()
                 .fromRequestInfo(mockedRequestInfoLocal)
-                .doSearch(searchClient, Words.RESOURCES));
+                .doSearch(searchClient, Words.TICKETS));
   }
 
   @ParameterizedTest
@@ -544,7 +544,7 @@ class TicketClientTest {
             .build()
             .withFilter()
             .fromRequestInfo(mockedRequestInfo)
-            .doSearch(searchClient, Words.RESOURCES);
+            .doSearch(searchClient, Words.TICKETS);
     assertNotNull(csvResult);
   }
 
@@ -562,7 +562,7 @@ class TicketClientTest {
             .user(CURRENT_USERNAME)
             .accessRights(MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT)
             .apply()
-            .doSearch(searchClient, Words.RESOURCES);
+            .doSearch(searchClient, Words.TICKETS);
 
     var pagedSearchResourceDto = response.toPagedResponse();
     assertNotNull(pagedSearchResourceDto.id());
@@ -581,20 +581,17 @@ class TicketClientTest {
                 .withRequiredParameters(FROM, SIZE)
                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .build()
-                .doSearch(searchClient, Words.RESOURCES));
+                .doSearch(searchClient, Words.TICKETS));
   }
 
   @Test
   void ownerEqualAssigneeReturnsUnauthorized() throws UnauthorizedException {
-    var uriBad = URI.create(REQUEST_BASE_URL + "owner=Kir+Truhacev&assignee=Kir+Truhacev");
-    //        var uriBad = URI.create(REQUEST_BASE_URL +
-    // "owner=Kir+Truhacev&assignee=Annette+Olli");
-
     var mockedRequestInfoLocal = mock(RequestInfo.class);
     when(mockedRequestInfoLocal.getUserName()).thenReturn("Kir Truhacev");
     when(mockedRequestInfoLocal.getTopLevelOrgCristinId())
         .thenReturn(Optional.of(testOrganizationId));
     when(mockedRequestInfoLocal.getAccessRights()).thenReturn(List.of(MANAGE_DOI));
+    var uriBad = URI.create(REQUEST_BASE_URL + "owner=Kir+Truhacev&assignee=Kir+Truhacev");
     assertThrows(
         UnauthorizedException.class,
         () ->
@@ -605,18 +602,18 @@ class TicketClientTest {
                 .build()
                 .withFilter()
                 .fromRequestInfo(mockedRequestInfoLocal)
-                .doSearch(searchClient, Words.RESOURCES));
+                .doSearch(searchClient, Words.TICKETS));
   }
 
   @Test
   void notSiktAdminReturnsUnauthorized() throws UnauthorizedException {
-    var uriBad = URI.create(REQUEST_BASE_URL + "STATISTICS=true");
 
     var mockedRequestInfoLocal = mock(RequestInfo.class);
     when(mockedRequestInfoLocal.getUserName()).thenReturn(randomString());
     when(mockedRequestInfoLocal.getTopLevelOrgCristinId())
         .thenReturn(Optional.of(testOrganizationId));
     when(mockedRequestInfoLocal.getAccessRights()).thenReturn(List.of(MANAGE_DOI));
+    var uriBad = URI.create(REQUEST_BASE_URL + "STATISTICS=true");
     assertThrows(
         UnauthorizedException.class,
         () ->
@@ -627,7 +624,7 @@ class TicketClientTest {
                 .build()
                 .withFilter()
                 .fromRequestInfo(mockedRequestInfoLocal)
-                .doSearch(searchClient, Words.RESOURCES));
+                .doSearch(searchClient, Words.TICKETS));
   }
 
   @Test
@@ -646,7 +643,7 @@ class TicketClientTest {
                 .build()
                 .withFilter()
                 .fromRequestInfo(mockedRequestInfoLocal)
-                .doSearch(searchClient, Words.RESOURCES));
+                .doSearch(searchClient, Words.TICKETS));
   }
 
   @Test
@@ -667,7 +664,7 @@ class TicketClientTest {
                 .build()
                 .withFilter()
                 .fromRequestInfo(mockedRequestInfoLocal)
-                .doSearch(searchClient, Words.RESOURCES));
+                .doSearch(searchClient, Words.TICKETS));
   }
 
   private static Arguments createArgument(String searchUri, int expectedCount) {

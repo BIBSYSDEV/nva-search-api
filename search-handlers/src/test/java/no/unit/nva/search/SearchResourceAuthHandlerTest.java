@@ -13,6 +13,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -111,7 +112,7 @@ class SearchResourceAuthHandlerTest {
         stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
     var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
 
-    when(mockedSearchClient.doSearch(any(), Words.RESOURCES)).thenReturn(body);
+    when(mockedSearchClient.doSearch(any(), eq(Words.RESOURCES))).thenReturn(body);
   }
 
   private InputStream getInputStreamWithAccessRight(

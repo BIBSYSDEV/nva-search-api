@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -265,7 +266,7 @@ class SearchImportCandidateAuthHandlerTest {
     var jsonResponse = FakeSearchResponse.generateSearchResponseString(exportCsvs, null);
     var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
 
-    when(mockedSearchClient.doSearch(any(), Words.RESOURCES)).thenReturn(body);
+    when(mockedSearchClient.doSearch(any(), eq(Words.IMPORT_CANDIDATES_INDEX))).thenReturn(body);
   }
 
   private void prepareRestHighLevelClientOkResponse() throws IOException {
@@ -273,21 +274,21 @@ class SearchImportCandidateAuthHandlerTest {
         stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
     var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
 
-    when(mockedSearchClient.doSearch(any(), Words.RESOURCES)).thenReturn(body);
+    when(mockedSearchClient.doSearch(any(), eq(Words.IMPORT_CANDIDATES_INDEX))).thenReturn(body);
   }
 
   private void prepareRestHighLevelClientEmptyResponse() throws IOException {
     var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
     var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
 
-    when(mockedSearchClient.doSearch(any(), Words.RESOURCES)).thenReturn(body);
+    when(mockedSearchClient.doSearch(any(), eq(Words.IMPORT_CANDIDATES_INDEX))).thenReturn(body);
   }
 
   private void prepareRestHighLevelClientEmptyResponseForSortOrder() throws IOException {
     var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
     var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
 
-    when(mockedSearchClient.doSearch(any(), Words.RESOURCES)).thenReturn(body);
+    when(mockedSearchClient.doSearch(any(), eq(Words.IMPORT_CANDIDATES_INDEX))).thenReturn(body);
   }
 
   private PagedSearch getSearchResourcesResponseFromFile(String filename)

@@ -7,7 +7,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 import java.util.function.BinaryOperator;
-import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.OpenSearchClient;
 import no.unit.nva.search.common.jwt.CachedJwtProvider;
 import no.unit.nva.search.common.records.SwsResponse;
@@ -36,7 +35,7 @@ public class ScrollClient extends OpenSearchClient<SwsResponse, ScrollQuery> {
   public SwsResponse doSearch(ScrollQuery query, String indexName) {
     queryBuilderStart = query.getStartTime();
     return query
-        .assemble(Words.RESOURCES)
+        .assemble(indexName)
         .map(this::createRequest)
         .map(this::fetch)
         .map(this::handleResponse)
