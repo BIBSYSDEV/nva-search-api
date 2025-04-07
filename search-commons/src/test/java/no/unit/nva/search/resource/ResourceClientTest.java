@@ -119,7 +119,6 @@ import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.paths.UriWrapper;
 import org.apache.http.HttpHost;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -1153,7 +1152,53 @@ class ResourceClientTest {
     assertThat(actualIdentifiers, containsInAnyOrder(expectedIdentifiers));
   }
 
-  private static @NotNull Set<String> extractActualIdentifiersFromHits(PagedSearch pagedResponse) {
+  @Test
+  void shouldFilterOnOwnerWhenUsingOwnResourcesOnlyFilter() throws BadRequestException {
+    var response =
+        ResourceSearchQuery.builder()
+            .withRequiredParameters(FROM, SIZE, AGGREGATION)
+            .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+            .build()
+            .withFilter()
+            .requiredStatus(PUBLISHED, PUBLISHED_METADATA, DRAFT)
+            .ownResourcesOnly("1136254@20754.0.0.0")
+            .apply()
+            .doSearch(searchClient, RESOURCES);
+
+    var pagedResponse = response.toPagedResponse();
+
+    assertThat(pagedResponse.totalHits(), is(equalTo(2)));
+
+    var expectedIdentifiers =
+        new String[] {
+          "019584817b67-0eb17fdc-fe45-4ff3-8173-ba7fb930176b",
+          "018c443840f1-b14a5947-2eae-4d67-9d95-c2e591059942"
+        };
+    var actualIdentifiers = extractActualIdentifiersFromHits(pagedResponse);
+
+    assertThat(actualIdentifiers, containsInAnyOrder(expectedIdentifiers));
+  }
+
+  @Test
+  void shouldNotBeAbleToBypassOwnResourcesOnlyFilter() throws BadRequestException {
+    var response =
+        ResourceSearchQuery.builder()
+            .withRequiredParameters(FROM, SIZE, AGGREGATION)
+            .withParameter(ResourceParameter.USER, "bora@184.0.0.0")
+            .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+            .build()
+            .withFilter()
+            .requiredStatus(PUBLISHED, PUBLISHED_METADATA, DRAFT)
+            .ownResourcesOnly("1136254@20754.0.0.0")
+            .apply()
+            .doSearch(searchClient, RESOURCES);
+
+    var pagedResponse = response.toPagedResponse();
+
+    assertThat(pagedResponse.totalHits(), is(equalTo(0)));
+  }
+
+  private static Set<String> extractActualIdentifiersFromHits(PagedSearch pagedResponse) {
     return pagedResponse.hits().stream()
         .map(node -> node.get("identifier").textValue())
         .collect(Collectors.toSet());

@@ -1,4 +1,4 @@
-package no.unit.nva;
+package no.unit.nva.search.testing;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.constants.Words.SPACE;

@@ -2,13 +2,14 @@ package no.unit.nva.search;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.search.resource.Constants.V_2024_12_01_SIMPLER_MODEL;
 import static no.unit.nva.search.resource.ResourceParameter.SEARCH_ALL;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -23,11 +24,10 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.Map;
-import no.unit.nva.constants.Words;
-import no.unit.nva.search.common.FakeGatewayResponse;
 import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.response.ResourceSearchResponse;
+import no.unit.nva.search.testing.common.FakeGatewayResponse;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,7 +59,7 @@ class SearchResource20241201HandlerTest {
         stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
     var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
 
-    when(mockedSearchClient.doSearch(any(), eq(Words.RESOURCES))).thenReturn(body);
+    when(mockedSearchClient.doSearch(any(), eq(RESOURCES))).thenReturn(body);
   }
 
   @Test

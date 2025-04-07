@@ -1,6 +1,7 @@
 package no.sikt.nva.oai.pmh.handler;
 
 import static java.net.HttpURLConnection.HTTP_INTERNAL_ERROR;
+import static no.unit.nva.constants.Words.RESOURCES;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
@@ -32,11 +33,12 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.xml.transform.Source;
 import no.unit.nva.commons.json.JsonUtils;
-import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.common.records.SwsResponse.HitsInfo;
 import no.unit.nva.search.common.records.SwsResponse.HitsInfo.TotalInfo;
 import no.unit.nva.search.resource.ResourceClient;
+import no.unit.nva.search.resource.ResourceParameter;
+import no.unit.nva.search.testing.common.ResourceSearchQueryMatcher;
 import no.unit.nva.stubs.FakeContext;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
@@ -144,9 +146,13 @@ public class OaiPmhHandlerTest {
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldReturnExpectedSetsWhenAskingForListSets(String method)
       throws IOException, JAXBException {
-    when(resourceClient.doSearch(
-            argThat(new ResourceSearchQueryMatcher(0, 0, "all")), eq(Words.RESOURCES)))
-        .thenReturn(swsResponse());
+    var matcher =
+        new ResourceSearchQueryMatcher.Builder()
+            .withPageParameter(ResourceParameter.FROM, "0")
+            .withPageParameter(ResourceParameter.SIZE, "0")
+            .withSearchParameter(ResourceParameter.AGGREGATION, "all")
+            .build();
+    when(resourceClient.doSearch(argThat(matcher), eq(RESOURCES))).thenReturn(swsResponse());
 
     var inputStream = request(VerbType.LIST_SETS.value(), method);
 
@@ -171,9 +177,7 @@ public class OaiPmhHandlerTest {
       throws IOException, JAXBException {
     final var appender = LogUtils.getTestingAppenderForRootLogger();
 
-    doThrow(new RuntimeException(EMPTY_STRING))
-        .when(resourceClient)
-        .doSearch(any(), eq(Words.RESOURCES));
+    doThrow(new RuntimeException(EMPTY_STRING)).when(resourceClient).doSearch(any(), eq(RESOURCES));
 
     var inputStream = request(VerbType.LIST_SETS.value(), method);
 

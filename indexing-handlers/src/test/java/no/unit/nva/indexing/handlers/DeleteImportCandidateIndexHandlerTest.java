@@ -1,8 +1,8 @@
 package no.unit.nva.indexing.handlers;
 
-import static no.unit.nva.LogAppender.getAppender;
-import static no.unit.nva.LogAppender.logToString;
 import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
+import static no.unit.nva.search.testing.LogAppender.getAppender;
+import static no.unit.nva.search.testing.LogAppender.logToString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
