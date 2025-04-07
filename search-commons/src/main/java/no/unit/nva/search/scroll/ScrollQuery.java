@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URI;
 import java.util.Objects;
 import java.util.stream.Stream;
-import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.OpenSearchClient;
 import no.unit.nva.search.common.Query;
 import no.unit.nva.search.common.records.HttpResponseFormatter;
@@ -71,22 +70,23 @@ public final class ScrollQuery extends Query<ScrollParameter> {
   @Override
   public <R, Q extends Query<ScrollParameter>> HttpResponseFormatter<ScrollParameter> doSearch(
       OpenSearchClient<R, Q> queryClient, String indexName) {
-    var response = buildSwsResponse(scrollFetch(firstResponse, 0, (ScrollClient) queryClient));
+    var response =
+        buildSwsResponse(scrollFetch(firstResponse, 0, (ScrollClient) queryClient, indexName));
     return new HttpResponseFormatter<>(response, CSV_UTF_8);
   }
 
   private Stream<JsonNode> scrollFetch(
-      SwsResponse previousResponse, int level, ScrollClient scrollClient) {
+      SwsResponse previousResponse, int level, ScrollClient scrollClient, String indexName) {
 
     if (shouldStopRecursion(level + 1, previousResponse)) {
       return previousResponse.getSearchHits().stream();
     }
     scrollId = previousResponse._scroll_id();
-    var currentResponse = scrollClient.doSearch(this, Words.RESOURCES);
+    var currentResponse = scrollClient.doSearch(this, indexName);
 
     return Stream.concat(
         previousResponse.getSearchHits().stream(),
-        scrollFetch(currentResponse, level + 1, scrollClient));
+        scrollFetch(currentResponse, level + 1, scrollClient, indexName));
   }
 
   private SwsResponse buildSwsResponse(Stream<JsonNode> results) {
