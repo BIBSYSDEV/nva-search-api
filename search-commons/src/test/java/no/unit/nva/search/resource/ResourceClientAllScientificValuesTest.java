@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -35,205 +36,217 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 public class ResourceClientAllScientificValuesTest {
 
-    private static final String indexName = "resources";
-    private static final URI ALL_SCIENTIFIC_VALUES_UNASSIGNED_AND_LEVEL_ZERO = URI.create(
-        "https://x.org/?allScientificValues=Unassigned,LevelZero");
-    private static ResourceClient resourceClient;
+  private static final String indexName = "resources";
+  private static final URI ALL_SCIENTIFIC_VALUES_UNASSIGNED_AND_LEVEL_ZERO =
+      URI.create("https://x.org/?allScientificValues=Unassigned,LevelZero");
+  private static ResourceClient resourceClient;
 
-    @BeforeAll
-    public static void setUp() throws IOException {
-        indexingClient.deleteIndex(indexName);
-        var cachedJwtProvider = setupMockedCachedJwtProvider();
-        var mochedHttpClient = mock(HttpClient.class);
-        var userSettingsClient = new UserSettingsClient(mochedHttpClient, cachedJwtProvider);
-        var response = mockedFutureHttpResponse(Path.of(USER_SETTINGS_JSON));
-        when(mochedHttpClient.sendAsync(any(), any())).thenReturn(response)
-            .thenReturn(mockedFutureHttpResponse(""))
-            .thenReturn(mockedFutureFailed());
-        resourceClient = new ResourceClient(HttpClient.newHttpClient(), cachedJwtProvider, userSettingsClient);
-    }
+  @BeforeAll
+  public static void setUp() throws IOException {
+    indexingClient.deleteIndex(indexName);
+    var cachedJwtProvider = setupMockedCachedJwtProvider();
+    var mochedHttpClient = mock(HttpClient.class);
+    var userSettingsClient = new UserSettingsClient(mochedHttpClient, cachedJwtProvider);
+    var response = mockedFutureHttpResponse(Path.of(USER_SETTINGS_JSON));
+    when(mochedHttpClient.sendAsync(any(), any()))
+        .thenReturn(response)
+        .thenReturn(mockedFutureHttpResponse(""))
+        .thenReturn(mockedFutureFailed());
+    resourceClient =
+        new ResourceClient(HttpClient.newHttpClient(), cachedJwtProvider, userSettingsClient);
+  }
 
-    @BeforeEach
-    public void cleanIndex() {
-        attempt(() -> indexingClient.deleteIndex(indexName));
-    }
+  @BeforeEach
+  public void cleanIndex() {
+    attempt(() -> indexingClient.deleteIndex(indexName));
+  }
 
-    @Test
-    void shouldReturnDocumentsWhereAllChannelsHaveOneOfProvidedScientificValues()
-        throws IOException, BadRequestException {
+  @Test
+  void shouldReturnDocumentsWhereAllChannelsHaveOneOfProvidedScientificValues()
+      throws IOException, BadRequestException {
 
-        var json = """
-            {
-              "type": "Publication",
-              "identifier": "018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619e3bbaf39",
-              "entityDescription": {
-                "reference": {
-                  "publicationContext": {
-                    "publisher": {
-                      "type": "Publisher",
-                      "scientificValue": "LevelZero"
-                    },
-                    "series": {
-                      "type": "Series",
-                      "scientificValue": "Unassigned"
-                    }
-                  }
+    var json =
+        """
+        {
+          "type": "Publication",
+          "identifier": "018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619e3bbaf39",
+          "entityDescription": {
+            "reference": {
+              "publicationContext": {
+                "publisher": {
+                  "type": "Publisher",
+                  "scientificValue": "LevelZero"
+                },
+                "series": {
+                  "type": "Series",
+                  "scientificValue": "Unassigned"
                 }
               }
             }
-            """;
-        createIndexAndIndexDocument(json);
+          }
+        }
+        """;
+    createIndexAndIndexDocument(json);
 
-        var response = doSearchWithUri(ALL_SCIENTIFIC_VALUES_UNASSIGNED_AND_LEVEL_ZERO);
-        var hits = response.toPagedResponse().hits();
-        assertFalse(hits.isEmpty());
-    }
+    var response = doSearchWithUri(ALL_SCIENTIFIC_VALUES_UNASSIGNED_AND_LEVEL_ZERO);
+    var hits = response.toPagedResponse().hits();
+    assertFalse(hits.isEmpty());
+  }
 
-    @Test
-    void shouldNotReturnDocumentsWhereAOneOfScientificValuesIsNotAsProvidedInRequest()
-        throws IOException, BadRequestException {
+  @Test
+  void shouldNotReturnDocumentsWhereAOneOfScientificValuesIsNotAsProvidedInRequest()
+      throws IOException, BadRequestException {
 
-        var json = """
-                    {
-              "type": "Publication",
-              "identifier": "018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619e3bbaf39",
-              "entityDescription": {
-                "reference": {
-                  "publicationContext": {
-                    "publisher": {
-                      "type": "Publisher",
-                      "scientificValue": "LevelOne"
-                    },
-                    "series": {
-                      "type": "Series",
-                      "scientificValue": "Unassigned"
-                    }
-                  }
+    var json =
+        """
+                {
+          "type": "Publication",
+          "identifier": "018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619e3bbaf39",
+          "entityDescription": {
+            "reference": {
+              "publicationContext": {
+                "publisher": {
+                  "type": "Publisher",
+                  "scientificValue": "LevelOne"
+                },
+                "series": {
+                  "type": "Series",
+                  "scientificValue": "Unassigned"
                 }
               }
             }
-            """;
-        createIndexAndIndexDocument(json);
+          }
+        }
+        """;
+    createIndexAndIndexDocument(json);
 
-        var response = doSearchWithUri(ALL_SCIENTIFIC_VALUES_UNASSIGNED_AND_LEVEL_ZERO);
-        var hits = response.toPagedResponse().hits();
-        assertTrue(hits.isEmpty());
-    }
+    var response = doSearchWithUri(ALL_SCIENTIFIC_VALUES_UNASSIGNED_AND_LEVEL_ZERO);
+    var hits = response.toPagedResponse().hits();
+    assertTrue(hits.isEmpty());
+  }
 
-    @Test
-    void shouldReturnDocumentsWhereOnlyOneScientificValuePresentAndMultipleProvidedInRequest()
-        throws IOException, BadRequestException {
-        var json = """
-                  {
-              "type": "Publication",
-              "identifier": "018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619e3bbaf39",
-              "entityDescription": {
-                "reference": {
-                  "publicationContext": {
-                    "publisher": {
-                      "type": "Publisher",
-                      "scientificValue": "LevelZero"
-                    }
-                  }
+  @Test
+  void shouldReturnDocumentsWhereOnlyOneScientificValuePresentAndMultipleProvidedInRequest()
+      throws IOException, BadRequestException {
+    var json =
+        """
+              {
+          "type": "Publication",
+          "identifier": "018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619e3bbaf39",
+          "entityDescription": {
+            "reference": {
+              "publicationContext": {
+                "publisher": {
+                  "type": "Publisher",
+                  "scientificValue": "LevelZero"
                 }
               }
             }
-            """;
-        createIndexAndIndexDocument(json);
+          }
+        }
+        """;
+    createIndexAndIndexDocument(json);
 
-        var response = doSearchWithUri(ALL_SCIENTIFIC_VALUES_UNASSIGNED_AND_LEVEL_ZERO);
-        var hits = response.toPagedResponse().hits();
-        assertFalse(hits.isEmpty());
-    }
+    var response = doSearchWithUri(ALL_SCIENTIFIC_VALUES_UNASSIGNED_AND_LEVEL_ZERO);
+    var hits = response.toPagedResponse().hits();
+    assertFalse(hits.isEmpty());
+  }
 
-    @Test
-    void shouldReturnDocumentsWhereOnlyOneScientificValueInPublicationContextPresentAndMultipleProvidedInRequest()
-        throws IOException, BadRequestException {
-        var json = """
-                  {
-              "type": "Publication",
-              "identifier": "018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619e3bbaf39",
-              "entityDescription": {
-                "reference": {
-                  "publicationContext": {
-                      "type": "Journal",
-                      "scientificValue": "LevelZero"
-                  }
+  @Test
+  void
+      shouldReturnDocumentsWhereOnlyOneScientificValueInPublicationContextPresentAndMultipleProvidedInRequest()
+          throws IOException, BadRequestException {
+    var json =
+        """
+              {
+          "type": "Publication",
+          "identifier": "018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619e3bbaf39",
+          "entityDescription": {
+            "reference": {
+              "publicationContext": {
+                  "type": "Journal",
+                  "scientificValue": "LevelZero"
+              }
+            }
+          }
+        }
+        """;
+    createIndexAndIndexDocument(json);
+
+    var response = doSearchWithUri(ALL_SCIENTIFIC_VALUES_UNASSIGNED_AND_LEVEL_ZERO);
+    var hits = response.toPagedResponse().hits();
+    assertFalse(hits.isEmpty());
+  }
+
+  @Test
+  void shouldNotReturnDocumentsWhereScientificValuesAreMissingWhenMultipleProvidedValuesInRequest()
+      throws IOException, BadRequestException {
+    var json =
+        """
+              {
+          "type": "Publication",
+          "identifier": "018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619e3bbaf39",
+          "entityDescription": {
+            "reference": {
+
+            }
+          }
+        }
+        """;
+    createIndexAndIndexDocument(json);
+
+    var response = doSearchWithUri(ALL_SCIENTIFIC_VALUES_UNASSIGNED_AND_LEVEL_ZERO);
+    var hits = response.toPagedResponse().hits();
+    assertTrue(hits.isEmpty());
+  }
+
+  @Test
+  void shouldNotReturnDocumentsWhereOnlyOneScientificValueAndIsNotAsOneOfValuesAsProvidedInRequest()
+      throws IOException, BadRequestException {
+    var json =
+        """
+                     {
+          "type": "Publication",
+          "identifier": "018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619e3bbaf39",
+          "entityDescription": {
+            "reference": {
+              "publicationContext": {
+                "publisher": {
+                  "type": "Publisher",
+                  "scientificValue": "LevelOne"
                 }
               }
             }
-            """;
-        createIndexAndIndexDocument(json);
+          }
+        }
+        """;
+    createIndexAndIndexDocument(json);
 
-        var response = doSearchWithUri(ALL_SCIENTIFIC_VALUES_UNASSIGNED_AND_LEVEL_ZERO);
-        var hits = response.toPagedResponse().hits();
-        assertFalse(hits.isEmpty());
-    }
+    var response = doSearchWithUri(ALL_SCIENTIFIC_VALUES_UNASSIGNED_AND_LEVEL_ZERO);
+    var hits = response.toPagedResponse().hits();
+    assertTrue(hits.isEmpty());
+  }
 
-    @Test
-    void shouldNotReturnDocumentsWhereScientificValuesAreMissingWhenMultipleProvidedValuesInRequest()
-        throws IOException, BadRequestException {
-        var json = """
-                  {
-              "type": "Publication",
-              "identifier": "018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619e3bbaf39",
-              "entityDescription": {
-                "reference": {
-            
-                }
-              }
-            }
-            """;
-        createIndexAndIndexDocument(json);
+  private static HttpResponseFormatter<ResourceParameter> doSearchWithUri(URI searchUri)
+      throws BadRequestException {
+    return ResourceSearchQuery.builder()
+        .fromTestQueryParameters(queryToMapEntries(searchUri))
+        .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+        .withRequiredParameters(FROM, SIZE)
+        .build()
+        .withFilter()
+        .apply()
+        .doSearch(resourceClient);
+  }
 
-        var response = doSearchWithUri(ALL_SCIENTIFIC_VALUES_UNASSIGNED_AND_LEVEL_ZERO);
-        var hits = response.toPagedResponse().hits();
-        assertTrue(hits.isEmpty());
-    }
-
-    @Test
-    void shouldNotReturnDocumentsWhereOnlyOneScientificValueAndIsNotAsOneOfValuesAsProvidedInRequest()
-        throws IOException, BadRequestException {
-        var json = """
-                         {
-              "type": "Publication",
-              "identifier": "018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619e3bbaf39",
-              "entityDescription": {
-                "reference": {
-                  "publicationContext": {
-                    "publisher": {
-                      "type": "Publisher",
-                      "scientificValue": "LevelOne"
-                    }
-                  }
-                }
-              }
-            }
-            """;
-        createIndexAndIndexDocument(json);
-
-        var response = doSearchWithUri(ALL_SCIENTIFIC_VALUES_UNASSIGNED_AND_LEVEL_ZERO);
-        var hits = response.toPagedResponse().hits();
-        assertTrue(hits.isEmpty());
-    }
-
-    private static HttpResponseFormatter<ResourceParameter> doSearchWithUri(URI searchUri) throws BadRequestException {
-        return ResourceSearchQuery.builder()
-                   .fromTestQueryParameters(queryToMapEntries(searchUri))
-                   .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                   .withRequiredParameters(FROM, SIZE)
-                   .build()
-                   .withFilter()
-                   .apply()
-                   .doSearch(resourceClient);
-    }
-
-    private static void createIndexAndIndexDocument(String json) throws IOException {
-        indexingClient.createIndex(indexName, RESOURCE_MAPPINGS.asMap(), RESOURCE_SETTINGS.asMap());
-        indexingClient.refreshIndex(indexName);
-        var document = new IndexDocument(new EventConsumptionAttributes(indexName, SortableIdentifier.next()),
-                                         JsonUtils.dtoObjectMapper.readTree(json));
-        indexingClient.addDocumentToIndex(document);
-        indexingClient.refreshIndex(indexName);
-    }
+  private static void createIndexAndIndexDocument(String json) throws IOException {
+    indexingClient.createIndex(indexName, RESOURCE_MAPPINGS.asMap(), RESOURCE_SETTINGS.asMap());
+    indexingClient.refreshIndex(indexName);
+    var document =
+        new IndexDocument(
+            new EventConsumptionAttributes(indexName, SortableIdentifier.next()),
+            JsonUtils.dtoObjectMapper.readTree(json));
+    indexingClient.addDocumentToIndex(document);
+    indexingClient.refreshIndex(indexName);
+  }
 }
