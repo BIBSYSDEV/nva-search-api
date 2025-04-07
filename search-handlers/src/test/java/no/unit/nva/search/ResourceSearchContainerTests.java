@@ -19,6 +19,7 @@ import java.net.http.HttpClient;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
+import no.unit.nva.constants.Words;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexingclient.IndexingClient;
 import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
@@ -108,7 +109,7 @@ public class ResourceSearchContainerTests {
             .withFilter()
             .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
             .apply()
-            .doSearch(resourceClient);
+            .doSearch(resourceClient, Words.RESOURCES);
 
     var actualOrderOfTitles =
         result.toPagedResponse().hits().stream()

@@ -13,6 +13,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -26,6 +27,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.Map;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.testing.common.FakeGatewayResponse;
@@ -110,7 +112,7 @@ class SearchResourceAuthHandlerTest {
         stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
     var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
 
-    when(mockedSearchClient.doSearch(any())).thenReturn(body);
+    when(mockedSearchClient.doSearch(any(), eq(Words.RESOURCES))).thenReturn(body);
   }
 
   private InputStream getInputStreamWithAccessRight(

@@ -198,8 +198,8 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
   @Override
   public <R, Q extends Query<ResourceParameter>> HttpResponseFormatter<ResourceParameter> doSearch(
-      OpenSearchClient<R, Q> queryClient) {
-    return super.doSearch(queryClient);
+      OpenSearchClient<R, Q> queryClient, String indexName) {
+    return super.doSearch(queryClient, indexName);
   }
 
   @Override
@@ -232,7 +232,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
   private void addPromotedPublications(UserSettingsClient client, BoolQueryBuilder builder) {
 
-    var result = attempt(() -> client.doSearch(this));
+    var result = attempt(() -> client.doSearch(this, Words.RESOURCES));
     if (result.isSuccess()) {
       AtomicInteger i = new AtomicInteger();
       var promoted = result.get().promotedPublications();
@@ -245,9 +245,9 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
   }
 
   @Override
-  public URI openSearchUri() {
+  public URI openSearchUri(String indexName) {
     return fromUri(infrastructureApiUri)
-        .addChild(Words.RESOURCES, Words.SEARCH)
+        .addChild(indexName, Words.SEARCH)
         .addQueryParameters(queryParameters())
         .getUri();
   }

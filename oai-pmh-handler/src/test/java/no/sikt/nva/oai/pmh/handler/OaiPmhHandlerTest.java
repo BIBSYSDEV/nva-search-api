@@ -1,6 +1,7 @@
 package no.sikt.nva.oai.pmh.handler;
 
 import static java.net.HttpURLConnection.HTTP_INTERNAL_ERROR;
+import static no.unit.nva.constants.Words.RESOURCES;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
@@ -9,6 +10,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -150,7 +152,7 @@ public class OaiPmhHandlerTest {
             .withPageParameter(ResourceParameter.SIZE, "0")
             .withSearchParameter(ResourceParameter.AGGREGATION, "all")
             .build();
-    when(resourceClient.doSearch(argThat(matcher))).thenReturn(swsResponse());
+    when(resourceClient.doSearch(argThat(matcher), eq(RESOURCES))).thenReturn(swsResponse());
 
     var inputStream = request(VerbType.LIST_SETS.value(), method);
 
@@ -175,7 +177,7 @@ public class OaiPmhHandlerTest {
       throws IOException, JAXBException {
     final var appender = LogUtils.getTestingAppenderForRootLogger();
 
-    doThrow(new RuntimeException(EMPTY_STRING)).when(resourceClient).doSearch(any());
+    doThrow(new RuntimeException(EMPTY_STRING)).when(resourceClient).doSearch(any(), eq(RESOURCES));
 
     var inputStream = request(VerbType.LIST_SETS.value(), method);
 

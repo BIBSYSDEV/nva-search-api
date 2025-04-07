@@ -15,6 +15,7 @@ import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.Map;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.ContentTypeUtils;
 import no.unit.nva.search.common.records.JsonNodeMutator;
 import no.unit.nva.search.resource.LegacyMutator;
@@ -72,7 +73,7 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
         .withFilter()
         .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
         .apply()
-        .doSearch(opensearchClient)
+        .doSearch(opensearchClient, Words.RESOURCES)
         .withMutators(getMutator(version))
         .toString();
   }

@@ -34,6 +34,7 @@ import java.net.http.HttpClient;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.records.PagedSearch;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.paths.UriWrapper;
@@ -145,7 +146,7 @@ class ResourceSearchQueryTest {
                 .withRequiredParameters(SIZE, FROM)
                 .fromTestQueryParameters(toMapEntries)
                 .build()
-                .doSearch(resourceClient));
+                .doSearch(resourceClient, Words.RESOURCES));
   }
 
   @Test
@@ -235,7 +236,7 @@ class ResourceSearchQueryTest {
                 .withRequiredParameters(FROM, SIZE, DOI)
                 .validate()
                 .build()
-                .openSearchUri());
+                .openSearchUri(Words.RESOURCES));
   }
 
   @ParameterizedTest
@@ -248,6 +249,6 @@ class ResourceSearchQueryTest {
                 .fromTestQueryParameters(queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE)
                 .build()
-                .openSearchUri());
+                .openSearchUri(Words.RESOURCES));
   }
 }
