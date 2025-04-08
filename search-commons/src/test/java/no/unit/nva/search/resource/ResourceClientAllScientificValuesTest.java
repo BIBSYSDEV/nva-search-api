@@ -11,7 +11,7 @@ import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCached
 import static no.unit.nva.search.resource.ResourceClientTest.USER_SETTINGS_JSON;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
-import static nva.commons.core.attempt.Try.attempt;
+import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -22,33 +22,33 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.nio.file.Path;
+import java.util.Locale;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
 import no.unit.nva.indexingclient.models.IndexDocument;
 import no.unit.nva.search.common.records.HttpResponseFormatter;
 import nva.commons.apigateway.exceptions.BadRequestException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
 public class ResourceClientAllScientificValuesTest {
 
-  private static final String indexName = "resources";
+  private static final String indexName = randomString().toLowerCase(Locale.ROOT);
   private static final URI ALL_SCIENTIFIC_VALUES_UNASSIGNED_AND_LEVEL_ZERO =
       URI.create("https://x.org/?allScientificValues=Unassigned,LevelZero");
   private static ResourceClient resourceClient;
 
   @BeforeAll
-  public static void setUp() throws IOException {
-    indexingClient.deleteIndex(indexName);
+  public static void setUp() {
     var cachedJwtProvider = setupMockedCachedJwtProvider();
-    var mockedHttpClient = mock(HttpClient.class);
-    var userSettingsClient = new UserSettingsClient(mockedHttpClient, cachedJwtProvider);
+    var mochedHttpClient = mock(HttpClient.class);
+    var userSettingsClient = new UserSettingsClient(mochedHttpClient, cachedJwtProvider);
     var response = mockedFutureHttpResponse(Path.of(USER_SETTINGS_JSON));
-    when(mockedHttpClient.sendAsync(any(), any()))
+    when(mochedHttpClient.sendAsync(any(), any()))
         .thenReturn(response)
         .thenReturn(mockedFutureHttpResponse(""))
         .thenReturn(mockedFutureFailed());
@@ -56,9 +56,9 @@ public class ResourceClientAllScientificValuesTest {
         new ResourceClient(HttpClient.newHttpClient(), cachedJwtProvider, userSettingsClient);
   }
 
-  @BeforeEach
-  public void cleanIndex() {
-    attempt(() -> indexingClient.deleteIndex(indexName));
+  @AfterEach
+  public void cleanIndex() throws IOException {
+    indexingClient.deleteIndex(indexName);
   }
 
   @Test
@@ -236,7 +236,7 @@ public class ResourceClientAllScientificValuesTest {
         .build()
         .withFilter()
         .apply()
-        .doSearch(resourceClient);
+        .doSearch(resourceClient, indexName);
   }
 
   private static void createIndexAndIndexDocument(String json) throws IOException {

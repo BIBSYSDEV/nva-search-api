@@ -15,6 +15,7 @@ import static no.unit.nva.search.resource.ResourceParameter.SORT;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import java.util.concurrent.CompletionException;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.OpenSearchClientException;
 import no.unit.nva.search.common.csv.ResourceCsvTransformer;
 import no.unit.nva.search.resource.ResourceClient;
@@ -106,7 +107,7 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
               .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
               .apply()
               .withScrollTime(SCROLL_TTL)
-              .doSearch(opensearchClient)
+              .doSearch(opensearchClient, Words.RESOURCES)
               .swsResponse();
 
       return AttemptResponse.success(
@@ -114,7 +115,7 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
               .withInitialResponse(initialResponse)
               .withScrollTime(SCROLL_TTL)
               .build()
-              .doSearch(scrollClient)
+              .doSearch(scrollClient, Words.RESOURCES)
               .toCsvText());
     } catch (CompletionException completionException) {
       if (completionException.getCause() instanceof OpenSearchClientException

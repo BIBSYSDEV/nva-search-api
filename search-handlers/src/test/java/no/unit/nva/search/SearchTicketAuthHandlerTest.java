@@ -4,6 +4,7 @@ import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.constants.Words.TICKETS;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -24,7 +26,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Map;
@@ -60,8 +61,7 @@ class SearchTicketAuthHandlerTest {
   }
 
   @Test
-  void shouldOnlyReturnPublicationsFromCuratorsOrganizationWhenQuerying()
-      throws IOException, URISyntaxException {
+  void shouldOnlyReturnPublicationsFromCuratorsOrganizationWhenQuerying() throws IOException {
     prepareRestHighLevelClientOkResponse();
 
     var input =
@@ -101,7 +101,7 @@ class SearchTicketAuthHandlerTest {
         stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
     var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
     when(mockedSearchClient.doSearch(
-            argThat(new TicketSearchQueryArgumentMatcher(TOP_LEVEL_CRISTIN_ID))))
+            argThat(new TicketSearchQueryArgumentMatcher(TOP_LEVEL_CRISTIN_ID)), eq(TICKETS)))
         .thenReturn(body);
 
     var input =
@@ -130,7 +130,8 @@ class SearchTicketAuthHandlerTest {
         stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
     var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
     when(mockedSearchClient.doSearch(
-            argThat(new TicketSearchQueryArgumentMatcher(firstViewingScope, secondViewingScope))))
+            argThat(new TicketSearchQueryArgumentMatcher(firstViewingScope, secondViewingScope)),
+            eq(TICKETS)))
         .thenReturn(body);
 
     var input =
@@ -153,7 +154,7 @@ class SearchTicketAuthHandlerTest {
         stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
     var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
 
-    when(mockedSearchClient.doSearch(any())).thenReturn(body);
+    when(mockedSearchClient.doSearch(any(), any())).thenReturn(body);
   }
 
   private InputStream getInputStreamWithAccessRight(

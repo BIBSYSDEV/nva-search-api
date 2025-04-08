@@ -26,18 +26,19 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
     startTime = Instant.now();
   }
 
-  public abstract Stream<QueryContentWrapper> assemble();
+  public abstract Stream<QueryContentWrapper> assemble(String indexName);
 
   /**
    * Method to mimic Domain driven design.
    *
    * @param queryClient simple service to do i/o (http)
+   * @param indexName
    * @return HttpResponseFormatter a formatter for the response
    */
   public abstract <R, Q extends Query<K>> HttpResponseFormatter<K> doSearch(
-      OpenSearchClient<R, Q> queryClient);
+      OpenSearchClient<R, Q> queryClient, String indexName);
 
-  protected abstract URI openSearchUri();
+  protected abstract URI openSearchUri(String indexName);
 
   public QueryKeys<K> parameters() {
     return queryKeys;

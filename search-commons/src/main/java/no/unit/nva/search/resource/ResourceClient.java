@@ -53,8 +53,8 @@ public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceSearch
   }
 
   @Override
-  public SwsResponse doSearch(ResourceSearchQuery query) {
-    return super.doSearch(query.withUserSettings(userSettingsClient));
+  public SwsResponse doSearch(ResourceSearchQuery query, String indexName) {
+    return super.doSearch(query.withUserSettings(userSettingsClient), indexName);
   }
 
   @Override

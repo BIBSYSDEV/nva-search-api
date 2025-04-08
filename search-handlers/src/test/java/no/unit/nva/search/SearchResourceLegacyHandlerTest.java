@@ -6,6 +6,7 @@ import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.CONTRIBUTOR;
+import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.search.resource.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -258,7 +260,7 @@ class SearchResourceLegacyHandlerTest {
     var jsonResponse = FakeSearchResponse.generateSearchResponseString(exportCsvs, null);
     var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
 
-    when(mockedSearchClient.doSearch(any())).thenReturn(body);
+    when(mockedSearchClient.doSearch(any(), eq(RESOURCES))).thenReturn(body);
     //        var searchResponse = createSearchResponseWithHits(json);
     //        when(restHighLevelClientMock.search(any(), any())).thenReturn(searchResponse);
   }
@@ -268,20 +270,20 @@ class SearchResourceLegacyHandlerTest {
         stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
     var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
 
-    when(mockedSearchClient.doSearch(any())).thenReturn(body);
+    when(mockedSearchClient.doSearch(any(), eq(RESOURCES))).thenReturn(body);
   }
 
   private void prepareRestHighLevelClientEmptyResponse() throws IOException {
     var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
     var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
 
-    when(mockedSearchClient.doSearch(any())).thenReturn(body);
+    when(mockedSearchClient.doSearch(any(), eq(RESOURCES))).thenReturn(body);
   }
 
   private void prepareRestHighLevelClientEmptyResponseForSortOrder() throws IOException {
     var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
     var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
 
-    when(mockedSearchClient.doSearch(any())).thenReturn(body);
+    when(mockedSearchClient.doSearch(any(), eq(Words.RESOURCES))).thenReturn(body);
   }
 }

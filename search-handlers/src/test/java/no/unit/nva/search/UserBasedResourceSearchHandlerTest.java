@@ -8,11 +8,13 @@ import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.apigateway.AccessRight.MANAGE_OWN_RESOURCES;
 import static nva.commons.apigateway.ApiGatewayHandler.ALLOWED_ORIGIN_ENV;
+import static nva.commons.apigateway.ApiGatewayHandler.RESOURCE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -54,7 +56,7 @@ public class UserBasedResourceSearchHandlerTest {
   @Test
   void shouldReturnInternalServerErrorOnUnexpectedException() throws IOException {
 
-    doThrow(RuntimeException.class).when(resourceClient).doSearch(any());
+    doThrow(RuntimeException.class).when(resourceClient).doSearch(any(), eq(RESOURCE));
 
     var request =
         new HandlerRequestBuilder<Void>(JsonUtils.dtoObjectMapper)
@@ -98,7 +100,7 @@ public class UserBasedResourceSearchHandlerTest {
   @Test
   void shouldQueryOpenSearchWithDefaultParametersIfNoQueryParametersIsPresent() throws IOException {
     var username = randomString();
-    when(resourceClient.doSearch(any())).thenReturn(emptySwsResponse());
+    when(resourceClient.doSearch(any(), eq(RESOURCE))).thenReturn(emptySwsResponse());
     var request =
         new HandlerRequestBuilder<Void>(JsonUtils.dtoObjectMapper)
             .withUserName(username)
@@ -121,7 +123,7 @@ public class UserBasedResourceSearchHandlerTest {
             .withNamedFilterQuery(
                 "owner", new TermsQueryBuilderExpectation("resourceOwner.owner.keyword", username))
             .build();
-    verify(resourceClient, Mockito.times(1)).doSearch(argThat(matcher));
+    verify(resourceClient, Mockito.times(1)).doSearch(argThat(matcher), eq(RESOURCE));
   }
 
   private static SwsResponse emptySwsResponse() {

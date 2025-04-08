@@ -12,6 +12,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
 import java.util.List;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.ContentTypeUtils;
 import no.unit.nva.search.common.records.JsonNodeMutator;
 import no.unit.nva.search.resource.LegacyMutator;
@@ -70,7 +71,7 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
         .withFilter()
         .customerCurationInstitutions(requestInfo)
         .apply()
-        .doSearch(opensearchClient)
+        .doSearch(opensearchClient, Words.RESOURCES)
         .withMutators(getMutator(version))
         .toString();
   }

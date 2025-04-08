@@ -147,7 +147,7 @@ class ImportCandidateClientTest {
             .withDockerHostUri(hostAddress)
             .withRequiredParameters(FROM, SIZE, AGGREGATION)
             .build()
-            .doSearch(importCandidateClient);
+            .doSearch(importCandidateClient, Words.IMPORT_CANDIDATES_INDEX);
 
     assertNotNull(response1);
 
@@ -184,7 +184,7 @@ class ImportCandidateClientTest {
                 .withRequiredParameters(SIZE, FROM)
                 .fromTestQueryParameters(toMapEntries)
                 .build()
-                .doSearch(importCandidateClient));
+                .doSearch(importCandidateClient, Words.IMPORT_CANDIDATES_INDEX));
   }
 
   @ParameterizedTest
@@ -196,7 +196,7 @@ class ImportCandidateClientTest {
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .withRequiredParameters(FROM, SIZE, SORT)
             .build()
-            .doSearch(importCandidateClient);
+            .doSearch(importCandidateClient, Words.IMPORT_CANDIDATES_INDEX);
 
     var pagedResponse = response.toPagedResponse();
 
@@ -219,7 +219,7 @@ class ImportCandidateClientTest {
             .withRequiredParameters(FROM, SIZE, SORT)
             .withMediaType(Words.TEXT_CSV)
             .build()
-            .doSearch(importCandidateClient);
+            .doSearch(importCandidateClient, Words.IMPORT_CANDIDATES_INDEX);
     assertNotNull(csvResult);
   }
 
@@ -232,7 +232,7 @@ class ImportCandidateClientTest {
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .withRequiredParameters(FROM, SIZE)
             .build()
-            .doSearch(importCandidateClient);
+            .doSearch(importCandidateClient, Words.IMPORT_CANDIDATES_INDEX);
 
     var pagedResponse = response.toPagedResponse();
     assertNotNull(pagedResponse.id());
@@ -251,7 +251,7 @@ class ImportCandidateClientTest {
                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .build()
-                .doSearch(importCandidateClient));
+                .doSearch(importCandidateClient, Words.IMPORT_CANDIDATES_INDEX));
   }
 
   @ParameterizedTest
@@ -265,6 +265,6 @@ class ImportCandidateClientTest {
                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .withRequiredParameters(FROM, SIZE, CREATED_DATE)
                 .build()
-                .doSearch(importCandidateClient));
+                .doSearch(importCandidateClient, Words.IMPORT_CANDIDATES_INDEX));
   }
 }

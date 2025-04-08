@@ -56,7 +56,7 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
     this.jwtProvider = jwtProvider;
   }
 
-  public R doSearch(Q query) {
+  public R doSearch(Q query, String indexName) {
     queryBuilderStart = query.getStartTime();
     queryParameters =
         query.parameters().asMap().entrySet().stream()
@@ -65,7 +65,7 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
 
     var completableFutures =
         query
-            .assemble()
+            .assemble(indexName)
             .map(this::createRequest)
             .map(this::fetch)
             .map(this::handleResponse)

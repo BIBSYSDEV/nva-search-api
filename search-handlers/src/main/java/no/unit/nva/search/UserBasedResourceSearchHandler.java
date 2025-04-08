@@ -51,7 +51,7 @@ public class UserBasedResourceSearchHandler extends ApiGatewayHandler<Void, Stri
         .withFilter()
         .ownResourcesOnly(username)
         .apply()
-        .doSearch(resourceClient)
+        .doSearch(resourceClient, RESOURCE)
         .withMutators(new SimplifiedMutator())
         .toString();
   }

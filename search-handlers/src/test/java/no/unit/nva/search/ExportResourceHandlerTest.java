@@ -236,10 +236,10 @@ class ExportResourceHandlerTest {
       ExportCsv initialSearchResult, ExportCsv scroll1SearchResult, ExportCsv scroll2SearchResult)
       throws IOException {
 
-    when(mockedResourceClient.doSearch(any()))
+    when(mockedResourceClient.doSearch(any(), any()))
         .thenReturn(csvToSwsResponse(initialSearchResult, "scrollId1"));
 
-    when(mockedScrollClient.doSearch(any()))
+    when(mockedScrollClient.doSearch(any(), any()))
         .thenReturn(csvToSwsResponse(scroll1SearchResult, "scrollId2"))
         .thenReturn(csvToSwsResponse(scroll2SearchResult, null));
   }

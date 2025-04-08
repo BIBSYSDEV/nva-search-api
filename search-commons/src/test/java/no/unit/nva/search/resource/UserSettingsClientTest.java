@@ -18,6 +18,7 @@ import java.net.http.HttpClient;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.records.UserSettings;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.core.attempt.Failure;
@@ -70,7 +71,7 @@ class UserSettingsClientTest {
             .withRequiredParameters(FROM, SIZE)
             .build();
     var promotedPublications =
-        attempt(() -> userSettingsClient.doSearch(resourceAwsQuery))
+        attempt(() -> userSettingsClient.doSearch(resourceAwsQuery, Words.RESOURCES))
             .map(UserSettings::promotedPublications)
             .orElse(logExceptionAndContinue());
     assertNotNull(promotedPublications);

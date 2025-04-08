@@ -48,7 +48,7 @@ public final class ScrollQuery extends Query<ScrollParameter> {
   }
 
   @Override
-  protected URI openSearchUri() {
+  protected URI openSearchUri(String indexName) {
     return fromUri(infrastructureApiUri).addChild(SEARCH_SCROLL).getUri();
   }
 
@@ -60,31 +60,33 @@ public final class ScrollQuery extends Query<ScrollParameter> {
   }
 
   @Override
-  public Stream<QueryContentWrapper> assemble() {
+  public Stream<QueryContentWrapper> assemble(String indexName) {
     var scrollRequest = new SearchScrollRequest(scrollId).scroll(ttl);
     return Stream.of(
-        new QueryContentWrapper(scrollRequestToString(scrollRequest), this.openSearchUri()));
+        new QueryContentWrapper(
+            scrollRequestToString(scrollRequest), this.openSearchUri(indexName)));
   }
 
   @Override
   public <R, Q extends Query<ScrollParameter>> HttpResponseFormatter<ScrollParameter> doSearch(
-      OpenSearchClient<R, Q> queryClient) {
-    var response = buildSwsResponse(scrollFetch(firstResponse, 0, (ScrollClient) queryClient));
+      OpenSearchClient<R, Q> queryClient, String indexName) {
+    var response =
+        buildSwsResponse(scrollFetch(firstResponse, 0, (ScrollClient) queryClient, indexName));
     return new HttpResponseFormatter<>(response, CSV_UTF_8);
   }
 
   private Stream<JsonNode> scrollFetch(
-      SwsResponse previousResponse, int level, ScrollClient scrollClient) {
+      SwsResponse previousResponse, int level, ScrollClient scrollClient, String indexName) {
 
     if (shouldStopRecursion(level + 1, previousResponse)) {
       return previousResponse.getSearchHits().stream();
     }
     scrollId = previousResponse._scroll_id();
-    var currentResponse = scrollClient.doSearch(this);
+    var currentResponse = scrollClient.doSearch(this, indexName);
 
     return Stream.concat(
         previousResponse.getSearchHits().stream(),
-        scrollFetch(currentResponse, level + 1, scrollClient));
+        scrollFetch(currentResponse, level + 1, scrollClient, indexName));
   }
 
   private SwsResponse buildSwsResponse(Stream<JsonNode> results) {
