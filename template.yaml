@@ -340,6 +340,25 @@ Resources:
             Method: get
             RestApiId: !Ref NvaSearchApi
 
+  UserBasedResourceSearchFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Lambda for searching Resources
+      CodeUri: search-handlers
+      Handler: no.unit.nva.search.UserBasedResourceSearchHandler::handleRequest
+      Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
+      Environment:
+        Variables:
+          ALLOWED_ORIGIN: !Ref AllowedOrigins
+          COGNITO_HOST: !Ref CognitoUri
+      Events:
+        GetResources:
+          Type: Api
+          Properties:
+            Path: /user/resources
+            Method: get
+            RestApiId: !Ref NvaSearchApi
+
   SearchImportCandidatesAuthorizedFunction:
     Type: AWS::Serverless::Function
     Properties:
