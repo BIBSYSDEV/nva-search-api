@@ -45,10 +45,10 @@ public class ResourceClientAllScientificValuesTest {
   public static void setUp() throws IOException {
     indexingClient.deleteIndex(indexName);
     var cachedJwtProvider = setupMockedCachedJwtProvider();
-    var mochedHttpClient = mock(HttpClient.class);
-    var userSettingsClient = new UserSettingsClient(mochedHttpClient, cachedJwtProvider);
+    var mockedHttpClient = mock(HttpClient.class);
+    var userSettingsClient = new UserSettingsClient(mockedHttpClient, cachedJwtProvider);
     var response = mockedFutureHttpResponse(Path.of(USER_SETTINGS_JSON));
-    when(mochedHttpClient.sendAsync(any(), any()))
+    when(mockedHttpClient.sendAsync(any(), any()))
         .thenReturn(response)
         .thenReturn(mockedFutureHttpResponse(""))
         .thenReturn(mockedFutureFailed());
