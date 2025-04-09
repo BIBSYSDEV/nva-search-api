@@ -8,7 +8,6 @@ import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.apigateway.AccessRight.MANAGE_OWN_RESOURCES;
 import static nva.commons.apigateway.ApiGatewayHandler.ALLOWED_ORIGIN_ENV;
-import static nva.commons.apigateway.ApiGatewayHandler.RESOURCE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
@@ -24,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import no.unit.nva.commons.json.JsonUtils;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.common.records.SwsResponse.HitsInfo;
 import no.unit.nva.search.common.records.SwsResponse.HitsInfo.TotalInfo;
@@ -56,7 +56,7 @@ public class UserBasedResourceSearchHandlerTest {
   @Test
   void shouldReturnInternalServerErrorOnUnexpectedException() throws IOException {
 
-    doThrow(RuntimeException.class).when(resourceClient).doSearch(any(), eq(RESOURCE));
+    doThrow(RuntimeException.class).when(resourceClient).doSearch(any(), eq(Words.RESOURCES));
 
     var request =
         new HandlerRequestBuilder<Void>(JsonUtils.dtoObjectMapper)
@@ -100,7 +100,7 @@ public class UserBasedResourceSearchHandlerTest {
   @Test
   void shouldQueryOpenSearchWithDefaultParametersIfNoQueryParametersIsPresent() throws IOException {
     var username = randomString();
-    when(resourceClient.doSearch(any(), eq(RESOURCE))).thenReturn(emptySwsResponse());
+    when(resourceClient.doSearch(any(), eq(Words.RESOURCES))).thenReturn(emptySwsResponse());
     var request =
         new HandlerRequestBuilder<Void>(JsonUtils.dtoObjectMapper)
             .withUserName(username)
@@ -123,7 +123,7 @@ public class UserBasedResourceSearchHandlerTest {
             .withNamedFilterQuery(
                 "owner", new TermsQueryBuilderExpectation("resourceOwner.owner.keyword", username))
             .build();
-    verify(resourceClient, Mockito.times(1)).doSearch(argThat(matcher), eq(RESOURCE));
+    verify(resourceClient, Mockito.times(1)).doSearch(argThat(matcher), eq(Words.RESOURCES));
   }
 
   private static SwsResponse emptySwsResponse() {
