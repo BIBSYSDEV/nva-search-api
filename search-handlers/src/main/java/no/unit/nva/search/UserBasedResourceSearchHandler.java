@@ -7,6 +7,7 @@ import static no.unit.nva.search.resource.ResourceParameter.SORT;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import java.net.HttpURLConnection;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.ResourceSearchQuery;
 import no.unit.nva.search.resource.SimplifiedMutator;
@@ -51,7 +52,7 @@ public class UserBasedResourceSearchHandler extends ApiGatewayHandler<Void, Stri
         .withFilter()
         .ownResourcesOnly(username)
         .apply()
-        .doSearch(resourceClient, RESOURCE)
+        .doSearch(resourceClient, Words.RESOURCES)
         .withMutators(new SimplifiedMutator())
         .toString();
   }
