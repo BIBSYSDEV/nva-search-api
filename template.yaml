@@ -485,7 +485,6 @@ Resources:
     Properties:
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.IndexResourceHandler::handleRequest
-      ReservedConcurrentExecutions: 32
       Role: !GetAtt TriggerExecutionRole.Arn
       MemorySize: 1408
       Environment:
@@ -525,7 +524,6 @@ Resources:
     Properties:
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.IndexImportCandidateHandler::handleRequest
-      ReservedConcurrentExecutions: 32
       Role: !GetAtt TriggerExecutionRole.Arn
       MemorySize: 1408
       Environment:
@@ -551,7 +549,6 @@ Resources:
     Properties:
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.DeleteResourceFromIndexHandler::handleRequest
-      ReservedConcurrentExecutions: 32
       Role: !GetAtt TriggerExecutionRole.Arn
       MemorySize: 1408
       Events:
@@ -574,7 +571,6 @@ Resources:
     Properties:
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.DeleteImportCandidateFromIndexHandler::handleRequest
-      ReservedConcurrentExecutions: 32
       Role: !GetAtt TriggerExecutionRole.Arn
       MemorySize: 1408
       Events:
@@ -816,3 +812,101 @@ Resources:
             Path: /
             Method: post
             RestApiId: !Ref PublicationOaiPmhApi
+
+  #============================ Global events ======================================================
+
+  ExternalUpdatesQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      VisibilityTimeout: 900 #Equal to or more than HandleIdentifierEventHandler Timeout
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt ExternalUpdatesDLQ.Arn
+        maxReceiveCount: 5
+
+  ExternalUpdatesDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 1209600 #14 days
+
+  ExternalUpdatesDLQAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: ExternalUpdatesDLQ Alarm in nva-search-api
+      AlarmDescription: If this alarm is triggered, then check sqs messages on ExternalUpdatesDLQ
+      MetricName: ApproximateNumberOfMessagesVisible
+      Namespace: AWS/SQS
+      Statistic: Sum
+      Dimensions:
+        - Name: QueueName
+          Value: !GetAtt ExternalUpdatesDLQ.QueueName
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      AlarmActions:
+        - !Ref SlackSnsArn
+
+  ExternalUpdateEventsRule:
+    Type: AWS::Events::Rule
+    Properties:
+      EventBusName: !Ref EventBusName
+      Description: "Event rule to listen to external updates."
+      State: ENABLED
+      EventPattern:
+        detail:
+          responsePayload:
+            topic:
+              - "PublicationService.Resource.Deleted"
+      Targets:
+        - Arn: !GetAtt ExternalUpdatesQueue.Arn
+          Id: ExternalUpdatesQueueTarget
+          DeadLetterConfig:
+            Arn: !GetAtt ExternalUpdatesDLQ.Arn
+
+  ExternalUpdatesQueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      Queues:
+        - !Ref ExternalUpdatesQueue
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: "events.amazonaws.com"
+            Action: 'sqs:SendMessage'
+            Resource: !GetAtt ExternalUpdatesQueue.Arn
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !GetAtt ExternalUpdateEventsRule.Arn
+
+  ConsumeMessagesFromExternalEventsQueueManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: 'Managed IAM policy to consume messages from external events queue'
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - sqs:ReceiveMessage
+              - sqs:DeleteMessage
+              - sqs:GetQueueAttributes
+            Resource: !GetAtt ExternalUpdatesQueue.Arn
+
+  ExternalUpdatesEventHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: event-handlers
+      Handler: no.sikt.nva.search.eventhandlers.ExternalUpdatesEventHandler::handleRequest
+      Timeout: 900
+      Policies:
+        - !Ref ReadSearchInfrastructureSecretsManagedPolicy
+        - !Ref ConsumeMessagesFromExternalEventsQueueManagedPolicy
+      Environment:
+        Variables:
+          EVENTS_BUCKET_NAME: !Ref EventsBucketsName
+      Events:
+        ExternalUpdatesQueueEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt ExternalUpdatesQueue.Arn
