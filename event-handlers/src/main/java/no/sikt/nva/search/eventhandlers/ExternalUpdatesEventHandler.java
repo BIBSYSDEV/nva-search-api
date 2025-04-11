@@ -79,12 +79,12 @@ public class ExternalUpdatesEventHandler implements RequestHandler<SQSEvent, Voi
       throw new EventHandlingException("Unknown action in s3 event data. Expected REMOVE!");
     }
 
-    System.out.printf(
-        "About to remove document with identifier %s from the index!\n",
-        updateEvent.oldData().identifier());
-
     try {
       indexingClient.removeDocumentFromResourcesIndex(updateEvent.oldData().identifier());
+      logger.info(
+          String.format(
+              "Removed document with identifier %s from the index!",
+              updateEvent.oldData().identifier()));
     } catch (IOException e) {
       throw new EventHandlingException("Failed to remove document from resources index", e);
     }

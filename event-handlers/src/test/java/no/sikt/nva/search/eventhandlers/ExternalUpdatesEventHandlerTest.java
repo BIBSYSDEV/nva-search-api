@@ -2,6 +2,7 @@ package no.sikt.nva.search.eventhandlers;
 
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
+import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableWithSize.iterableWithSize;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -15,11 +16,14 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexing.testutils.FakeIndexingClient;
+import no.unit.nva.indexingclient.IndexingClient;
 import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
 import no.unit.nva.indexingclient.models.IndexDocument;
 import no.unit.nva.stubs.FakeContext;
@@ -30,16 +34,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class ExternalUpdatesEventHandlerTest {
+
+  private static final String MESSAGE_BODY_TEMPLATE =
+      stringFromResources(Path.of("sqsMessageBodyTemplate.json"));
   private Environment environment;
-  private FakeS3Client s3Client;
 
   @BeforeEach
   public void beforeEach() {
     environment = mock(Environment.class);
     when(environment.readEnv("EVENT_BUCKET_NAME")).thenReturn(randomString());
-    when(environment.readEnv("SEARCH_INFRASTRUCTURE_AUTH_URI")).thenReturn("https://localhost");
-
-    s3Client = new FakeS3Client();
   }
 
   @Test
@@ -54,252 +57,119 @@ public class ExternalUpdatesEventHandlerTest {
 
   @Test
   void shouldFailOnMessageFromUnknownTopic() {
-    var messageBody =
-        """
-{
-  "detail": {
-    "responsePayload": {
-      "topic": "DUMMY_TOPIC"
-    }
-  }
-}
-""";
-    var indexingClient = new FakeIndexingClient();
-
-    var handler = new ExternalUpdatesEventHandler(environment, new FakeS3Client(), indexingClient);
-
-    var sqsMessage = new SQSMessage();
-    sqsMessage.setBody(messageBody);
-
-    var sqsEvent = new SQSEvent();
-    sqsEvent.setRecords(List.of(sqsMessage));
+    var s3Uri = randomUri();
+    var messageBody = stringFromResources(Path.of("sqsMessageWithUnexpectedTopic.json"));
+    var eventReference = "ignoreMe";
+    var fixture = prepareForTesting(s3Uri, eventReference, messageBody, new FakeIndexingClient());
 
     assertThrows(
-        EventHandlingException.class, () -> handler.handleRequest(sqsEvent, new FakeContext()));
+        EventHandlingException.class,
+        () -> fixture.handler().handleRequest(fixture.sqsEvent(), new FakeContext()));
   }
 
   @Test
   void shouldFailOnUnknownActionInS3Event() {
-    var uri = randomUri();
-    var messageBody =
-        String.format(
-            """
-{
-  "detail": {
-    "responsePayload": {
-      "topic": "PublicationService.Resource.Deleted",
-      "uri": "%s"
-    }
-  }
-}
-""",
-            uri);
-    var s3File =
-        """
-        {
-          "action": "INSERT",
-          "oldData": null,
-          "newData": null
-        }
-        """;
-    var filename = UriWrapper.fromUri(uri).getLastPathElement();
-    var s3Client =
-        FakeS3Client.fromContentsMap(
-            Map.of(filename, new ByteArrayInputStream(s3File.getBytes(StandardCharsets.UTF_8))));
-    var indexingClient = new FakeIndexingClient();
-    var handler = new ExternalUpdatesEventHandler(environment, s3Client, indexingClient);
-
-    var sqsMessage = new SQSMessage();
-    sqsMessage.setBody(messageBody);
-
-    var sqsEvent = new SQSEvent();
-    sqsEvent.setRecords(List.of(sqsMessage));
+    var s3Uri = randomUri();
+    var messageBody = generateMessageBody(s3Uri);
+    var eventReference = stringFromResources(Path.of("s3EventReferenceWithUnexpectedAction.json"));
+    var fixture = prepareForTesting(s3Uri, eventReference, messageBody, new FakeIndexingClient());
 
     assertThrows(
-        EventHandlingException.class, () -> handler.handleRequest(sqsEvent, new FakeContext()));
+        EventHandlingException.class,
+        () -> fixture.handler().handleRequest(fixture.sqsEvent(), new FakeContext()));
   }
 
   @Test
   void shouldFailWhenNotAbleToParseS3EventData() {
-    var uri = randomUri();
-    var messageBody =
-        String.format(
-            """
-{
-  "detail": {
-    "responsePayload": {
-      "topic": "PublicationService.Resource.Deleted",
-      "uri": "%s"
-    }
-  }
-}
-""",
-            uri);
-    var s3File =
-        """
-        {
-          "action": 1,
-          "oldData": [],
-          "newData": []
-        }
-        """;
-    var filename = UriWrapper.fromUri(uri).getLastPathElement();
-    var s3Client =
-        FakeS3Client.fromContentsMap(
-            Map.of(filename, new ByteArrayInputStream(s3File.getBytes(StandardCharsets.UTF_8))));
-    var indexingClient = new FakeIndexingClient();
-    var handler = new ExternalUpdatesEventHandler(environment, s3Client, indexingClient);
-
-    var sqsMessage = new SQSMessage();
-    sqsMessage.setBody(messageBody);
-
-    var sqsEvent = new SQSEvent();
-    sqsEvent.setRecords(List.of(sqsMessage));
+    var s3Uri = randomUri();
+    var messageBody = generateMessageBody(s3Uri);
+    var unparsableS3EventReference =
+        stringFromResources(Path.of("unparsableS3EventReference.json"));
+    var fixture =
+        prepareForTesting(s3Uri, unparsableS3EventReference, messageBody, new FakeIndexingClient());
 
     assertThrows(
-        EventHandlingException.class, () -> handler.handleRequest(sqsEvent, new FakeContext()));
+        EventHandlingException.class,
+        () -> fixture.handler().handleRequest(fixture.sqsEvent(), new FakeContext()));
   }
 
   @Test
   void shouldFailWhenNotAbleToParseEventReference() {
-    var uri = randomUri();
-    var messageBody =
-        String.format(
-            """
-{
-  "detail": {
-    "responsePayload": {
-      "topic": 1,
-      "uri": []
-    }
-  }
-}
-""",
-            uri);
-    var s3File =
-        """
-        {
-          "action": "REMOVE",
-          "oldData": {},
-          "newData": null
-        }
-        """;
-    var filename = UriWrapper.fromUri(uri).getLastPathElement();
-    var s3Client =
-        FakeS3Client.fromContentsMap(
-            Map.of(filename, new ByteArrayInputStream(s3File.getBytes(StandardCharsets.UTF_8))));
-    var indexingClient = new FakeIndexingClient();
-    var handler = new ExternalUpdatesEventHandler(environment, s3Client, indexingClient);
-
-    var sqsMessage = new SQSMessage();
-    sqsMessage.setBody(messageBody);
-
-    var sqsEvent = new SQSEvent();
-    sqsEvent.setRecords(List.of(sqsMessage));
+    var s3Uri = randomUri();
+    var invalidMessageBody = stringFromResources(Path.of("unparsableSqsMessageBody.json"));
+    var eventReference = "ignoreMe";
+    var fixture =
+        prepareForTesting(s3Uri, eventReference, invalidMessageBody, new FakeIndexingClient());
 
     assertThrows(
-        EventHandlingException.class, () -> handler.handleRequest(sqsEvent, new FakeContext()));
+        EventHandlingException.class,
+        () -> fixture.handler().handleRequest(fixture.sqsEvent(), new FakeContext()));
   }
 
   @Test
   void shouldRemoveDocumentFromIndex() throws IOException {
-    var uri = randomUri();
-    var messageBody =
-        String.format(
-            """
-{
-  "detail": {
-    "responsePayload": {
-      "topic": "PublicationService.Resource.Deleted",
-      "uri": "%s"
-    }
-  }
-}
-""",
-            uri);
+    var s3Uri = randomUri();
+    var messageBody = generateMessageBody(s3Uri);
 
     var identifier = SortableIdentifier.next();
-    var s3File =
-        String.format(
-            """
-{
-  "action": "REMOVE",
-  "oldData": {
-    "type": "Resource",
-    "identifier": "%s"
-  },
-  "newData": null
-}
-""",
-            identifier);
-    var filename = UriWrapper.fromUri(uri).getLastPathElement();
-    var s3Client =
-        FakeS3Client.fromContentsMap(
-            Map.of(filename, new ByteArrayInputStream(s3File.getBytes(StandardCharsets.UTF_8))));
+    var eventReference = generateEventReference(identifier);
+
     var indexingClient = new FakeIndexingClient();
     indexingClient.addDocumentToIndex(
         new IndexDocument(
             new EventConsumptionAttributes("resources", identifier),
             new ObjectNode(JsonNodeFactory.instance)));
-    var handler = new ExternalUpdatesEventHandler(environment, s3Client, indexingClient);
 
-    var sqsMessage = new SQSMessage();
-    sqsMessage.setBody(messageBody);
+    var fixture = prepareForTesting(s3Uri, eventReference, messageBody, indexingClient);
 
-    var sqsEvent = new SQSEvent();
-    sqsEvent.setRecords(List.of(sqsMessage));
-
-    assertDoesNotThrow(() -> handler.handleRequest(sqsEvent, new FakeContext()));
+    assertDoesNotThrow(
+        () -> fixture.handler().handleRequest(fixture.sqsEvent(), new FakeContext()));
 
     assertThat(indexingClient.listAllDocuments("resources"), iterableWithSize(0));
   }
 
   @Test
-  void shouldFailIfNotAbleToReachIndex() throws IOException {
+  void shouldFailIfNotAbleToReachIndex() {
     var uri = randomUri();
-    var messageBody =
-        String.format(
-            """
-{
-  "detail": {
-    "responsePayload": {
-      "topic": "PublicationService.Resource.Deleted",
-      "uri": "%s"
-    }
-  }
-}
-""",
-            uri);
+    var messageBody = generateMessageBody(uri);
 
     var identifier = SortableIdentifier.next();
-    var s3File =
-        String.format(
-            """
-{
-  "action": "REMOVE",
-  "oldData": {
-    "type": "Publication",
-    "id": "https://example.com/abc",
-    "identifier": "%s"
-  },
-  "newData": null
-}
-""",
-            identifier);
+    var eventReference = generateEventReference(identifier);
+
+    var indexingClient = new FailingIndexingClient(new IOException("Always failing!"));
+    var fixture = prepareForTesting(uri, eventReference, messageBody, indexingClient);
+
+    assertThrows(
+        EventHandlingException.class,
+        () -> fixture.handler().handleRequest(fixture.sqsEvent(), new FakeContext()));
+  }
+
+  private String generateEventReference(SortableIdentifier identifier) {
+    var eventReferenceTemplate = stringFromResources(Path.of("eventReferenceTemplate.json"));
+    return String.format(eventReferenceTemplate, identifier);
+  }
+
+  private static String generateMessageBody(URI uri) {
+    return String.format(MESSAGE_BODY_TEMPLATE, uri);
+  }
+
+  private Fixture prepareForTesting(
+      URI uri, String eventReference, String invalidMessageBody, IndexingClient indexingClient) {
     var filename = UriWrapper.fromUri(uri).getLastPathElement();
     var s3Client =
         FakeS3Client.fromContentsMap(
-            Map.of(filename, new ByteArrayInputStream(s3File.getBytes(StandardCharsets.UTF_8))));
-    var indexingClient = new FailingIndexingClient(new IOException("Always failing!"));
+            Map.of(
+                filename,
+                new ByteArrayInputStream(eventReference.getBytes(StandardCharsets.UTF_8))));
     var handler = new ExternalUpdatesEventHandler(environment, s3Client, indexingClient);
 
     var sqsMessage = new SQSMessage();
-    sqsMessage.setBody(messageBody);
+    sqsMessage.setBody(invalidMessageBody);
 
     var sqsEvent = new SQSEvent();
     sqsEvent.setRecords(List.of(sqsMessage));
-
-    assertThrows(
-        EventHandlingException.class, () -> handler.handleRequest(sqsEvent, new FakeContext()));
+    return new Fixture(handler, sqsEvent);
   }
+
+  private record Fixture(ExternalUpdatesEventHandler handler, SQSEvent sqsEvent) {}
 }
