@@ -225,8 +225,7 @@ public class ExternalUpdatesEventHandlerTest {
 {
   "action": "REMOVE",
   "oldData": {
-    "type": "Publication",
-    "id": "https://example.com/abc",
+    "type": "Resource",
     "identifier": "%s"
   },
   "newData": null

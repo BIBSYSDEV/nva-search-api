@@ -26,11 +26,13 @@ import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.s3.S3Client;
 
 public class ExternalUpdatesEventHandler implements RequestHandler<SQSEvent, Void> {
+
   private static final Logger logger = LoggerFactory.getLogger(ExternalUpdatesEventHandler.class);
   private static final TypeReference<AwsEventBridgeEvent<AwsEventBridgeDetail<EventReference>>>
       SQS_VALUE_TYPE_REF = new TypeReference<>() {};
   private static final String RESOURCE_DELETED_TOPIC = "PublicationService.Resource.Deleted";
   private static final String EVENTS_BUCKET_NAME_ENV = "EVENTS_BUCKET_NAME";
+  private static final String REMOVE_ACTION = "REMOVE";
 
   private final S3Driver s3Driver;
   private final IndexingClient indexingClient;
@@ -72,7 +74,7 @@ public class ExternalUpdatesEventHandler implements RequestHandler<SQSEvent, Voi
         attempt(() -> JsonUtils.dtoObjectMapper.readValue(event, UpdateEvent.class))
             .orElseThrow(this::logAndThrow);
 
-    if (!"REMOVE".equals(updateEvent.action())) {
+    if (!REMOVE_ACTION.equals(updateEvent.action())) {
       logger.error("Received unknown action in s3 event: {}", updateEvent.action());
       throw new EventHandlingException("Unknown action in s3 event data. Expected REMOVE!");
     }
