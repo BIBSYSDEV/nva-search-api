@@ -893,6 +893,18 @@ Resources:
               - sqs:GetQueueAttributes
             Resource: !GetAtt ExternalUpdatesQueue.Arn
 
+  ReadEventBucketManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: 'Managed IAM policy to consume messages from external events queue'
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:GetObject
+            Resource: !Sub "arn:aws:s3:::${EventsBucketsName}/*"
+
   ExternalUpdatesEventHandler:
     Type: AWS::Serverless::Function
     Properties:
@@ -902,6 +914,7 @@ Resources:
       Policies:
         - !Ref ReadSearchInfrastructureSecretsManagedPolicy
         - !Ref ConsumeMessagesFromExternalEventsQueueManagedPolicy
+        - !Ref ReadEventBucketManagedPolicy
       Environment:
         Variables:
           EVENTS_BUCKET_NAME: !Ref EventsBucketsName
