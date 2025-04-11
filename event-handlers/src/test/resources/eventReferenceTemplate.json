@@ -1,0 +1,8 @@
+{
+  "action": "REMOVE",
+  "oldData": {
+    "type": "Resource",
+    "identifier": "%s"
+  },
+  "newData": null
+}

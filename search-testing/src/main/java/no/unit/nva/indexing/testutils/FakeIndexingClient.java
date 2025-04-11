@@ -5,6 +5,7 @@ import static nva.commons.core.attempt.Try.attempt;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -71,7 +72,8 @@ public class FakeIndexingClient extends IndexingClient {
   }
 
   public Set<JsonNode> listAllDocuments(String indexName) {
-    return new HashSet<>(this.indexContents.get(indexName).values());
+    return new HashSet<>(
+        this.indexContents.getOrDefault(indexName, Collections.emptyMap()).values());
   }
 
   private void removeDocument(Map<String, JsonNode> jsonNodes, String identifier) {
