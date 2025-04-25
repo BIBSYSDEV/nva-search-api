@@ -17,6 +17,7 @@ import static no.unit.nva.search.ticket.TicketParameter.ORGANIZATION_ID;
 import static no.unit.nva.search.ticket.TicketParameter.OWNER;
 import static no.unit.nva.search.ticket.TicketParameter.STATISTICS;
 import static nva.commons.apigateway.AccessRight.MANAGE_CUSTOMERS;
+import static nva.commons.apigateway.AccessRight.MANAGE_DEGREE;
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
 import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
 import static nva.commons.core.attempt.Try.attempt;
@@ -167,9 +168,10 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
    * Apply business rules to determine which ticket types are allowed.
    *
    * <ul>
-   *   <li>manage_doi -> DOI_REQUEST
+   *   <li>doi -> DOI_REQUEST
    *   <li>support -> GENERAL_SUPPORT_CASE
-   *   <li>manage_publishing_requests -> PUBLISHING_REQUEST
+   *   <li>publishing -> PUBLISHING_REQUEST
+   *   <li>degree -> FILES_APPROVAL_THESIS
    * </ul>
    */
   private Set<TicketType> accessRightsToTicketTypes(Set<AccessRight> accessRights) {
@@ -182,6 +184,9 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
     }
     if (accessRights.contains(MANAGE_PUBLISHING_REQUESTS)) {
       allowed.add(TicketType.PUBLISHING_REQUEST);
+    }
+    if (accessRights.contains(MANAGE_DEGREE)) {
+      allowed.add(TicketType.FILES_APPROVAL_THESIS);
     }
     if (allowed.isEmpty()) {
       allowed.add(TicketType.NONE);
