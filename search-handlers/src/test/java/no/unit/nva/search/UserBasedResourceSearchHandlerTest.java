@@ -40,6 +40,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 public class UserBasedResourceSearchHandlerTest {
+
+  private static final String API_HOST = "API_HOST";
+  private static final String COGNITO_AUTHORIZER_URLS = "COGNITO_AUTHORIZER_URLS";
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
   private UserBasedResourceSearchHandler handlerUnderTest;
@@ -50,6 +53,8 @@ public class UserBasedResourceSearchHandlerTest {
     resourceClient = mock(ResourceClient.class);
     var environment = mock(Environment.class);
     when(environment.readEnv(ALLOWED_ORIGIN_ENV)).thenReturn("*");
+    when(environment.readEnv(API_HOST)).thenReturn("localhost");
+    when(environment.readEnv(COGNITO_AUTHORIZER_URLS)).thenReturn("http://localhost:3000");
     handlerUnderTest = new UserBasedResourceSearchHandler(environment, resourceClient);
   }
 

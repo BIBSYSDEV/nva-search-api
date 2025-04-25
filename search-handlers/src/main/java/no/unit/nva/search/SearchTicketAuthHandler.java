@@ -18,6 +18,7 @@ import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
+import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
 /**
@@ -31,11 +32,11 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
 
   @JacocoGenerated
   public SearchTicketAuthHandler() {
-    this(defaultClient());
+    this(defaultClient(), new Environment());
   }
 
-  public SearchTicketAuthHandler(TicketClient ticketClient) {
-    super(Void.class);
+  public SearchTicketAuthHandler(TicketClient ticketClient, Environment environment) {
+    super(Void.class, environment);
     this.opensearchClient = ticketClient;
   }
 

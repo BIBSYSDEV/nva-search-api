@@ -29,7 +29,7 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
 
   @JacocoGenerated
   public OaiPmhHandler() throws JAXBException {
-    super(String.class);
+    super(String.class, new Environment());
 
     var endpointUri = generateEndpointUri(environment);
 
@@ -48,7 +48,7 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
 
   public OaiPmhHandler(
       Environment environment, XmlSerializer xmlSerializer, ResourceClient resourceClient) {
-    super(String.class);
+    super(String.class, environment);
 
     var endpointUri = generateEndpointUri(environment);
 
