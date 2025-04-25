@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
  * <li>DoiRequest
  * <li>GeneralSupportCase
  * <li>PublishingRequest
+ * <li>FilesApprovalThesis
  *
  * @author Stig Norland
  */
@@ -19,6 +20,7 @@ public enum TicketType {
   DOI_REQUEST("DoiRequest"),
   GENERAL_SUPPORT_CASE("GeneralSupportCase"),
   PUBLISHING_REQUEST("PublishingRequest"),
+  FILES_APPROVAL_THESIS("FilesApprovalThesis"),
   UNPUBLISH_REQUEST("UnpublishRequest");
 
   private final String type;
