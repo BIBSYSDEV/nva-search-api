@@ -35,6 +35,7 @@ import no.unit.nva.search.testing.common.FakeGatewayResponse;
 import no.unit.nva.search.ticket.TicketClient;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.AccessRight;
+import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -55,7 +56,7 @@ class SearchTicketAuthHandlerTest {
   void setUp() {
 
     mockedSearchClient = mock(TicketClient.class);
-    handler = new SearchTicketAuthHandler(mockedSearchClient);
+    handler = new SearchTicketAuthHandler(mockedSearchClient, new Environment());
     contextMock = mock(Context.class);
     outputStream = new ByteArrayOutputStream();
   }

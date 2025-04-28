@@ -38,6 +38,7 @@ import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiIoException;
 import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.core.Environment;
 import nva.commons.logutils.LogUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -76,7 +77,9 @@ class ExportResourceHandlerTest {
   void setUp() {
     mockedResourceClient = mock(ResourceClient.class);
     mockedScrollClient = mock(ScrollClient.class);
-    handler = new ExportResourceHandler(mockedResourceClient, mockedScrollClient, null, null);
+    handler =
+        new ExportResourceHandler(
+            mockedResourceClient, mockedScrollClient, null, null, new Environment());
   }
 
   @Test
@@ -109,7 +112,9 @@ class ExportResourceHandlerTest {
                   new FakeHttpResponse(HttpURLConnection.HTTP_ENTITY_TOO_LARGE)));
 
       var appender = LogUtils.getTestingAppenderForRootLogger();
-      handler = new ExportResourceHandler(resourceClient, mockedScrollClient, null, null);
+      handler =
+          new ExportResourceHandler(
+              resourceClient, mockedScrollClient, null, null, new Environment());
 
       assertThrows(
           RuntimeException.class,

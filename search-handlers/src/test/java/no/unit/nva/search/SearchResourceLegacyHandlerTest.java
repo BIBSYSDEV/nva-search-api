@@ -42,6 +42,7 @@ import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.testing.common.FakeGatewayResponse;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
+import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -87,7 +88,7 @@ class SearchResourceLegacyHandlerTest {
   void setUp() {
 
     mockedSearchClient = mock(ResourceClient.class);
-    handler = new SearchResourceHandler(mockedSearchClient);
+    handler = new SearchResourceHandler(mockedSearchClient, new Environment());
     contextMock = mock(Context.class);
     outputStream = new ByteArrayOutputStream();
   }

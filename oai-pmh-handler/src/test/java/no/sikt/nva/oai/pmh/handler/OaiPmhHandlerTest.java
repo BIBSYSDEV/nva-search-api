@@ -93,6 +93,7 @@ public class OaiPmhHandlerTest {
         .thenReturn("https://example.com/search");
     when(environment.readEnv("API_HOST")).thenReturn("localhost");
     when(environment.readEnv("OAI_BASE_PATH")).thenReturn("publication-oai-pmh");
+    when(environment.readEnv("COGNITO_AUTHORIZER_URLS")).thenReturn("http://localhost:3000");
     this.resourceClient = mock(ResourceClient.class);
   }
 

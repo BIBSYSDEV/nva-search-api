@@ -25,6 +25,7 @@ import no.unit.nva.search.scroll.ScrollQuery;
 import nva.commons.apigateway.ApiS3GatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,15 +56,17 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
         ResourceClient.defaultClient(),
         ScrollClient.defaultClient(),
         defaultS3Client(),
-        defaultS3Presigner());
+        defaultS3Presigner(),
+        new Environment());
   }
 
   public ExportResourceHandler(
       ResourceClient resourceClient,
       ScrollClient scrollClient,
       S3Client s3Client,
-      S3Presigner s3Presigner) {
-    super(Void.class, s3Client, s3Presigner);
+      S3Presigner s3Presigner,
+      Environment environment) {
+    super(Void.class, s3Client, s3Presigner, environment);
     this.opensearchClient = resourceClient;
     this.scrollClient = scrollClient;
   }

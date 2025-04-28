@@ -17,6 +17,7 @@ import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
 /**
@@ -31,11 +32,12 @@ public class SearchImportCandidateAuthHandler extends ApiGatewayHandler<Void, St
 
   @JacocoGenerated
   public SearchImportCandidateAuthHandler() {
-    this(defaultClient());
+    this(defaultClient(), new Environment());
   }
 
-  public SearchImportCandidateAuthHandler(ImportCandidateClient candidateClient) {
-    super(Void.class);
+  public SearchImportCandidateAuthHandler(
+      ImportCandidateClient candidateClient, Environment environment) {
+    super(Void.class, environment);
     this.opensearchClient = candidateClient;
   }
 

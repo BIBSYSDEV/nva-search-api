@@ -33,6 +33,7 @@ import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.testing.common.FakeGatewayResponse;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.AccessRight;
+import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -51,7 +52,7 @@ class SearchResourceAuthHandlerTest {
   void setUp() {
 
     mockedSearchClient = mock(ResourceClient.class);
-    handler = new SearchResourceAuthHandler(mockedSearchClient);
+    handler = new SearchResourceAuthHandler(mockedSearchClient, new Environment());
     contextMock = mock(Context.class);
     outputStream = new ByteArrayOutputStream();
   }

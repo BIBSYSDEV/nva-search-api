@@ -18,6 +18,7 @@ Globals:
         COGNITO_HOST: !Ref CognitoUri
         API_HOST: !Sub 'api.${CustomDomain}'
         LARGE_API_RESPONSES_BUCKET: !Ref LargeApiResponsesBucketName
+        COGNITO_AUTHORIZER_URLS: !Join [",", !Ref CognitoAuthorizerUrls]
   Api:
     Cors:
       AllowMethods: "'PUT, GET,OPTIONS,DELETE,POST'"
@@ -33,6 +34,9 @@ Parameters:
     Type: AWS::SSM::Parameter::Value<String>
     Description: Reference to Cognito UserPool for the stage
     Default: CognitoAuthorizerArn
+  CognitoAuthorizerUrls:
+    Type: AWS::SSM::Parameter::Value<CommaDelimitedList>
+    Default: CognitoAuthorizerUrls
   SearchInfrastructureApiUri:
     Type: String
     Description: URI to external search infrastructure API (SWS).

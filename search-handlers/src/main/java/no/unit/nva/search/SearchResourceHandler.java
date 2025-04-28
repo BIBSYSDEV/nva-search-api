@@ -25,6 +25,7 @@ import no.unit.nva.search.resource.SimplifiedMutator;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 import org.apache.http.HttpHeaders;
 
@@ -39,11 +40,11 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
 
   @JacocoGenerated
   public SearchResourceHandler() {
-    this(defaultClient());
+    this(defaultClient(), new Environment());
   }
 
-  public SearchResourceHandler(ResourceClient resourceClient) {
-    super(Void.class);
+  public SearchResourceHandler(ResourceClient resourceClient, Environment environment) {
+    super(Void.class, environment);
     this.opensearchClient = resourceClient;
   }
 

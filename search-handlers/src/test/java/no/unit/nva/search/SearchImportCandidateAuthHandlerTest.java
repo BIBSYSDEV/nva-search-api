@@ -40,6 +40,7 @@ import no.unit.nva.search.importcandidate.ImportCandidateClient;
 import no.unit.nva.search.testing.common.FakeGatewayResponse;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
+import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -87,7 +88,7 @@ class SearchImportCandidateAuthHandlerTest {
   void setUp() {
 
     mockedSearchClient = mock(ImportCandidateClient.class);
-    handler = new SearchImportCandidateAuthHandler(mockedSearchClient);
+    handler = new SearchImportCandidateAuthHandler(mockedSearchClient, new Environment());
     contextMock = mock(Context.class);
     outputStream = new ByteArrayOutputStream();
   }
