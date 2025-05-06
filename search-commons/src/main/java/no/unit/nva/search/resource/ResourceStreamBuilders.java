@@ -18,7 +18,6 @@ import static no.unit.nva.constants.Words.NO;
 import static no.unit.nva.constants.Words.NOT_VERIFIED;
 import static no.unit.nva.constants.Words.ROLE;
 import static no.unit.nva.constants.Words.SOURCE;
-import static no.unit.nva.constants.Words.SOURCE_NAME;
 import static no.unit.nva.constants.Words.SPACE;
 import static no.unit.nva.constants.Words.TYPE;
 import static no.unit.nva.constants.Words.VALUE;
@@ -73,8 +72,8 @@ public class ResourceStreamBuilders {
       jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, VERIFICATION_STATUS, KEYWORD);
   public static final String ADDITIONAL_IDENTIFIERS_VALUE_PATH =
       jsonPath(ADDITIONAL_IDENTIFIERS, VALUE, KEYWORD);
-  public static final String ADDITIONAL_IDENTIFIERS_NAME_PATH =
-      jsonPath(ADDITIONAL_IDENTIFIERS, SOURCE_NAME, KEYWORD);
+  public static final String ADDITIONAL_IDENTIFIERS_TYPE_PATH =
+      jsonPath(ADDITIONAL_IDENTIFIERS, TYPE, KEYWORD);
   public static final String FUNDING_SOURCE_IDENTIFIER =
       jsonPath(FUNDINGS, SOURCE, IDENTIFIER, KEYWORD);
   public static final String CONTRIBUTOR_AFFILIATIONS =
@@ -118,14 +117,14 @@ public class ResourceStreamBuilders {
   }
 
   public Stream<Map.Entry<ResourceParameter, QueryBuilder>> additionalIdentifierQuery(
-      ResourceParameter key, String source) {
+      ResourceParameter key, String type) {
     String value = parameters.get(key).as();
     var query =
         nestedQuery(
             ADDITIONAL_IDENTIFIERS,
             boolQuery()
                 .must(termQuery(ADDITIONAL_IDENTIFIERS_VALUE_PATH, value))
-                .must(termQuery(ADDITIONAL_IDENTIFIERS_NAME_PATH, source)),
+                .must(termQuery(ADDITIONAL_IDENTIFIERS_TYPE_PATH, type)),
             ScoreMode.None);
 
     return Functions.queryToEntry(key, query);
