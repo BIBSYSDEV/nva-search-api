@@ -43,7 +43,7 @@ public final class Words {
   public static final String COURSE = "course";
   public static final String CREATED_DATE = "createdDate";
   public static final String CREATOR = "Creator";
-  public static final String CRISTIN_AS_TYPE = "Cristin";
+  public static final String CRISTIN_AS_TYPE = "CristinIdentifier";
   public static final String CURATING_INSTITUTIONS = "curatingInstitutions";
   public static final String CUSTOMER_ID = "customerId";
   public static final String DAY = "day";
@@ -123,7 +123,7 @@ public final class Words {
   public static final String SAMI_CODE = "sme";
   public static final String SCIENTIFIC_INDEX = "scientificIndex";
   public static final String SCIENTIFIC_VALUE = "scientificValue";
-  public static final String SCOPUS_AS_TYPE = "Scopus";
+  public static final String SCOPUS_AS_TYPE = "ScopusIdentifier";
   public static final String SCORE = "_score";
   public static final String SEARCH = "_search";
   public static final String SEARCH_AFTER = "SEARCH_AFTER";

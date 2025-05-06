@@ -49,13 +49,13 @@
     ],
     "additionalIdentifiers": [
       {
-        "sourceName": "Scopus",
-        "type": "AdditionalIdentifier",
+        "sourceName": "scopus@org",
+        "type": "ScopusIdentifier",
         "value": "2-s2.0-85104787031"
       },
       {
-        "sourceName": "Cristin",
-        "type": "AdditionalIdentifier",
+        "sourceName": "cristin@org",
+        "type": "CristinIdentifier",
         "value": "3212342"
       }
     ],
@@ -218,8 +218,8 @@
     "organizations": [],
     "additionalIdentifiers": [
       {
-        "sourceName": "Scopus",
-        "type": "AdditionalIdentifier",
+        "sourceName": "scopus@org",
+        "type": "ScopusIdentifier",
         "value": "3212342"
       }
     ],
@@ -396,8 +396,8 @@
     ],
     "additionalIdentifiers": [
       {
-        "sourceName": "Scopus",
-        "type": "AdditionalIdentifier",
+        "sourceName": "scopus@org",
+        "type": "ScopusIdentifier",
         "value": "2-s2.0-85137144310"
       }
     ],
@@ -604,8 +604,8 @@
     ],
     "additionalIdentifiers": [
       {
-        "sourceName": "Scopus",
-        "type": "AdditionalIdentifier",
+        "sourceName": "scopus@org",
+        "type": "ScopusIdentifier",
         "value": "2-s2.0-85106378132"
       }
     ],
@@ -813,8 +813,8 @@
     "organizations": [],
     "additionalIdentifiers": [
       {
-        "sourceName": "Scopus",
-        "type": "AdditionalIdentifier",
+        "sourceName": "scopus@org",
+        "type": "ScopusIdentifier",
         "value": "2-s2.0-85109415624"
       }
     ],
@@ -1005,8 +1005,8 @@
     ],
     "additionalIdentifiers": [
       {
-        "sourceName": "Scopus",
-        "type": "AdditionalIdentifier",
+        "sourceName": "scopus@org",
+        "type": "ScopusIdentifier",
         "value": "2-s2.0-85168575107"
       }
     ],
@@ -1275,8 +1275,8 @@
     "organizations": [],
     "additionalIdentifiers": [
       {
-        "sourceName": "Scopus",
-        "type": "AdditionalIdentifier",
+        "sourceName": "scopus@org",
+        "type": "ScopusIdentifier",
         "value": "2-s2.0-85160834649"
       }
     ],
@@ -1460,8 +1460,8 @@
     ],
     "additionalIdentifiers": [
       {
-        "sourceName": "Scopus",
-        "type": "AdditionalIdentifier",
+        "sourceName": "scopus@org",
+        "type": "ScopusIdentifier",
         "value": "2-s2.0-85165328932"
       }
     ],
