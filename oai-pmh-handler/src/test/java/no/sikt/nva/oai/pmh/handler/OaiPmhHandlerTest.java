@@ -54,7 +54,6 @@ import no.unit.nva.search.common.records.SwsResponse.HitsInfo;
 import no.unit.nva.search.common.records.SwsResponse.HitsInfo.Hit;
 import no.unit.nva.search.common.records.SwsResponse.HitsInfo.TotalInfo;
 import no.unit.nva.search.resource.ResourceClient;
-import no.unit.nva.search.scroll.ScrollClient;
 import no.unit.nva.search.resource.ResourceParameter;
 import no.unit.nva.search.scroll.ScrollClient;
 import no.unit.nva.search.testing.common.ResourceSearchQueryMatcher;
@@ -364,9 +363,13 @@ public class OaiPmhHandlerTest {
     var scrollId = "initialScrollId";
     var resourceQueryMatcher =
         new ResourceSearchQueryMatcher.Builder()
-            .withPageParameter(ResourceParameter.PAGE, "0")
+            .withPageParameter(ResourceParameter.FROM, "0")
             .withPageParameter(ResourceParameter.SIZE, "50")
-            .withPageParameter(ResourceParameter.AGGREGATION, "none")
+            .withPageParameter(ResourceParameter.SORT, "modifiedDate,identifier")
+            .withPageParameter(ResourceParameter.SORT_ORDER, "desc")
+            .withSearchParameter(ResourceParameter.AGGREGATION, "none")
+            .withSearchParameter(ResourceParameter.MODIFIED_BEFORE, "2016-01-02")
+            .withSearchParameter(ResourceParameter.MODIFIED_SINCE, "2016-01-01")
             .build();
     when(resourceClient.doSearch(argThat(resourceQueryMatcher), any()))
         .thenReturn(firstPageSwsResponse(scrollId));
@@ -409,7 +412,7 @@ public class OaiPmhHandlerTest {
   void shouldListRecordsWithResumptionToken(String method) throws IOException, JAXBException {
     var scrollId = "nextScrollId";
     var ttl = "10m";
-    when(scrollClient.doSearch(argThat(new ScrollingQueryMatcher(scrollId, ttl))))
+    when(scrollClient.doSearch(argThat(new ScrollingQueryMatcher(scrollId, ttl)), any()))
         .thenReturn(resumptionPageSwsResponse(scrollId));
 
     var from = "2016-01-01";
@@ -571,9 +574,10 @@ public class OaiPmhHandlerTest {
     var scrollId = randomString();
     var resourceQueryMatcher =
         new ResourceSearchQueryMatcher.Builder()
-            .withPageParameter(ResourceParameter.PAGE, "0")
+            .withPageParameter(ResourceParameter.FROM, "0")
             .withPageParameter(ResourceParameter.SIZE, "50")
-            .withPageParameter(ResourceParameter.AGGREGATION, "none")
+            .withPageParameter(ResourceParameter.SORT, "modifiedDate,identifier")
+            .withPageParameter(ResourceParameter.SORT_ORDER, "desc")
             .build();
 
     when(resourceClient.doSearch(argThat(resourceQueryMatcher), any()))

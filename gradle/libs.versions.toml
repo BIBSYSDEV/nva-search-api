@@ -25,7 +25,6 @@ typesafe = { strictly = '1.4.1' }
 xmlUnit = { strictly = '2.10.0' }
 xraySdk = { strictly = '2.10.0' }
 zalandoProblem = { strictly = '0.27.1' }
-xmlUnit = { strictly = '2.10.0' }
 wiremock = { strictly = '3.12.0' }
 
 [libraries]

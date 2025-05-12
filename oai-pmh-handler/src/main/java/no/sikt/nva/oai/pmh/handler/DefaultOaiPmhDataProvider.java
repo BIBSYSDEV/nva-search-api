@@ -166,7 +166,7 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
 
   private HttpResponseFormatter<ResourceParameter> doSearch(ResourceSearchQuery query) {
     try {
-      return query.doSearch(resourceClient);
+      return query.doSearch(resourceClient, Words.RESOURCES);
     } catch (RuntimeException e) {
       LOGGER.error("Failed to search for records.", e);
       throw new ResourceSearchException("Error looking up records.", e);
@@ -216,7 +216,7 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
       var token = ResumptionToken.from(incomingResumptionToken);
       var scrollQuery =
           ScrollQuery.builder().withScrollId(token.scrollId()).withTtl(SCROLL_TTL).build();
-      response = scrollQuery.doSearch(scrollClient).swsResponse();
+      response = scrollQuery.doSearch(scrollClient, Words.RESOURCES).swsResponse();
     } else {
       var query = buildListRecordsPageQuery(from, until);
       response = doSearch(query).swsResponse();
