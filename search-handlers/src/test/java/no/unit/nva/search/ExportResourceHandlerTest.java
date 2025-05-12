@@ -38,6 +38,7 @@ import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiIoException;
 import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.core.Environment;
 import nva.commons.logutils.LogUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -76,7 +77,9 @@ class ExportResourceHandlerTest {
   void setUp() {
     mockedResourceClient = mock(ResourceClient.class);
     mockedScrollClient = mock(ScrollClient.class);
-    handler = new ExportResourceHandler(mockedResourceClient, mockedScrollClient, null, null);
+    handler =
+        new ExportResourceHandler(
+            mockedResourceClient, mockedScrollClient, null, null, new Environment());
   }
 
   @Test
@@ -91,9 +94,7 @@ class ExportResourceHandlerTest {
 
     var s3data =
         handler.processS3Input(
-            null,
-            RequestInfo.fromRequest(getRequestInputStreamAccepting(), HttpClient.newHttpClient()),
-            new FakeContext());
+            null, RequestInfo.fromRequest(getRequestInputStreamAccepting()), new FakeContext());
 
     assertThat(StringUtils.countMatches(s3data, expectedTitle1), is(1));
     assertThat(StringUtils.countMatches(s3data, expectedTitle2), is(1));
@@ -111,15 +112,16 @@ class ExportResourceHandlerTest {
                   new FakeHttpResponse(HttpURLConnection.HTTP_ENTITY_TOO_LARGE)));
 
       var appender = LogUtils.getTestingAppenderForRootLogger();
-      handler = new ExportResourceHandler(resourceClient, mockedScrollClient, null, null);
+      handler =
+          new ExportResourceHandler(
+              resourceClient, mockedScrollClient, null, null, new Environment());
 
       assertThrows(
           RuntimeException.class,
           () ->
               handler.processS3Input(
                   null,
-                  RequestInfo.fromRequest(
-                      getRequestInputStreamAccepting(), HttpClient.newHttpClient()),
+                  RequestInfo.fromRequest(getRequestInputStreamAccepting()),
                   new FakeContext()));
 
       // very 4 attempts (page size of 500, 250, 125, 65):
@@ -239,10 +241,10 @@ class ExportResourceHandlerTest {
       ExportCsv initialSearchResult, ExportCsv scroll1SearchResult, ExportCsv scroll2SearchResult)
       throws IOException {
 
-    when(mockedResourceClient.doSearch(any()))
+    when(mockedResourceClient.doSearch(any(), any()))
         .thenReturn(csvToSwsResponse(initialSearchResult, "scrollId1"));
 
-    when(mockedScrollClient.doSearch(any()))
+    when(mockedScrollClient.doSearch(any(), any()))
         .thenReturn(csvToSwsResponse(scroll1SearchResult, "scrollId2"))
         .thenReturn(csvToSwsResponse(scroll2SearchResult, null));
   }

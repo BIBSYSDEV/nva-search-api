@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -26,18 +27,17 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.http.HttpClient;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import no.unit.nva.constants.Words;
 import no.unit.nva.indexing.testutils.FakeSearchResponse;
-import no.unit.nva.search.common.FakeGatewayResponse;
 import no.unit.nva.search.common.csv.ExportCsv;
 import no.unit.nva.search.common.records.PagedSearch;
 import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.importcandidate.ImportCandidateClient;
+import no.unit.nva.search.testing.common.FakeGatewayResponse;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.Environment;
@@ -88,9 +88,7 @@ class SearchImportCandidateAuthHandlerTest {
   void setUp() {
 
     mockedSearchClient = mock(ImportCandidateClient.class);
-    handler =
-        new SearchImportCandidateAuthHandler(
-            new Environment(), mockedSearchClient, HttpClient.newHttpClient());
+    handler = new SearchImportCandidateAuthHandler(mockedSearchClient, new Environment());
     contextMock = mock(Context.class);
     outputStream = new ByteArrayOutputStream();
   }
@@ -269,7 +267,7 @@ class SearchImportCandidateAuthHandlerTest {
     var jsonResponse = FakeSearchResponse.generateSearchResponseString(exportCsvs, null);
     var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
 
-    when(mockedSearchClient.doSearch(any())).thenReturn(body);
+    when(mockedSearchClient.doSearch(any(), eq(Words.IMPORT_CANDIDATES_INDEX))).thenReturn(body);
   }
 
   private void prepareRestHighLevelClientOkResponse() throws IOException {
@@ -277,21 +275,21 @@ class SearchImportCandidateAuthHandlerTest {
         stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
     var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
 
-    when(mockedSearchClient.doSearch(any())).thenReturn(body);
+    when(mockedSearchClient.doSearch(any(), eq(Words.IMPORT_CANDIDATES_INDEX))).thenReturn(body);
   }
 
   private void prepareRestHighLevelClientEmptyResponse() throws IOException {
     var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
     var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
 
-    when(mockedSearchClient.doSearch(any())).thenReturn(body);
+    when(mockedSearchClient.doSearch(any(), eq(Words.IMPORT_CANDIDATES_INDEX))).thenReturn(body);
   }
 
   private void prepareRestHighLevelClientEmptyResponseForSortOrder() throws IOException {
     var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
     var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
 
-    when(mockedSearchClient.doSearch(any())).thenReturn(body);
+    when(mockedSearchClient.doSearch(any(), eq(Words.IMPORT_CANDIDATES_INDEX))).thenReturn(body);
   }
 
   private PagedSearch getSearchResourcesResponseFromFile(String filename)

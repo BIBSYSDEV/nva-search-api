@@ -9,8 +9,8 @@ import static no.unit.nva.search.ticket.TicketParameter.SIZE;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
-import java.net.http.HttpClient;
 import java.util.List;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.ticket.TicketClient;
 import no.unit.nva.search.ticket.TicketSearchQuery;
 import nva.commons.apigateway.ApiGatewayHandler;
@@ -32,12 +32,11 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
 
   @JacocoGenerated
   public SearchTicketAuthHandler() {
-    this(new Environment(), defaultClient(), HttpClient.newHttpClient());
+    this(defaultClient(), new Environment());
   }
 
-  public SearchTicketAuthHandler(
-      Environment environment, TicketClient ticketClient, HttpClient httpClient) {
-    super(Void.class, environment, httpClient);
+  public SearchTicketAuthHandler(TicketClient ticketClient, Environment environment) {
+    super(Void.class, environment);
     this.opensearchClient = ticketClient;
   }
 
@@ -62,7 +61,7 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
         .build()
         .withFilter()
         .fromRequestInfo(requestInfo)
-        .doSearch(opensearchClient)
+        .doSearch(opensearchClient, Words.TICKETS)
         .toString();
   }
 

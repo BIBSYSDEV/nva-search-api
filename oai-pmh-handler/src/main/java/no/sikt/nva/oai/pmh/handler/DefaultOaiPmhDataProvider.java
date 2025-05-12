@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.xml.datatype.DatatypeFactory;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.records.Facet;
 import no.unit.nva.search.common.records.HttpResponseFormatter;
 import no.unit.nva.search.common.records.SwsResponse;
@@ -244,7 +245,7 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
       ResourceSearchQuery query) {
     final HttpResponseFormatter<ResourceParameter> response;
     try {
-      response = query.doSearch(resourceClient);
+      response = query.doSearch(resourceClient, Words.RESOURCES);
     } catch (RuntimeException e) {
       LOGGER.error("Failed to search for publication instance types using 'type' aggregation.", e);
       throw new ResourceSearchException("Error looking up instance types using aggregations.", e);

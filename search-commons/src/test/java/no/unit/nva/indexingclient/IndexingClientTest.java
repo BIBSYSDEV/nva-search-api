@@ -44,6 +44,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.opensearch.action.DocWriteResponse;
 import org.opensearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.opensearch.action.admin.indices.refresh.RefreshRequest;
 import org.opensearch.action.bulk.BulkRequest;
 import org.opensearch.action.bulk.BulkResponse;
 import org.opensearch.action.delete.DeleteResponse;
@@ -180,6 +181,17 @@ class IndexingClientTest {
     var expectedNumberOfCreateInvocationsToEs = 1;
     verify(indicesClient, times(expectedNumberOfCreateInvocationsToEs))
         .delete(any(DeleteIndexRequest.class), any(RequestOptions.class));
+  }
+
+  @Test
+  void shouldCallEsClientRefreshIndexRequest() throws IOException {
+    var indicesClient = mock(IndicesClient.class);
+    var indicesClientWrapper = new IndicesClientWrapper(indicesClient);
+    when(esClient.indices()).thenReturn(indicesClientWrapper);
+    indexingClient.refreshIndex(randomString());
+    var expectedNumberOfRefreshInvocationsToEs = 1;
+    verify(indicesClient, times(expectedNumberOfRefreshInvocationsToEs))
+        .refresh(any(RefreshRequest.class), any(RequestOptions.class));
   }
 
   private IndicesClientWrapper createMockIndicesClientWrapper() {

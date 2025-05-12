@@ -119,7 +119,6 @@ import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.paths.UriWrapper;
 import org.apache.http.HttpHost;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -286,7 +285,7 @@ class ResourceClientTest {
         .withFilter()
         .requiredStatus(PUBLISHED, UNPUBLISHED)
         .apply()
-        .doSearch(searchClient);
+        .doSearch(searchClient, RESOURCES);
   }
 
   private static IndexDocument indexDocumentWithIdentifier() throws JsonProcessingException {
@@ -336,7 +335,7 @@ class ResourceClientTest {
             .build()
             .withFilter()
             .fromRequestInfo(mockedRequestInfoLocal)
-            .doSearch(searchClient);
+            .doSearch(searchClient, RESOURCES);
     assertThat(result.toPagedResponse().hits().size(), is(2));
   }
 
@@ -355,7 +354,7 @@ class ResourceClientTest {
             .withFilter()
             .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
-            .doSearch(searchClient);
+            .doSearch(searchClient, RESOURCES);
 
     assertNotNull(response1);
 
@@ -398,7 +397,7 @@ class ResourceClientTest {
             .withFilter()
             .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
-            .doSearch(searchClient);
+            .doSearch(searchClient, RESOURCES);
 
     assertNotNull(response);
   }
@@ -427,7 +426,7 @@ class ResourceClientTest {
             .withFilter()
             .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
-            .doSearch(searchClient);
+            .doSearch(searchClient, RESOURCES);
 
     assertNotNull(response);
   }
@@ -455,7 +454,7 @@ class ResourceClientTest {
             .withFilter()
             .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
-            .doSearch(searchClient);
+            .doSearch(searchClient, RESOURCES);
 
     assertNotNull(response);
   }
@@ -484,7 +483,7 @@ class ResourceClientTest {
             .withFilter()
             .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
-            .doSearch(searchClient);
+            .doSearch(searchClient, RESOURCES);
 
     assertNotNull(response);
   }
@@ -503,7 +502,7 @@ class ResourceClientTest {
             .requiredStatus(
                 NEW, DRAFT, UNPUBLISHED, PUBLISHED, DELETED, UNPUBLISHED, DRAFT_FOR_DELETION)
             .apply()
-            .doSearch(searchClient)
+            .doSearch(searchClient, RESOURCES)
             .toString();
     assertNotNull(pagedResult);
     assertTrue(pagedResult.contains("\"hits\":["));
@@ -520,7 +519,7 @@ class ResourceClientTest {
                 .withRequiredParameters(FROM, SIZE)
                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .build()
-                .doSearch(searchClient));
+                .doSearch(searchClient, RESOURCES));
   }
 
   @ParameterizedTest
@@ -539,7 +538,7 @@ class ResourceClientTest {
             .requiredStatus(
                 NEW, DRAFT, UNPUBLISHED, PUBLISHED, DELETED, UNPUBLISHED, DRAFT_FOR_DELETION)
             .apply()
-            .doSearch(searchClient);
+            .doSearch(searchClient, RESOURCES);
 
     var pagedSearchResourceDto = response.toPagedResponse();
     assertEquals(expectedHits, pagedSearchResourceDto.totalHits());
@@ -565,7 +564,7 @@ class ResourceClientTest {
             .build()
             .withFilter()
             .fromRequestInfo(requestInfo)
-            .doSearch(searchClient);
+            .doSearch(searchClient, RESOURCES);
 
     assertNotNull(response);
 
@@ -593,7 +592,7 @@ class ResourceClientTest {
                 .build()
                 .withFilter()
                 .fromRequestInfo(requestInfo)
-                .doSearch(searchClient));
+                .doSearch(searchClient, RESOURCES));
   }
 
   @Test
@@ -614,7 +613,7 @@ class ResourceClientTest {
             .build()
             .withFilter()
             .fromRequestInfo(requestInfo)
-            .doSearch(searchClient);
+            .doSearch(searchClient, RESOURCES);
 
     assertNotNull(response);
 
@@ -637,7 +636,7 @@ class ResourceClientTest {
             .requiredStatus(PUBLISHED_METADATA, PUBLISHED)
             .apply()
             .withScrollTime(ONE_MINUTE)
-            .doSearch(searchClient)
+            .doSearch(searchClient, RESOURCES)
             .swsResponse();
 
     var response =
@@ -646,7 +645,7 @@ class ResourceClientTest {
             .withInitialResponse(firstResponse)
             .withScrollTime(ONE_MINUTE)
             .build()
-            .doSearch(scrollClient)
+            .doSearch(scrollClient, RESOURCES)
             .toCsvText();
     assertNotNull(response);
   }
@@ -665,7 +664,7 @@ class ResourceClientTest {
             .withFilter()
             .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
-            .doSearch(searchClient);
+            .doSearch(searchClient, RESOURCES);
 
     var pagedSearchResourceDto = response.toPagedResponse();
 
@@ -691,7 +690,7 @@ class ResourceClientTest {
             .withFilter()
             .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
-            .doSearch(searchClient);
+            .doSearch(searchClient, RESOURCES);
 
     var pagedSearchResourceDto = response.toPagedResponse();
 
@@ -730,7 +729,7 @@ class ResourceClientTest {
             .withFilter()
             .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
-            .doSearch(searchClient);
+            .doSearch(searchClient, RESOURCES);
 
     var pagedSearchResourceDto = response.toPagedResponse();
     var document = pagedSearchResourceDto.hits().getFirst();
@@ -762,7 +761,7 @@ class ResourceClientTest {
             .withFilter()
             .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
-            .doSearch(searchClient);
+            .doSearch(searchClient, RESOURCES);
 
     var pagedSearchResourceDto = response.toPagedResponse();
     var document = pagedSearchResourceDto.hits().getFirst();
@@ -794,7 +793,7 @@ class ResourceClientTest {
             .withFilter()
             .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
-            .doSearch(searchClient);
+            .doSearch(searchClient, RESOURCES);
 
     var pagedSearchResourceDto = response.toPagedResponse();
     var documents = pagedSearchResourceDto.hits();
@@ -833,7 +832,7 @@ class ResourceClientTest {
             .withFilter()
             .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
-            .doSearch(searchClient);
+            .doSearch(searchClient, RESOURCES);
 
     var pagedSearchResourceDto = response.toPagedResponse();
     var documents = pagedSearchResourceDto.hits();
@@ -872,7 +871,7 @@ class ResourceClientTest {
             .withFilter()
             .requiredStatus(PUBLISHED_METADATA)
             .apply()
-            .doSearch(searchClient)
+            .doSearch(searchClient, RESOURCES)
             .toString();
     assertNotNull(csvResult);
   }
@@ -889,7 +888,7 @@ class ResourceClientTest {
             .withFilter()
             .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
-            .doSearch(searchClient);
+            .doSearch(searchClient, RESOURCES);
 
     var pagedSearchResourceDto = response.toPagedResponse();
     assertNotNull(pagedSearchResourceDto.id());
@@ -926,7 +925,7 @@ class ResourceClientTest {
                 .withRequiredParameters(FROM, SIZE)
                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .build()
-                .doSearch(searchClient));
+                .doSearch(searchClient, RESOURCES));
   }
 
   @Test
@@ -945,7 +944,7 @@ class ResourceClientTest {
             .withFilter()
             .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
-            .doSearch(searchClient);
+            .doSearch(searchClient, RESOURCES);
 
     var pagedSearchResourceDto = response.toPagedResponse();
     assertThat(pagedSearchResourceDto.hits(), hasSize(2));
@@ -967,7 +966,7 @@ class ResourceClientTest {
             .withFilter()
             .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
-            .doSearch(searchClient);
+            .doSearch(searchClient, RESOURCES);
     var pagedSearchResourceDto = response.toPagedResponse();
     assertThat(pagedSearchResourceDto.hits(), hasSize(1));
   }
@@ -994,7 +993,7 @@ class ResourceClientTest {
             .withFilter()
             .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
-            .doSearch(searchClient);
+            .doSearch(searchClient, RESOURCES);
 
     var pagedSearchResourceDto = response.toPagedResponse();
 
@@ -1025,7 +1024,7 @@ class ResourceClientTest {
             .withFilter()
             .requiredStatus(PUBLISHED, UNPUBLISHED, DELETED)
             .apply()
-            .doSearch(searchClient);
+            .doSearch(searchClient, RESOURCES);
 
     var pagedSearchResourceDto = response.toPagedResponse();
 
@@ -1049,7 +1048,7 @@ class ResourceClientTest {
             .withFilter()
             .requiredStatus(PUBLISHED, UNPUBLISHED, DELETED)
             .apply()
-            .doSearch(searchClient);
+            .doSearch(searchClient, RESOURCES);
 
     var pagedSearchResourceDto = response.toPagedResponse();
 
@@ -1071,7 +1070,7 @@ class ResourceClientTest {
             .withFilter()
             .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
-            .doSearch(searchClient);
+            .doSearch(searchClient, RESOURCES);
 
     var pagedSearchResourceDto = response.toPagedResponse();
     var pageCounts =
@@ -1117,7 +1116,7 @@ class ResourceClientTest {
             .withFilter()
             .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
-            .doSearch(searchClient);
+            .doSearch(searchClient, RESOURCES);
 
     var pagedResponse = response.toPagedResponse();
 
@@ -1142,7 +1141,7 @@ class ResourceClientTest {
             .withFilter()
             .requiredStatus(PUBLISHED, UNPUBLISHED)
             .apply()
-            .doSearch(searchClient);
+            .doSearch(searchClient, RESOURCES);
 
     var pagedResponse = response.toPagedResponse();
 
@@ -1153,7 +1152,53 @@ class ResourceClientTest {
     assertThat(actualIdentifiers, containsInAnyOrder(expectedIdentifiers));
   }
 
-  private static @NotNull Set<String> extractActualIdentifiersFromHits(PagedSearch pagedResponse) {
+  @Test
+  void shouldFilterOnOwnerWhenUsingOwnResourcesOnlyFilter() throws BadRequestException {
+    var response =
+        ResourceSearchQuery.builder()
+            .withRequiredParameters(FROM, SIZE, AGGREGATION)
+            .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+            .build()
+            .withFilter()
+            .requiredStatus(PUBLISHED, PUBLISHED_METADATA, DRAFT)
+            .ownResourcesOnly("1136254@20754.0.0.0")
+            .apply()
+            .doSearch(searchClient, RESOURCES);
+
+    var pagedResponse = response.toPagedResponse();
+
+    assertThat(pagedResponse.totalHits(), is(equalTo(2)));
+
+    var expectedIdentifiers =
+        new String[] {
+          "019584817b67-0eb17fdc-fe45-4ff3-8173-ba7fb930176b",
+          "018c443840f1-b14a5947-2eae-4d67-9d95-c2e591059942"
+        };
+    var actualIdentifiers = extractActualIdentifiersFromHits(pagedResponse);
+
+    assertThat(actualIdentifiers, containsInAnyOrder(expectedIdentifiers));
+  }
+
+  @Test
+  void shouldNotBeAbleToBypassOwnResourcesOnlyFilter() throws BadRequestException {
+    var response =
+        ResourceSearchQuery.builder()
+            .withRequiredParameters(FROM, SIZE, AGGREGATION)
+            .withParameter(ResourceParameter.USER, "bora@184.0.0.0")
+            .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+            .build()
+            .withFilter()
+            .requiredStatus(PUBLISHED, PUBLISHED_METADATA, DRAFT)
+            .ownResourcesOnly("1136254@20754.0.0.0")
+            .apply()
+            .doSearch(searchClient, RESOURCES);
+
+    var pagedResponse = response.toPagedResponse();
+
+    assertThat(pagedResponse.totalHits(), is(equalTo(0)));
+  }
+
+  private static Set<String> extractActualIdentifiersFromHits(PagedSearch pagedResponse) {
     return pagedResponse.hits().stream()
         .map(node -> node.get("identifier").textValue())
         .collect(Collectors.toSet());

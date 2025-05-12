@@ -41,7 +41,7 @@ public final class ScrollQuery extends Query<ScrollParameter> {
   }
 
   @Override
-  protected URI openSearchUri() {
+  protected URI openSearchUri(String indexName) {
     return fromUri(infrastructureApiUri).addChild(SEARCH_SCROLL).getUri();
   }
 
@@ -53,22 +53,23 @@ public final class ScrollQuery extends Query<ScrollParameter> {
   }
 
   @Override
-  public Stream<QueryContentWrapper> assemble() {
+  public Stream<QueryContentWrapper> assemble(String indexName) {
     var scrollRequest = new SearchScrollRequest(scrollId).scroll(ttl);
     return Stream.of(
-        new QueryContentWrapper(scrollRequestToString(scrollRequest), this.openSearchUri()));
+        new QueryContentWrapper(
+            scrollRequestToString(scrollRequest), this.openSearchUri(indexName)));
   }
 
   @Override
   public <R, Q extends Query<ScrollParameter>> HttpResponseFormatter<ScrollParameter> doSearch(
-      OpenSearchClient<R, Q> queryClient) {
-    var response = scrollFetch((ScrollClient) queryClient);
+      OpenSearchClient<R, Q> queryClient, String indexName) {
+    var response = scrollFetch((ScrollClient) queryClient, indexName);
     return new HttpResponseFormatter<>(response, CSV_UTF_8);
   }
 
-  private SwsResponse scrollFetch(ScrollClient scrollClient) {
+  private SwsResponse scrollFetch(ScrollClient scrollClient, String indexName) {
 
-    return scrollClient.doSearch(this);
+    return scrollClient.doSearch(this, indexName);
   }
 
   private String scrollRequestToString(SearchScrollRequest request) {

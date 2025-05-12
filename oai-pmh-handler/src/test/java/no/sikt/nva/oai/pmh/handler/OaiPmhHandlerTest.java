@@ -5,6 +5,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static java.net.HttpURLConnection.HTTP_INTERNAL_ERROR;
 import static java.util.Objects.nonNull;
+import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -16,6 +17,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -53,6 +55,9 @@ import no.unit.nva.search.common.records.SwsResponse.HitsInfo.Hit;
 import no.unit.nva.search.common.records.SwsResponse.HitsInfo.TotalInfo;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.scroll.ScrollClient;
+import no.unit.nva.search.resource.ResourceParameter;
+import no.unit.nva.search.scroll.ScrollClient;
+import no.unit.nva.search.testing.common.ResourceSearchQueryMatcher;
 import no.unit.nva.stubs.FakeContext;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
@@ -114,6 +119,7 @@ public class OaiPmhHandlerTest {
         .thenReturn("https://example.com/search");
     when(environment.readEnv("API_HOST")).thenReturn("localhost");
     when(environment.readEnv("OAI_BASE_PATH")).thenReturn("publication-oai-pmh");
+    when(environment.readEnv("COGNITO_AUTHORIZER_URLS")).thenReturn("http://localhost:3000");
     this.resourceClient = mock(ResourceClient.class);
     this.scrollClient = mock(ScrollClient.class);
     var context = IoUtils.stringFromResources(Path.of("publication.context"));
@@ -173,8 +179,13 @@ public class OaiPmhHandlerTest {
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldReturnExpectedSetsWhenAskingForListSets(String method)
       throws IOException, JAXBException {
-    when(resourceClient.doSearch(argThat(new ResourceSearchQueryMatcher(0, 0, "all"))))
-        .thenReturn(aggregationsSwsResponse());
+    var matcher =
+        new ResourceSearchQueryMatcher.Builder()
+            .withPageParameter(ResourceParameter.FROM, "0")
+            .withPageParameter(ResourceParameter.SIZE, "0")
+            .withSearchParameter(ResourceParameter.AGGREGATION, "all")
+            .build();
+    when(resourceClient.doSearch(argThat(matcher), eq(RESOURCES))).thenReturn(swsResponse());
 
     var inputStream = request(VerbType.LIST_SETS.value(), method);
 
@@ -199,7 +210,7 @@ public class OaiPmhHandlerTest {
       throws IOException, JAXBException {
     final var appender = LogUtils.getTestingAppenderForRootLogger();
 
-    doThrow(new RuntimeException(EMPTY_STRING)).when(resourceClient).doSearch(any());
+    doThrow(new RuntimeException(EMPTY_STRING)).when(resourceClient).doSearch(any(), eq(RESOURCES));
 
     var inputStream = request(VerbType.LIST_SETS.value(), method);
 
@@ -351,7 +362,13 @@ public class OaiPmhHandlerTest {
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldListRecordsOnInitialQuery(String method) throws IOException, JAXBException {
     var scrollId = "initialScrollId";
-    when(resourceClient.doSearch(argThat(new ResourceSearchQueryMatcher(0, 50, "none"))))
+    var resourceQueryMatcher =
+        new ResourceSearchQueryMatcher.Builder()
+            .withPageParameter(ResourceParameter.PAGE, "0")
+            .withPageParameter(ResourceParameter.SIZE, "50")
+            .withPageParameter(ResourceParameter.AGGREGATION, "none")
+            .build();
+    when(resourceClient.doSearch(argThat(resourceQueryMatcher), any()))
         .thenReturn(firstPageSwsResponse(scrollId));
 
     var from = "2016-01-01";
@@ -552,7 +569,14 @@ public class OaiPmhHandlerTest {
 
   private InputStream hitAndRequest(ArrayNode hits) throws JsonProcessingException {
     var scrollId = randomString();
-    when(resourceClient.doSearch(argThat(new ResourceSearchQueryMatcher(0, 50, "none"))))
+    var resourceQueryMatcher =
+        new ResourceSearchQueryMatcher.Builder()
+            .withPageParameter(ResourceParameter.PAGE, "0")
+            .withPageParameter(ResourceParameter.SIZE, "50")
+            .withPageParameter(ResourceParameter.AGGREGATION, "none")
+            .build();
+
+    when(resourceClient.doSearch(argThat(resourceQueryMatcher), any()))
         .thenReturn(initialSwsResponse(hits, scrollId));
 
     var from = "2016-01-01";
@@ -728,7 +752,7 @@ public class OaiPmhHandlerTest {
     assertThat(errorNode.getFirstChild().getNodeValue(), is(equalTo(message)));
   }
 
-  private SwsResponse aggregationsSwsResponse() throws JsonProcessingException {
+  private SwsResponse swsResponse() throws JsonProcessingException {
     return new SwsResponse(
         0,
         false,

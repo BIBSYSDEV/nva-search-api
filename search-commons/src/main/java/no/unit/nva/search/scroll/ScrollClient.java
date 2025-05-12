@@ -33,10 +33,10 @@ public class ScrollClient extends OpenSearchClient<SwsResponse, Query<ScrollPara
   }
 
   @Override
-  public SwsResponse doSearch(Query<ScrollParameter> query) {
+  public SwsResponse doSearch(Query<ScrollParameter> query, String indexName) {
     queryBuilderStart = query.getStartTime();
     return query
-        .assemble()
+        .assemble(indexName)
         .map(this::createRequest)
         .map(this::fetch)
         .map(this::handleResponse)

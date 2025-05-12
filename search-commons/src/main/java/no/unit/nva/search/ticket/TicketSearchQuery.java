@@ -11,7 +11,6 @@ import static no.unit.nva.constants.Words.NONE;
 import static no.unit.nva.constants.Words.POST_FILTER;
 import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.constants.Words.SEARCH;
-import static no.unit.nva.constants.Words.TICKETS;
 import static no.unit.nva.search.common.constant.Functions.toEnumStrings;
 import static no.unit.nva.search.common.constant.Functions.trimSpace;
 import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
@@ -141,8 +140,8 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
   }
 
   @Override
-  public URI openSearchUri() {
-    return fromUri(infrastructureApiUri).addChild(TICKETS, SEARCH).getUri();
+  public URI openSearchUri(String indexName) {
+    return fromUri(infrastructureApiUri).addChild(indexName).addChild(SEARCH).getUri();
   }
 
   @Override

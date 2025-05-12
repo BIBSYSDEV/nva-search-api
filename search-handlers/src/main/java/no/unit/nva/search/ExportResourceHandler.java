@@ -15,6 +15,7 @@ import static no.unit.nva.search.resource.ResourceParameter.SORT;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import java.util.concurrent.CompletionException;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.OpenSearchClientException;
 import no.unit.nva.search.common.csv.ResourceCsvTransformer;
 import no.unit.nva.search.resource.ResourceClient;
@@ -24,6 +25,7 @@ import no.unit.nva.search.scroll.ScrollClient;
 import nva.commons.apigateway.ApiS3GatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,15 +56,17 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
         ResourceClient.defaultClient(),
         ScrollClient.defaultClient(),
         defaultS3Client(),
-        defaultS3Presigner());
+        defaultS3Presigner(),
+        new Environment());
   }
 
   public ExportResourceHandler(
       ResourceClient resourceClient,
       ScrollClient scrollClient,
       S3Client s3Client,
-      S3Presigner s3Presigner) {
-    super(Void.class, s3Client, s3Presigner);
+      S3Presigner s3Presigner,
+      Environment environment) {
+    super(Void.class, s3Client, s3Presigner, environment);
     this.opensearchClient = resourceClient;
     this.scrollClient = scrollClient;
   }
@@ -106,7 +110,7 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
               .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
               .apply()
               .withScrollTime(SCROLL_TTL)
-              .doSearch(opensearchClient)
+              .doSearch(opensearchClient, Words.RESOURCES)
               .swsResponse();
 
       return AttemptResponse.success(
@@ -114,7 +118,7 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
               .withInitialResponse(initialResponse)
               .withScrollTime(SCROLL_TTL)
               .build()
-              .doSearch(scrollClient)
+              .doSearch(scrollClient, Words.RESOURCES)
               .toCsvText());
     } catch (CompletionException completionException) {
       if (completionException.getCause() instanceof OpenSearchClientException

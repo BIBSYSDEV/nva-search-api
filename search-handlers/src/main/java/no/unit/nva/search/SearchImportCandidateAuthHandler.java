@@ -9,8 +9,8 @@ import static no.unit.nva.search.importcandidate.ImportCandidateParameter.SIZE;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
-import java.net.http.HttpClient;
 import java.util.List;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.importcandidate.ImportCandidateClient;
 import no.unit.nva.search.importcandidate.ImportCandidateSearchQuery;
 import nva.commons.apigateway.ApiGatewayHandler;
@@ -32,12 +32,12 @@ public class SearchImportCandidateAuthHandler extends ApiGatewayHandler<Void, St
 
   @JacocoGenerated
   public SearchImportCandidateAuthHandler() {
-    this(new Environment(), defaultClient(), HttpClient.newHttpClient());
+    this(defaultClient(), new Environment());
   }
 
   public SearchImportCandidateAuthHandler(
-      Environment environment, ImportCandidateClient candidateClient, HttpClient httpClient) {
-    super(Void.class, environment, httpClient);
+      ImportCandidateClient candidateClient, Environment environment) {
+    super(Void.class, environment);
     this.opensearchClient = candidateClient;
   }
 
@@ -49,7 +49,7 @@ public class SearchImportCandidateAuthHandler extends ApiGatewayHandler<Void, St
         .withRequiredParameters(FROM, SIZE, AGGREGATION)
         .validate()
         .build()
-        .doSearch(opensearchClient)
+        .doSearch(opensearchClient, Words.IMPORT_CANDIDATES_INDEX)
         .toString();
   }
 

@@ -13,9 +13,9 @@ import static no.unit.nva.search.resource.ResourceParameter.SORT;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
-import java.net.http.HttpClient;
 import java.util.List;
 import java.util.Map;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.ContentTypeUtils;
 import no.unit.nva.search.common.records.JsonNodeMutator;
 import no.unit.nva.search.resource.LegacyMutator;
@@ -40,12 +40,11 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
 
   @JacocoGenerated
   public SearchResourceHandler() {
-    this(new Environment(), defaultClient(), HttpClient.newHttpClient());
+    this(defaultClient(), new Environment());
   }
 
-  public SearchResourceHandler(
-      Environment environment, ResourceClient resourceClient, HttpClient httpClient) {
-    super(Void.class, environment, httpClient);
+  public SearchResourceHandler(ResourceClient resourceClient, Environment environment) {
+    super(Void.class, environment);
     this.opensearchClient = resourceClient;
   }
 
@@ -75,7 +74,7 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
         .withFilter()
         .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
         .apply()
-        .doSearch(opensearchClient)
+        .doSearch(opensearchClient, Words.RESOURCES)
         .withMutators(getMutator(version))
         .toString();
   }

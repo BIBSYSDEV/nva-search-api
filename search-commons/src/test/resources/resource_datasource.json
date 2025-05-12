@@ -3713,13 +3713,13 @@
     "filesStatus": "hasPublicFiles",
     "additionalIdentifiers": [
       {
-        "type": "AdditionalIdentifier",
-        "sourceName": "Cristin",
+        "type": "CristinIdentifier",
+        "sourceName": "cristin@org",
         "value": "123455"
       },
       {
-        "type": "AdditionalIdentifier",
-        "sourceName": "Scopus",
+        "type": "ScopusIdentifier",
+        "sourceName": "scopus@org",
         "value": "someId"
       }
     ],
@@ -3907,13 +3907,13 @@
     "filesStatus": "hasPublicFiles",
     "additionalIdentifiers": [
       {
-        "type": "AdditionalIdentifier",
-        "sourceName": "Cristin",
+        "type": "CristinIdentifier",
+        "sourceName": "cristin@org",
         "value": "someId"
       },
       {
-        "type": "AdditionalIdentifier",
-        "sourceName": "Scopus",
+        "type": "ScopusIdentifier",
+        "sourceName": "scopus@org",
         "value": "123455"
       }
     ],
@@ -3992,8 +3992,8 @@
     "filesStatus": "hasPublicFiles",
     "additionalIdentifiers": [
       {
-        "type": "AdditionalIdentifier",
-        "sourceName": "Cristin",
+        "type": "CristinIdentifier",
+        "sourceName": "cristin@org",
         "value": "2179545"
       }
     ],
@@ -4072,8 +4072,8 @@
     "filesStatus": "hasPublicFiles",
     "additionalIdentifiers": [
       {
-        "type": "AdditionalIdentifier",
-        "sourceName": "Cristin",
+        "type": "CristinIdentifier",
+        "sourceName": "cristin@org",
         "value": "2179523"
       }
     ],
@@ -4152,8 +4152,8 @@
     "filesStatus": "hasPublicFiles",
     "additionalIdentifiers": [
       {
-        "type": "AdditionalIdentifier",
-        "sourceName": "Cristin",
+        "type": "CristinIdentifier",
+        "sourceName": "cristin@org",
         "value": "2178703"
       }
     ],
@@ -4394,8 +4394,8 @@
     "id": "https://api.dev.nva.aws.unit.no/publication/018ba39a3a43-092f5bfa-4def-4b5d-af78-1c48cf4bd0fc",
     "additionalIdentifiers": [
       {
-        "type": "AdditionalIdentifier",
-        "sourceName": "Cristin",
+        "type": "CristinIdentifier",
+        "sourceName": "cristin@org",
         "value": "2133164"
       }
     ],
@@ -4478,8 +4478,8 @@
     "id": "https://api.dev.nva.aws.unit.no/publication/018ba39aafd4-92dd290a-7c0e-4f37-98e7-a61a8d4e9a58",
     "additionalIdentifiers": [
       {
-        "type": "AdditionalIdentifier",
-        "sourceName": "Cristin",
+        "type": "CristinIdentifier",
+        "sourceName": "cristin@org",
         "value": "2130654"
       }
     ],
@@ -4565,8 +4565,8 @@
     "id": "https://api.dev.nva.aws.unit.no/publication/018ba39ab1a3-7c09e399-53b4-432a-ae89-adcb4a7a8a1f",
     "additionalIdentifiers": [
       {
-        "type": "AdditionalIdentifier",
-        "sourceName": "Cristin",
+        "type": "CristinIdentifier",
+        "sourceName": "cristin@org",
         "value": "2139688"
       }
     ],
@@ -4651,8 +4651,8 @@
     "id": "https://api.dev.nva.aws.unit.no/publication/0190554a46d9-41780102-675d-43ba-81df-17168d78fa22",
     "additionalIdentifiers": [
       {
-        "type": "AdditionalIdentifier",
-        "sourceName": "Cristin",
+        "type": "CristinIdentifier",
+        "sourceName": "cristin@org",
         "value": "853343"
       },
       {
@@ -4885,8 +4885,8 @@
         "value": "r07009756"
       },
       {
-        "type": "AdditionalIdentifier",
-        "sourceName": "Cristin",
+        "type": "CristinIdentifier",
+        "sourceName": "cristin@org",
         "value": "853486"
       }
     ],
@@ -5090,8 +5090,8 @@
     "id": "https://api.dev.nva.aws.unit.no/publication/01905518408c-dba987f7-0d84-4519-a625-89605672afc8",
     "additionalIdentifiers": [
       {
-        "type": "AdditionalIdentifier",
-        "sourceName": "Cristin",
+        "type": "CristinIdentifier",
+        "sourceName": "cristin@org",
         "value": "856324"
       },
       {

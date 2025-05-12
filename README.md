@@ -276,7 +276,7 @@ Accept: application/json
         - https://api.nva.unit.no/search/resources
         - https://api.nva.unit.no/search/customer/resources
         - https://api.nva.unit.no/search/customer/tickets
-  
+
 ---
 ## Utility startpoints and flows ###
 ![](utilities_flow.png)

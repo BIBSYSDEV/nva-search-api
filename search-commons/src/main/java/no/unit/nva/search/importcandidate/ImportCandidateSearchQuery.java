@@ -13,7 +13,7 @@ import static no.unit.nva.constants.Words.NONE;
 import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.constants.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.constants.Words.SEARCH;
-import static no.unit.nva.constants.Words.SOURCE_NAME;
+import static no.unit.nva.constants.Words.TYPE;
 import static no.unit.nva.constants.Words.VALUE;
 import static no.unit.nva.search.common.constant.Functions.jsonPath;
 import static no.unit.nva.search.common.constant.Functions.trimSpace;
@@ -120,7 +120,7 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
   }
 
   @Override
-  public URI openSearchUri() {
+  public URI openSearchUri(String indexName) {
     return fromUri(infrastructureApiUri).addChild(IMPORT_CANDIDATES_INDEX_NAME, SEARCH).getUri();
   }
 
@@ -147,14 +147,14 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
   }
 
   private Stream<Entry<ImportCandidateParameter, QueryBuilder>> builderStreamAdditionalIdentifier(
-      ImportCandidateParameter key, String source) {
+      ImportCandidateParameter key, String type) {
     var value = parameters().get(key).as();
     var query =
         QueryBuilders.nestedQuery(
             ADDITIONAL_IDENTIFIERS,
             boolQuery()
                 .must(termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, VALUE, KEYWORD), value))
-                .must(termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, SOURCE_NAME, KEYWORD), source)),
+                .must(termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, TYPE, KEYWORD), type)),
             ScoreMode.None);
 
     return Functions.queryToEntry(key, query);
