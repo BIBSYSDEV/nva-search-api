@@ -1,15 +1,18 @@
 package no.sikt.nva.oai.pmh.handler;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 
 public class HitBuilder {
   private final ObjectNode referenceNode;
   private final int port;
   private String identifier;
   private String title;
+  private String[] contributors = new String[] {};
 
   private HitBuilder(int port, ObjectNode referenceNode) {
     this.port = port;
@@ -36,6 +39,11 @@ public class HitBuilder {
     return this;
   }
 
+  public HitBuilder withContributors(String... contributors) {
+    this.contributors = contributors;
+    return this;
+  }
+
   public ObjectNode build() {
     var rootNode = new ObjectNode(JsonNodeFactory.instance);
     rootNode.put("type", "Publication");
@@ -46,19 +54,39 @@ public class HitBuilder {
     publicationDateNode.put("year", "2020");
     publicationDateNode.put("month", "01");
     publicationDateNode.put("day", "01");
+    var contributorsPreviewNode = new ArrayNode(JsonNodeFactory.instance);
+    Arrays.stream(contributors)
+        .forEach(contributor -> contributorsPreviewNode.add(contributorNode(contributor)));
     rootNode.set(
-        "entityDescription", entityDescriptionNode(title, referenceNode, publicationDateNode));
+        "entityDescription",
+        entityDescriptionNode(title, referenceNode, publicationDateNode, contributorsPreviewNode));
     rootNode.put(
         "modifiedDate", ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
     return rootNode;
   }
 
+  private ObjectNode contributorNode(String contributor) {
+    var contributorNode = new ObjectNode(JsonNodeFactory.instance);
+    contributorNode.set("identity", identityNode(contributor));
+    return contributorNode;
+  }
+
+  private ObjectNode identityNode(String contributor) {
+    var identityNode = new ObjectNode(JsonNodeFactory.instance);
+    identityNode.put("name", contributor);
+    return identityNode;
+  }
+
   private ObjectNode entityDescriptionNode(
-      String title, ObjectNode referenceNode, ObjectNode publicationDateNode) {
+      String title,
+      ObjectNode referenceNode,
+      ObjectNode publicationDateNode,
+      ArrayNode contributorsPreviewNode) {
     var node = new ObjectNode(JsonNodeFactory.instance);
     node.set("reference", referenceNode);
     node.set("publicationDate", publicationDateNode);
     node.put("mainTitle", title);
+    node.set("contributorsPreview", contributorsPreviewNode);
     return node;
   }
 

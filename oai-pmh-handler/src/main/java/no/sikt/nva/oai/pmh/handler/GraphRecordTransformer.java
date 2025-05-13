@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import no.unit.nva.commons.json.JsonUtils;
+import nva.commons.core.JacocoGenerated;
 import nva.commons.core.ioutils.IoUtils;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QuerySolution;
@@ -30,6 +31,7 @@ import org.openarchives.oai.pmh.v2.RecordType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@JacocoGenerated
 public final class GraphRecordTransformer implements RecordTransformer {
 
   private static final String SPARQL_QUERY =

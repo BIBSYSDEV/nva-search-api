@@ -566,6 +566,7 @@ public class OaiPmhHandlerTest {
                 HitBuilder.academicArticle(port, "My journal")
                     .withIdentifier("1")
                     .withTitle("My title")
+                    .withContributors("Ola Nordmann")
                     .build()));
     return hitAndRequest(hits);
   }
@@ -602,43 +603,6 @@ public class OaiPmhHandlerTest {
                     .build()));
     return hitAndRequest(hits);
   }
-
-  /*
-       "publicationContext" : {
-       "type" : "Report",
-       "series" : {
-         "type" : "Series",
-         "id" : "https://api.dev.nva.aws.unit.no/publication-channels/beb2ae40-63df-4ca0-a20c-374a236ae468"
-       },
-       "seriesNumber" : "GXyvFdqFAWGJk6ag6Rl",
-       "publisher" : {
-         "type" : "Publisher",
-         "id" : "https://api.dev.nva.aws.unit.no/publication-channels/0d392b44-e538-425b-92b7-3379ed3a8f78",
-         "valid" : true
-       },
-       "isbnList" : [ "9791776659110", "9781851966943" ],
-       "additionalIdentifiers" : [ {
-         "type" : "AdditionalIdentifier",
-         "sourceName" : "ISBN",
-         "value" : "1851966943"
-       } ]
-     },
-     "doi" : "https://www.example.org/734fedcb-abbb-42ab-b6d3-9f3dddcb6b86",
-     "publicationInstance" : {
-       "type" : "ReportBasic",
-       "pages" : {
-         "type" : "MonographPages",
-         "introduction" : {
-           "type" : "Range",
-           "begin" : "TAY2BDmwinXYD5n4t",
-           "end" : "WgjYjsfvlym5"
-         },
-         "pages" : "KEOWq6OxziLN3oDgU",
-         "illustrated" : false
-       }
-     }
-
-  */
 
   private InputStream request(
       String verb,
@@ -872,7 +836,8 @@ public class OaiPmhHandlerTest {
   private GatewayResponse<String> invokeHandler(
       Environment environment, JaxbXmlSerializer marshaller, InputStream inputStream)
       throws IOException {
-    var handler = new OaiPmhHandler(environment, marshaller, resourceClient, scrollClient);
+    var dataProvider = new SimplifiedOaiPmhDataProvider(resourceClient, scrollClient);
+    var handler = new OaiPmhHandler(environment, dataProvider, marshaller);
     handler.handleRequest(inputStream, outputStream, new FakeContext());
 
     return GatewayResponse.fromOutputStream(outputStream, String.class);

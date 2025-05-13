@@ -1,7 +1,12 @@
 package no.sikt.nva.oai.pmh.handler;
 
 import static java.util.Objects.nonNull;
+import static no.unit.nva.search.common.enums.PublicationStatus.DELETED;
+import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
+import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
+import static no.unit.nva.search.common.enums.PublicationStatus.UNPUBLISHED;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.xml.bind.JAXBElement;
 import java.math.BigInteger;
 import java.net.URI;
@@ -17,15 +22,14 @@ import javax.xml.datatype.DatatypeFactory;
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.records.Facet;
 import no.unit.nva.search.common.records.HttpResponseFormatter;
-import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.ResourceParameter;
 import no.unit.nva.search.resource.ResourceSearchQuery;
 import no.unit.nva.search.resource.ResourceSort;
+import no.unit.nva.search.resource.SimplifiedMutator;
 import no.unit.nva.search.scroll.ScrollClient;
 import no.unit.nva.search.scroll.ScrollQuery;
 import nva.commons.apigateway.exceptions.BadRequestException;
-import nva.commons.core.JacocoGenerated;
 import org.openarchives.oai.pmh.v2.DeletedRecordType;
 import org.openarchives.oai.pmh.v2.GranularityType;
 import org.openarchives.oai.pmh.v2.OAIPMHerrorcodeType;
@@ -37,10 +41,9 @@ import org.openarchives.oai.pmh.v2.VerbType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@JacocoGenerated
-public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
+public class SimplifiedOaiPmhDataProvider implements OaiPmhDataProvider {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(DefaultOaiPmhDataProvider.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(SimplifiedOaiPmhDataProvider.class);
   private static final String PUBLICATION_INSTANCE_TYPE_SET = "PublicationInstanceType";
   private static final String COLON = ":";
   private static final String INSTANCE_TYPE_AGGREGATION_NAME = "type";
@@ -64,10 +67,10 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
   private final ScrollClient scrollClient;
   private final RecordTransformer recordTransformer;
 
-  public DefaultOaiPmhDataProvider(ResourceClient resourceClient, ScrollClient scrollClient) {
+  public SimplifiedOaiPmhDataProvider(ResourceClient resourceClient, ScrollClient scrollClient) {
     this.resourceClient = resourceClient;
     this.scrollClient = scrollClient;
-    this.recordTransformer = new GraphRecordTransformer();
+    this.recordTransformer = new SimplifiedRecordTransformer();
   }
 
   @Override
@@ -182,12 +185,12 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
     var oaiPmhType = oaiResponse.getValue();
     populateListRecordsRequest(from, until, incomingResumptionToken, metadataPrefix, oaiPmhType);
 
-    var scrollId = response._scroll_id();
+    var scrollId = response.scrollId();
 
-    var records = recordTransformer.transform(response.getSearchHits());
+    var records = recordTransformer.transform(response.hits);
 
     var resumptionTokenType =
-        generateResumptionToken(from, until, metadataPrefix, scrollId, response.getTotalSize());
+        generateResumptionToken(from, until, metadataPrefix, scrollId, response.totalSize());
     var listRecords = objectFactory.createListRecordsType();
     listRecords.getRecord().addAll(records);
     listRecords.setResumptionToken(resumptionTokenType);
@@ -209,20 +212,27 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
     oaiPmhType.getRequest().setMetadataPrefix(metadataPrefix);
   }
 
-  private SwsResponse doSearchForRecords(
+  private SearchResult doSearchForRecords(
       String from, String until, String incomingResumptionToken) {
-    final SwsResponse response;
     if (nonNull(incomingResumptionToken)) {
       var token = ResumptionToken.from(incomingResumptionToken);
       var scrollQuery =
           ScrollQuery.builder().withScrollId(token.scrollId()).withTtl(SCROLL_TTL).build();
-      response = scrollQuery.doSearch(scrollClient, Words.RESOURCES).swsResponse();
+      var response =
+          scrollQuery.doSearch(scrollClient, Words.RESOURCES).withMutators(new SimplifiedMutator());
+      var swsResponse = response.swsResponse();
+      var mutatedHits = response.toMutatedHits();
+      return new SearchResult(swsResponse._scroll_id(), swsResponse.getTotalSize(), mutatedHits);
     } else {
       var query = buildListRecordsPageQuery(from, until);
-      response = doSearch(query).swsResponse();
+      var response = doSearch(query).withMutators(new SimplifiedMutator());
+      var swsResponse = response.swsResponse();
+      var mutatedHits = response.toMutatedHits();
+      return new SearchResult(swsResponse._scroll_id(), swsResponse.getTotalSize(), mutatedHits);
     }
-    return response;
   }
+
+  private record SearchResult(String scrollId, int totalSize, List<JsonNode> hits) {}
 
   private ResumptionTokenType generateResumptionToken(
       String from, String until, String metadataPrefix, String scrollId, Integer totalSize) {
@@ -277,9 +287,6 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
     return query;
   }
 
-  // .withAlwaysIncludedFields(getIncludedFields(version))
-  // .doSearch()
-  // .withMutators(getMutator(version))
   private static ResourceSearchQuery buildListRecordsPageQuery(String from, String until) {
     final ResourceSearchQuery query;
     try {
@@ -292,7 +299,11 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
               .withParameter(ResourceParameter.SIZE, "50")
               .withParameter(ResourceParameter.SORT, ResourceSort.MODIFIED_DATE.asCamelCase())
               .withParameter(ResourceParameter.SORT_ORDER, "desc")
+              .withAlwaysIncludedFields(SimplifiedMutator.getIncludedFields())
               .build()
+              .withFilter()
+              .requiredStatus(PUBLISHED, PUBLISHED_METADATA, UNPUBLISHED, DELETED)
+              .apply()
               .withScrollTime(SCROLL_TTL);
     } catch (BadRequestException e) {
       // should never happen unless query validation code is changed!

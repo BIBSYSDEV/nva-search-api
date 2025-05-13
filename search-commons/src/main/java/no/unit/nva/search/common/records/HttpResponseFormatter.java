@@ -6,6 +6,7 @@ import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.search.common.constant.Functions.hasContent;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.net.MediaType;
 import java.net.URI;
 import java.util.List;
@@ -70,13 +71,16 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
     return response;
   }
 
+  public List<JsonNode> toMutatedHits() {
+    return response.getSearchHits().stream()
+        .flatMap(hit -> getMutators().map(mutator -> mutator.transform(hit)))
+        .toList();
+  }
+
   public PagedSearch toPagedResponse() {
     final var aggregationFormatted =
         AggregationFormat.apply(response.aggregations(), facetPaths).toString();
-    final var hits =
-        response.getSearchHits().stream()
-            .flatMap(hit -> getMutators().map(mutator -> mutator.transform(hit)))
-            .toList();
+    final var hits = toMutatedHits();
 
     return new PagedSearchBuilder()
         .withTotalHits(response.getTotalSize())

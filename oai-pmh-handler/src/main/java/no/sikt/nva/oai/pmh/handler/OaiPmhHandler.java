@@ -32,39 +32,38 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
 
   private final XmlSerializer xmlSerializer;
   private final OaiPmhDataProvider dataProvider;
+  private final URI endpointUri;
 
   @JacocoGenerated
   public OaiPmhHandler() throws JAXBException {
-    super(String.class, new Environment());
+    this(new Environment(), defaultOaiPmhDataProvider(), defaultXmlSerializer());
+  }
 
-    var endpointUri = generateEndpointUri(environment);
+  public OaiPmhHandler(
+      Environment environment, OaiPmhDataProvider dataProvider, XmlSerializer xmlSerializer) {
+    super(String.class, environment);
+    this.endpointUri = generateEndpointUri(environment);
+    this.dataProvider = dataProvider;
+    this.xmlSerializer = xmlSerializer;
+  }
 
+  @JacocoGenerated
+  private static XmlSerializer defaultXmlSerializer() throws JAXBException {
     var context = JAXBContext.newInstance(OAIPMHtype.class);
     var marshaller = context.createMarshaller();
+    return new JaxbXmlSerializer(marshaller);
+  }
 
-    this.xmlSerializer = new JaxbXmlSerializer(marshaller);
-    this.dataProvider =
-        new DefaultOaiPmhDataProvider(
-            ResourceClient.defaultClient(), ScrollClient.defaultClient(), endpointUri);
+  @JacocoGenerated
+  private static OaiPmhDataProvider defaultOaiPmhDataProvider() {
+    return new SimplifiedOaiPmhDataProvider(
+        ResourceClient.defaultClient(), ScrollClient.defaultClient());
   }
 
   private static URI generateEndpointUri(Environment environment) {
     var apiHost = environment.readEnv("API_HOST");
     var basePath = environment.readEnv("OAI_BASE_PATH");
     return new UriWrapper(HTTPS_SCHEME, apiHost).addChild(basePath).getUri();
-  }
-
-  public OaiPmhHandler(
-      Environment environment,
-      XmlSerializer xmlSerializer,
-      ResourceClient resourceClient,
-      ScrollClient scrollClient) {
-    super(String.class, environment);
-
-    var endpointUri = generateEndpointUri(environment);
-
-    this.xmlSerializer = xmlSerializer;
-    this.dataProvider = new DefaultOaiPmhDataProvider(resourceClient, scrollClient, endpointUri);
   }
 
   @Override
@@ -85,7 +84,8 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
         extractParameter(PARAMETER_NAME_RESUMPTION_TOKEN, requestInfo, body).orElse(null);
 
     return xmlSerializer.serialize(
-        dataProvider.handleRequest(verb, from, until, metadataPrefix, resumptionToken));
+        dataProvider.handleRequest(
+            verb, from, until, metadataPrefix, resumptionToken, endpointUri));
   }
 
   private Optional<String> extractParameter(
