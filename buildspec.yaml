@@ -18,6 +18,11 @@ phases:
 artifacts:
   files:
     - packaged.yaml
+reports:
+  jupiter-reports:
+    files:
+      - "**/test-results/test/*.xml"
+    file-format: "JUNITXML"
 cache:
   paths:
     - '/root/venv/**/*'
