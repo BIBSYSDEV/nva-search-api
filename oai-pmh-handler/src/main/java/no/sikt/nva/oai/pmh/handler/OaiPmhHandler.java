@@ -4,6 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.List;
@@ -51,6 +52,11 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
   private static XmlSerializer defaultXmlSerializer() throws JAXBException {
     var context = JAXBContext.newInstance(OAIPMHtype.class);
     var marshaller = context.createMarshaller();
+    marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION,
+                           "http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd " +
+                           "http://purl.org/dc/elements/1.1/ http://dublincore.org/schemas/xmls/simpledc20021212.xsd " +
+                           "http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd");
+
     return new JaxbXmlSerializer(marshaller);
   }
 
@@ -83,9 +89,9 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
     var resumptionToken =
         extractParameter(PARAMETER_NAME_RESUMPTION_TOKEN, requestInfo, body).orElse(null);
 
-    return xmlSerializer.serialize(
-        dataProvider.handleRequest(
-            verb, from, until, metadataPrefix, resumptionToken, endpointUri));
+    var rootElement =
+        dataProvider.handleRequest(verb, from, until, metadataPrefix, resumptionToken, endpointUri);
+    return xmlSerializer.serialize(rootElement);
   }
 
   private Optional<String> extractParameter(
