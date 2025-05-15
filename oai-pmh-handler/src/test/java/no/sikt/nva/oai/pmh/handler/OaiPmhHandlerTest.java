@@ -103,6 +103,7 @@ public class OaiPmhHandlerTest {
   private static final String POST_METHOD = "post";
   private static final String OAI_DC_NAMESPACE_PREFIX = "oai-dc";
   private static final String OAI_DC_NAMESPACE = "http://www.openarchives.org/OAI/2.0/oai_dc/";
+  public static final String DEFAULT_PUBLICATION_IDENTIFIER = "1";
 
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
   private Environment environment;
@@ -451,7 +452,7 @@ public class OaiPmhHandlerTest {
             "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:header/oai:identifier",
             response);
 
-    assertThat(identifier, is(equalTo("http://localhost/publication/1")));
+    assertThat(identifier, is(equalTo("https://localhost/publication/1")));
   }
 
   @Test
@@ -516,6 +517,22 @@ public class OaiPmhHandlerTest {
   }
 
   @Test
+  void shouldUseIdAsRecordMetadataDcIdentifier() throws IOException, JAXBException {
+    var inputStream = setUpDefaultHitAndRequest();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    var type =
+        extractTextNodeValueFromResponse(
+            xpathEngine,
+            "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:metadata/oai-dc:dc/dc:identifier",
+            response);
+    assertThat(
+        type, is(equalTo("https://localhost/publication/" + DEFAULT_PUBLICATION_IDENTIFIER)));
+  }
+
+  @Test
   void
       shouldUseNameOfPublicationContextIfTypeIsJournalAsRecordMetadataDcPublisherIfPublisherAndSeriesAreNotPresent()
           throws IOException, JAXBException {
@@ -564,7 +581,7 @@ public class OaiPmhHandlerTest {
             JsonNodeFactory.instance,
             List.of(
                 HitBuilder.academicArticle(port, "My journal")
-                    .withIdentifier("1")
+                    .withIdentifier(DEFAULT_PUBLICATION_IDENTIFIER)
                     .withTitle("My title")
                     .withContributors("Ola Nordmann")
                     .build()));

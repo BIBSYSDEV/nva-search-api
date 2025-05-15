@@ -48,6 +48,7 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
   private static MetadataType populateMetadataType(ResourceSearchResponse response) {
     var metadata = OBJECT_FACTORY.createMetadataType();
     var oaiDcType = OBJECT_FACTORY.createOaiDcType();
+    appendIdentifier(response, oaiDcType);
     appendTitle(response, oaiDcType);
     appendContributors(response, oaiDcType);
     appendDate(response, oaiDcType);
@@ -68,6 +69,14 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
     var creatorElement = OBJECT_FACTORY.createElementType();
     creatorElement.setValue(contributor.identity().name());
     return creatorElement;
+  }
+
+  private static void appendIdentifier(ResourceSearchResponse response, OaiDcType oaiDcType) {
+    var identifierElement = OBJECT_FACTORY.createElementType();
+    identifierElement.setValue(response.id().toString());
+    oaiDcType
+        .getTitleOrCreatorOrSubject()
+        .addLast(OBJECT_FACTORY.createIdentifier(identifierElement));
   }
 
   private static void appendTitle(ResourceSearchResponse response, OaiDcType oaiDcType) {
