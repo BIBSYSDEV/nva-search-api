@@ -1,6 +1,7 @@
 package no.sikt.nva.oai.pmh.handler;
 
 import static java.util.Objects.nonNull;
+import static no.sikt.nva.oai.pmh.handler.JaxbUtils.getSchemaLocation;
 
 import jakarta.xml.bind.JAXBElement;
 import java.math.BigInteger;
@@ -14,6 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.xml.datatype.DatatypeFactory;
+import no.sikt.nva.oai.pmh.handler.JaxbUtils.Namespaces;
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.records.Facet;
 import no.unit.nva.search.common.records.HttpResponseFormatter;
@@ -53,9 +55,6 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
   private static final String CONTACT_AT_SIKT_NO = "kontakt@sikt.no";
   private static final String UNSUPPORTED_VERB = "Unsupported verb.";
   private static final String UNKNOWN_OR_NO_VERB_SUPPLIED = "Unknown or no verb supplied.";
-  private static final String OAI_DC = "oai-dc";
-  private static final String OAI_DC_SCHEMA = "http://www.openarchives.org/OAI/2.0/oai_dc.xsd";
-  private static final String OAI_DC_NAMESPACE = "http://www.openarchives.org/OAI/2.0/oai_dc/";
   private static final String SCROLL_TTL = "10m";
   private static final int RESUMPTION_TOKEN_TTL = 10;
 
@@ -125,9 +124,9 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
     var listMetadataFormatsType = objectFactory.createListMetadataFormatsType();
 
     var metadataFormatType = objectFactory.createMetadataFormatType();
-    metadataFormatType.setMetadataPrefix(OAI_DC);
-    metadataFormatType.setSchema(OAI_DC_SCHEMA);
-    metadataFormatType.setMetadataNamespace(OAI_DC_NAMESPACE);
+    metadataFormatType.setMetadataPrefix(OAI_DC_METADATA_PREFIX);
+    metadataFormatType.setSchema(getSchemaLocation(Namespaces.OAI_DC));
+    metadataFormatType.setMetadataNamespace(Namespaces.OAI_DC);
 
     listMetadataFormatsType.getMetadataFormat().add(metadataFormatType);
 

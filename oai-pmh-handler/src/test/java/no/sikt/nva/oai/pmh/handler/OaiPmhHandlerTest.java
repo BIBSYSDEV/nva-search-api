@@ -790,6 +790,7 @@ public class OaiPmhHandlerTest {
       throws JAXBException, IOException {
     var context = JAXBContext.newInstance(OAIPMHtype.class);
     var marshaller = context.createMarshaller();
+    JaxbUtils.configureMarshaller(marshaller);
     var gatewayResponse =
         invokeHandler(environment, new JaxbXmlSerializer(marshaller), inputStream);
     assertThat(gatewayResponse.getStatusCode(), is(equalTo(statusCode)));

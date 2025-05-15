@@ -4,7 +4,6 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Marshaller;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.List;
@@ -19,8 +18,11 @@ import nva.commons.core.JacocoGenerated;
 import nva.commons.core.StringUtils;
 import nva.commons.core.paths.UriWrapper;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
+  private static final Logger logger = LoggerFactory.getLogger(OaiPmhHandler.class);
 
   private static final String PARAMETER_NAME_VERB = "verb";
   private static final String PARAMETER_NAME_FROM = "from";
@@ -51,12 +53,11 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
   @JacocoGenerated
   private static XmlSerializer defaultXmlSerializer() throws JAXBException {
     var context = JAXBContext.newInstance(OAIPMHtype.class);
+    logger.info(
+        "Created JAXBContext for OAIPMHtype with the following implementation: {}",
+        context.getClass().getName());
     var marshaller = context.createMarshaller();
-    marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION,
-                           "http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd " +
-                           "http://purl.org/dc/elements/1.1/ http://dublincore.org/schemas/xmls/simpledc20021212.xsd " +
-                           "http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd");
-
+    JaxbUtils.configureMarshaller(marshaller);
     return new JaxbXmlSerializer(marshaller);
   }
 
