@@ -2,10 +2,8 @@ package no.sikt.nva.oai.pmh.handler;
 
 import static java.util.Objects.nonNull;
 import static no.sikt.nva.oai.pmh.handler.JaxbUtils.getSchemaLocation;
-import static no.unit.nva.search.common.enums.PublicationStatus.DELETED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
-import static no.unit.nva.search.common.enums.PublicationStatus.UNPUBLISHED;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.xml.bind.JAXBElement;
@@ -29,14 +27,13 @@ import no.unit.nva.search.resource.ResourceParameter;
 import no.unit.nva.search.resource.ResourceSearchQuery;
 import no.unit.nva.search.resource.ResourceSort;
 import no.unit.nva.search.resource.SimplifiedMutator;
-import no.unit.nva.search.scroll.ScrollClient;
-import no.unit.nva.search.scroll.ScrollQuery;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import org.openarchives.oai.pmh.v2.DeletedRecordType;
 import org.openarchives.oai.pmh.v2.GranularityType;
 import org.openarchives.oai.pmh.v2.OAIPMHerrorcodeType;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
 import org.openarchives.oai.pmh.v2.ObjectFactory;
+import org.openarchives.oai.pmh.v2.RecordType;
 import org.openarchives.oai.pmh.v2.ResumptionTokenType;
 import org.openarchives.oai.pmh.v2.SetType;
 import org.openarchives.oai.pmh.v2.VerbType;
@@ -45,7 +42,8 @@ import org.slf4j.LoggerFactory;
 
 public class SimplifiedOaiPmhDataProvider implements OaiPmhDataProvider {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(SimplifiedOaiPmhDataProvider.class);
+  private static final Logger logger = LoggerFactory.getLogger(SimplifiedOaiPmhDataProvider.class);
+
   private static final String PUBLICATION_INSTANCE_TYPE_SET = "PublicationInstanceType";
   private static final String COLON = ":";
   private static final String INSTANCE_TYPE_AGGREGATION_NAME = "type";
@@ -58,18 +56,17 @@ public class SimplifiedOaiPmhDataProvider implements OaiPmhDataProvider {
   private static final String CONTACT_AT_SIKT_NO = "kontakt@sikt.no";
   private static final String UNSUPPORTED_VERB = "Unsupported verb.";
   private static final String UNKNOWN_OR_NO_VERB_SUPPLIED = "Unknown or no verb supplied.";
-  private static final String SCROLL_TTL = "10m";
   private static final int RESUMPTION_TOKEN_TTL = 10;
 
   private final ObjectFactory objectFactory = new ObjectFactory();
   private final ResourceClient resourceClient;
-  private final ScrollClient scrollClient;
   private final RecordTransformer recordTransformer;
+  private final int batchSize;
 
-  public SimplifiedOaiPmhDataProvider(ResourceClient resourceClient, ScrollClient scrollClient) {
+  public SimplifiedOaiPmhDataProvider(ResourceClient resourceClient, int batchSize) {
     this.resourceClient = resourceClient;
-    this.scrollClient = scrollClient;
     this.recordTransformer = new SimplifiedRecordTransformer();
+    this.batchSize = batchSize;
   }
 
   @Override
@@ -170,32 +167,63 @@ public class SimplifiedOaiPmhDataProvider implements OaiPmhDataProvider {
     try {
       return query.doSearch(resourceClient, Words.RESOURCES);
     } catch (RuntimeException e) {
-      LOGGER.error("Failed to search for records.", e);
+      logger.error("Failed to search for records.", e);
       throw new ResourceSearchException("Error looking up records.", e);
     }
   }
 
   private JAXBElement<OAIPMHtype> listRecords(
-      String from, String until, String incomingResumptionToken, String metadataPrefix) {
+      String from, String until, String incomingEncodedResumptionToken, String metadataPrefix) {
 
-    final var response = doSearchForRecords(from, until, incomingResumptionToken);
+    var incomingResumptionToken = ResumptionToken.from(incomingEncodedResumptionToken);
+    var searchResult =
+        incomingResumptionToken
+            .map(resumptionToken -> doFollowUpSearch(until, resumptionToken))
+            .orElseGet(() -> doInitialSearch(from, until));
 
     var oaiResponse = baseResponse();
     var oaiPmhType = oaiResponse.getValue();
-    populateListRecordsRequest(from, until, incomingResumptionToken, metadataPrefix, oaiPmhType);
 
-    var scrollId = response.scrollId();
+    populateListRecordsRequest(
+        from, until, incomingEncodedResumptionToken, metadataPrefix, oaiPmhType);
 
-    var records = recordTransformer.transform(response.hits);
+    var records = recordTransformer.transform(searchResult.hits);
 
-    var resumptionTokenType =
-        generateResumptionToken(from, until, metadataPrefix, scrollId, response.totalSize());
+    var current = extractLastDateTime(records);
+
     var listRecords = objectFactory.createListRecordsType();
     listRecords.getRecord().addAll(records);
-    listRecords.setResumptionToken(resumptionTokenType);
+
+    if (nonNull(current) && searchResult.totalSize() >= batchSize) {
+      var resumptionTokenType =
+          generateResumptionToken(from, until, metadataPrefix, current, searchResult.totalSize());
+      listRecords.setResumptionToken(resumptionTokenType);
+    }
 
     oaiPmhType.setListRecords(listRecords);
     return oaiResponse;
+  }
+
+  private SearchResult doFollowUpSearch(String until, ResumptionToken resumptionToken) {
+    var query = buildListRecordsPageQuery(resumptionToken.current(), until, batchSize);
+    var response = doSearch(query).withMutators(new SimplifiedMutator());
+    var mutatedHits = response.toMutatedHits();
+    return new SearchResult(resumptionToken.totalSize(), mutatedHits);
+  }
+
+  private SearchResult doInitialSearch(String from, String until) {
+    var query = buildListRecordsPageQuery(from, until, batchSize);
+    var response = doSearch(query).withMutators(new SimplifiedMutator());
+    var mutatedHits = response.toMutatedHits();
+    return new SearchResult(response.swsResponse().getTotalSize(), mutatedHits);
+  }
+
+  private String extractLastDateTime(List<RecordType> records) {
+    if (records.isEmpty()) {
+      return null;
+    } else {
+      return records.getLast().getHeader().getDatestamp();
+    }
   }
 
   private static void populateListRecordsRequest(
@@ -211,42 +239,20 @@ public class SimplifiedOaiPmhDataProvider implements OaiPmhDataProvider {
     oaiPmhType.getRequest().setMetadataPrefix(metadataPrefix);
   }
 
-  private SearchResult doSearchForRecords(
-      String from, String until, String incomingResumptionToken) {
-    if (nonNull(incomingResumptionToken)) {
-      var token = ResumptionToken.from(incomingResumptionToken);
-      var scrollQuery =
-          ScrollQuery.builder().withScrollId(token.scrollId()).withTtl(SCROLL_TTL).build();
-      var response =
-          scrollQuery.doSearch(scrollClient, Words.RESOURCES).withMutators(new SimplifiedMutator());
-      var swsResponse = response.swsResponse();
-      var mutatedHits = response.toMutatedHits();
-      return new SearchResult(swsResponse._scroll_id(), swsResponse.getTotalSize(), mutatedHits);
-    } else {
-      var query = buildListRecordsPageQuery(from, until);
-      var response = doSearch(query).withMutators(new SimplifiedMutator());
-      var swsResponse = response.swsResponse();
-      var mutatedHits = response.toMutatedHits();
-      return new SearchResult(swsResponse._scroll_id(), swsResponse.getTotalSize(), mutatedHits);
-    }
-  }
-
-  private record SearchResult(String scrollId, int totalSize, List<JsonNode> hits) {}
+  private record SearchResult(int totalSize, List<JsonNode> hits) {}
 
   private ResumptionTokenType generateResumptionToken(
-      String from, String until, String metadataPrefix, String scrollId, Integer totalSize) {
+      String from, String until, String metadataPrefix, String current, int totalSize) {
     var inTenMinutes =
         DatatypeFactory.newDefaultInstance()
             .newXMLGregorianCalendar(
                 GregorianCalendar.from(ZonedDateTime.now().plusMinutes(RESUMPTION_TOKEN_TTL)));
 
     var resumptionTokenType = objectFactory.createResumptionTokenType();
-    var newResumptionToken = new ResumptionToken(from, until, metadataPrefix, scrollId);
+    var newResumptionToken = new ResumptionToken(from, until, metadataPrefix, current, totalSize);
     resumptionTokenType.setValue(newResumptionToken.getValue());
     resumptionTokenType.setExpirationDate(inTenMinutes);
-    if (nonNull(totalSize)) {
-      resumptionTokenType.setCompleteListSize(BigInteger.valueOf(totalSize));
-    }
+    resumptionTokenType.setCompleteListSize(BigInteger.valueOf(totalSize));
     return resumptionTokenType;
   }
 
@@ -256,7 +262,7 @@ public class SimplifiedOaiPmhDataProvider implements OaiPmhDataProvider {
     try {
       response = query.doSearch(resourceClient, Words.RESOURCES);
     } catch (RuntimeException e) {
-      LOGGER.error("Failed to search for publication instance types using 'type' aggregation.", e);
+      logger.error("Failed to search for publication instance types using 'type' aggregation.", e);
       throw new ResourceSearchException("Error looking up instance types using aggregations.", e);
     }
 
@@ -280,13 +286,14 @@ public class SimplifiedOaiPmhDataProvider implements OaiPmhDataProvider {
               .build();
     } catch (BadRequestException e) {
       // should never happen unless query validation code is changed!
-      LOGGER.error("Failed to search for publication instance types using 'type' aggregation.", e);
+      logger.error("Failed to search for publication instance types using 'type' aggregation.", e);
       throw new ResourceSearchException("Error looking up instance types using aggregations.", e);
     }
     return query;
   }
 
-  private static ResourceSearchQuery buildListRecordsPageQuery(String from, String until) {
+  private static ResourceSearchQuery buildListRecordsPageQuery(
+      String from, String until, int batchSize) {
     final ResourceSearchQuery query;
     try {
       query =
@@ -295,18 +302,18 @@ public class SimplifiedOaiPmhDataProvider implements OaiPmhDataProvider {
               .withParameter(ResourceParameter.MODIFIED_SINCE, from)
               .withParameter(ResourceParameter.MODIFIED_BEFORE, until)
               .withParameter(ResourceParameter.FROM, ZERO)
-              .withParameter(ResourceParameter.SIZE, "50")
+              .withParameter(ResourceParameter.SIZE, Integer.toString(batchSize))
               .withParameter(ResourceParameter.SORT, ResourceSort.MODIFIED_DATE.asCamelCase())
               .withParameter(ResourceParameter.SORT_ORDER, "desc")
               .withAlwaysIncludedFields(SimplifiedMutator.getIncludedFields())
               .build()
               .withFilter()
-              .requiredStatus(PUBLISHED, PUBLISHED_METADATA, UNPUBLISHED, DELETED)
-              .apply()
-              .withScrollTime(SCROLL_TTL);
+              .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+              .apply();
     } catch (BadRequestException e) {
+
       // should never happen unless query validation code is changed!
-      LOGGER.error("Failed to lookup initial page from OpenSearch during ListRecords.", e);
+      logger.error("Failed to lookup initial page from OpenSearch during ListRecords.", e);
       throw new ResourceSearchException(
           "Error search for initial page of search results during ListRecords.", e);
     }

@@ -55,8 +55,8 @@ import no.unit.nva.search.common.records.SwsResponse.HitsInfo.Hit;
 import no.unit.nva.search.common.records.SwsResponse.HitsInfo.TotalInfo;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.ResourceParameter;
-import no.unit.nva.search.scroll.ScrollClient;
 import no.unit.nva.search.testing.common.ResourceSearchQueryMatcher;
+import no.unit.nva.search.testing.common.ResourceSearchQueryMatcher.TermsQueryBuilderExpectation;
 import no.unit.nva.stubs.FakeContext;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
@@ -108,7 +108,6 @@ public class OaiPmhHandlerTest {
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
   private Environment environment;
   private ResourceClient resourceClient;
-  private ScrollClient scrollClient;
   private int port = 0;
 
   @BeforeEach
@@ -121,7 +120,6 @@ public class OaiPmhHandlerTest {
     when(environment.readEnv("OAI_BASE_PATH")).thenReturn("publication-oai-pmh");
     when(environment.readEnv("COGNITO_AUTHORIZER_URLS")).thenReturn("http://localhost:3000");
     this.resourceClient = mock(ResourceClient.class);
-    this.scrollClient = mock(ScrollClient.class);
     var context = IoUtils.stringFromResources(Path.of("publication.context"));
     stubFor(
         get("/publication/context")
@@ -361,11 +359,10 @@ public class OaiPmhHandlerTest {
   @ParameterizedTest
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldListRecordsOnInitialQuery(String method) throws IOException, JAXBException {
-    var scrollId = "initialScrollId";
     var resourceQueryMatcher =
         new ResourceSearchQueryMatcher.Builder()
             .withPageParameter(ResourceParameter.FROM, "0")
-            .withPageParameter(ResourceParameter.SIZE, "50")
+            .withPageParameter(ResourceParameter.SIZE, "3")
             .withPageParameter(ResourceParameter.SORT, "modifiedDate,identifier")
             .withPageParameter(ResourceParameter.SORT_ORDER, "desc")
             .withSearchParameter(ResourceParameter.AGGREGATION, "none")
@@ -373,7 +370,7 @@ public class OaiPmhHandlerTest {
             .withSearchParameter(ResourceParameter.MODIFIED_SINCE, "2016-01-01")
             .build();
     when(resourceClient.doSearch(argThat(resourceQueryMatcher), any()))
-        .thenReturn(firstPageSwsResponse(scrollId));
+        .thenReturn(firstPageSwsResponse());
 
     var from = "2016-01-01";
     var until = "2016-01-02";
@@ -411,15 +408,25 @@ public class OaiPmhHandlerTest {
   @ParameterizedTest
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldListRecordsWithResumptionToken(String method) throws IOException, JAXBException {
-    var scrollId = "nextScrollId";
-    var ttl = "10m";
-    when(scrollClient.doSearch(argThat(new ScrollingQueryMatcher(scrollId, ttl)), any()))
-        .thenReturn(resumptionPageSwsResponse(scrollId));
+    var resourceQueryMatcher =
+        new ResourceSearchQueryMatcher.Builder()
+            .withPageParameter(ResourceParameter.FROM, "0")
+            .withPageParameter(ResourceParameter.SIZE, "3")
+            .withPageParameter(ResourceParameter.SORT, "modifiedDate,identifier")
+            .withPageParameter(ResourceParameter.SORT_ORDER, "desc")
+            .withSearchParameter(ResourceParameter.AGGREGATION, "none")
+            .withSearchParameter(ResourceParameter.MODIFIED_BEFORE, "2016-01-02")
+            .withSearchParameter(ResourceParameter.MODIFIED_SINCE, "2016-01-01T05:48:31Z")
+            .build();
+    when(resourceClient.doSearch(argThat(resourceQueryMatcher), any()))
+        .thenReturn(firstPageSwsResponse());
 
     var from = "2016-01-01";
     var until = "2016-01-02";
+    var current = "2016-01-01T05:48:31Z";
     var metadataPrefix = "oai-dc";
-    String resumptionToken = new ResumptionToken(from, until, metadataPrefix, scrollId).getValue();
+    String resumptionToken =
+        new ResumptionToken(from, until, metadataPrefix, current, 6).getValue();
     var response =
         performListRecordsOperation(method, from, until, metadataPrefix, resumptionToken);
     var xpathEngine = getXpathEngine();
@@ -593,9 +600,16 @@ public class OaiPmhHandlerTest {
     var resourceQueryMatcher =
         new ResourceSearchQueryMatcher.Builder()
             .withPageParameter(ResourceParameter.FROM, "0")
-            .withPageParameter(ResourceParameter.SIZE, "50")
+            .withPageParameter(ResourceParameter.SIZE, "3")
             .withPageParameter(ResourceParameter.SORT, "modifiedDate,identifier")
             .withPageParameter(ResourceParameter.SORT_ORDER, "desc")
+            .withSearchParameter(ResourceParameter.AGGREGATION, "none")
+            .withSearchParameter(ResourceParameter.MODIFIED_BEFORE, "2016-01-02")
+            .withSearchParameter(ResourceParameter.MODIFIED_SINCE, "2016-01-01")
+            .withNamedFilterQuery(
+                "status",
+                new TermsQueryBuilderExpectation(
+                    "status.keyword", "PUBLISHED", "PUBLISHED_METADATA"))
             .build();
 
     when(resourceClient.doSearch(argThat(resourceQueryMatcher), any()))
@@ -764,7 +778,7 @@ public class OaiPmhHandlerTest {
         scrollId);
   }
 
-  private SwsResponse firstPageSwsResponse(String scrollId) throws JsonProcessingException {
+  private SwsResponse firstPageSwsResponse() throws JsonProcessingException {
     var hits = new ArrayList<Hit>();
     var iterator = hits().elements();
 
@@ -773,7 +787,7 @@ public class OaiPmhHandlerTest {
       hits.add(new Hit("", "", "", 1.0, element, null, List.of()));
     }
     return new SwsResponse(
-        0, false, null, new HitsInfo(new TotalInfo(3, ""), 1.0, hits), null, scrollId);
+        0, false, null, new HitsInfo(new TotalInfo(6, ""), 1.0, hits), null, null);
   }
 
   private SwsResponse resumptionPageSwsResponse(String scrollId) throws JsonProcessingException {
@@ -854,7 +868,7 @@ public class OaiPmhHandlerTest {
   private GatewayResponse<String> invokeHandler(
       Environment environment, JaxbXmlSerializer marshaller, InputStream inputStream)
       throws IOException {
-    var dataProvider = new SimplifiedOaiPmhDataProvider(resourceClient, scrollClient);
+    var dataProvider = new SimplifiedOaiPmhDataProvider(resourceClient, 3);
     var handler = new OaiPmhHandler(environment, dataProvider, marshaller);
     handler.handleRequest(inputStream, outputStream, new FakeContext());
 

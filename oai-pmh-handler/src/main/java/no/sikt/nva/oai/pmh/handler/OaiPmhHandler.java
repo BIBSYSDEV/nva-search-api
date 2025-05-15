@@ -9,7 +9,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import no.unit.nva.search.resource.ResourceClient;
-import no.unit.nva.search.scroll.ScrollClient;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
@@ -63,8 +62,9 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
 
   @JacocoGenerated
   private static OaiPmhDataProvider defaultOaiPmhDataProvider() {
+    var batchSize = new Environment().readEnvOpt("LIST_RECORDS_BATCH_SIZE").orElse("250");
     return new SimplifiedOaiPmhDataProvider(
-        ResourceClient.defaultClient(), ScrollClient.defaultClient());
+        ResourceClient.defaultClient(), Integer.parseInt(batchSize));
   }
 
   private static URI generateEndpointUri(Environment environment) {
