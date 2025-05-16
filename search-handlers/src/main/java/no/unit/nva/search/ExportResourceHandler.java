@@ -121,14 +121,10 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
               .doSearch(scrollClient, Words.RESOURCES)
               .toCsvText());
     } catch (CompletionException completionException) {
-      if (completionException.getCause() instanceof OpenSearchClientException
-          && ((OpenSearchClientException) completionException.getCause()).getStatusCode()
-              == HTTP_ENTITY_TOO_LARGE
-          && pageSize > SPLIT_LIMIT) {
+      if (isSizeLimitExceededError(completionException, pageSize)) {
         return AttemptResponse.sizeLimitExceeded();
-      } else {
-        return AttemptResponse.otherFailure(completionException);
       }
+      return AttemptResponse.otherFailure(completionException);
     }
   }
 
@@ -168,5 +164,12 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
     public static AttemptResponse sizeLimitExceeded() {
       return new AttemptResponse(SIZE_LIMIT_EXCEEDED, null, null);
     }
+  }
+
+  private boolean isSizeLimitExceededError(CompletionException exception, int pageSize) {
+    if (!(exception.getCause() instanceof OpenSearchClientException cause)) {
+      return false;
+    }
+    return cause.getStatusCode() == HTTP_ENTITY_TOO_LARGE && pageSize > SPLIT_LIMIT;
   }
 }
