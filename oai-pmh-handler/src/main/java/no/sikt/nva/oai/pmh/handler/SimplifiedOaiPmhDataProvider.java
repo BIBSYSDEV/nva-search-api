@@ -1,5 +1,9 @@
 package no.sikt.nva.oai.pmh.handler;
 
+import static no.sikt.nva.oai.pmh.handler.JaxbUtils.getSchemaLocation;
+import static no.unit.nva.constants.Words.ALL;
+import static no.unit.nva.constants.Words.ZERO;
+
 import jakarta.xml.bind.JAXBElement;
 import java.net.URI;
 import java.time.ZonedDateTime;
@@ -11,6 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.xml.datatype.DatatypeFactory;
+import no.sikt.nva.oai.pmh.handler.JaxbUtils.Namespaces;
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.records.Facet;
 import no.unit.nva.search.common.records.HttpResponseFormatter;
@@ -28,35 +33,39 @@ import org.openarchives.oai.pmh.v2.VerbType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
+public class SimplifiedOaiPmhDataProvider implements OaiPmhDataProvider {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(DefaultOaiPmhDataProvider.class);
+  private static final Logger logger = LoggerFactory.getLogger(SimplifiedOaiPmhDataProvider.class);
+
   private static final String PUBLICATION_INSTANCE_TYPE_SET = "PublicationInstanceType";
   private static final String COLON = ":";
   private static final String INSTANCE_TYPE_AGGREGATION_NAME = "type";
-  private static final String ZERO = "0";
-  private static final String AGGREGATION_ALL = "all";
   private static final String PROTOCOL_VERSION = "2.0";
   private static final String REPOSITORY_NAME = "NVA-OAI-PMH";
   private static final String EARLIEST_DATESTAMP = "2016-01-01";
   private static final String CONTACT_AT_SIKT_NO = "kontakt@sikt.no";
   private static final String UNSUPPORTED_VERB = "Unsupported verb.";
   private static final String UNKNOWN_OR_NO_VERB_SUPPLIED = "Unknown or no verb supplied.";
-  private static final String OAI_DC = "oai-dc";
-  private static final String OAI_DC_SCHEMA = "http://www.openarchives.org/OAI/2.0/oai_dc.xsd";
-  private static final String OAI_DC_NAMESPACE = "http://www.openarchives.org/OAI/2.0/oai_dc/";
 
   private final ObjectFactory objectFactory = new ObjectFactory();
-  private final ResourceClient opensearchClient;
-  private final URI endpointUri;
+  private final ResourceClient resourceClient;
+  private final RecordTransformer recordTransformer;
+  private final int batchSize;
 
-  public DefaultOaiPmhDataProvider(ResourceClient opensearchClient, URI endpointUri) {
-    this.opensearchClient = opensearchClient;
-    this.endpointUri = endpointUri;
+  public SimplifiedOaiPmhDataProvider(ResourceClient resourceClient, int batchSize) {
+    this.resourceClient = resourceClient;
+    this.recordTransformer = new SimplifiedRecordTransformer();
+    this.batchSize = batchSize;
   }
 
   @Override
-  public JAXBElement<OAIPMHtype> handleRequest(final String verb) {
+  public JAXBElement<OAIPMHtype> handleRequest(
+      final String verb,
+      final String from,
+      final String until,
+      final String metadataPrefix,
+      final String resumptionToken,
+      final URI endpointUri) {
     Optional<VerbType> verbType;
     try {
       verbType = Optional.of(VerbType.fromValue(verb));
@@ -69,14 +78,17 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
             type ->
                 switch (type) {
                   case LIST_SETS -> listSets();
-                  case IDENTIFY -> identify();
+                  case IDENTIFY -> identify(endpointUri);
                   case LIST_METADATA_FORMATS -> listMetadataFormats();
+                  case LIST_RECORDS ->
+                      new ListRecordsHandler(resourceClient, recordTransformer, batchSize)
+                          .listRecords(from, until, resumptionToken, metadataPrefix);
                   default -> badVerb(UNSUPPORTED_VERB);
                 })
         .orElseGet(() -> badVerb(UNKNOWN_OR_NO_VERB_SUPPLIED));
   }
 
-  private JAXBElement<OAIPMHtype> identify() {
+  private JAXBElement<OAIPMHtype> identify(URI endpointUri) {
     var oaiResponse = baseResponse();
     var value = oaiResponse.getValue();
     value.getRequest().setVerb(VerbType.IDENTIFY);
@@ -103,9 +115,9 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
     var listMetadataFormatsType = objectFactory.createListMetadataFormatsType();
 
     var metadataFormatType = objectFactory.createMetadataFormatType();
-    metadataFormatType.setMetadataPrefix(OAI_DC);
-    metadataFormatType.setSchema(OAI_DC_SCHEMA);
-    metadataFormatType.setMetadataNamespace(OAI_DC_NAMESPACE);
+    metadataFormatType.setMetadataPrefix(OAI_DC_METADATA_PREFIX);
+    metadataFormatType.setSchema(getSchemaLocation(Namespaces.OAI_DC));
+    metadataFormatType.setMetadataNamespace(Namespaces.OAI_DC);
 
     listMetadataFormatsType.getMetadataFormat().add(metadataFormatType);
 
@@ -146,9 +158,9 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
       ResourceSearchQuery query) {
     final HttpResponseFormatter<ResourceParameter> response;
     try {
-      response = query.doSearch(opensearchClient, Words.RESOURCES);
+      response = query.doSearch(resourceClient, Words.RESOURCES);
     } catch (RuntimeException e) {
-      LOGGER.error("Failed to search for publication instance types using 'type' aggregation.", e);
+      logger.error("Failed to search for publication instance types using 'type' aggregation.", e);
       throw new ResourceSearchException("Error looking up instance types using aggregations.", e);
     }
 
@@ -166,13 +178,13 @@ public class DefaultOaiPmhDataProvider implements OaiPmhDataProvider {
     try {
       query =
           ResourceSearchQuery.builder()
-              .withParameter(ResourceParameter.AGGREGATION, AGGREGATION_ALL)
+              .withParameter(ResourceParameter.AGGREGATION, ALL)
               .withParameter(ResourceParameter.FROM, ZERO)
               .withParameter(ResourceParameter.SIZE, ZERO)
               .build();
     } catch (BadRequestException e) {
       // should never happen unless query validation code is changed!
-      LOGGER.error("Failed to search for publication instance types using 'type' aggregation.", e);
+      logger.error("Failed to search for publication instance types using 'type' aggregation.", e);
       throw new ResourceSearchException("Error looking up instance types using aggregations.", e);
     }
     return query;

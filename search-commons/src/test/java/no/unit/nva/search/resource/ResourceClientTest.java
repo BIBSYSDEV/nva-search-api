@@ -110,8 +110,8 @@ import no.unit.nva.search.common.csv.ResourceCsvTransformer;
 import no.unit.nva.search.common.jwt.CachedJwtProvider;
 import no.unit.nva.search.common.records.HttpResponseFormatter;
 import no.unit.nva.search.common.records.PagedSearch;
+import no.unit.nva.search.scroll.RecursiveScrollQuery;
 import no.unit.nva.search.scroll.ScrollClient;
-import no.unit.nva.search.scroll.ScrollQuery;
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
@@ -640,7 +640,7 @@ class ResourceClientTest {
             .swsResponse();
 
     var response =
-        ScrollQuery.builder()
+        RecursiveScrollQuery.builder()
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .withInitialResponse(firstResponse)
             .withScrollTime(ONE_MINUTE)
