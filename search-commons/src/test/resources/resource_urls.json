@@ -126,6 +126,8 @@
   "LICENSE=https://creativecommons.org/licenses/by/4.0": 10,
   "LICENSE_NOT=CC-BY": 12,
   "MODIFIED_BEFORE=1872-01-01&MODIFIED_SINCE=9460-01-01": 0,
+  "MODIFIED_BEFORE=1872-01-01T00:00:00.123456789Z&MODIFIED_SINCE=9460-01-01T00:00:00.123456789Z": 0,
+  "MODIFIED_BEFORE=1872-01-01T00:00:00.123Z&MODIFIED_SINCE=9460-01-01T00:00:00.456Z": 0,
   "NODES_INCLUDED=identifier,projects.name&nodesExcluded=projects.name": 22,
   "NODES_INCLUDED=identifier,projects.name,entityDescription.contributors.affiliations": 22,
   "ORCID=https://sandbox.orcid.org/0000-0003-4147-3499": 2,
