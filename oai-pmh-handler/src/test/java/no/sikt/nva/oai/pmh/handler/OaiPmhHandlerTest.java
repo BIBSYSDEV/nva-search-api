@@ -10,6 +10,7 @@ import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsEmptyIterable.*;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableWithSize.iterableWithSize;
 import static org.hamcrest.core.Is.is;
@@ -358,92 +359,49 @@ public class OaiPmhHandlerTest {
 
   @ParameterizedTest
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
-  void shouldListRecordsOnInitialQuery(String method) throws IOException, JAXBException {
-    var resourceQueryMatcher =
-        new ResourceSearchQueryMatcher.Builder()
-            .withPageParameter(ResourceParameter.FROM, "0")
-            .withPageParameter(ResourceParameter.SIZE, "3")
-            .withPageParameter(ResourceParameter.SORT, "modifiedDate,identifier")
-            .withPageParameter(ResourceParameter.SORT_ORDER, "desc")
-            .withSearchParameter(ResourceParameter.AGGREGATION, "none")
-            .withSearchParameter(ResourceParameter.MODIFIED_BEFORE, "2016-01-02")
-            .withSearchParameter(ResourceParameter.MODIFIED_SINCE, "2016-01-01")
-            .build();
-    when(resourceClient.doSearch(argThat(resourceQueryMatcher), any()))
-        .thenReturn(firstPageSwsResponse());
-
-    var from = "2016-01-01";
-    var until = "2016-01-02";
-    var metadataPrefix = "oai-dc";
-    String resumptionToken = null;
-    var response =
-        performListRecordsOperation(method, from, until, metadataPrefix, resumptionToken);
-    var xpathEngine = getXpathEngine();
-
-    assertResponseRequestContains(VerbType.LIST_RECORDS, response, xpathEngine);
-
-    var recordNodes = xpathEngine.selectNodes("/oai:OAI-PMH/oai:ListRecords/oai:record", response);
-    assertThat(recordNodes, iterableWithSize(3));
-
-    var identifiers = extractRecordIdentifiers(recordNodes);
-
-    assertThat(
-        identifiers,
-        containsInAnyOrder(
+  void shouldListRecordsOnInitialQuery(String method) throws Exception {
+    var fromDate = "2016-01-01";
+    var untilDate = "2017-01-01";
+    var expectedIdentifiers =
+        List.of(
             "https://api.sandbox.nva.aws.unit.no/publication/019527b847ad-ee78bdbe-3f70-4ff4-930c-b4ace492ea64",
             "https://api.sandbox.nva.aws.unit.no/publication/019527b84693-a86c1cae-24da-4c9d-9bff-e097fd9be2f1",
-            "https://api.sandbox.nva.aws.unit.no/publication/019527b845e4-182ebbf0-9481-4a98-aad2-76b617cc1b0c"));
-  }
+            "https://api.sandbox.nva.aws.unit.no/publication/019527b845e4-182ebbf0-9481-4a98-aad2-76b617cc1b0c");
 
-  private Source performListRecordsOperation(
-      String method, String from, String until, String metadataPrefix, String resumptionToken)
-      throws JAXBException, IOException {
-    var inputStream =
-        request(
-            VerbType.LIST_RECORDS.value(), method, from, until, metadataPrefix, resumptionToken);
-
-    return invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    runListRecordsTest(method, fromDate, untilDate, null, 3, expectedIdentifiers, true);
   }
 
   @ParameterizedTest
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
-  void shouldListRecordsWithResumptionToken(String method) throws IOException, JAXBException {
-    var resourceQueryMatcher =
-        new ResourceSearchQueryMatcher.Builder()
-            .withPageParameter(ResourceParameter.FROM, "0")
-            .withPageParameter(ResourceParameter.SIZE, "3")
-            .withPageParameter(ResourceParameter.SORT, "modifiedDate,identifier")
-            .withPageParameter(ResourceParameter.SORT_ORDER, "desc")
-            .withSearchParameter(ResourceParameter.AGGREGATION, "none")
-            .withSearchParameter(ResourceParameter.MODIFIED_BEFORE, "2016-01-02")
-            .withSearchParameter(ResourceParameter.MODIFIED_SINCE, "2016-01-01T05:48:31Z")
-            .build();
-    when(resourceClient.doSearch(argThat(resourceQueryMatcher), any()))
-        .thenReturn(firstPageSwsResponse());
+  void shouldListRecordsWithResumptionToken(String method) throws Exception {
+    var fromDate = "2016-01-04T05:48:31Z";
+    var untilDate = "2017-01-01";
+    var current = fromDate;
+    var resumptionToken = new ResumptionToken(fromDate, untilDate, "oai-dc", current, 8).getValue();
 
-    var from = "2016-01-01";
-    var until = "2016-01-02";
-    var current = "2016-01-01T05:48:31Z";
-    var metadataPrefix = "oai-dc";
-    String resumptionToken =
-        new ResumptionToken(from, until, metadataPrefix, current, 6).getValue();
-    var response =
-        performListRecordsOperation(method, from, until, metadataPrefix, resumptionToken);
-    var xpathEngine = getXpathEngine();
+    var expectedIdentifiers =
+        List.of(
+            "https://api.sandbox.nva.aws.unit.no/publication/019527b847ad-ee78bdbe-3f70-4ff4-930c-b4ace492ea65",
+            "https://api.sandbox.nva.aws.unit.no/publication/019527b84693-a86c1cae-24da-4c9d-9bff-e097fd9be2f2",
+            "https://api.sandbox.nva.aws.unit.no/publication/019527b845e4-182ebbf0-9481-4a98-aad2-76b617cc1b0d");
 
-    assertResponseRequestContains(VerbType.LIST_RECORDS, response, xpathEngine);
+    runListRecordsTest(method, fromDate, untilDate, resumptionToken, 3, expectedIdentifiers, true);
+  }
 
-    var recordNodes = xpathEngine.selectNodes("/oai:OAI-PMH/oai:ListRecords/oai:record", response);
-    assertThat(recordNodes, iterableWithSize(3));
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldNotReturnResumptionTokenOnLastPage(String method) throws Exception {
+    var fromDate = "2016-01-07T05:48:31Z";
+    var untilDate = "2017-01-01";
+    var current = fromDate;
+    var resumptionToken = new ResumptionToken(fromDate, untilDate, "oai-dc", current, 8).getValue();
 
-    var identifiers = extractRecordIdentifiers(recordNodes);
+    var expectedIdentifiers =
+        List.of(
+            "https://api.sandbox.nva.aws.unit.no/publication/019527b847ad-ee78bdbe-3f70-4ff4-930c-b4ace492ea66",
+            "https://api.sandbox.nva.aws.unit.no/publication/019527b84693-a86c1cae-24da-4c9d-9bff-e097fd9be2f3");
 
-    assertThat(
-        identifiers,
-        containsInAnyOrder(
-            "https://api.sandbox.nva.aws.unit.no/publication/019527b847ad-ee78bdbe-3f70-4ff4-930c-b4ace492ea64",
-            "https://api.sandbox.nva.aws.unit.no/publication/019527b84693-a86c1cae-24da-4c9d-9bff-e097fd9be2f1",
-            "https://api.sandbox.nva.aws.unit.no/publication/019527b845e4-182ebbf0-9481-4a98-aad2-76b617cc1b0c"));
+    runListRecordsTest(method, fromDate, untilDate, resumptionToken, 2, expectedIdentifiers, false);
   }
 
   @Test
@@ -570,6 +528,98 @@ public class OaiPmhHandlerTest {
             "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:metadata/oai-dc:dc/dc:publisher",
             response);
     assertThat(publisher, is(equalTo("My publisher name")));
+  }
+
+  private void runListRecordsTest(
+      String method,
+      String fromDate,
+      String untilDate,
+      String resumptionToken,
+      int expectedRecordCount,
+      List<String> expectedIdentifiers,
+      boolean expectResumptionToken)
+      throws Exception {
+
+    var matcher = buildMatcher(fromDate, untilDate);
+    var swsResponse = resolveMockResponse(fromDate, expectedRecordCount);
+    when(resourceClient.doSearch(argThat(matcher), any())).thenReturn(swsResponse);
+
+    var response =
+        performListRecordsOperation(method, fromDate, untilDate, "oai-dc", resumptionToken);
+    var xpathEngine = getXpathEngine();
+
+    assertResponseRequestContains(VerbType.LIST_RECORDS, response, xpathEngine);
+
+    var recordNodes = xpathEngine.selectNodes("/oai:OAI-PMH/oai:ListRecords/oai:record", response);
+    assertThat(recordNodes, iterableWithSize(expectedRecordCount));
+
+    var identifiers = extractRecordIdentifiers(recordNodes);
+    assertThat(identifiers, containsInAnyOrder(expectedIdentifiers.toArray()));
+
+    if (expectResumptionToken) {
+      assertResumptionTokenHasCompleteRecordSize(xpathEngine, response);
+    } else {
+      assertNoResumptionToken(xpathEngine, response);
+    }
+  }
+
+  private SwsResponse resolveMockResponse(String fromDate, int expectedRecordCount)
+      throws Exception {
+    return switch (expectedRecordCount) {
+      case 3 ->
+          "2016-01-01".equals(fromDate)
+              ? firstPageSwsResponse()
+              : secondPageSwsResponse(); // or firstPage based
+      // on context
+      case 2 -> lastPageSwsResponse();
+      default ->
+          throw new IllegalArgumentException("Unexpected record count: " + expectedRecordCount);
+    };
+  }
+
+  private ResourceSearchQueryMatcher buildMatcher(String from, String until) {
+    return new ResourceSearchQueryMatcher.Builder()
+        .withPageParameter(ResourceParameter.FROM, "0")
+        .withPageParameter(ResourceParameter.SIZE, "3")
+        .withPageParameter(ResourceParameter.SORT, "modifiedDate,identifier")
+        .withPageParameter(ResourceParameter.SORT_ORDER, "desc")
+        .withSearchParameter(ResourceParameter.AGGREGATION, "none")
+        .withSearchParameter(ResourceParameter.MODIFIED_SINCE, from)
+        .withSearchParameter(ResourceParameter.MODIFIED_BEFORE, until)
+        .build();
+  }
+
+  private void assertResumptionTokenHasCompleteRecordSize(
+      XPathEngine xPathEngine, Source response) {
+    var resumptionTokenNodes =
+        xPathEngine.selectNodes("/oai:OAI-PMH/oai:ListRecords/oai:resumptionToken", response);
+
+    assertThat(resumptionTokenNodes, iterableWithSize(1));
+    var completeListSize =
+        resumptionTokenNodes
+            .iterator()
+            .next()
+            .getAttributes()
+            .getNamedItem("completeListSize")
+            .getNodeValue();
+    assertThat(completeListSize, is(equalTo("8")));
+  }
+
+  private void assertNoResumptionToken(XPathEngine xPathEngine, Source response) {
+    var resumptionTokenNodes =
+        xPathEngine.selectNodes("/oai:OAI-PMH/oai:ListRecords/oai:resumptionToken", response);
+
+    assertThat(resumptionTokenNodes, is(emptyIterable()));
+  }
+
+  private Source performListRecordsOperation(
+      String method, String from, String until, String metadataPrefix, String resumptionToken)
+      throws JAXBException, IOException {
+    var inputStream =
+        request(
+            VerbType.LIST_RECORDS.value(), method, from, until, metadataPrefix, resumptionToken);
+
+    return invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
   }
 
   private static String extractTextNodeValueFromResponse(
@@ -779,32 +829,35 @@ public class OaiPmhHandlerTest {
   }
 
   private SwsResponse firstPageSwsResponse() throws JsonProcessingException {
-    var hits = new ArrayList<Hit>();
-    var iterator = hits().elements();
-
-    while (iterator.hasNext()) {
-      var element = iterator.next();
-      hits.add(new Hit("", "", "", 1.0, element, null, List.of()));
-    }
-    return new SwsResponse(
-        0, false, null, new HitsInfo(new TotalInfo(6, ""), 1.0, hits), null, null);
+    return createSwsResponse("firstPageHits.json", new TotalInfo(8, ""));
   }
 
-  private SwsResponse resumptionPageSwsResponse(String scrollId) throws JsonProcessingException {
-    var hits = new ArrayList<Hit>();
-    var iterator = hits().elements();
-
-    while (iterator.hasNext()) {
-      var element = iterator.next();
-      hits.add(new Hit("", "", "", 1.0, element, null, List.of()));
-    }
-    return new SwsResponse(
-        0, false, null, new HitsInfo(new TotalInfo(3, ""), 1.0, hits), null, scrollId);
+  private SwsResponse secondPageSwsResponse() throws JsonProcessingException {
+    return createSwsResponse("secondPageHits.json", new TotalInfo(5, ""));
   }
 
-  private ArrayNode hits() throws JsonProcessingException {
-    var json = IoUtils.stringFromResources(Path.of("hits.json"));
+  private SwsResponse lastPageSwsResponse() throws JsonProcessingException {
+    return createSwsResponse("thirdAndLastPageHits.json", new TotalInfo(2, ""));
+  }
+
+  private SwsResponse createSwsResponse(String resourceFileName, TotalInfo totalInfo)
+      throws JsonProcessingException {
+    var hitsJson = readHits(resourceFileName);
+    var hits = createHits(hitsJson);
+    var hitsInfo = new HitsInfo(totalInfo, 1.0, hits);
+
+    return new SwsResponse(0, false, null, hitsInfo, null, null);
+  }
+
+  private ArrayNode readHits(String fileName) throws JsonProcessingException {
+    var json = IoUtils.stringFromResources(Path.of(fileName));
     return (ArrayNode) JsonUtils.dtoObjectMapper.readTree(json);
+  }
+
+  private List<Hit> createHits(ArrayNode hitsJson) {
+    List<Hit> hits = new ArrayList<>();
+    hitsJson.forEach(element -> hits.add(new Hit("", "", "", 1.0, element, null, List.of())));
+    return hits;
   }
 
   private JsonNode aggregations() throws JsonProcessingException {

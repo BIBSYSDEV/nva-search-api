@@ -1,5 +1,6 @@
 package no.sikt.nva.oai.pmh.handler;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.constants.Words.ZERO;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
@@ -82,8 +83,9 @@ public class ListRecordsHandler extends AbstractOaiPmhMethodHandler {
     var listRecords = objectFactory.createListRecordsType();
     listRecords.getRecord().addAll(records);
 
-    String current = extractLastDateTime(records);
-    if (shouldAddResumptionToken(current, totalSize)) {
+    var current = extractLastDateTime(records);
+    var pageSize = records.size();
+    if (shouldAddResumptionToken(current, pageSize)) {
       var resumptionTokenType =
           generateResumptionToken(from, until, metadataPrefix, current, totalSize);
       listRecords.setResumptionToken(resumptionTokenType);
@@ -98,20 +100,23 @@ public class ListRecordsHandler extends AbstractOaiPmhMethodHandler {
 
   private SearchResult doFollowUpSearch(String until, ResumptionToken resumptionToken) {
     var query = buildListRecordsPageQuery(resumptionToken.current(), until, batchSize);
-    return doSearch(query);
+    return doSearch(query, resumptionToken.totalSize());
   }
 
   private SearchResult doInitialSearch(String from, String until) {
     var query = buildListRecordsPageQuery(from, until, batchSize);
-    return doSearch(query);
+    return doSearch(query, null);
   }
 
-  private SearchResult doSearch(ResourceSearchQuery query) {
+  private SearchResult doSearch(ResourceSearchQuery query, Integer incomingTotalSize) {
     try {
       var response =
           query.doSearch(resourceClient, Words.RESOURCES).withMutators(new SimplifiedMutator());
       var mutatedHits = response.toMutatedHits();
-      return new SearchResult(response.swsResponse().getTotalSize(), mutatedHits);
+      var pageSize = mutatedHits.size();
+      var totalSize =
+          isNull(incomingTotalSize) ? response.swsResponse().getTotalSize() : incomingTotalSize;
+      return new SearchResult(totalSize, pageSize, mutatedHits);
     } catch (RuntimeException e) {
       logger.error("Failed to search for records.", e);
       throw new ResourceSearchException("Error looking up records.", e);
@@ -166,7 +171,7 @@ public class ListRecordsHandler extends AbstractOaiPmhMethodHandler {
     oaiPmhType.getRequest().setMetadataPrefix(metadataPrefix);
   }
 
-  private record SearchResult(int totalSize, List<JsonNode> hits) {}
+  private record SearchResult(int totalSize, int pageSize, List<JsonNode> hits) {}
 
   private ResumptionTokenType generateResumptionToken(
       String from, String until, String metadataPrefix, String current, int totalSize) {
