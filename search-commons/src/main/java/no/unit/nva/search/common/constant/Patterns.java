@@ -43,7 +43,7 @@ public final class Patterns {
    * yyyy-MM-ddTHH:mm:ss.SSSZ
    */
   public static final String PATTERN_IS_DATE =
-      "\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z?)?)?)?";
+      "\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3,9})?Z?)?)?)?";
 
   /** Pattern for matching from key */
   public static final String PATTERN_IS_FROM_KEY = "(?i)offset|from";

@@ -22,6 +22,7 @@ public enum ParameterKind {
   CUSTOM,
   NUMBER,
   DATE,
+  DATE_TIME,
   ACROSS_FIELDS,
   BOOLEAN,
   EXISTS,
