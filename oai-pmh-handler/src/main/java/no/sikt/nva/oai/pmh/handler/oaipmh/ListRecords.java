@@ -1,7 +1,8 @@
-package no.sikt.nva.oai.pmh.handler;
+package no.sikt.nva.oai.pmh.handler.oaipmh;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhUtils.baseResponse;
 import static no.unit.nva.constants.Words.ZERO;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
@@ -29,16 +30,15 @@ import org.openarchives.oai.pmh.v2.VerbType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ListRecordsHandler extends AbstractOaiPmhMethodHandler {
-  private static final Logger logger = LoggerFactory.getLogger(ListRecordsHandler.class);
+public class ListRecords {
+  private static final Logger logger = LoggerFactory.getLogger(ListRecords.class);
   private static final int RESUMPTION_TOKEN_TTL_HOURS = 24;
 
-  private final ObjectFactory objectFactory = new ObjectFactory();
   private final ResourceClient resourceClient;
   private final RecordTransformer recordTransformer;
   private final int batchSize;
 
-  public ListRecordsHandler(
+  public ListRecords(
       ResourceClient resourceClient, RecordTransformer recordTransformer, int batchSize) {
     super();
     this.resourceClient = resourceClient;
@@ -48,14 +48,16 @@ public class ListRecordsHandler extends AbstractOaiPmhMethodHandler {
 
   public JAXBElement<OAIPMHtype> listRecords(
       String from, String until, String incomingEncodedResumptionToken, String metadataPrefix) {
-
     var searchResult = performSearch(from, until, incomingEncodedResumptionToken);
+    var objectFactory = new ObjectFactory();
     var oaiResponse =
-        createBaseResponse(from, until, incomingEncodedResumptionToken, metadataPrefix);
+        createBaseResponse(
+            from, until, incomingEncodedResumptionToken, metadataPrefix, objectFactory);
 
     var records = recordTransformer.transform(searchResult.hits);
     var listRecords =
-        createListRecordsResponse(records, searchResult.totalSize(), from, until, metadataPrefix);
+        createListRecordsResponse(
+            records, searchResult.totalSize(), from, until, metadataPrefix, objectFactory);
 
     oaiResponse.getValue().setListRecords(listRecords);
     return oaiResponse;
@@ -70,15 +72,24 @@ public class ListRecordsHandler extends AbstractOaiPmhMethodHandler {
   }
 
   private JAXBElement<OAIPMHtype> createBaseResponse(
-      String from, String until, String incomingEncodedResumptionToken, String metadataPrefix) {
-    var oaiResponse = baseResponse();
+      String from,
+      String until,
+      String incomingEncodedResumptionToken,
+      String metadataPrefix,
+      ObjectFactory objectFactory) {
+    var oaiResponse = baseResponse(objectFactory);
     populateListRecordsRequest(
         from, until, incomingEncodedResumptionToken, metadataPrefix, oaiResponse.getValue());
     return oaiResponse;
   }
 
   private ListRecordsType createListRecordsResponse(
-      List<RecordType> records, int totalSize, String from, String until, String metadataPrefix) {
+      List<RecordType> records,
+      int totalSize,
+      String from,
+      String until,
+      String metadataPrefix,
+      ObjectFactory objectFactory) {
 
     var listRecords = objectFactory.createListRecordsType();
     listRecords.getRecord().addAll(records);
@@ -87,7 +98,7 @@ public class ListRecordsHandler extends AbstractOaiPmhMethodHandler {
     var pageSize = records.size();
     if (shouldAddResumptionToken(current, pageSize)) {
       var resumptionTokenType =
-          generateResumptionToken(from, until, metadataPrefix, current, totalSize);
+          generateResumptionToken(from, until, metadataPrefix, current, totalSize, objectFactory);
       listRecords.setResumptionToken(resumptionTokenType);
     }
 
@@ -114,8 +125,8 @@ public class ListRecordsHandler extends AbstractOaiPmhMethodHandler {
           query.doSearch(resourceClient, Words.RESOURCES).withMutators(new SimplifiedMutator());
       var mutatedHits = response.toMutatedHits();
       var pageSize = mutatedHits.size();
-      var totalSize =
-          isNull(incomingTotalSize) ? response.swsResponse().getTotalSize() : incomingTotalSize;
+      var remainingHits = response.swsResponse().getTotalSize();
+      var totalSize = isNull(incomingTotalSize) ? remainingHits : incomingTotalSize;
       return new SearchResult(totalSize, pageSize, mutatedHits);
     } catch (RuntimeException e) {
       logger.error("Failed to search for records.", e);
@@ -174,7 +185,12 @@ public class ListRecordsHandler extends AbstractOaiPmhMethodHandler {
   private record SearchResult(int totalSize, int pageSize, List<JsonNode> hits) {}
 
   private ResumptionTokenType generateResumptionToken(
-      String from, String until, String metadataPrefix, String current, int totalSize) {
+      String from,
+      String until,
+      String metadataPrefix,
+      String current,
+      int totalSize,
+      ObjectFactory objectFactory) {
     var inTenMinutes =
         DatatypeFactory.newDefaultInstance()
             .newXMLGregorianCalendar(

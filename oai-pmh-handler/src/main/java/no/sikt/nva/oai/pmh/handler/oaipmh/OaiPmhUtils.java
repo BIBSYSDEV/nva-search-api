@@ -1,4 +1,4 @@
-package no.sikt.nva.oai.pmh.handler;
+package no.sikt.nva.oai.pmh.handler.oaipmh;
 
 import jakarta.xml.bind.JAXBElement;
 import java.time.ZonedDateTime;
@@ -7,10 +7,10 @@ import javax.xml.datatype.DatatypeFactory;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
 import org.openarchives.oai.pmh.v2.ObjectFactory;
 
-public class AbstractOaiPmhMethodHandler {
-  private static final ObjectFactory objectFactory = new ObjectFactory();
+public final class OaiPmhUtils {
+  private OaiPmhUtils() {}
 
-  protected JAXBElement<OAIPMHtype> baseResponse() {
+  public static JAXBElement<OAIPMHtype> baseResponse(final ObjectFactory objectFactory) {
     var responseDate =
         DatatypeFactory.newDefaultInstance()
             .newXMLGregorianCalendar(GregorianCalendar.from(ZonedDateTime.now()));

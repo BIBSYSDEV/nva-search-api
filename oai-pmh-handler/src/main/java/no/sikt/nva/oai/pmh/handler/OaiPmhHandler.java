@@ -8,6 +8,8 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+import no.sikt.nva.oai.pmh.handler.oaipmh.DefaultOaiPmhMethodRouter;
+import no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhMethodRouter;
 import no.unit.nva.search.resource.ResourceClient;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
@@ -33,16 +35,16 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
   private static final String NULL_STRING = "null";
 
   private final XmlSerializer xmlSerializer;
-  private final OaiPmhDataProvider dataProvider;
+  private final OaiPmhMethodRouter dataProvider;
   private final URI endpointUri;
 
   @JacocoGenerated
   public OaiPmhHandler() throws JAXBException {
-    this(new Environment(), defaultOaiPmhDataProvider(), defaultXmlSerializer());
+    this(new Environment(), defaultOaiPmhMethodRouter(), defaultXmlSerializer());
   }
 
   public OaiPmhHandler(
-      Environment environment, OaiPmhDataProvider dataProvider, XmlSerializer xmlSerializer) {
+      Environment environment, OaiPmhMethodRouter dataProvider, XmlSerializer xmlSerializer) {
     super(String.class, environment);
     this.endpointUri = generateEndpointUri(environment);
     this.dataProvider = dataProvider;
@@ -61,9 +63,9 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
   }
 
   @JacocoGenerated
-  private static OaiPmhDataProvider defaultOaiPmhDataProvider() {
+  private static OaiPmhMethodRouter defaultOaiPmhMethodRouter() {
     var batchSize = new Environment().readEnvOpt("LIST_RECORDS_BATCH_SIZE").orElse("250");
-    return new SimplifiedOaiPmhDataProvider(
+    return new DefaultOaiPmhMethodRouter(
         ResourceClient.defaultClient(), Integer.parseInt(batchSize));
   }
 

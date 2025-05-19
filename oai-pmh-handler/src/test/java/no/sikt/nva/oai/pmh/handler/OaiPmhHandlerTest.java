@@ -49,6 +49,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.xml.transform.Source;
+import no.sikt.nva.oai.pmh.handler.oaipmh.DefaultOaiPmhMethodRouter;
+import no.sikt.nva.oai.pmh.handler.oaipmh.ResumptionToken;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.common.records.SwsResponse.HitsInfo;
@@ -921,7 +923,7 @@ public class OaiPmhHandlerTest {
   private GatewayResponse<String> invokeHandler(
       Environment environment, JaxbXmlSerializer marshaller, InputStream inputStream)
       throws IOException {
-    var dataProvider = new SimplifiedOaiPmhDataProvider(resourceClient, 3);
+    var dataProvider = new DefaultOaiPmhMethodRouter(resourceClient, 3);
     var handler = new OaiPmhHandler(environment, dataProvider, marshaller);
     handler.handleRequest(inputStream, outputStream, new FakeContext());
 
