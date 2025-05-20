@@ -18,9 +18,3 @@ phases:
 artifacts:
   files:
     - packaged.yaml
-cache:
-  paths:
-    - '/root/venv/**/*'
-    - '/root/.cache/pip/**/*'
-    - '/root/.gradle/wrapper/**/*'
-
