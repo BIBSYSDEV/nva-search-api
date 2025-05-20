@@ -1,22 +1,22 @@
 [
   {
-    "@context": "https://api.sandbox.nva.aws.unit.no/publication/context",
+    "@context": "https://api.unittests.nva.aws.unit.no/publication/context",
     "identifier": "019527b847ad-ee78bdbe-3f70-4ff4-930c-b4ace492ea64",
     "contributorOrganizations": [
-      "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.64.0.0",
-      "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.63.25.0",
-      "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.63.0.0",
-      "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.0.0.0",
-      "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.64.20.0"
+      "https://api.unittests.nva.aws.unit.no/cristin/organization/194.64.0.0",
+      "https://api.unittests.nva.aws.unit.no/cristin/organization/194.63.25.0",
+      "https://api.unittests.nva.aws.unit.no/cristin/organization/194.63.0.0",
+      "https://api.unittests.nva.aws.unit.no/cristin/organization/194.0.0.0",
+      "https://api.unittests.nva.aws.unit.no/cristin/organization/194.64.20.0"
     ],
     "modelVersion": "0.23.3",
     "resourceOwner": {
       "owner": "ntnu@194.0.0.0",
-      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.0.0.0"
+      "ownerAffiliation": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.0.0.0"
     },
     "type": "Publication",
     "curatingInstitutions": [
-      "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.0.0.0"
+      "https://api.unittests.nva.aws.unit.no/cristin/organization/194.0.0.0"
     ],
     "entityDescription": {
       "reference": {
@@ -55,7 +55,7 @@
           "identity": {
             "verificationStatus": "Verified",
             "name": "Saverio Messineo",
-            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/35885",
+            "id": "https://api.unittests.nva.aws.unit.no/cristin/person/35885",
             "type": "Identity"
           },
           "correspondingAuthor": "false",
@@ -63,11 +63,11 @@
             {
               "partOf": [
                 {
-                  "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.64.0.0"
+                  "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.64.0.0"
                 }
               ],
               "countryCode": "NO",
-              "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.64.20.0",
+              "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.64.20.0",
               "type": "Organization",
               "labels": {
                 "nb": "Institutt for marin teknikk",
@@ -85,7 +85,7 @@
           "identity": {
             "verificationStatus": "Verified",
             "name": "Fabio Celani",
-            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/42640",
+            "id": "https://api.unittests.nva.aws.unit.no/cristin/person/42640",
             "type": "Identity"
           },
           "correspondingAuthor": "false",
@@ -99,7 +99,7 @@
           "identity": {
             "verificationStatus": "Verified",
             "name": "Olav Egeland",
-            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/41958",
+            "id": "https://api.unittests.nva.aws.unit.no/cristin/person/41958",
             "type": "Identity"
           },
           "correspondingAuthor": "false",
@@ -107,11 +107,11 @@
             {
               "partOf": [
                 {
-                  "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.63.0.0"
+                  "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.63.0.0"
                 }
               ],
               "countryCode": "NO",
-              "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.63.25.0",
+              "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.63.25.0",
               "type": "Organization",
               "labels": {
                 "nb": "Institutt for teknisk kybernetikk",
@@ -131,7 +131,7 @@
           "identity": {
             "verificationStatus": "Verified",
             "name": "Saverio Messineo",
-            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/35885",
+            "id": "https://api.unittests.nva.aws.unit.no/cristin/person/35885",
             "type": "Identity"
           },
           "correspondingAuthor": "false",
@@ -139,11 +139,11 @@
             {
               "partOf": [
                 {
-                  "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.64.0.0"
+                  "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.64.0.0"
                 }
               ],
               "countryCode": "NO",
-              "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.64.20.0",
+              "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.64.20.0",
               "type": "Organization",
               "labels": {
                 "nb": "Institutt for marin teknikk",
@@ -161,7 +161,7 @@
           "identity": {
             "verificationStatus": "Verified",
             "name": "Fabio Celani",
-            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/42640",
+            "id": "https://api.unittests.nva.aws.unit.no/cristin/person/42640",
             "type": "Identity"
           },
           "correspondingAuthor": "false",
@@ -175,7 +175,7 @@
           "identity": {
             "verificationStatus": "Verified",
             "name": "Olav Egeland",
-            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/41958",
+            "id": "https://api.unittests.nva.aws.unit.no/cristin/person/41958",
             "type": "Identity"
           },
           "correspondingAuthor": "false",
@@ -183,11 +183,11 @@
             {
               "partOf": [
                 {
-                  "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.63.0.0"
+                  "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.63.0.0"
                 }
               ],
               "countryCode": "NO",
-              "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.63.25.0",
+              "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.63.25.0",
               "type": "Organization",
               "labels": {
                 "nb": "Institutt for teknisk kybernetikk",
@@ -215,11 +215,11 @@
       }
     ],
     "publisher": {
-      "id": "https://api.sandbox.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+      "id": "https://api.unittests.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
       "type": "Organization"
     },
     "filesStatus": "noFiles",
-    "id": "https://api.sandbox.nva.aws.unit.no/publication/019527b847ad-ee78bdbe-3f70-4ff4-930c-b4ace492ea64",
+    "id": "https://api.unittests.nva.aws.unit.no/publication/019527b847ad-ee78bdbe-3f70-4ff4-930c-b4ace492ea64",
     "pendingOpenFileCount": "0",
     "publishedDate": "2025-02-21T08:55:43.277085824Z",
     "scientificIndex": {},
@@ -229,18 +229,18 @@
           {
             "partOf": [
               {
-                "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.0.0.0"
+                "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.0.0.0"
               }
             ],
             "hasPart": [
               {
                 "partOf": [
                   {
-                    "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.63.0.0"
+                    "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.63.0.0"
                   }
                 ],
                 "countryCode": "NO",
-                "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.63.25.0",
+                "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.63.25.0",
                 "type": "Organization",
                 "labels": {
                   "nb": "Institutt for teknisk kybernetikk",
@@ -249,7 +249,7 @@
               }
             ],
             "countryCode": "NO",
-            "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.63.0.0",
+            "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.63.0.0",
             "type": "Organization",
             "labels": {
               "nb": "Fakultet for informasjonsteknologi og elektroteknikk",
@@ -259,18 +259,18 @@
           {
             "partOf": [
               {
-                "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.0.0.0"
+                "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.0.0.0"
               }
             ],
             "hasPart": [
               {
                 "partOf": [
                   {
-                    "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.64.0.0"
+                    "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.64.0.0"
                   }
                 ],
                 "countryCode": "NO",
-                "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.64.20.0",
+                "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.64.20.0",
                 "type": "Organization",
                 "labels": {
                   "nb": "Institutt for marin teknikk",
@@ -279,7 +279,7 @@
               }
             ],
             "countryCode": "NO",
-            "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.64.0.0",
+            "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.64.0.0",
             "type": "Organization",
             "labels": {
               "nb": "Fakultet for ingeniørvitenskap",
@@ -288,19 +288,19 @@
           }
         ],
         "countryCode": "NO",
-        "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.0.0.0",
+        "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.0.0.0",
         "type": "Organization",
         "contributorCristinIds": [
           {
             "verificationStatus": "Verified",
             "name": "Saverio Messineo",
-            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/35885",
+            "id": "https://api.unittests.nva.aws.unit.no/cristin/person/35885",
             "type": "Identity"
           },
           {
             "verificationStatus": "Verified",
             "name": "Olav Egeland",
-            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/41958",
+            "id": "https://api.unittests.nva.aws.unit.no/cristin/person/41958",
             "type": "Identity"
           }
         ],
@@ -314,21 +314,21 @@
     "status": "PUBLISHED"
   },
   {
-    "@context": "https://api.sandbox.nva.aws.unit.no/publication/context",
+    "@context": "https://api.unittests.nva.aws.unit.no/publication/context",
     "identifier": "019527b84693-a86c1cae-24da-4c9d-9bff-e097fd9be2f1",
     "contributorOrganizations": [
-      "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.0.0.0",
-      "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.65.20.0",
-      "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.65.0.0"
+      "https://api.unittests.nva.aws.unit.no/cristin/organization/194.0.0.0",
+      "https://api.unittests.nva.aws.unit.no/cristin/organization/194.65.20.0",
+      "https://api.unittests.nva.aws.unit.no/cristin/organization/194.65.0.0"
     ],
     "modelVersion": "0.23.3",
     "resourceOwner": {
       "owner": "ntnu@194.0.0.0",
-      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.0.0.0"
+      "ownerAffiliation": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.0.0.0"
     },
     "type": "Publication",
     "curatingInstitutions": [
-      "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.0.0.0"
+      "https://api.unittests.nva.aws.unit.no/cristin/organization/194.0.0.0"
     ],
     "entityDescription": {
       "reference": {
@@ -369,7 +369,7 @@
           "identity": {
             "verificationStatus": "Verified",
             "name": "Kristian Midthjell",
-            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/43453",
+            "id": "https://api.unittests.nva.aws.unit.no/cristin/person/43453",
             "type": "Identity"
           },
           "correspondingAuthor": "false",
@@ -377,11 +377,11 @@
             {
               "partOf": [
                 {
-                  "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.65.0.0"
+                  "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.65.0.0"
                 }
               ],
               "countryCode": "NO",
-              "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.65.20.0",
+              "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.65.20.0",
               "type": "Organization",
               "labels": {
                 "nb": "Institutt for samfunnsmedisin og sykepleie",
@@ -401,7 +401,7 @@
           "identity": {
             "verificationStatus": "Verified",
             "name": "Kristian Midthjell",
-            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/43453",
+            "id": "https://api.unittests.nva.aws.unit.no/cristin/person/43453",
             "type": "Identity"
           },
           "correspondingAuthor": "false",
@@ -409,11 +409,11 @@
             {
               "partOf": [
                 {
-                  "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.65.0.0"
+                  "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.65.0.0"
                 }
               ],
               "countryCode": "NO",
-              "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.65.20.0",
+              "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.65.20.0",
               "type": "Organization",
               "labels": {
                 "nb": "Institutt for samfunnsmedisin og sykepleie",
@@ -441,11 +441,11 @@
       }
     ],
     "publisher": {
-      "id": "https://api.sandbox.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+      "id": "https://api.unittests.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
       "type": "Organization"
     },
     "filesStatus": "noFiles",
-    "id": "https://api.sandbox.nva.aws.unit.no/publication/019527b84693-a86c1cae-24da-4c9d-9bff-e097fd9be2f1",
+    "id": "https://api.unittests.nva.aws.unit.no/publication/019527b84693-a86c1cae-24da-4c9d-9bff-e097fd9be2f1",
     "pendingOpenFileCount": "0",
     "publishedDate": "2025-02-21T08:55:42.995912178Z",
     "scientificIndex": {},
@@ -455,18 +455,18 @@
           {
             "partOf": [
               {
-                "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.0.0.0"
+                "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.0.0.0"
               }
             ],
             "hasPart": [
               {
                 "partOf": [
                   {
-                    "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.65.0.0"
+                    "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.65.0.0"
                   }
                 ],
                 "countryCode": "NO",
-                "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.65.20.0",
+                "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.65.20.0",
                 "type": "Organization",
                 "labels": {
                   "nb": "Institutt for samfunnsmedisin og sykepleie",
@@ -475,7 +475,7 @@
               }
             ],
             "countryCode": "NO",
-            "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.65.0.0",
+            "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.65.0.0",
             "type": "Organization",
             "labels": {
               "nb": "Fakultet for medisin og helsevitenskap",
@@ -484,13 +484,13 @@
           }
         ],
         "countryCode": "NO",
-        "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/194.0.0.0",
+        "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/194.0.0.0",
         "type": "Organization",
         "contributorCristinIds": [
           {
             "verificationStatus": "Verified",
             "name": "Kristian Midthjell",
-            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/43453",
+            "id": "https://api.unittests.nva.aws.unit.no/cristin/person/43453",
             "type": "Identity"
           }
         ],
@@ -504,21 +504,21 @@
     "status": "PUBLISHED"
   },
   {
-    "@context": "https://api.sandbox.nva.aws.unit.no/publication/context",
+    "@context": "https://api.unittests.nva.aws.unit.no/publication/context",
     "identifier": "019527b845e4-182ebbf0-9481-4a98-aad2-76b617cc1b0c",
     "contributorOrganizations": [
-      "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.12.5.0",
-      "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.12.0.0",
-      "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
+      "https://api.unittests.nva.aws.unit.no/cristin/organization/185.12.5.0",
+      "https://api.unittests.nva.aws.unit.no/cristin/organization/185.12.0.0",
+      "https://api.unittests.nva.aws.unit.no/cristin/organization/185.90.0.0"
     ],
     "modelVersion": "0.23.3",
     "resourceOwner": {
       "owner": "uio@185.90.0.0",
-      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
+      "ownerAffiliation": "https://api.unittests.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
     "type": "Publication",
     "curatingInstitutions": [
-      "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
+      "https://api.unittests.nva.aws.unit.no/cristin/organization/185.90.0.0"
     ],
     "entityDescription": {
       "reference": {
@@ -561,7 +561,7 @@
           "identity": {
             "verificationStatus": "Verified",
             "name": "Christina Voigt",
-            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/22597",
+            "id": "https://api.unittests.nva.aws.unit.no/cristin/person/22597",
             "type": "Identity"
           },
           "correspondingAuthor": "false",
@@ -569,11 +569,11 @@
             {
               "partOf": [
                 {
-                  "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.12.0.0"
+                  "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/185.12.0.0"
                 }
               ],
               "countryCode": "NO",
-              "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.12.5.0",
+              "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/185.12.5.0",
               "type": "Organization",
               "labels": {
                 "nb": "Institutt for offentlig rett",
@@ -593,7 +593,7 @@
           "identity": {
             "verificationStatus": "Verified",
             "name": "Christina Voigt",
-            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/22597",
+            "id": "https://api.unittests.nva.aws.unit.no/cristin/person/22597",
             "type": "Identity"
           },
           "correspondingAuthor": "false",
@@ -601,11 +601,11 @@
             {
               "partOf": [
                 {
-                  "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.12.0.0"
+                  "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/185.12.0.0"
                 }
               ],
               "countryCode": "NO",
-              "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.12.5.0",
+              "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/185.12.5.0",
               "type": "Organization",
               "labels": {
                 "nb": "Institutt for offentlig rett",
@@ -633,11 +633,11 @@
       }
     ],
     "publisher": {
-      "id": "https://api.sandbox.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+      "id": "https://api.unittests.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
       "type": "Organization"
     },
     "filesStatus": "noFiles",
-    "id": "https://api.sandbox.nva.aws.unit.no/publication/019527b845e4-182ebbf0-9481-4a98-aad2-76b617cc1b0c",
+    "id": "https://api.unittests.nva.aws.unit.no/publication/019527b845e4-182ebbf0-9481-4a98-aad2-76b617cc1b0c",
     "pendingOpenFileCount": "0",
     "publishedDate": "2025-02-21T08:55:42.820948672Z",
     "scientificIndex": {},
@@ -647,18 +647,18 @@
           {
             "partOf": [
               {
-                "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
+                "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/185.90.0.0"
               }
             ],
             "hasPart": [
               {
                 "partOf": [
                   {
-                    "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.12.0.0"
+                    "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/185.12.0.0"
                   }
                 ],
                 "countryCode": "NO",
-                "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.12.5.0",
+                "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/185.12.5.0",
                 "type": "Organization",
                 "labels": {
                   "nb": "Institutt for offentlig rett",
@@ -667,7 +667,7 @@
               }
             ],
             "countryCode": "NO",
-            "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.12.0.0",
+            "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/185.12.0.0",
             "type": "Organization",
             "labels": {
               "nb": "Det juridiske fakultet",
@@ -676,13 +676,13 @@
           }
         ],
         "countryCode": "NO",
-        "id": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0",
+        "id": "https://api.unittests.nva.aws.unit.no/cristin/organization/185.90.0.0",
         "type": "Organization",
         "contributorCristinIds": [
           {
             "verificationStatus": "Verified",
             "name": "Christina Voigt",
-            "id": "https://api.sandbox.nva.aws.unit.no/cristin/person/22597",
+            "id": "https://api.unittests.nva.aws.unit.no/cristin/person/22597",
             "type": "Identity"
           }
         ],

@@ -4,6 +4,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static java.net.HttpURLConnection.HTTP_INTERNAL_ERROR;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
@@ -50,6 +51,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.xml.transform.Source;
 import no.sikt.nva.oai.pmh.handler.oaipmh.DefaultOaiPmhMethodRouter;
+import no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhRequest;
 import no.sikt.nva.oai.pmh.handler.oaipmh.ResumptionToken;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.search.common.records.SwsResponse;
@@ -362,48 +364,74 @@ public class OaiPmhHandlerTest {
   @ParameterizedTest
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldListRecordsOnInitialQuery(String method) throws Exception {
+    String currentPageFromDate = null;
     var fromDate = "2016-01-01";
     var untilDate = "2017-01-01";
     var expectedIdentifiers =
         List.of(
-            "https://api.sandbox.nva.aws.unit.no/publication/019527b847ad-ee78bdbe-3f70-4ff4-930c-b4ace492ea64",
-            "https://api.sandbox.nva.aws.unit.no/publication/019527b84693-a86c1cae-24da-4c9d-9bff-e097fd9be2f1",
-            "https://api.sandbox.nva.aws.unit.no/publication/019527b845e4-182ebbf0-9481-4a98-aad2-76b617cc1b0c");
+            "https://api.unittests.nva.aws.unit.no/publication/019527b847ad-ee78bdbe-3f70-4ff4-930c-b4ace492ea64",
+            "https://api.unittests.nva.aws.unit.no/publication/019527b84693-a86c1cae-24da-4c9d-9bff-e097fd9be2f1",
+            "https://api.unittests.nva.aws.unit.no/publication/019527b845e4-182ebbf0-9481-4a98-aad2-76b617cc1b0c");
 
-    runListRecordsTest(method, fromDate, untilDate, null, 3, expectedIdentifiers, true);
+    runListRecordsTest(
+        method, currentPageFromDate, fromDate, untilDate, null, 3, expectedIdentifiers, true);
   }
 
   @ParameterizedTest
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldListRecordsWithResumptionToken(String method) throws Exception {
-    var fromDate = "2016-01-04T05:48:31Z";
+    var fromDate = "2016-01-01";
     var untilDate = "2017-01-01";
-    var current = fromDate;
-    var resumptionToken = new ResumptionToken(fromDate, untilDate, "oai-dc", current, 8).getValue();
+    var metadataPrefix = "oai-dc";
+    var currentPageFromDate = "2016-01-04T05:48:31Z";
+    var oaiPmhRequest =
+        OaiPmhRequest.parse(
+            VerbType.LIST_RECORDS.value(), fromDate, untilDate, metadataPrefix, null);
+    var resumptionToken = new ResumptionToken(oaiPmhRequest, currentPageFromDate, 8).getValue();
 
     var expectedIdentifiers =
         List.of(
-            "https://api.sandbox.nva.aws.unit.no/publication/019527b847ad-ee78bdbe-3f70-4ff4-930c-b4ace492ea65",
-            "https://api.sandbox.nva.aws.unit.no/publication/019527b84693-a86c1cae-24da-4c9d-9bff-e097fd9be2f2",
-            "https://api.sandbox.nva.aws.unit.no/publication/019527b845e4-182ebbf0-9481-4a98-aad2-76b617cc1b0d");
+            "https://api.unittests.nva.aws.unit.no/publication/019527b847ad-ee78bdbe-3f70-4ff4-930c-b4ace492ea65",
+            "https://api.unittests.nva.aws.unit.no/publication/019527b84693-a86c1cae-24da-4c9d-9bff-e097fd9be2f2",
+            "https://api.unittests.nva.aws.unit.no/publication/019527b845e4-182ebbf0-9481-4a98-aad2-76b617cc1b0d");
 
-    runListRecordsTest(method, fromDate, untilDate, resumptionToken, 3, expectedIdentifiers, true);
+    runListRecordsTest(
+        method,
+        currentPageFromDate,
+        fromDate,
+        untilDate,
+        resumptionToken,
+        3,
+        expectedIdentifiers,
+        true);
   }
 
   @ParameterizedTest
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldNotReturnResumptionTokenOnLastPage(String method) throws Exception {
-    var fromDate = "2016-01-07T05:48:31Z";
+    var fromDate = "2016-01-01";
     var untilDate = "2017-01-01";
-    var current = fromDate;
-    var resumptionToken = new ResumptionToken(fromDate, untilDate, "oai-dc", current, 8).getValue();
+    var currentPageFromDate = "2016-01-07T05:48:31Z";
+    var metadataPrefix = "oai-dc";
+    var oaiPmhRequest =
+        OaiPmhRequest.parse(
+            VerbType.LIST_RECORDS.value(), fromDate, untilDate, metadataPrefix, null);
+    var resumptionToken = new ResumptionToken(oaiPmhRequest, currentPageFromDate, 8).getValue();
 
     var expectedIdentifiers =
         List.of(
-            "https://api.sandbox.nva.aws.unit.no/publication/019527b847ad-ee78bdbe-3f70-4ff4-930c-b4ace492ea66",
-            "https://api.sandbox.nva.aws.unit.no/publication/019527b84693-a86c1cae-24da-4c9d-9bff-e097fd9be2f3");
+            "https://api.unittests.nva.aws.unit.no/publication/019527b847ad-ee78bdbe-3f70-4ff4-930c-b4ace492ea66",
+            "https://api.unittests.nva.aws.unit.no/publication/019527b84693-a86c1cae-24da-4c9d-9bff-e097fd9be2f3");
 
-    runListRecordsTest(method, fromDate, untilDate, resumptionToken, 2, expectedIdentifiers, false);
+    runListRecordsTest(
+        method,
+        currentPageFromDate,
+        fromDate,
+        untilDate,
+        resumptionToken,
+        2,
+        expectedIdentifiers,
+        false);
   }
 
   @Test
@@ -534,6 +562,7 @@ public class OaiPmhHandlerTest {
 
   private void runListRecordsTest(
       String method,
+      String currentPageFromDate,
       String fromDate,
       String untilDate,
       String resumptionToken,
@@ -542,8 +571,9 @@ public class OaiPmhHandlerTest {
       boolean expectResumptionToken)
       throws Exception {
 
-    var matcher = buildMatcher(fromDate, untilDate);
-    var swsResponse = resolveMockResponse(fromDate, expectedRecordCount);
+    var matcher =
+        buildMatcher(nonNull(currentPageFromDate) ? currentPageFromDate : fromDate, untilDate);
+    var swsResponse = resolveMockResponse(currentPageFromDate, expectedRecordCount);
     when(resourceClient.doSearch(argThat(matcher), any())).thenReturn(swsResponse);
 
     var response =
@@ -565,13 +595,10 @@ public class OaiPmhHandlerTest {
     }
   }
 
-  private SwsResponse resolveMockResponse(String fromDate, int expectedRecordCount)
+  private SwsResponse resolveMockResponse(String currentPageFromDate, int expectedRecordCount)
       throws Exception {
     return switch (expectedRecordCount) {
-      case 3 ->
-          "2016-01-01".equals(fromDate)
-              ? firstPageSwsResponse()
-              : secondPageSwsResponse(); // or firstPage based
+      case 3 -> isNull(currentPageFromDate) ? firstPageSwsResponse() : secondPageSwsResponse();
       // on context
       case 2 -> lastPageSwsResponse();
       default ->

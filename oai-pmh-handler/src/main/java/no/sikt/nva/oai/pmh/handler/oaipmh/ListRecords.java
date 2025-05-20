@@ -47,31 +47,24 @@ public class ListRecords {
   }
 
   public JAXBElement<OAIPMHtype> listRecords(OaiPmhRequest request) {
-    var searchResult =
-        performSearch(request.getFrom(), request.getUntil(), request.getResumptionToken());
+    var searchResult = performSearch(request);
     var objectFactory = new ObjectFactory();
     var oaiResponse = createBaseResponse(request, objectFactory);
 
     var records = recordTransformer.transform(searchResult.hits);
     var listRecords =
-        createListRecordsResponse(
-            records,
-            searchResult.totalSize(),
-            request.getFrom(),
-            request.getUntil(),
-            request.getMetadataPrefix(),
-            objectFactory);
+        createListRecordsResponse(records, searchResult.totalSize(), request, objectFactory);
 
     oaiResponse.getValue().setListRecords(listRecords);
     return oaiResponse;
   }
 
-  private SearchResult performSearch(
-      String from, String until, String incomingEncodedResumptionToken) {
-    var incomingResumptionToken = ResumptionToken.from(incomingEncodedResumptionToken);
+  private SearchResult performSearch(OaiPmhRequest request) {
+    var incomingResumptionToken =
+        ResumptionToken.from(VerbType.LIST_RECORDS, request.getResumptionToken());
     return incomingResumptionToken
-        .map(resumptionToken -> doFollowUpSearch(until, resumptionToken))
-        .orElseGet(() -> doInitialSearch(from, until));
+        .map(resumptionToken -> doFollowUpSearch(request.getUntil(), resumptionToken))
+        .orElseGet(() -> doInitialSearch(request.getFrom(), request.getUntil()));
   }
 
   private JAXBElement<OAIPMHtype> createBaseResponse(
@@ -87,12 +80,7 @@ public class ListRecords {
   }
 
   private ListRecordsType createListRecordsResponse(
-      List<RecordType> records,
-      int totalSize,
-      String from,
-      String until,
-      String metadataPrefix,
-      ObjectFactory objectFactory) {
+      List<RecordType> records, int totalSize, OaiPmhRequest request, ObjectFactory objectFactory) {
 
     var listRecords = objectFactory.createListRecordsType();
     listRecords.getRecord().addAll(records);
@@ -100,8 +88,7 @@ public class ListRecords {
     var current = extractLastDateTime(records);
     var pageSize = records.size();
     if (shouldAddResumptionToken(current, pageSize)) {
-      var resumptionTokenType =
-          generateResumptionToken(from, until, metadataPrefix, current, totalSize, objectFactory);
+      var resumptionTokenType = generateResumptionToken(request, current, totalSize, objectFactory);
       listRecords.setResumptionToken(resumptionTokenType);
     }
 
@@ -188,19 +175,14 @@ public class ListRecords {
   private record SearchResult(int totalSize, int pageSize, List<JsonNode> hits) {}
 
   private ResumptionTokenType generateResumptionToken(
-      String from,
-      String until,
-      String metadataPrefix,
-      String current,
-      int totalSize,
-      ObjectFactory objectFactory) {
+      OaiPmhRequest originalRequest, String current, int totalSize, ObjectFactory objectFactory) {
     var inTenMinutes =
         DatatypeFactory.newDefaultInstance()
             .newXMLGregorianCalendar(
                 GregorianCalendar.from(ZonedDateTime.now().plusHours(RESUMPTION_TOKEN_TTL_HOURS)));
 
     var resumptionTokenType = objectFactory.createResumptionTokenType();
-    var newResumptionToken = new ResumptionToken(from, until, metadataPrefix, current, totalSize);
+    var newResumptionToken = new ResumptionToken(originalRequest, current, totalSize);
     resumptionTokenType.setValue(newResumptionToken.getValue());
     resumptionTokenType.setExpirationDate(inTenMinutes);
     resumptionTokenType.setCompleteListSize(BigInteger.valueOf(totalSize));
