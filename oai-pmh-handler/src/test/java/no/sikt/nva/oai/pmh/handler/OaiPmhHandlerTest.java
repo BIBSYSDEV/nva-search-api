@@ -54,6 +54,7 @@ import no.sikt.nva.oai.pmh.handler.oaipmh.DefaultOaiPmhMethodRouter;
 import no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhRequest;
 import no.sikt.nva.oai.pmh.handler.oaipmh.ResumptionToken;
 import no.unit.nva.commons.json.JsonUtils;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.common.records.SwsResponse.HitsInfo;
 import no.unit.nva.search.common.records.SwsResponse.HitsInfo.Hit;
@@ -86,6 +87,7 @@ import org.xmlunit.xpath.XPathEngine;
 @WireMockTest
 public class OaiPmhHandlerTest {
 
+  private static final String ASCENDING = "asc";
   private static final String OAI_PMH_NAMESPACE_PREFIX = "oai";
   private static final String OAI_PMH_NAMESPACE = "http://www.openarchives.org/OAI/2.0/";
   private static final String DC_NAMESPACE_PREFIX = "dc";
@@ -611,8 +613,8 @@ public class OaiPmhHandlerTest {
         .withPageParameter(ResourceParameter.FROM, "0")
         .withPageParameter(ResourceParameter.SIZE, "3")
         .withPageParameter(ResourceParameter.SORT, "modifiedDate,identifier")
-        .withPageParameter(ResourceParameter.SORT_ORDER, "desc")
-        .withSearchParameter(ResourceParameter.AGGREGATION, "none")
+        .withPageParameter(ResourceParameter.SORT_ORDER, ASCENDING)
+        .withSearchParameter(ResourceParameter.AGGREGATION, Words.NONE)
         .withSearchParameter(ResourceParameter.MODIFIED_SINCE, from)
         .withSearchParameter(ResourceParameter.MODIFIED_BEFORE, until)
         .build();
@@ -681,8 +683,8 @@ public class OaiPmhHandlerTest {
             .withPageParameter(ResourceParameter.FROM, "0")
             .withPageParameter(ResourceParameter.SIZE, "3")
             .withPageParameter(ResourceParameter.SORT, "modifiedDate,identifier")
-            .withPageParameter(ResourceParameter.SORT_ORDER, "desc")
-            .withSearchParameter(ResourceParameter.AGGREGATION, "none")
+            .withPageParameter(ResourceParameter.SORT_ORDER, ASCENDING)
+            .withSearchParameter(ResourceParameter.AGGREGATION, Words.NONE)
             .withSearchParameter(ResourceParameter.MODIFIED_BEFORE, "2016-01-02")
             .withSearchParameter(ResourceParameter.MODIFIED_SINCE, "2016-01-01")
             .withNamedFilterQuery(

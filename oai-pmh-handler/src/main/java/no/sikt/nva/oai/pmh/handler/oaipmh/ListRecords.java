@@ -31,8 +31,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ListRecords {
+
   private static final Logger logger = LoggerFactory.getLogger(ListRecords.class);
   private static final int RESUMPTION_TOKEN_TTL_HOURS = 24;
+  public static final String ASCENDING = "asc";
 
   private final ResourceClient resourceClient;
   private final RecordTransformer recordTransformer;
@@ -136,7 +138,7 @@ public class ListRecords {
               .withParameter(ResourceParameter.FROM, ZERO)
               .withParameter(ResourceParameter.SIZE, Integer.toString(batchSize))
               .withParameter(ResourceParameter.SORT, ResourceSort.MODIFIED_DATE.asCamelCase())
-              .withParameter(ResourceParameter.SORT_ORDER, "desc")
+              .withParameter(ResourceParameter.SORT_ORDER, ASCENDING)
               .withAlwaysIncludedFields(SimplifiedMutator.getIncludedFields())
               .build()
               .withFilter()
