@@ -34,7 +34,8 @@ public class ListRecords {
 
   private static final Logger logger = LoggerFactory.getLogger(ListRecords.class);
   private static final int RESUMPTION_TOKEN_TTL_HOURS = 24;
-  public static final String ASCENDING = "asc";
+  public static final String MODIFIED_DATE_ASCENDING =
+      ResourceSort.MODIFIED_DATE.asCamelCase() + ":asc";
 
   private final ResourceClient resourceClient;
   private final RecordTransformer recordTransformer;
@@ -137,8 +138,7 @@ public class ListRecords {
               .withParameter(ResourceParameter.MODIFIED_BEFORE, until)
               .withParameter(ResourceParameter.FROM, ZERO)
               .withParameter(ResourceParameter.SIZE, Integer.toString(batchSize))
-              .withParameter(ResourceParameter.SORT, ResourceSort.MODIFIED_DATE.asCamelCase())
-              .withParameter(ResourceParameter.SORT_ORDER, ASCENDING)
+              .withParameter(ResourceParameter.SORT, MODIFIED_DATE_ASCENDING)
               .withAlwaysIncludedFields(SimplifiedMutator.getIncludedFields())
               .build()
               .withFilter()
