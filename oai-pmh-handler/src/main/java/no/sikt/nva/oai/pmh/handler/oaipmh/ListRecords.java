@@ -46,19 +46,20 @@ public class ListRecords {
     this.batchSize = batchSize;
   }
 
-  public JAXBElement<OAIPMHtype> listRecords(OaiPmhContext context) {
-    var searchResult = performSearch(context.from(), context.until(), context.resumptionToken());
+  public JAXBElement<OAIPMHtype> listRecords(OaiPmhRequest request) {
+    var searchResult =
+        performSearch(request.getFrom(), request.getUntil(), request.getResumptionToken());
     var objectFactory = new ObjectFactory();
-    var oaiResponse = createBaseResponse(context, objectFactory);
+    var oaiResponse = createBaseResponse(request, objectFactory);
 
     var records = recordTransformer.transform(searchResult.hits);
     var listRecords =
         createListRecordsResponse(
             records,
             searchResult.totalSize(),
-            context.from(),
-            context.until(),
-            context.metadataPrefix(),
+            request.getFrom(),
+            request.getUntil(),
+            request.getMetadataPrefix(),
             objectFactory);
 
     oaiResponse.getValue().setListRecords(listRecords);
@@ -74,13 +75,13 @@ public class ListRecords {
   }
 
   private JAXBElement<OAIPMHtype> createBaseResponse(
-      OaiPmhContext context, ObjectFactory objectFactory) {
+      OaiPmhRequest context, ObjectFactory objectFactory) {
     var oaiResponse = baseResponse(objectFactory);
     populateListRecordsRequest(
-        context.from(),
-        context.until(),
-        context.resumptionToken(),
-        context.metadataPrefix(),
+        context.getFrom(),
+        context.getUntil(),
+        context.getResumptionToken(),
+        context.getMetadataPrefix(),
         oaiResponse.getValue());
     return oaiResponse;
   }

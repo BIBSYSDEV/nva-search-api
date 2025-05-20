@@ -4,12 +4,10 @@ import static no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhUtils.baseResponse;
 
 import jakarta.xml.bind.JAXBElement;
 import java.net.URI;
-import java.util.Optional;
 import no.unit.nva.search.resource.ResourceClient;
 import org.openarchives.oai.pmh.v2.OAIPMHerrorcodeType;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
 import org.openarchives.oai.pmh.v2.ObjectFactory;
-import org.openarchives.oai.pmh.v2.VerbType;
 
 public class DefaultOaiPmhMethodRouter implements OaiPmhMethodRouter {
 
@@ -27,15 +25,9 @@ public class DefaultOaiPmhMethodRouter implements OaiPmhMethodRouter {
   }
 
   @Override
-  public JAXBElement<OAIPMHtype> handleRequest(final OaiPmhContext context, final URI endpointUri) {
-    Optional<VerbType> verbType;
-    try {
-      verbType = Optional.of(VerbType.fromValue(context.verb()));
-    } catch (IllegalArgumentException e) {
-      verbType = Optional.empty();
-    }
-
-    return verbType
+  public JAXBElement<OAIPMHtype> handleRequest(final OaiPmhRequest request, final URI endpointUri) {
+    return request
+        .getVerb()
         .map(
             type ->
                 switch (type) {
@@ -44,7 +36,7 @@ public class DefaultOaiPmhMethodRouter implements OaiPmhMethodRouter {
                   case LIST_METADATA_FORMATS -> new ListMetadataFormats().listMetadataFormats();
                   case LIST_RECORDS ->
                       new ListRecords(resourceClient, recordTransformer, batchSize)
-                          .listRecords(context);
+                          .listRecords(request);
                   default -> badVerb(UNSUPPORTED_VERB);
                 })
         .orElseGet(() -> badVerb(UNKNOWN_OR_NO_VERB_SUPPLIED));
