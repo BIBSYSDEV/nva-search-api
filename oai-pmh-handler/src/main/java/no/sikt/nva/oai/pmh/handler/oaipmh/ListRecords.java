@@ -46,18 +46,21 @@ public class ListRecords {
     this.batchSize = batchSize;
   }
 
-  public JAXBElement<OAIPMHtype> listRecords(
-      String from, String until, String incomingEncodedResumptionToken, String metadataPrefix) {
-    var searchResult = performSearch(from, until, incomingEncodedResumptionToken);
+  public JAXBElement<OAIPMHtype> listRecords(OaiOmhRequest request) {
+    var searchResult =
+        performSearch(request.getFrom(), request.getUntil(), request.getResumptionToken());
     var objectFactory = new ObjectFactory();
-    var oaiResponse =
-        createBaseResponse(
-            from, until, incomingEncodedResumptionToken, metadataPrefix, objectFactory);
+    var oaiResponse = createBaseResponse(request, objectFactory);
 
     var records = recordTransformer.transform(searchResult.hits);
     var listRecords =
         createListRecordsResponse(
-            records, searchResult.totalSize(), from, until, metadataPrefix, objectFactory);
+            records,
+            searchResult.totalSize(),
+            request.getFrom(),
+            request.getUntil(),
+            request.getMetadataPrefix(),
+            objectFactory);
 
     oaiResponse.getValue().setListRecords(listRecords);
     return oaiResponse;
@@ -72,14 +75,9 @@ public class ListRecords {
   }
 
   private JAXBElement<OAIPMHtype> createBaseResponse(
-      String from,
-      String until,
-      String incomingEncodedResumptionToken,
-      String metadataPrefix,
-      ObjectFactory objectFactory) {
+      OaiOmhRequest request, ObjectFactory objectFactory) {
     var oaiResponse = baseResponse(objectFactory);
-    populateListRecordsRequest(
-        from, until, incomingEncodedResumptionToken, metadataPrefix, oaiResponse.getValue());
+    populateListRecordsRequest(request, oaiResponse.getValue());
     return oaiResponse;
   }
 
@@ -169,17 +167,12 @@ public class ListRecords {
     }
   }
 
-  private static void populateListRecordsRequest(
-      String from,
-      String until,
-      String incomingResumptionToken,
-      String metadataPrefix,
-      OAIPMHtype oaiPmhType) {
+  private static void populateListRecordsRequest(OaiOmhRequest request, OAIPMHtype oaiPmhType) {
     oaiPmhType.getRequest().setVerb(VerbType.LIST_RECORDS);
-    oaiPmhType.getRequest().setResumptionToken(incomingResumptionToken);
-    oaiPmhType.getRequest().setFrom(from);
-    oaiPmhType.getRequest().setUntil(until);
-    oaiPmhType.getRequest().setMetadataPrefix(metadataPrefix);
+    oaiPmhType.getRequest().setResumptionToken(request.getResumptionToken());
+    oaiPmhType.getRequest().setFrom(request.getFrom());
+    oaiPmhType.getRequest().setUntil(request.getUntil());
+    oaiPmhType.getRequest().setMetadataPrefix(request.getMetadataPrefix());
   }
 
   private record SearchResult(int totalSize, int pageSize, List<JsonNode> hits) {}

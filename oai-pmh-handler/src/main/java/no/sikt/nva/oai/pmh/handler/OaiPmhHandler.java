@@ -9,6 +9,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import no.sikt.nva.oai.pmh.handler.oaipmh.DefaultOaiPmhMethodRouter;
+import no.sikt.nva.oai.pmh.handler.oaipmh.OaiOmhRequest;
 import no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhMethodRouter;
 import no.unit.nva.search.resource.ResourceClient;
 import nva.commons.apigateway.ApiGatewayHandler;
@@ -92,8 +93,8 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
     var resumptionToken =
         extractParameter(PARAMETER_NAME_RESUMPTION_TOKEN, requestInfo, body).orElse(null);
 
-    var rootElement =
-        dataProvider.handleRequest(verb, from, until, metadataPrefix, resumptionToken, endpointUri);
+    var request = OaiOmhRequest.parse(verb, from, until, metadataPrefix, resumptionToken);
+    var rootElement = dataProvider.handleRequest(request, endpointUri);
     return xmlSerializer.serialize(rootElement);
   }
 
