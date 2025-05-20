@@ -27,16 +27,10 @@ public class DefaultOaiPmhMethodRouter implements OaiPmhMethodRouter {
   }
 
   @Override
-  public JAXBElement<OAIPMHtype> handleRequest(
-      final String verb,
-      final String from,
-      final String until,
-      final String metadataPrefix,
-      final String resumptionToken,
-      final URI endpointUri) {
+  public JAXBElement<OAIPMHtype> handleRequest(final OaiPmhContext context, final URI endpointUri) {
     Optional<VerbType> verbType;
     try {
-      verbType = Optional.of(VerbType.fromValue(verb));
+      verbType = Optional.of(VerbType.fromValue(context.verb()));
     } catch (IllegalArgumentException e) {
       verbType = Optional.empty();
     }
@@ -50,7 +44,7 @@ public class DefaultOaiPmhMethodRouter implements OaiPmhMethodRouter {
                   case LIST_METADATA_FORMATS -> new ListMetadataFormats().listMetadataFormats();
                   case LIST_RECORDS ->
                       new ListRecords(resourceClient, recordTransformer, batchSize)
-                          .listRecords(from, until, resumptionToken, metadataPrefix);
+                          .listRecords(context);
                   default -> badVerb(UNSUPPORTED_VERB);
                 })
         .orElseGet(() -> badVerb(UNKNOWN_OR_NO_VERB_SUPPLIED));

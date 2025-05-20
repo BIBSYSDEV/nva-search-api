@@ -9,6 +9,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import no.sikt.nva.oai.pmh.handler.oaipmh.DefaultOaiPmhMethodRouter;
+import no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhContext;
 import no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhMethodRouter;
 import no.unit.nva.search.resource.ResourceClient;
 import nva.commons.apigateway.ApiGatewayHandler;
@@ -83,6 +84,12 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
   @Override
   protected String processInput(String body, RequestInfo requestInfo, Context context)
       throws ApiGatewayException {
+    var oaiPmhContext = getOaiPmhContext(body, requestInfo);
+    var rootElement = dataProvider.handleRequest(oaiPmhContext, endpointUri);
+    return xmlSerializer.serialize(rootElement);
+  }
+
+  private OaiPmhContext getOaiPmhContext(String body, RequestInfo requestInfo) {
     var verb = extractParameter(PARAMETER_NAME_VERB, requestInfo, body).orElse(EMPTY_VERB);
 
     var from = extractParameter(PARAMETER_NAME_FROM, requestInfo, body).orElse(null);
@@ -92,9 +99,7 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
     var resumptionToken =
         extractParameter(PARAMETER_NAME_RESUMPTION_TOKEN, requestInfo, body).orElse(null);
 
-    var rootElement =
-        dataProvider.handleRequest(verb, from, until, metadataPrefix, resumptionToken, endpointUri);
-    return xmlSerializer.serialize(rootElement);
+    return new OaiPmhContext(verb, from, until, metadataPrefix, resumptionToken);
   }
 
   private Optional<String> extractParameter(
