@@ -19,7 +19,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexingclient.IndexingClient;
@@ -31,6 +34,7 @@ import org.opensearch.client.RestClient;
 import org.opensearch.testcontainers.OpensearchContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
@@ -49,25 +53,50 @@ public class Containers {
   public static void setup() throws IOException, InterruptedException {
     container.withEnv("indices.query.bool.max_clause_count", "2048").start();
 
+    container.waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(60)));
+
     var restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
     var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
     var cachedJwtProvider = setupMockedCachedJwtProvider();
     indexingClient = new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
 
-    logger.info("creating indexes");
+    var refreshFutures =
+        List.of(
+            CompletableFuture.runAsync(Containers::prepareResourcesIndex),
+            CompletableFuture.runAsync(Containers::prepareTicketsIndex),
+            CompletableFuture.runAsync(Containers::prepareImportCandidateIndex));
 
-    createIndex(TICKETS, TICKET_MAPPINGS.asMap(), null);
-    createIndex(IMPORT_CANDIDATES_INDEX, IMPORT_CANDIDATE_MAPPINGS.asMap(), null);
-    createIndex(RESOURCES, RESOURCE_MAPPINGS.asMap(), RESOURCE_SETTINGS.asMap());
+    CompletableFuture.allOf(refreshFutures.toArray(new CompletableFuture[0])).join();
+  }
 
-    logger.info("populating indexes");
+  private static void prepareResourcesIndex() {
+    try {
+      createIndex(RESOURCES, RESOURCE_MAPPINGS.asMap(), RESOURCE_SETTINGS.asMap());
+      populateIndex(RESOURCE_DATASOURCE_JSON, RESOURCES);
+      indexingClient.refreshIndex(RESOURCES);
+    } catch (IOException e) {
+      logger.error("Failed to prepare resources index", e);
+    }
+  }
 
-    populateIndex(TICKET_DATASOURCE_JSON, TICKETS);
-    populateIndex(IMPORT_CANDIDATE_DATASOURCE_JSON, IMPORT_CANDIDATES_INDEX);
-    populateIndex(RESOURCE_DATASOURCE_JSON, RESOURCES);
+  private static void prepareTicketsIndex() {
+    try {
+      createIndex(TICKETS, TICKET_MAPPINGS.asMap(), null);
+      populateIndex(TICKET_DATASOURCE_JSON, TICKETS);
+      indexingClient.refreshIndex(TICKETS);
+    } catch (IOException e) {
+      logger.error("Failed to prepare tickets index", e);
+    }
+  }
 
-    logger.info("Waiting {} ms for indexing to complete", DELAY_AFTER_INDEXING);
-    Thread.sleep(DELAY_AFTER_INDEXING);
+  private static void prepareImportCandidateIndex() {
+    try {
+      createIndex(IMPORT_CANDIDATES_INDEX, IMPORT_CANDIDATE_MAPPINGS.asMap(), null);
+      populateIndex(IMPORT_CANDIDATE_DATASOURCE_JSON, IMPORT_CANDIDATES_INDEX);
+      indexingClient.refreshIndex(IMPORT_CANDIDATES_INDEX);
+    } catch (IOException e) {
+      logger.error("Failed to prepare import candidate index", e);
+    }
   }
 
   public static void afterAll() throws Exception {
