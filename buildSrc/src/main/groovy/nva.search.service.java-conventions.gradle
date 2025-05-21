@@ -70,22 +70,8 @@ tasks.named('test', Test) {
     useJUnitPlatform()
     testLogging {
         events 'skipped', 'passed', 'failed'
-        showStandardStreams true
-        exceptionFormat 'full'
-        showCauses true
-        showExceptions true
-        showStackTraces true
     }
-    reports {
-        junitXml.required.set(true)
-        html.required.set(true)
-    }
-
-    afterTest { desc, result ->
-        if (result.resultType == org.gradle.api.tasks.testing.TestResult.ResultType.FAILURE) {
-            println "❌ Test failed: ${desc.className}.${desc.name}"
-        }
-    }
+    //    environment "ALLOWED_ORIGIN", "*"
     finalizedBy jacocoTestReport
 }
 
