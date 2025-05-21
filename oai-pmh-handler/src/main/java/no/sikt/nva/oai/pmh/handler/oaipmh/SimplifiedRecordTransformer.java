@@ -1,4 +1,4 @@
-package no.sikt.nva.oai.pmh.handler;
+package no.sikt.nva.oai.pmh.handler.oaipmh;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;

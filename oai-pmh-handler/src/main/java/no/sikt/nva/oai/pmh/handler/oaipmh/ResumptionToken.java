@@ -1,4 +1,4 @@
-package no.sikt.nva.oai.pmh.handler;
+package no.sikt.nva.oai.pmh.handler.oaipmh;
 
 import static java.util.Objects.nonNull;
 
@@ -9,9 +9,9 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import nva.commons.core.StringUtils;
+import org.openarchives.oai.pmh.v2.VerbType;
 
-public record ResumptionToken(
-    String from, String until, String metadataPrefix, String current, int totalSize) {
+public record ResumptionToken(OaiPmhRequest originalRequest, String current, int totalSize) {
   private static final String EQUALS = "=";
   private static final String FROM = "from";
   private static final String UNTIL = "until";
@@ -22,12 +22,23 @@ public record ResumptionToken(
 
   public String getValue() {
     var unencodedValueBuilder = new StringBuilder();
-    unencodedValueBuilder.append(METADATA_PREFIX).append(EQUALS).append(metadataPrefix);
-    if (nonNull(from)) {
-      unencodedValueBuilder.append(AMPERSAND).append(FROM).append(EQUALS).append(from);
+    unencodedValueBuilder
+        .append(METADATA_PREFIX)
+        .append(EQUALS)
+        .append(originalRequest.getMetadataPrefix());
+    if (nonNull(originalRequest.getFrom())) {
+      unencodedValueBuilder
+          .append(AMPERSAND)
+          .append(FROM)
+          .append(EQUALS)
+          .append(originalRequest.getFrom());
     }
-    if (nonNull(until)) {
-      unencodedValueBuilder.append(AMPERSAND).append(UNTIL).append(EQUALS).append(until);
+    if (nonNull(originalRequest.getFrom())) {
+      unencodedValueBuilder
+          .append(AMPERSAND)
+          .append(UNTIL)
+          .append(EQUALS)
+          .append(originalRequest.getFrom());
     }
     if (nonNull(current)) {
       unencodedValueBuilder.append(AMPERSAND).append(CURRENT).append(EQUALS).append(current);
@@ -36,7 +47,7 @@ public record ResumptionToken(
     return URLEncoder.encode(unencodedValueBuilder.toString(), StandardCharsets.UTF_8);
   }
 
-  public static Optional<ResumptionToken> from(String encodedToken) {
+  public static Optional<ResumptionToken> from(VerbType verb, String encodedToken) {
     if (StringUtils.isEmpty(encodedToken)) {
       return Optional.empty();
     }
@@ -55,7 +66,7 @@ public record ResumptionToken(
     var current = values.get(CURRENT);
     var totalSize = values.get(TOTAL_SIZE);
 
-    return Optional.of(
-        new ResumptionToken(from, until, metadataPrefix, current, Integer.parseInt(totalSize)));
+    var originalRequest = OaiPmhRequest.parse(verb.value(), from, until, metadataPrefix, null);
+    return Optional.of(new ResumptionToken(originalRequest, current, Integer.parseInt(totalSize)));
   }
 }

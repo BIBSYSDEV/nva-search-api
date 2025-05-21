@@ -8,6 +8,9 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+import no.sikt.nva.oai.pmh.handler.oaipmh.DefaultOaiPmhMethodRouter;
+import no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhMethodRouter;
+import no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhRequest;
 import no.unit.nva.search.resource.ResourceClient;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
@@ -33,16 +36,16 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
   private static final String NULL_STRING = "null";
 
   private final XmlSerializer xmlSerializer;
-  private final OaiPmhDataProvider dataProvider;
+  private final OaiPmhMethodRouter dataProvider;
   private final URI endpointUri;
 
   @JacocoGenerated
   public OaiPmhHandler() throws JAXBException {
-    this(new Environment(), defaultOaiPmhDataProvider(), defaultXmlSerializer());
+    this(new Environment(), defaultOaiPmhMethodRouter(), defaultXmlSerializer());
   }
 
   public OaiPmhHandler(
-      Environment environment, OaiPmhDataProvider dataProvider, XmlSerializer xmlSerializer) {
+      Environment environment, OaiPmhMethodRouter dataProvider, XmlSerializer xmlSerializer) {
     super(String.class, environment);
     this.endpointUri = generateEndpointUri(environment);
     this.dataProvider = dataProvider;
@@ -61,9 +64,9 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
   }
 
   @JacocoGenerated
-  private static OaiPmhDataProvider defaultOaiPmhDataProvider() {
+  private static OaiPmhMethodRouter defaultOaiPmhMethodRouter() {
     var batchSize = new Environment().readEnvOpt("LIST_RECORDS_BATCH_SIZE").orElse("250");
-    return new SimplifiedOaiPmhDataProvider(
+    return new DefaultOaiPmhMethodRouter(
         ResourceClient.defaultClient(), Integer.parseInt(batchSize));
   }
 
@@ -81,8 +84,13 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
   @Override
   protected String processInput(String body, RequestInfo requestInfo, Context context)
       throws ApiGatewayException {
-    var verb = extractParameter(PARAMETER_NAME_VERB, requestInfo, body).orElse(EMPTY_VERB);
+    var oaiPmhRequest = getOaiPmhContext(body, requestInfo);
+    var rootElement = dataProvider.handleRequest(oaiPmhRequest, endpointUri);
+    return xmlSerializer.serialize(rootElement);
+  }
 
+  private OaiPmhRequest getOaiPmhContext(String body, RequestInfo requestInfo) {
+    var verb = extractParameter(PARAMETER_NAME_VERB, requestInfo, body).orElse(EMPTY_VERB);
     var from = extractParameter(PARAMETER_NAME_FROM, requestInfo, body).orElse(null);
     var until = extractParameter(PARAMETER_NAME_UNTIL, requestInfo, body).orElse(null);
     var metadataPrefix =
@@ -90,9 +98,7 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
     var resumptionToken =
         extractParameter(PARAMETER_NAME_RESUMPTION_TOKEN, requestInfo, body).orElse(null);
 
-    var rootElement =
-        dataProvider.handleRequest(verb, from, until, metadataPrefix, resumptionToken, endpointUri);
-    return xmlSerializer.serialize(rootElement);
+    return OaiPmhRequest.parse(verb, from, until, metadataPrefix, resumptionToken);
   }
 
   private Optional<String> extractParameter(
