@@ -156,9 +156,11 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
       validateAssigneeAndOwnerParameters();
     }
 
-    this.query
-        .filters()
-        .add(filterByOrganization(organizationSet))
+    var filters = query.filters();
+    if (!searchAsTicketOwner()) {
+      filters.add(filterByOrganization(organizationSet));
+    }
+    filters
         .add(filterByUserAndTicketTypes(currentUser, curatorTicketTypes))
         .add(filterByDeniedUnpublishRequest());
     return query;
