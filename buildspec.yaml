@@ -1,17 +1,34 @@
 version: 0.2
 
+env:
+  variables:
+    GRADLE_USER_HOME: '/root/.gradle'
+    SAM_CLI_TELEMETRY: "0"
+
+cache:
+  paths:
+    - '/root/.gradle/caches/**/*'
+
 phases:
   install:
     runtime-versions:
       java: corretto21
     commands:
-      - pip3 install aws-sam-cli -U
+      - echo "Checking if AWS SAM CLI is installed"
+      - |
+        if command -v sam >/dev/null 2>&1; then
+          echo "AWS SAM CLI is already installed";
+          sam --version;
+        else
+          echo "AWS SAM CLI is not installed, installing now";
+          pip3 install aws-sam-cli
+        fi
   build:
     commands:
       - sam build
-      - sam package --s3-bucket $S3_BUCKET --output-template-file packaged_raw.yaml
   post_build:
     commands:
+      - sam package --s3-bucket $S3_BUCKET --output-template-file packaged_raw.yaml
       # Use timestamp to force update of ApiGatewayCreateDeploymentCustomResource
       - BUILD_TIMESTAMP=$(date '+%s')
       - envsubst '${BUILD_TIMESTAMP}' < packaged_raw.yaml > packaged.yaml
