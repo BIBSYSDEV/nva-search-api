@@ -12,12 +12,14 @@ import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.apigateway.AccessRight.MANAGE_DEGREE;
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
+import static nva.commons.apigateway.AccessRight.MANAGE_NVI;
+import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
+import static nva.commons.apigateway.AccessRight.SUPPORT;
 import static nva.commons.core.attempt.Try.attempt;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import java.net.URI;
@@ -40,6 +42,9 @@ import nva.commons.apigateway.exceptions.UnauthorizedException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
@@ -126,6 +131,29 @@ public class TicketClientTestV2 {
     assertTrue(response.hits().isEmpty());
   }
 
+  @ParameterizedTest
+  @EnumSource(
+      value = TicketType.class,
+      mode = Mode.EXCLUDE,
+      names = {"UNPUBLISH_REQUEST", "NONE"})
+  void shouldNotReturnTicketsWithStatusNotApplicable(TicketType ticketType)
+      throws UnauthorizedException, BadRequestException, IOException {
+    var topLevelId = randomUri();
+
+    var filesApprovalThesisJson =
+        ticketOfTypeWithTopLevelOrgAndStatus(ticketType, topLevelId, TicketStatus.NOT_APPLICABLE);
+    var filesApprovalThesis = toIndexDocument(filesApprovalThesisJson);
+    createIndexAndAddDocumentsToIndex(filesApprovalThesis);
+
+    var requestInfo =
+        createRequestWithAccessRights(
+            topLevelId, MANAGE_DEGREE, MANAGE_DOI, MANAGE_PUBLISHING_REQUESTS, SUPPORT, MANAGE_NVI);
+
+    var response = performSearch(requestInfo);
+
+    assertTrue(response.hits().isEmpty());
+  }
+
   private static IndexDocument toIndexDocument(String json) throws JsonProcessingException {
     return new IndexDocument(
         new EventConsumptionAttributes(indexName, SortableIdentifier.next()),
@@ -152,6 +180,22 @@ public class TicketClientTestV2 {
         .replace("__TOP_LEVEL__", topLevelId.toString());
   }
 
+  private static String ticketOfTypeWithTopLevelOrgAndStatus(
+      TicketType type, URI topLevelId, TicketStatus status) {
+    return """
+                       {
+             "type": "__TYPE__",
+             "organization": {
+               "id": "__TOP_LEVEL__"
+             },
+             "status": "__STATUS__"
+           }
+           """
+        .replace("__TYPE__", type.toString())
+        .replace("__TOP_LEVEL__", topLevelId.toString())
+        .replace("__STATUS__", status.toString());
+  }
+
   private static PagedSearch performSearch(RequestInfo requestInfo)
       throws UnauthorizedException, BadRequestException {
     return TicketSearchQuery.builder()
@@ -175,6 +219,16 @@ public class TicketClientTestV2 {
     when(requestInfo.getHeaders()).thenReturn(Map.of("Authorization", randomString()));
     when(requestInfo.getMultiValueQueryStringParameters())
         .thenReturn(Map.of(Words.TYPE, Arrays.asList(types), "aggregation", List.of(Words.ALL)));
+    return requestInfo;
+  }
+
+  private static RequestInfo createRequestWithAccessRights(
+      URI topLevelOrgIdentifier, AccessRight... accessRights) throws UnauthorizedException {
+    var requestInfo = mock(RequestInfo.class);
+    when(requestInfo.getUserName()).thenReturn(randomString());
+    when(requestInfo.getTopLevelOrgCristinId()).thenReturn(Optional.of(topLevelOrgIdentifier));
+    when(requestInfo.getAccessRights()).thenReturn(Arrays.asList(accessRights));
+    when(requestInfo.getHeaders()).thenReturn(Map.of("Authorization", randomString()));
     return requestInfo;
   }
 }
