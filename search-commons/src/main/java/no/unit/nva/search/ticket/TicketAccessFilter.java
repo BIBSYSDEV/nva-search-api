@@ -2,13 +2,16 @@ package no.unit.nva.search.ticket;
 
 import static java.util.Objects.isNull;
 import static no.unit.nva.search.ticket.Constants.CANNOT_SEARCH_AS_BOTH_ASSIGNEE_AND_OWNER_AT_THE_SAME_TIME;
+import static no.unit.nva.search.ticket.Constants.FILTER_BY_NOT_APPLICABLE;
 import static no.unit.nva.search.ticket.Constants.FILTER_BY_ORGANIZATION;
 import static no.unit.nva.search.ticket.Constants.FILTER_BY_OWNER;
+import static no.unit.nva.search.ticket.Constants.FILTER_BY_STATUS;
 import static no.unit.nva.search.ticket.Constants.FILTER_BY_TICKET_TYPES;
 import static no.unit.nva.search.ticket.Constants.FILTER_BY_UN_PUBLISHED;
 import static no.unit.nva.search.ticket.Constants.FILTER_BY_USER_AND_TICKET_TYPES;
 import static no.unit.nva.search.ticket.Constants.ORGANIZATION_IS_REQUIRED;
 import static no.unit.nva.search.ticket.Constants.ORGANIZATION_PATHS;
+import static no.unit.nva.search.ticket.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search.ticket.Constants.TYPE_KEYWORD;
 import static no.unit.nva.search.ticket.Constants.USER_IS_NOT_ALLOWED_TO_SEARCH_FOR_TICKETS_NOT_OWNED_BY_THEMSELVES;
 import static no.unit.nva.search.ticket.Constants.USER_IS_REQUIRED;
@@ -16,6 +19,7 @@ import static no.unit.nva.search.ticket.TicketParameter.ASSIGNEE;
 import static no.unit.nva.search.ticket.TicketParameter.ORGANIZATION_ID;
 import static no.unit.nva.search.ticket.TicketParameter.OWNER;
 import static no.unit.nva.search.ticket.TicketParameter.STATISTICS;
+import static no.unit.nva.search.ticket.TicketStatus.NOT_APPLICABLE;
 import static nva.commons.apigateway.AccessRight.MANAGE_CUSTOMERS;
 import static nva.commons.apigateway.AccessRight.MANAGE_DEGREE;
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
@@ -39,6 +43,7 @@ import nva.commons.apigateway.exceptions.UnauthorizedException;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.Operator;
+import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermsQueryBuilder;
 
@@ -162,8 +167,17 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
     }
     filters
         .add(filterByUserAndTicketTypes(currentUser, curatorTicketTypes))
-        .add(filterByDeniedUnpublishRequest());
+        .add(filterByDeniedUnpublishRequest())
+        .add(filterNotApplicableTickets());
     return query;
+  }
+
+  private QueryBuilder filterNotApplicableTickets() {
+    return boolQuery()
+        .mustNot(
+            new TermsQueryBuilder(STATUS_KEYWORD, NOT_APPLICABLE.toString())
+                .queryName(FILTER_BY_STATUS))
+        .queryName(FILTER_BY_NOT_APPLICABLE);
   }
 
   /**

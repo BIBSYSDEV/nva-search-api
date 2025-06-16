@@ -55,6 +55,8 @@ public final class Constants {
   static final String FILTER_BY_OWNER = "filterByOwner";
   static final String FILTER_BY_TICKET_TYPES = "filterByTicketTypes";
   static final String FILTER_BY_UN_PUBLISHED = "filterByUnPublished";
+  static final String FILTER_BY_STATUS = "filterByStatus";
+  static final String FILTER_BY_NOT_APPLICABLE = "filterByNotApplicable";
   static final String FILTER_BY_USER_AND_TICKET_TYPES = "filterByUserAndTicketTypes";
   static final String ORGANIZATION_IS_REQUIRED = "Organization is required";
   static final String USER_IS_NOT_ALLOWED_TO_SEARCH_FOR_TICKETS_NOT_OWNED_BY_THEMSELVES =
