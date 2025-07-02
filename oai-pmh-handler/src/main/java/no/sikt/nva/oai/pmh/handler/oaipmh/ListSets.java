@@ -26,8 +26,6 @@ import org.slf4j.LoggerFactory;
 
 public class ListSets {
   private static final Logger logger = LoggerFactory.getLogger(ListSets.class);
-  private static final String PUBLICATION_INSTANCE_TYPE_SET = "PublicationInstanceType";
-  private static final String COLON = ":";
   private static final String INSTANCE_TYPE_AGGREGATION_NAME = "type";
 
   public ListSets() {}
@@ -87,8 +85,8 @@ public class ListSets {
   private List<SetType> generateSets(Set<String> instanceTypes, ObjectFactory objectFactory) {
     var setTypes = new LinkedList<SetType>();
     var setQualifier = objectFactory.createSetType();
-    setQualifier.setSetSpec(PUBLICATION_INSTANCE_TYPE_SET);
-    setQualifier.setSetName(PUBLICATION_INSTANCE_TYPE_SET);
+    setQualifier.setSetSpec(Sets.PUBLICATION_INSTANCE_TYPE.getValue());
+    setQualifier.setSetName(Sets.PUBLICATION_INSTANCE_TYPE.getValue());
 
     setTypes.add(setQualifier);
 
@@ -101,7 +99,7 @@ public class ListSets {
 
   private SetType wrap(String instanceType, ObjectFactory objectFactory) {
     var setType = objectFactory.createSetType();
-    setType.setSetSpec(PUBLICATION_INSTANCE_TYPE_SET + COLON + instanceType);
+    setType.setSetSpec(Sets.PUBLICATION_INSTANCE_TYPE.getSpec(instanceType));
     setType.setSetName(instanceType);
 
     return setType;

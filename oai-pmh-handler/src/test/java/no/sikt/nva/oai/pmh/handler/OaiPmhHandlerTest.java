@@ -53,6 +53,7 @@ import javax.xml.transform.Source;
 import no.sikt.nva.oai.pmh.handler.oaipmh.DefaultOaiPmhMethodRouter;
 import no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhRequest;
 import no.sikt.nva.oai.pmh.handler.oaipmh.ResumptionToken;
+import no.sikt.nva.oai.pmh.handler.oaipmh.Sets;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.records.SwsResponse;
@@ -465,6 +466,22 @@ public class OaiPmhHandlerTest {
             response);
 
     assertThat(datestamp, is(not(nullValue())));
+  }
+
+  @Test
+  void shouldPopulateRecordHeaderSetSpec() throws IOException, JAXBException {
+    var inputStream = setUpDefaultHitAndRequest();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    var setSpec =
+        extractTextNodeValueFromResponse(
+            xpathEngine,
+            "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:header/oai:setSpec",
+            response);
+
+    assertThat(setSpec, is(equalTo(Sets.PUBLICATION_INSTANCE_TYPE.getSpec("Journal"))));
   }
 
   @Test
