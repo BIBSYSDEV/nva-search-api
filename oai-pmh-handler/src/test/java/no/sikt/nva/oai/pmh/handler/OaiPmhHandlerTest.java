@@ -87,7 +87,6 @@ import org.xmlunit.xpath.XPathEngine;
 @WireMockTest
 public class OaiPmhHandlerTest {
 
-  private static final String ASCENDING = "asc";
   private static final String OAI_PMH_NAMESPACE_PREFIX = "oai";
   private static final String OAI_PMH_NAMESPACE = "http://www.openarchives.org/OAI/2.0/";
   private static final String DC_NAMESPACE_PREFIX = "dc";
@@ -562,6 +561,36 @@ public class OaiPmhHandlerTest {
     assertThat(publisher, is(equalTo("My publisher name")));
   }
 
+  @Test
+  void shouldOmitDcDateIfPublicationIsMissingPublicationDate() throws IOException, JAXBException {
+    var inputStream = requestWithReportBasicHitMissingPublicationDate();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    assertNotPresent(
+        xpathEngine,
+        "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:metadata/oai-dc:dc/dc:date",
+        response);
+  }
+
+  @Test
+  void shouldOmitDcDateIfPublicationHasEmptyPublicationDate() throws IOException, JAXBException {
+    var inputStream = requestWithReportBasicHitEmptyPublicationDate();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    assertNotPresent(
+        xpathEngine,
+        "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:metadata/oai-dc:dc/dc:date",
+        response);
+  }
+
+  private void assertNotPresent(JAXPXPathEngine xpathEngine, String expression, Source source) {
+    assertThat(xpathEngine.selectNodes(expression, source), is(emptyIterable()));
+  }
+
   private void runListRecordsTest(
       String method,
       String currentPageFromDate,
@@ -710,6 +739,34 @@ public class OaiPmhHandlerTest {
                 HitBuilder.reportBasic(port, "My publisher name", "My series name")
                     .withIdentifier("1")
                     .withTitle("My title")
+                    .build()));
+    return hitAndRequest(hits);
+  }
+
+  private InputStream requestWithReportBasicHitMissingPublicationDate()
+      throws JsonProcessingException {
+    var hits =
+        new ArrayNode(
+            JsonNodeFactory.instance,
+            List.of(
+                HitBuilder.reportBasic(port, "My publisher name", "My series name")
+                    .withIdentifier("1")
+                    .withTitle("My title")
+                    .withNoPublicationDate()
+                    .build()));
+    return hitAndRequest(hits);
+  }
+
+  private InputStream requestWithReportBasicHitEmptyPublicationDate()
+      throws JsonProcessingException {
+    var hits =
+        new ArrayNode(
+            JsonNodeFactory.instance,
+            List.of(
+                HitBuilder.reportBasic(port, "My publisher name", "My series name")
+                    .withIdentifier("1")
+                    .withTitle("My title")
+                    .withEmptyPublicationDate()
                     .build()));
     return hitAndRequest(hits);
   }

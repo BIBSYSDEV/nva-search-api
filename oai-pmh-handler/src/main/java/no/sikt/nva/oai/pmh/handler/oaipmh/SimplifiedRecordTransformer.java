@@ -112,9 +112,11 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
   }
 
   private static void appendDate(ResourceSearchResponse response, OaiDcType oaiDcType) {
-    var dateElement = OBJECT_FACTORY.createElementType();
-    dateElement.setValue(asString(response.publicationDate()));
-    oaiDcType.getTitleOrCreatorOrSubject().addLast(OBJECT_FACTORY.createDate(dateElement));
+    if (nonNull(response.publicationDate()) && nonNull(response.publicationDate().year())) {
+      var dateElement = OBJECT_FACTORY.createElementType();
+      dateElement.setValue(asString(response.publicationDate()));
+      oaiDcType.getTitleOrCreatorOrSubject().addLast(OBJECT_FACTORY.createDate(dateElement));
+    }
   }
 
   private static String asString(PublicationDate publicationDate) {
