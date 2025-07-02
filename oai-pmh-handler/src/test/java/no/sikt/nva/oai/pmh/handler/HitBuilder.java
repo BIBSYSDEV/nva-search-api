@@ -1,6 +1,7 @@
 package no.sikt.nva.oai.pmh.handler;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -26,6 +27,16 @@ public class HitBuilder {
 
   public static HitBuilder academicArticle(int port, String journalName) {
     var referenceNode = academicArticleReferenceNode(journalName);
+    return new HitBuilder(port, referenceNode);
+  }
+
+  public static HitBuilder academicArticleWithMissingJournalInformation(int port) {
+    var referenceNode = academicArticleReferenceNode(null);
+    return new HitBuilder(port, referenceNode);
+  }
+
+  public static HitBuilder reportBasicWithMissingChannelName(int port) {
+    var referenceNode = reportBasicReferenceNode(null, null);
     return new HitBuilder(port, referenceNode);
   }
 
@@ -125,7 +136,9 @@ public class HitBuilder {
     publicationInstance.put("type", "AcademicArticle");
     var publicationContext = new ObjectNode(JsonNodeFactory.instance);
     publicationContext.put("type", "Journal");
-    publicationContext.put("name", journalName);
+    if (nonNull(journalName)) {
+      publicationContext.put("name", journalName);
+    }
 
     var referenceNode = new ObjectNode(JsonNodeFactory.instance);
     referenceNode.put("type", "Reference");
@@ -153,13 +166,17 @@ public class HitBuilder {
 
   private static ObjectNode publisherNode(String publisherName) {
     var node = new ObjectNode(JsonNodeFactory.instance);
-    node.put("name", publisherName);
+    if (nonNull(publisherName)) {
+      node.put("name", publisherName);
+    }
     return node;
   }
 
   private static ObjectNode seriesNode(String seriesName) {
     var node = new ObjectNode(JsonNodeFactory.instance);
-    node.put("name", seriesName);
+    if (nonNull(seriesName)) {
+      node.put("name", seriesName);
+    }
     return node;
   }
 }

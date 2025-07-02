@@ -88,14 +88,9 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
     if (nonNull(response.publishingDetails())) {
       final String publisherName;
       if (JOURNAL.equals(response.publishingDetails().type())) {
-        var publishingDetails = response.publishingDetails();
-        publisherName =
-            nonNull(publishingDetails.name())
-                ? publishingDetails.name()
-                : publishingDetails.id().toString();
+        publisherName = resolvePublisherFromJournal(response);
       } else if (nonNull(response.publishingDetails().publisher())) {
-        var publisher = response.publishingDetails().publisher();
-        publisherName = nonNull(publisher.name()) ? publisher.name() : publisher.id().toString();
+        publisherName = resolvePublisherFromPublisher(response);
       } else {
         publisherName = null;
       }
@@ -108,6 +103,20 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
             .addLast(OBJECT_FACTORY.createPublisher(publisherElement));
       }
     }
+  }
+
+  private static String resolvePublisherFromPublisher(ResourceSearchResponse response) {
+    var publisher = response.publishingDetails().publisher();
+    return nonNull(publisher.name())
+        ? publisher.name()
+        : nonNull(publisher.id()) ? publisher.id().toString() : null;
+  }
+
+  private static String resolvePublisherFromJournal(ResourceSearchResponse response) {
+    var publishingDetails = response.publishingDetails();
+    return nonNull(publishingDetails.name())
+        ? publishingDetails.name()
+        : nonNull(publishingDetails.id()) ? publishingDetails.id().toString() : null;
   }
 
   private static void appendDate(ResourceSearchResponse response, OaiDcType oaiDcType) {

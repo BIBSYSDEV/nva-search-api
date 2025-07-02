@@ -579,6 +579,32 @@ public class OaiPmhHandlerTest {
   }
 
   @Test
+  void shouldOmitJournalNameAsPublisherIfDataIsIncomplete() throws IOException, JAXBException {
+    var inputStream = requestWithReportBasicHitWithIncompletePublisherInformation();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    assertNotPresent(
+        xpathEngine,
+        "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:metadata/oai-dc:dc/dc:publisher",
+        response);
+  }
+
+  @Test
+  void shouldOmitPublisherNameAsPublisherIfDataIsIncomplete() throws IOException, JAXBException {
+    var inputStream = academicArticleWithIncompleteJournalInformation();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    assertNotPresent(
+        xpathEngine,
+        "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:metadata/oai-dc:dc/dc:publisher",
+        response);
+  }
+
+  @Test
   void shouldOmitDcDateIfPublicationIsMissingPublicationDate() throws IOException, JAXBException {
     var inputStream = requestWithReportBasicHitMissingPublicationDate();
 
@@ -721,6 +747,20 @@ public class OaiPmhHandlerTest {
     return hitAndRequest(hits);
   }
 
+  private InputStream academicArticleWithIncompleteJournalInformation()
+      throws JsonProcessingException {
+    var hits =
+        new ArrayNode(
+            JsonNodeFactory.instance,
+            List.of(
+                HitBuilder.academicArticleWithMissingJournalInformation(port)
+                    .withIdentifier(DEFAULT_PUBLICATION_IDENTIFIER)
+                    .withTitle("My title")
+                    .withContributors("Ola Nordmann")
+                    .build()));
+    return hitAndRequest(hits);
+  }
+
   private InputStream hitAndRequest(ArrayNode hits) throws JsonProcessingException {
     var scrollId = randomString();
     var resourceQueryMatcher =
@@ -754,6 +794,19 @@ public class OaiPmhHandlerTest {
             JsonNodeFactory.instance,
             List.of(
                 HitBuilder.reportBasic(port, "My publisher name", "My series name")
+                    .withIdentifier("1")
+                    .withTitle("My title")
+                    .build()));
+    return hitAndRequest(hits);
+  }
+
+  private InputStream requestWithReportBasicHitWithIncompletePublisherInformation()
+      throws JsonProcessingException {
+    var hits =
+        new ArrayNode(
+            JsonNodeFactory.instance,
+            List.of(
+                HitBuilder.reportBasicWithMissingChannelName(port)
                     .withIdentifier("1")
                     .withTitle("My title")
                     .build()));
