@@ -5,7 +5,6 @@ import static java.util.Objects.nonNull;
 import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import no.unit.nva.search.resource.response.Contributor;
@@ -39,7 +38,7 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
   private RecordType toRecord(ResourceSearchResponse response) {
     var record = new RecordType();
     var metadata = populateMetadataType(response);
-    var headerType = populateHeaderType(response.id(), response.recordMetadata().modifiedDate());
+    var headerType = populateHeaderType(response);
     record.setHeader(headerType);
     record.setMetadata(metadata);
     return record;
@@ -136,10 +135,13 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
     oaiDcType.getTitleOrCreatorOrSubject().addLast(OBJECT_FACTORY.createType(typeElement));
   }
 
-  private static HeaderType populateHeaderType(URI id, String datestamp) {
+  private static HeaderType populateHeaderType(ResourceSearchResponse response) {
     var headerType = new ObjectFactory().createHeaderType();
-    headerType.setIdentifier(id.toString());
-    headerType.setDatestamp(datestamp);
+    headerType.setIdentifier(response.id().toString());
+    headerType.setDatestamp(response.recordMetadata().modifiedDate());
+    headerType
+        .getSetSpec()
+        .add(Sets.PUBLICATION_INSTANCE_TYPE.getSpec(response.publishingDetails().type()));
     return headerType;
   }
 }
