@@ -1,5 +1,7 @@
 package no.sikt.nva.oai.pmh.handler;
 
+import static java.util.Objects.isNull;
+
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -8,11 +10,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 public class HitBuilder {
+
   private final ObjectNode referenceNode;
   private final int port;
   private String identifier;
   private String title;
   private String[] contributors = new String[] {};
+  private ObjectNode publicationDateNode;
+  private boolean publicationDatePresent = true;
 
   private HitBuilder(int port, ObjectNode referenceNode) {
     this.port = port;
@@ -44,47 +49,72 @@ public class HitBuilder {
     return this;
   }
 
+  public HitBuilder withEmptyPublicationDate() {
+    publicationDateNode = new ObjectNode(JsonNodeFactory.instance);
+    return this;
+  }
+
+  public HitBuilder withNoPublicationDate() {
+    this.publicationDatePresent = false;
+    return this;
+  }
+
   public ObjectNode build() {
     var rootNode = new ObjectNode(JsonNodeFactory.instance);
     rootNode.put("type", "Publication");
     rootNode.put("@context", "https://localhost:" + port + "/publication/context");
     rootNode.put("id", "https://localhost/publication/" + this.identifier);
     rootNode.put("identifier", this.identifier);
-    var publicationDateNode = new ObjectNode(JsonNodeFactory.instance);
-    publicationDateNode.put("year", "2020");
-    publicationDateNode.put("month", "01");
-    publicationDateNode.put("day", "01");
+    var publicationDateNodeToUse = resolvePublicationDateNode();
     var contributorsPreviewNode = new ArrayNode(JsonNodeFactory.instance);
     Arrays.stream(contributors)
         .forEach(contributor -> contributorsPreviewNode.add(contributorNode(contributor)));
     rootNode.set(
         "entityDescription",
-        entityDescriptionNode(title, referenceNode, publicationDateNode, contributorsPreviewNode));
+        entityDescriptionNode(
+            title, referenceNode, publicationDateNodeToUse, contributorsPreviewNode));
     rootNode.put(
         "modifiedDate", ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
     return rootNode;
   }
 
-  private ObjectNode contributorNode(String contributor) {
+  private ObjectNode resolvePublicationDateNode() {
+    ObjectNode publicationDateNodeToUse;
+    if (publicationDatePresent && isNull(publicationDateNode)) {
+      publicationDateNodeToUse = new ObjectNode(JsonNodeFactory.instance);
+      publicationDateNodeToUse.put("year", "2020");
+      publicationDateNodeToUse.put("month", "01");
+      publicationDateNodeToUse.put("day", "01");
+    } else if (publicationDatePresent) {
+      publicationDateNodeToUse = publicationDateNode;
+    } else {
+      publicationDateNodeToUse = null;
+    }
+    return publicationDateNodeToUse;
+  }
+
+  private static ObjectNode contributorNode(String contributor) {
     var contributorNode = new ObjectNode(JsonNodeFactory.instance);
     contributorNode.set("identity", identityNode(contributor));
     return contributorNode;
   }
 
-  private ObjectNode identityNode(String contributor) {
+  private static ObjectNode identityNode(String contributor) {
     var identityNode = new ObjectNode(JsonNodeFactory.instance);
     identityNode.put("name", contributor);
     return identityNode;
   }
 
-  private ObjectNode entityDescriptionNode(
+  private static ObjectNode entityDescriptionNode(
       String title,
       ObjectNode referenceNode,
       ObjectNode publicationDateNode,
       ArrayNode contributorsPreviewNode) {
     var node = new ObjectNode(JsonNodeFactory.instance);
     node.set("reference", referenceNode);
-    node.set("publicationDate", publicationDateNode);
+    if (publicationDateNode != null) {
+      node.set("publicationDate", publicationDateNode);
+    }
     node.put("mainTitle", title);
     node.set("contributorsPreview", contributorsPreviewNode);
     return node;
