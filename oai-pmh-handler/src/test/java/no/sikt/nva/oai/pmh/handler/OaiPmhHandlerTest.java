@@ -51,6 +51,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.xml.transform.Source;
 import no.sikt.nva.oai.pmh.handler.oaipmh.DefaultOaiPmhMethodRouter;
+import no.sikt.nva.oai.pmh.handler.oaipmh.MetadataPrefix;
 import no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhRequest;
 import no.sikt.nva.oai.pmh.handler.oaipmh.ResumptionToken;
 import no.sikt.nva.oai.pmh.handler.oaipmh.Sets;
@@ -356,11 +357,23 @@ public class OaiPmhHandlerTest {
     var schema = getTextValueOfNamedChild(metadataFormatNode, "schema");
     var metadataNamespace = getTextValueOfNamedChild(metadataFormatNode, "metadataNamespace");
 
-    assertThat(metadataPrefix.orElseThrow(), is(equalTo("oai-dc")));
+    assertThat(metadataPrefix.orElseThrow(), is(equalTo(MetadataPrefix.OAI_DC.getPrefix())));
     assertThat(schema.orElseThrow(), is(equalTo("http://www.openarchives.org/OAI/2.0/oai_dc.xsd")));
     assertThat(
         metadataNamespace.orElseThrow(),
         is(equalTo("http://www.openarchives.org/OAI/2.0/oai_dc/")));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldReportErrorOnListRecordsWithNotSupportedMetadataPrefix(String method)
+      throws Exception {
+    var fromDate = "2016-01-01";
+    var untilDate = "2017-01-01";
+
+    var response = performListRecordsOperation(method, fromDate, untilDate, "NOT_SUPPORTED", null);
+    assertXmlResponseWithError(
+        response, OAIPMHerrorcodeType.CANNOT_DISSEMINATE_FORMAT, "NOT_SUPPORTED");
   }
 
   @ParameterizedTest
@@ -384,11 +397,11 @@ public class OaiPmhHandlerTest {
   void shouldListRecordsWithResumptionToken(String method) throws Exception {
     var fromDate = "2016-01-01";
     var untilDate = "2017-01-01";
-    var metadataPrefix = "oai-dc";
+    var metadataPrefix = MetadataPrefix.OAI_DC;
     var currentPageFromDate = "2016-01-04T05:48:31Z";
     var oaiPmhRequest =
         OaiPmhRequest.parse(
-            VerbType.LIST_RECORDS.value(), fromDate, untilDate, metadataPrefix, null);
+            VerbType.LIST_RECORDS.value(), fromDate, untilDate, metadataPrefix.getPrefix(), null);
     var resumptionToken = new ResumptionToken(oaiPmhRequest, currentPageFromDate, 8).getValue();
 
     var expectedIdentifiers =
@@ -414,10 +427,10 @@ public class OaiPmhHandlerTest {
     var fromDate = "2016-01-01";
     var untilDate = "2017-01-01";
     var currentPageFromDate = "2016-01-07T05:48:31Z";
-    var metadataPrefix = "oai-dc";
+    var metadataPrefix = MetadataPrefix.OAI_DC;
     var oaiPmhRequest =
         OaiPmhRequest.parse(
-            VerbType.LIST_RECORDS.value(), fromDate, untilDate, metadataPrefix, null);
+            VerbType.LIST_RECORDS.value(), fromDate, untilDate, metadataPrefix.getPrefix(), null);
     var resumptionToken = new ResumptionToken(oaiPmhRequest, currentPageFromDate, 8).getValue();
 
     var expectedIdentifiers =
@@ -650,8 +663,9 @@ public class OaiPmhHandlerTest {
     var swsResponse = resolveMockResponse(currentPageFromDate, expectedRecordCount);
     when(resourceClient.doSearch(argThat(matcher), any())).thenReturn(swsResponse);
 
+    var metadataPrefix = MetadataPrefix.OAI_DC.getPrefix();
     var response =
-        performListRecordsOperation(method, fromDate, untilDate, "oai-dc", resumptionToken);
+        performListRecordsOperation(method, fromDate, untilDate, metadataPrefix, resumptionToken);
     var xpathEngine = getXpathEngine();
 
     assertResponseRequestContains(VerbType.LIST_RECORDS, response, xpathEngine);
@@ -664,6 +678,15 @@ public class OaiPmhHandlerTest {
 
     if (expectResumptionToken) {
       assertResumptionTokenHasCompleteRecordSize(xpathEngine, response);
+      var resumptionTokenValue =
+          xpathEngine
+              .selectNodes("/oai:OAI-PMH/oai:ListRecords/oai:resumptionToken", response)
+              .iterator()
+              .next()
+              .getFirstChild()
+              .getNodeValue();
+      var token = ResumptionToken.from(VerbType.LIST_RECORDS, resumptionTokenValue).orElseThrow();
+      assertThat(token.originalRequest().getMetadataPrefix(), is(equalTo(metadataPrefix)));
     } else {
       assertNoResumptionToken(xpathEngine, response);
     }
@@ -782,7 +805,7 @@ public class OaiPmhHandlerTest {
 
     var from = "2016-01-01";
     var until = "2016-01-02";
-    var metadataPrefix = "oai-dc";
+    var metadataPrefix = MetadataPrefix.OAI_DC.getPrefix();
     String resumptionToken = null;
     return request(
         VerbType.LIST_RECORDS.value(), "GET", from, until, metadataPrefix, resumptionToken);

@@ -10,7 +10,6 @@ import org.openarchives.oai.pmh.v2.ObjectFactory;
 import org.openarchives.oai.pmh.v2.VerbType;
 
 public class ListMetadataFormats {
-  private static final String OAI_DC_METADATA_PREFIX = "oai-dc";
 
   public ListMetadataFormats() {}
 
@@ -23,7 +22,7 @@ public class ListMetadataFormats {
     var listMetadataFormatsType = objectFactory.createListMetadataFormatsType();
 
     var metadataFormatType = objectFactory.createMetadataFormatType();
-    metadataFormatType.setMetadataPrefix(OAI_DC_METADATA_PREFIX);
+    metadataFormatType.setMetadataPrefix(MetadataPrefix.OAI_DC.getPrefix());
     metadataFormatType.setSchema(getSchemaLocation(Namespaces.OAI_DC));
     metadataFormatType.setMetadataNamespace(Namespaces.OAI_DC);
 
