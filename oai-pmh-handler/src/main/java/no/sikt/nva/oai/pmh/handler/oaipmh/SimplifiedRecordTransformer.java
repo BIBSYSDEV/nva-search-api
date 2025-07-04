@@ -148,9 +148,7 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
     var headerType = new ObjectFactory().createHeaderType();
     headerType.setIdentifier(response.id().toString());
     headerType.setDatestamp(response.recordMetadata().modifiedDate());
-    headerType
-        .getSetSpec()
-        .add(Sets.PUBLICATION_INSTANCE_TYPE.getSpec(response.publishingDetails().type()));
+    headerType.getSetSpec().add(Set.PUBLICATION_INSTANCE_TYPE.getSpec(response.type()));
     return headerType;
   }
 }
