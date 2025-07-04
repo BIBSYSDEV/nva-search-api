@@ -14,7 +14,6 @@ import no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhRequest;
 import no.unit.nva.search.resource.ResourceClient;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
-import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.StringUtils;
@@ -29,6 +28,7 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
   private static final String PARAMETER_NAME_VERB = "verb";
   private static final String PARAMETER_NAME_FROM = "from";
   private static final String PARAMETER_NAME_UNTIL = "until";
+  private static final String PARAMETER_NAME_SET = "set";
   private static final String PARAMETER_NAME_METADATA_PREFIX = "metadataPrefix";
   private static final String PARAMETER_NAME_RESUMPTION_TOKEN = "resumptionToken";
   private static final String EMPTY_VERB = "null";
@@ -82,8 +82,7 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
   }
 
   @Override
-  protected String processInput(String body, RequestInfo requestInfo, Context context)
-      throws ApiGatewayException {
+  protected String processInput(String body, RequestInfo requestInfo, Context context) {
     var oaiPmhRequest = getOaiPmhContext(body, requestInfo);
     var rootElement = dataProvider.handleRequest(oaiPmhRequest, endpointUri);
     return xmlSerializer.serialize(rootElement);
@@ -97,8 +96,9 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
         extractParameter(PARAMETER_NAME_METADATA_PREFIX, requestInfo, body).orElse(null);
     var resumptionToken =
         extractParameter(PARAMETER_NAME_RESUMPTION_TOKEN, requestInfo, body).orElse(null);
+    var set = extractParameter(PARAMETER_NAME_SET, requestInfo, body).orElse(null);
 
-    return OaiPmhRequest.parse(verb, from, until, metadataPrefix, resumptionToken);
+    return OaiPmhRequest.parse(verb, from, until, metadataPrefix, set, resumptionToken);
   }
 
   private Optional<String> extractParameter(

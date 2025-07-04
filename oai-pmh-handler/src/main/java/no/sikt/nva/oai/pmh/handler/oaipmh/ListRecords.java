@@ -60,16 +60,27 @@ public class ListRecords {
           nonNull(request.getMetadataPrefix())
               ? MetadataPrefix.fromPrefix(request.getMetadataPrefix())
               : MetadataPrefix.OAI_DC;
+      var searchResult = performSearch(request);
+      var records = recordTransformer.transform(searchResult.hits);
+      var listRecords =
+          createListRecordsResponse(records, searchResult.totalSize(), request, objectFactory);
+
+      oaiResponse.getValue().setListRecords(listRecords);
     } catch (MetadataPrefixNotSupportedException e) {
       return reportCannotDisseminateFormatError(request, objectFactory, oaiResponse);
+    } catch (SetNotSupportedException e) {
+      return reportBadArgumentError(request, objectFactory, oaiResponse);
     }
-    var searchResult = performSearch(request);
+    return oaiResponse;
+  }
 
-    var records = recordTransformer.transform(searchResult.hits);
-    var listRecords =
-        createListRecordsResponse(records, searchResult.totalSize(), request, objectFactory);
-
-    oaiResponse.getValue().setListRecords(listRecords);
+  private JAXBElement<OAIPMHtype> reportBadArgumentError(
+      OaiPmhRequest request, ObjectFactory objectFactory, JAXBElement<OAIPMHtype> oaiResponse) {
+    var errorType = objectFactory.createOAIPMHerrorType();
+    errorType.setCode(OAIPMHerrorcodeType.BAD_ARGUMENT);
+    errorType.setValue(
+        "Set '" + HtmlEscapers.htmlEscaper().escape(request.getSet()) + "' is not supported");
+    oaiResponse.getValue().getError().add(errorType);
     return oaiResponse;
   }
 
@@ -85,9 +96,10 @@ public class ListRecords {
   private SearchResult performSearch(OaiPmhRequest request) {
     var incomingResumptionToken =
         ResumptionToken.from(VerbType.LIST_RECORDS, request.getResumptionToken());
+    var setInstance = nonNull(request.getSet()) ? SetInstance.from(request.getSet()) : null;
     return incomingResumptionToken
-        .map(resumptionToken -> doFollowUpSearch(request.getUntil(), resumptionToken))
-        .orElseGet(() -> doInitialSearch(request.getFrom(), request.getUntil()));
+        .map(this::doFollowUpSearch)
+        .orElseGet(() -> doInitialSearch(request.getFrom(), request.getUntil(), setInstance));
   }
 
   private JAXBElement<OAIPMHtype> createBaseResponse(
@@ -123,13 +135,22 @@ public class ListRecords {
     return nonNull(current) && totalSize >= batchSize;
   }
 
-  private SearchResult doFollowUpSearch(String until, ResumptionToken resumptionToken) {
-    var query = buildListRecordsPageQuery(resumptionToken.current(), until, batchSize);
+  private SearchResult doFollowUpSearch(ResumptionToken resumptionToken) {
+    var setInstance =
+        nonNull(resumptionToken.originalRequest().getSet())
+            ? SetInstance.from(resumptionToken.originalRequest().getSet())
+            : null;
+    var query =
+        buildListRecordsPageQuery(
+            resumptionToken.current(),
+            resumptionToken.originalRequest().getUntil(),
+            setInstance,
+            batchSize);
     return doSearch(query, resumptionToken.totalSize());
   }
 
-  private SearchResult doInitialSearch(String from, String until) {
-    var query = buildListRecordsPageQuery(from, until, batchSize);
+  private SearchResult doInitialSearch(String from, String until, SetInstance setInstance) {
+    var query = buildListRecordsPageQuery(from, until, setInstance, batchSize);
     return doSearch(query, null);
   }
 
@@ -149,17 +170,26 @@ public class ListRecords {
   }
 
   private static ResourceSearchQuery buildListRecordsPageQuery(
-      String from, String until, int batchSize) {
+      String from, String until, SetInstance setInstance, int batchSize) {
     final ResourceSearchQuery query;
     try {
-      query =
+      var builder =
           ResourceSearchQuery.builder()
               .withParameter(ResourceParameter.AGGREGATION, Words.NONE)
-              .withParameter(ResourceParameter.MODIFIED_SINCE, from)
-              .withParameter(ResourceParameter.MODIFIED_BEFORE, until)
               .withParameter(ResourceParameter.FROM, ZERO)
               .withParameter(ResourceParameter.SIZE, Integer.toString(batchSize))
-              .withParameter(ResourceParameter.SORT, MODIFIED_DATE_ASCENDING)
+              .withParameter(ResourceParameter.SORT, MODIFIED_DATE_ASCENDING);
+      if (nonNull(from)) {
+        builder.withParameter(ResourceParameter.MODIFIED_SINCE, from);
+      }
+      if (nonNull(until)) {
+        builder.withParameter(ResourceParameter.MODIFIED_BEFORE, until);
+      }
+      if (nonNull(setInstance) && Set.PUBLICATION_INSTANCE_TYPE.equals(setInstance.set())) {
+        builder.withParameter(ResourceParameter.INSTANCE_TYPE, setInstance.value());
+      }
+      query =
+          builder
               .withAlwaysIncludedFields(SimplifiedMutator.getIncludedFields())
               .build()
               .withFilter()
