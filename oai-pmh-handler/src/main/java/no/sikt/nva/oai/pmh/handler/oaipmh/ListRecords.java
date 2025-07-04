@@ -8,6 +8,7 @@ import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.html.HtmlEscapers;
 import jakarta.xml.bind.JAXBElement;
 import java.math.BigInteger;
 import java.time.ZonedDateTime;
@@ -22,6 +23,7 @@ import no.unit.nva.search.resource.ResourceSort;
 import no.unit.nva.search.resource.SimplifiedMutator;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import org.openarchives.oai.pmh.v2.ListRecordsType;
+import org.openarchives.oai.pmh.v2.OAIPMHerrorcodeType;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
 import org.openarchives.oai.pmh.v2.ObjectFactory;
 import org.openarchives.oai.pmh.v2.RecordType;
@@ -50,15 +52,33 @@ public class ListRecords {
   }
 
   public JAXBElement<OAIPMHtype> listRecords(OaiPmhRequest request) {
-    var searchResult = performSearch(request);
     var objectFactory = new ObjectFactory();
+
     var oaiResponse = createBaseResponse(request, objectFactory);
+    try {
+      var ignored =
+          nonNull(request.getMetadataPrefix())
+              ? MetadataPrefix.fromPrefix(request.getMetadataPrefix())
+              : MetadataPrefix.OAI_DC;
+    } catch (MetadataPrefixNotSupportedException e) {
+      return reportCannotDisseminateFormatError(request, objectFactory, oaiResponse);
+    }
+    var searchResult = performSearch(request);
 
     var records = recordTransformer.transform(searchResult.hits);
     var listRecords =
         createListRecordsResponse(records, searchResult.totalSize(), request, objectFactory);
 
     oaiResponse.getValue().setListRecords(listRecords);
+    return oaiResponse;
+  }
+
+  private static JAXBElement<OAIPMHtype> reportCannotDisseminateFormatError(
+      OaiPmhRequest request, ObjectFactory objectFactory, JAXBElement<OAIPMHtype> oaiResponse) {
+    var errorType = objectFactory.createOAIPMHerrorType();
+    errorType.setCode(OAIPMHerrorcodeType.CANNOT_DISSEMINATE_FORMAT);
+    errorType.setValue(HtmlEscapers.htmlEscaper().escape(request.getMetadataPrefix()));
+    oaiResponse.getValue().getError().add(errorType);
     return oaiResponse;
   }
 
@@ -73,11 +93,12 @@ public class ListRecords {
   private JAXBElement<OAIPMHtype> createBaseResponse(
       OaiPmhRequest context, ObjectFactory objectFactory) {
     var oaiResponse = baseResponse(objectFactory);
+    var metadataPrefix = context.getMetadataPrefix();
     populateListRecordsRequest(
         context.getFrom(),
         context.getUntil(),
         context.getResumptionToken(),
-        context.getMetadataPrefix(),
+        metadataPrefix,
         oaiResponse.getValue());
     return oaiResponse;
   }
