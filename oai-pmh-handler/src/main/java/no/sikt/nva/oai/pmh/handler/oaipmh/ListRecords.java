@@ -61,11 +61,7 @@ public class ListRecords {
               ? MetadataPrefix.fromPrefix(request.getMetadataPrefix())
               : MetadataPrefix.OAI_DC;
     } catch (MetadataPrefixNotSupportedException e) {
-      var errorType = objectFactory.createOAIPMHerrorType();
-      errorType.setCode(OAIPMHerrorcodeType.CANNOT_DISSEMINATE_FORMAT);
-      errorType.setValue(HtmlEscapers.htmlEscaper().escape(request.getMetadataPrefix()));
-      oaiResponse.getValue().getError().add(errorType);
-      return oaiResponse;
+      return reportCannotDisseminateFormatError(request, objectFactory, oaiResponse);
     }
     var searchResult = performSearch(request);
 
@@ -74,6 +70,15 @@ public class ListRecords {
         createListRecordsResponse(records, searchResult.totalSize(), request, objectFactory);
 
     oaiResponse.getValue().setListRecords(listRecords);
+    return oaiResponse;
+  }
+
+  private static JAXBElement<OAIPMHtype> reportCannotDisseminateFormatError(
+      OaiPmhRequest request, ObjectFactory objectFactory, JAXBElement<OAIPMHtype> oaiResponse) {
+    var errorType = objectFactory.createOAIPMHerrorType();
+    errorType.setCode(OAIPMHerrorcodeType.CANNOT_DISSEMINATE_FORMAT);
+    errorType.setValue(HtmlEscapers.htmlEscaper().escape(request.getMetadataPrefix()));
+    oaiResponse.getValue().getError().add(errorType);
     return oaiResponse;
   }
 
