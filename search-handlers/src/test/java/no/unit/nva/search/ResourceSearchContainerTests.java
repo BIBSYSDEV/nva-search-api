@@ -15,6 +15,7 @@ import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.nio.file.Path;
 import java.util.stream.Stream;
@@ -32,7 +33,7 @@ import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiIoException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.ioutils.IoUtils;
-import org.apache.http.HttpHost;
+import org.apache.hc.core5.http.HttpHost;
 import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -42,14 +43,16 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.opensearch.client.RestClient;
-import org.opensearch.testcontainers.OpensearchContainer;
+import org.opensearch.client.RestClientBuilder;
+import org.opensearch.testcontainers.OpenSearchContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
 public class ResourceSearchContainerTests {
 
   private static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.11.0";
-  private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
+  private static final OpenSearchContainer<?> container =
+      new OpenSearchContainer<>(OPEN_SEARCH_IMAGE);
   private static final String INDEX_NAME = "resources";
   private static final String INDEX_DOCUMENT_TEMPLATE =
       IoUtils.stringFromResources(Path.of("indexDocumentTemplate.json"));
@@ -66,14 +69,20 @@ public class ResourceSearchContainerTests {
   public static void beforeAll() {
     container.withEnv("indices.query.bool.max_clause_count", "2048").start();
 
-    var restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
-    var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
-    var cachedJwtProvider = setupMockedCachedJwtProvider();
-    indexingClient = new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
+    RestClientBuilder restClientBuilder = null;
+    try {
+      restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
 
-    var userSettingsClient = mock(UserSettingsClient.class);
-    resourceClient =
-        new ResourceClient(HttpClient.newHttpClient(), cachedJwtProvider, userSettingsClient);
+      var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
+      var cachedJwtProvider = setupMockedCachedJwtProvider();
+      indexingClient = new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
+
+      var userSettingsClient = mock(UserSettingsClient.class);
+      resourceClient =
+          new ResourceClient(HttpClient.newHttpClient(), cachedJwtProvider, userSettingsClient);
+    } catch (URISyntaxException e) {
+      throw new IllegalArgumentException(e);
+    }
   }
 
   @AfterAll
