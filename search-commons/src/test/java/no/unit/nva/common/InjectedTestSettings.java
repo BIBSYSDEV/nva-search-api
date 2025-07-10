@@ -1,6 +1,5 @@
 package no.unit.nva.common;
 
-import java.io.IOException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.platform.launcher.TestExecutionListener;
@@ -15,13 +14,9 @@ public class InjectedTestSettings implements TestExecutionListener {
   @Override
   public void testPlanExecutionStarted(TestPlan testPlan) {
     TestExecutionListener.super.testPlanExecutionStarted(testPlan);
-    try {
-      Configurator.setAllLevels("", Level.WARN);
-      logger.info("Setting up Opensearch server");
-      Containers.setup();
-    } catch (InterruptedException | IOException e) {
-      logger.error(e.getMessage());
-    }
+    Configurator.setAllLevels("", Level.WARN);
+    logger.info("Setting up Opensearch server");
+    Containers.setup();
   }
 
   @Override

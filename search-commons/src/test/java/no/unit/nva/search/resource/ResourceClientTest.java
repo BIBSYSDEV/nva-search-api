@@ -88,6 +88,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.nio.charset.StandardCharsets;
@@ -118,7 +119,7 @@ import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.paths.UriWrapper;
-import org.apache.http.HttpHost;
+import org.apache.hc.core5.http.HttpHost;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -169,9 +170,13 @@ class ResourceClientTest {
   }
 
   private static IndexingClient initiateIndexingClient(CachedJwtProvider cachedJwtProvider) {
-    var restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
-    var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
-    return new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
+    try {
+      var restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
+      var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
+      return new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
+    } catch (URISyntaxException e) {
+      throw new IllegalArgumentException(e);
+    }
   }
 
   static Stream<Arguments> uriPagingProvider() {

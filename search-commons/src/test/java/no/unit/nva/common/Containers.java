@@ -18,6 +18,7 @@ import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.List;
@@ -29,9 +30,9 @@ import no.unit.nva.indexingclient.IndexingClient;
 import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
 import no.unit.nva.indexingclient.models.IndexDocument;
 import no.unit.nva.indexingclient.models.RestHighLevelClientWrapper;
-import org.apache.http.HttpHost;
+import org.apache.hc.core5.http.HttpHost;
 import org.opensearch.client.RestClient;
-import org.opensearch.testcontainers.OpensearchContainer;
+import org.opensearch.testcontainers.OpenSearchContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -40,7 +41,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 public class Containers {
 
-  public static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
+  public static final OpenSearchContainer<?> container =
+      new OpenSearchContainer<>(OPEN_SEARCH_IMAGE);
   private static final Logger logger = LoggerFactory.getLogger(Containers.class);
 
   private static final String RESOURCE_DATASOURCE_JSON = "resource_datasource.json";
@@ -50,16 +52,19 @@ public class Containers {
   private static final String IMPORT_CANDIDATE_DATASOURCE_JSON = "import_candidate_datasource.json";
   public static IndexingClient indexingClient;
 
-  public static void setup() throws IOException, InterruptedException {
+  public static void setup() {
     container.withEnv("indices.query.bool.max_clause_count", "2048").start();
 
     container.waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(60)));
 
-    var restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
-    var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
-    var cachedJwtProvider = setupMockedCachedJwtProvider();
-    indexingClient = new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
-
+    try {
+      var restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
+      var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
+      var cachedJwtProvider = setupMockedCachedJwtProvider();
+      indexingClient = new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
+    } catch (URISyntaxException e) {
+      throw new IllegalArgumentException(e);
+    }
     var refreshFutures =
         List.of(
             CompletableFuture.runAsync(Containers::prepareResourcesIndex),

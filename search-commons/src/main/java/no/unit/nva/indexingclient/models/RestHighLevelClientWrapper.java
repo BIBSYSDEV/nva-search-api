@@ -3,8 +3,9 @@ package no.unit.nva.indexingclient.models;
 import static no.unit.nva.constants.Defaults.ENVIRONMENT;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import nva.commons.core.JacocoGenerated;
-import org.apache.http.HttpHost;
+import org.apache.hc.core5.http.HttpHost;
 import org.opensearch.action.admin.indices.refresh.RefreshRequest;
 import org.opensearch.action.admin.indices.refresh.RefreshResponse;
 import org.opensearch.action.bulk.BulkRequest;
@@ -49,7 +50,11 @@ public class RestHighLevelClientWrapper {
   }
 
   public static RestHighLevelClientWrapper prepareRestHighLevelClientWrapperForUri(String address) {
-    return new RestHighLevelClientWrapper(RestClient.builder(HttpHost.create(address)));
+    try {
+      return new RestHighLevelClientWrapper(RestClient.builder(HttpHost.create(address)));
+    } catch (URISyntaxException e) {
+      throw new IllegalArgumentException(e);
+    }
   }
 
   /**
