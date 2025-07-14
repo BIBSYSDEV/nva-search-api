@@ -41,11 +41,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.opensearch.client.RestClient;
-import org.opensearch.client.RestClientBuilder;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
-public class TicketClientByOwnerTest {
+class TicketClientByOwnerTest {
   private static final String INDEX_NAME =
       TicketClientByOwnerTest.class.getSimpleName().toLowerCase(Locale.ROOT);
   private static final String MY_ORG_IDENTIFIER = "1.0.0.0";
@@ -74,9 +73,8 @@ public class TicketClientByOwnerTest {
     var cachedJwtProvider = setupMockedCachedJwtProvider();
     ticketClient = new TicketClient(HttpClient.newHttpClient(), cachedJwtProvider);
 
-    RestClientBuilder restClientBuilder = null;
     try {
-      restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
+      var restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
 
       var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
       var indexingClient = new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);

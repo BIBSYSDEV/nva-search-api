@@ -43,12 +43,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.opensearch.client.RestClient;
-import org.opensearch.client.RestClientBuilder;
 import org.opensearch.testcontainers.OpenSearchContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
-public class ResourceSearchContainerTests {
+class ResourceSearchContainerTests {
 
   private static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.11.0";
   private static final OpenSearchContainer<?> container =
@@ -66,12 +65,11 @@ public class ResourceSearchContainerTests {
   private static ResourceClient resourceClient;
 
   @BeforeAll
-  public static void beforeAll() {
+  static void beforeAll() {
     container.withEnv("indices.query.bool.max_clause_count", "2048").start();
 
-    RestClientBuilder restClientBuilder = null;
     try {
-      restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
+      var restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
 
       var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
       var cachedJwtProvider = setupMockedCachedJwtProvider();
@@ -86,7 +84,7 @@ public class ResourceSearchContainerTests {
   }
 
   @AfterAll
-  public static void afterAll() {
+  static void afterAll() {
     container.stop();
   }
 
@@ -96,7 +94,7 @@ public class ResourceSearchContainerTests {
   }
 
   @AfterEach
-  public void afterEach() throws IOException {
+  void afterEach() throws IOException {
     indexingClient.deleteIndex(INDEX_NAME);
   }
 
