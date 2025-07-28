@@ -15,6 +15,7 @@ public record ResumptionToken(OaiPmhRequest originalRequest, String current, int
   private static final String EQUALS = "=";
   private static final String FROM = "from";
   private static final String UNTIL = "until";
+  private static final String SET = "set";
   private static final String METADATA_PREFIX = "metadataPrefix";
   private static final String CURRENT = "current";
   private static final String TOTAL_SIZE = "totalSize";
@@ -33,12 +34,19 @@ public record ResumptionToken(OaiPmhRequest originalRequest, String current, int
           .append(EQUALS)
           .append(originalRequest.getFrom());
     }
-    if (nonNull(originalRequest.getFrom())) {
+    if (nonNull(originalRequest.getUntil())) {
       unencodedValueBuilder
           .append(AMPERSAND)
           .append(UNTIL)
           .append(EQUALS)
-          .append(originalRequest.getFrom());
+          .append(originalRequest.getUntil());
+    }
+    if (nonNull(originalRequest.getSet())) {
+      unencodedValueBuilder
+          .append(AMPERSAND)
+          .append(SET)
+          .append(EQUALS)
+          .append(originalRequest.getSet());
     }
     if (nonNull(current)) {
       unencodedValueBuilder.append(AMPERSAND).append(CURRENT).append(EQUALS).append(current);
@@ -63,10 +71,11 @@ public record ResumptionToken(OaiPmhRequest originalRequest, String current, int
     var metadataPrefix = values.get(METADATA_PREFIX);
     var from = values.get(FROM);
     var until = values.get(UNTIL);
+    var set = values.get(SET);
     var current = values.get(CURRENT);
     var totalSize = values.get(TOTAL_SIZE);
 
-    var originalRequest = OaiPmhRequest.parse(verb.value(), from, until, metadataPrefix, null);
+    var originalRequest = OaiPmhRequest.parse(verb.value(), from, until, metadataPrefix, set, null);
     return Optional.of(new ResumptionToken(originalRequest, current, Integer.parseInt(totalSize)));
   }
 }

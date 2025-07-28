@@ -8,7 +8,6 @@ import jakarta.xml.bind.JAXBElement;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.records.Facet;
@@ -46,7 +45,7 @@ public class ListSets {
     return oaiResponse;
   }
 
-  private Set<String> doSearchAndExtractInstanceTypesFromTypeAggregation(
+  private java.util.Set<String> doSearchAndExtractInstanceTypesFromTypeAggregation(
       ResourceClient resourceClient, ResourceSearchQuery query) {
     final HttpResponseFormatter<ResourceParameter> response;
     try {
@@ -82,11 +81,12 @@ public class ListSets {
     return query;
   }
 
-  private List<SetType> generateSets(Set<String> instanceTypes, ObjectFactory objectFactory) {
+  private List<SetType> generateSets(
+      java.util.Set<String> instanceTypes, ObjectFactory objectFactory) {
     var setTypes = new LinkedList<SetType>();
     var setQualifier = objectFactory.createSetType();
-    setQualifier.setSetSpec(Sets.PUBLICATION_INSTANCE_TYPE.getValue());
-    setQualifier.setSetName(Sets.PUBLICATION_INSTANCE_TYPE.getValue());
+    setQualifier.setSetSpec(Set.PUBLICATION_INSTANCE_TYPE.getValue());
+    setQualifier.setSetName(Set.PUBLICATION_INSTANCE_TYPE.getValue());
 
     setTypes.add(setQualifier);
 
@@ -99,7 +99,7 @@ public class ListSets {
 
   private SetType wrap(String instanceType, ObjectFactory objectFactory) {
     var setType = objectFactory.createSetType();
-    setType.setSetSpec(Sets.PUBLICATION_INSTANCE_TYPE.getSpec(instanceType));
+    setType.setSetSpec(Set.PUBLICATION_INSTANCE_TYPE.getSpec(instanceType));
     setType.setSetName(instanceType);
 
     return setType;

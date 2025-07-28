@@ -9,19 +9,31 @@ public final class OaiPmhRequest {
   private final String from;
   private final String until;
   private final String metadataPrefix;
+  private final String set;
   private final String resumptionToken;
 
   public static OaiPmhRequest parse(
-      String verb, String from, String until, String metadataPrefix, String resumptionToken) {
-    return new OaiPmhRequest(toVerbType(verb), from, until, metadataPrefix, resumptionToken);
+      String verb,
+      String from,
+      String until,
+      String metadataPrefix,
+      String set,
+      String resumptionToken) {
+    return new OaiPmhRequest(toVerbType(verb), from, until, metadataPrefix, set, resumptionToken);
   }
 
   private OaiPmhRequest(
-      VerbType verb, String from, String until, String metadataPrefix, String resumptionToken) {
+      VerbType verb,
+      String from,
+      String until,
+      String metadataPrefix,
+      String set,
+      String resumptionToken) {
     this.verb = verb;
     this.from = from;
     this.until = until;
     this.metadataPrefix = metadataPrefix;
+    this.set = set;
     this.resumptionToken = resumptionToken;
   }
 
@@ -35,6 +47,10 @@ public final class OaiPmhRequest {
 
   public String getUntil() {
     return until;
+  }
+
+  public String getSet() {
+    return set;
   }
 
   public String getMetadataPrefix() {
