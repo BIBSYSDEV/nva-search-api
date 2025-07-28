@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    implementation libs.apache.http
     implementation libs.aws.lambda.events
     implementation libs.aws.lambda.java.core
     implementation libs.aws.sdk2.sqs

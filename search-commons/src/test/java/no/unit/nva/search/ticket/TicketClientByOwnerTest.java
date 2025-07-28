@@ -14,6 +14,7 @@ import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,7 +36,7 @@ import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
-import org.apache.http.HttpHost;
+import org.apache.hc.core5.http.HttpHost;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -43,7 +44,7 @@ import org.opensearch.client.RestClient;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
-public class TicketClientByOwnerTest {
+class TicketClientByOwnerTest {
   private static final String INDEX_NAME =
       TicketClientByOwnerTest.class.getSimpleName().toLowerCase(Locale.ROOT);
   private static final String MY_ORG_IDENTIFIER = "1.0.0.0";
@@ -72,16 +73,21 @@ public class TicketClientByOwnerTest {
     var cachedJwtProvider = setupMockedCachedJwtProvider();
     ticketClient = new TicketClient(HttpClient.newHttpClient(), cachedJwtProvider);
 
-    var restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
-    var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
-    var indexingClient = new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
+    try {
+      var restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
 
-    indexingClient.createIndex(INDEX_NAME);
-    indexDocuments()
-        .forEach(
-            indexDocument ->
-                attempt(() -> indexingClient.addDocumentToIndex(indexDocument)).orElseThrow());
-    indexingClient.refreshIndex(INDEX_NAME);
+      var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
+      var indexingClient = new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
+
+      indexingClient.createIndex(INDEX_NAME);
+      indexDocuments()
+          .forEach(
+              indexDocument ->
+                  attempt(() -> indexingClient.addDocumentToIndex(indexDocument)).orElseThrow());
+      indexingClient.refreshIndex(INDEX_NAME);
+    } catch (URISyntaxException e) {
+      throw new IllegalArgumentException(e);
+    }
   }
 
   private static String ticketJsonFromTemplate(
