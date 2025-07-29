@@ -20,6 +20,12 @@ public record ResumptionToken(ListRecordsRequest originalRequest, String current
   private static final String TOTAL_SIZE = "totalSize";
   private static final String AMPERSAND = "&";
 
+  public ResumptionToken(ListRecordsRequest originalRequest, String current, int totalSize) {
+    this.originalRequest = originalRequest;
+    this.current = current;
+    this.totalSize = totalSize;
+  }
+
   public String getValue() {
     var unencodedValueBuilder = new StringBuilder();
     unencodedValueBuilder
@@ -31,14 +37,14 @@ public record ResumptionToken(ListRecordsRequest originalRequest, String current
           .append(AMPERSAND)
           .append(FROM)
           .append(EQUALS)
-          .append(originalRequest.getFrom());
+          .append(originalRequest.getFrom().asString());
     }
     if (nonNull(originalRequest.getUntil())) {
       unencodedValueBuilder
           .append(AMPERSAND)
           .append(UNTIL)
           .append(EQUALS)
-          .append(originalRequest.getUntil());
+          .append(originalRequest.getUntil().asString());
     }
     if (nonNull(originalRequest.getSet())) {
       unencodedValueBuilder
@@ -74,7 +80,9 @@ public record ResumptionToken(ListRecordsRequest originalRequest, String current
     var current = values.get(CURRENT);
     var totalSize = values.get(TOTAL_SIZE);
 
-    var originalRequest = new ListRecordsRequest(from, until, set, metadataPrefix);
+    var originalRequest =
+        new ListRecordsRequest(
+            OaiPmhDateTime.from(from), OaiPmhDateTime.from(until), set, metadataPrefix);
     return Optional.of(new ResumptionToken(originalRequest, current, Integer.parseInt(totalSize)));
   }
 }

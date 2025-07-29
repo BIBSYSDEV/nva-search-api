@@ -28,7 +28,7 @@ public class Identify {
     identify.setProtocolVersion(PROTOCOL_VERSION);
     identify.setEarliestDatestamp(EARLIEST_DATESTAMP);
     identify.setRepositoryName(REPOSITORY_NAME);
-    identify.setGranularity(GranularityType.YYYY_MM_DD);
+    identify.setGranularity(GranularityType.YYYY_MM_DD_THH_MM_SS_Z);
     identify.setDeletedRecord(DeletedRecordType.NO);
     identify.getAdminEmail().add(CONTACT_AT_SIKT_NO);
 

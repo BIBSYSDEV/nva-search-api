@@ -53,6 +53,7 @@ import javax.xml.transform.Source;
 import no.sikt.nva.oai.pmh.handler.oaipmh.DefaultOaiPmhMethodRouter;
 import no.sikt.nva.oai.pmh.handler.oaipmh.ListRecordsRequest;
 import no.sikt.nva.oai.pmh.handler.oaipmh.MetadataPrefix;
+import no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhDateTime;
 import no.sikt.nva.oai.pmh.handler.oaipmh.ResumptionToken;
 import no.sikt.nva.oai.pmh.handler.oaipmh.Set;
 import no.unit.nva.commons.json.JsonUtils;
@@ -337,7 +338,7 @@ public class OaiPmhHandlerTest {
 
     var granularity = getIdentifyChildNodeText(xpathEngine, response, GRANULARITY_NODE_NAME);
 
-    assertThat(granularity, is(equalTo("YYYY-MM-DD")));
+    assertThat(granularity, is(equalTo("YYYY-MM-DDThh:mm:ssZ")));
   }
 
   @ParameterizedTest
@@ -387,6 +388,19 @@ public class OaiPmhHandlerTest {
 
   @ParameterizedTest
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldReportErrorOnListRecordsWithoutMetadataPrefix(String method) throws Exception {
+    var fromDate = "2016-01-01";
+    var untilDate = "2017-01-01";
+
+    var response =
+        performListRecordsOperation(
+            method, fromDate, untilDate, null, "DUMMY" + ":AcademicArticle", null);
+    assertXmlResponseWithError(
+        response, OAIPMHerrorcodeType.BAD_ARGUMENT, "metadataPrefix is required");
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldReportErrorOnListRecordsWithNotSupportedMetadataPrefix(String method)
       throws Exception {
     var fromDate = "2016-01-01";
@@ -416,8 +430,8 @@ public class OaiPmhHandlerTest {
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldListRecordsOnInitialQuery(String method) throws Exception {
     String currentPageFromDate = null;
-    var fromDate = "2016-01-01";
-    var untilDate = "2017-01-01";
+    var fromDate = OaiPmhDateTime.from("2016-01-01");
+    var untilDate = OaiPmhDateTime.from("2017-01-01");
     var expectedIdentifiers =
         List.of(
             "https://api.unittests.nva.aws.unit.no/publication/019527b847ad-ee78bdbe-3f70-4ff4-930c-b4ace492ea64",
@@ -431,8 +445,8 @@ public class OaiPmhHandlerTest {
   @ParameterizedTest
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldListRecordsWithResumptionToken(String method) throws Exception {
-    var fromDate = "2016-01-01";
-    var untilDate = "2017-01-01";
+    var fromDate = OaiPmhDateTime.from("2016-01-01");
+    var untilDate = OaiPmhDateTime.from("2017-01-01");
     var metadataPrefix = MetadataPrefix.OAI_DC;
     var currentPageFromDate = "2016-01-04T05:48:31Z";
     var listRecordsRequest =
@@ -460,8 +474,8 @@ public class OaiPmhHandlerTest {
   @ParameterizedTest
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldNotReturnResumptionTokenOnLastPage(String method) throws Exception {
-    var fromDate = "2016-01-01";
-    var untilDate = "2017-01-01";
+    var fromDate = OaiPmhDateTime.from("2016-01-01");
+    var untilDate = OaiPmhDateTime.from("2017-01-01");
     var currentPageFromDate = "2016-01-07T05:48:31Z";
     var metadataPrefix = MetadataPrefix.OAI_DC;
     var listRecordsRequest =
@@ -700,8 +714,8 @@ public class OaiPmhHandlerTest {
   private void runListRecordsTest(
       String method,
       String currentPageFromDate,
-      String fromDate,
-      String untilDate,
+      OaiPmhDateTime fromDate,
+      OaiPmhDateTime untilDate,
       String resumptionToken,
       int expectedRecordCount,
       List<String> expectedIdentifiers,
@@ -709,14 +723,21 @@ public class OaiPmhHandlerTest {
       throws Exception {
 
     var matcher =
-        buildMatcher(nonNull(currentPageFromDate) ? currentPageFromDate : fromDate, untilDate);
+        buildMatcher(
+            nonNull(currentPageFromDate) ? currentPageFromDate : fromDate.asString(),
+            untilDate.asString());
     var swsResponse = resolveMockResponse(currentPageFromDate, expectedRecordCount);
     when(resourceClient.doSearch(argThat(matcher), any())).thenReturn(swsResponse);
 
     var metadataPrefix = MetadataPrefix.OAI_DC.getPrefix();
     var response =
         performListRecordsOperation(
-            method, fromDate, untilDate, metadataPrefix, null, resumptionToken);
+            method,
+            fromDate.asString(),
+            untilDate.asString(),
+            metadataPrefix,
+            null,
+            resumptionToken);
     var xpathEngine = getXpathEngine();
 
     assertResponseRequestContains(VerbType.LIST_RECORDS, response, xpathEngine);
@@ -862,8 +883,8 @@ public class OaiPmhHandlerTest {
             .withPageParameter(ResourceParameter.SIZE, "3")
             .withPageParameter(ResourceParameter.SORT, "modifiedDate:asc,identifier")
             .withSearchParameter(ResourceParameter.AGGREGATION, Words.NONE)
-            .withSearchParameter(ResourceParameter.MODIFIED_BEFORE, "2016-01-02")
-            .withSearchParameter(ResourceParameter.MODIFIED_SINCE, "2016-01-01");
+            .withSearchParameter(ResourceParameter.MODIFIED_BEFORE, "2016-01-02T00:00:00Z")
+            .withSearchParameter(ResourceParameter.MODIFIED_SINCE, "2016-01-01T00:00:00Z");
     if (nonNull(set) && set.startsWith(Set.PUBLICATION_INSTANCE_TYPE.getValue())) {
       queryBuilder.withSearchParameter(ResourceParameter.INSTANCE_TYPE, set.split(":")[1]);
     }
@@ -971,7 +992,9 @@ public class OaiPmhHandlerTest {
       throws JsonProcessingException {
     var bodyBuilder = new StringBuilder();
     bodyBuilder.append("verb=").append(verb);
-    bodyBuilder.append("&metadataPrefix=").append(metadataPrefix);
+    if (nonNull(metadataPrefix)) {
+      bodyBuilder.append("&metadataPrefix=").append(metadataPrefix);
+    }
     if (nonNull(from)) {
       bodyBuilder.append("&from=").append(from);
     }
@@ -998,7 +1021,9 @@ public class OaiPmhHandlerTest {
       HandlerRequestBuilder<String> handlerRequestBuilder) {
     Map<String, String> queryParams = new HashMap<>();
     queryParams.put("verb", verb);
-    queryParams.put("metadataPrefix", metadataPrefix);
+    if (nonNull(metadataPrefix)) {
+      queryParams.put("metadataPrefix", metadataPrefix);
+    }
     if (nonNull(from)) {
       queryParams.put("from", from);
     }

@@ -45,12 +45,14 @@ public abstract class OaiPmhRequest {
       return new ListRecordsRequest(ResumptionToken.from(resumptionToken).orElseThrow());
     }
 
+    var metadataPrefix =
+        extractParameter(PARAMETER_NAME_METADATA_PREFIX, requestInfo, body)
+            .orElseThrow(() -> new BadArgumentException("metadataPrefix is required"));
     var from = extractParameter(PARAMETER_NAME_FROM, requestInfo, body).orElse(null);
     var until = extractParameter(PARAMETER_NAME_UNTIL, requestInfo, body).orElse(null);
-    var metadataPrefix =
-        extractParameter(PARAMETER_NAME_METADATA_PREFIX, requestInfo, body).orElse(null);
     var set = extractParameter(PARAMETER_NAME_SET, requestInfo, body).orElse(null);
-    return new ListRecordsRequest(from, until, set, metadataPrefix);
+    return new ListRecordsRequest(
+        OaiPmhDateTime.from(from), OaiPmhDateTime.from(until), set, metadataPrefix);
   }
 
   private static ListSetsRequest listSetsRequest(RequestInfo requestInfo, String body) {
