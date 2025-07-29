@@ -9,9 +9,8 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import nva.commons.core.StringUtils;
-import org.openarchives.oai.pmh.v2.VerbType;
 
-public record ResumptionToken(OaiPmhRequest originalRequest, String current, int totalSize) {
+public record ResumptionToken(ListRecordsRequest originalRequest, String current, int totalSize) {
   private static final String EQUALS = "=";
   private static final String FROM = "from";
   private static final String UNTIL = "until";
@@ -55,7 +54,7 @@ public record ResumptionToken(OaiPmhRequest originalRequest, String current, int
     return URLEncoder.encode(unencodedValueBuilder.toString(), StandardCharsets.UTF_8);
   }
 
-  public static Optional<ResumptionToken> from(VerbType verb, String encodedToken) {
+  public static Optional<ResumptionToken> from(String encodedToken) {
     if (StringUtils.isEmpty(encodedToken)) {
       return Optional.empty();
     }
@@ -75,7 +74,7 @@ public record ResumptionToken(OaiPmhRequest originalRequest, String current, int
     var current = values.get(CURRENT);
     var totalSize = values.get(TOTAL_SIZE);
 
-    var originalRequest = OaiPmhRequest.parse(verb.value(), from, until, metadataPrefix, set, null);
+    var originalRequest = new ListRecordsRequest(from, until, set, metadataPrefix);
     return Optional.of(new ResumptionToken(originalRequest, current, Integer.parseInt(totalSize)));
   }
 }

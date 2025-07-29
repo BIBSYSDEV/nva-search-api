@@ -12,7 +12,6 @@ import org.openarchives.oai.pmh.v2.ObjectFactory;
 public class DefaultOaiPmhMethodRouter implements OaiPmhMethodRouter {
 
   private static final String UNSUPPORTED_VERB = "Unsupported verb.";
-  private static final String UNKNOWN_OR_NO_VERB_SUPPLIED = "Unknown or no verb supplied.";
 
   private final ResourceClient resourceClient;
   private final RecordTransformer recordTransformer;
@@ -26,28 +25,28 @@ public class DefaultOaiPmhMethodRouter implements OaiPmhMethodRouter {
 
   @Override
   public JAXBElement<OAIPMHtype> handleRequest(final OaiPmhRequest request, final URI endpointUri) {
-    return request
-        .getVerb()
-        .map(
-            type ->
-                switch (type) {
-                  case LIST_SETS -> new ListSets().listSets(resourceClient);
-                  case IDENTIFY -> new Identify().identify(endpointUri);
-                  case LIST_METADATA_FORMATS -> new ListMetadataFormats().listMetadataFormats();
-                  case LIST_RECORDS ->
-                      new ListRecords(resourceClient, recordTransformer, batchSize)
-                          .listRecords(request);
-                  default -> badVerb(UNSUPPORTED_VERB);
-                })
-        .orElseGet(() -> badVerb(UNKNOWN_OR_NO_VERB_SUPPLIED));
+    try {
+      return switch (request.getVerbType()) {
+        case LIST_SETS -> new ListSets().listSets((ListSetsRequest) request, resourceClient);
+        case IDENTIFY -> new Identify().identify((IdentifyRequest) request, endpointUri);
+        case LIST_METADATA_FORMATS ->
+            new ListMetadataFormats().listMetadataFormats((ListMetadataFormatsRequest) request);
+        case LIST_RECORDS ->
+            new ListRecords(resourceClient, recordTransformer, batchSize)
+                .listRecords((ListRecordsRequest) request);
+        default -> error(OAIPMHerrorcodeType.BAD_VERB, UNSUPPORTED_VERB);
+      };
+    } catch (OaiPmhException exception) {
+      return error(exception.getCodeType(), exception.getMessage());
+    }
   }
 
-  private JAXBElement<OAIPMHtype> badVerb(String message) {
+  public static JAXBElement<OAIPMHtype> error(OAIPMHerrorcodeType codeType, String message) {
     var objectFactory = new ObjectFactory();
     var response = baseResponse(objectFactory);
     var value = response.getValue();
     var error = objectFactory.createOAIPMHerrorType();
-    error.setCode(OAIPMHerrorcodeType.BAD_VERB);
+    error.setCode(codeType);
     error.setValue(message);
 
     value.getError().add(error);

@@ -51,7 +51,7 @@ public class ListRecords {
     this.batchSize = batchSize;
   }
 
-  public JAXBElement<OAIPMHtype> listRecords(OaiPmhRequest request) {
+  public JAXBElement<OAIPMHtype> listRecords(ListRecordsRequest request) {
     var objectFactory = new ObjectFactory();
 
     var oaiResponse = createBaseResponse(request, objectFactory);
@@ -75,7 +75,9 @@ public class ListRecords {
   }
 
   private JAXBElement<OAIPMHtype> reportBadArgumentError(
-      OaiPmhRequest request, ObjectFactory objectFactory, JAXBElement<OAIPMHtype> oaiResponse) {
+      ListRecordsRequest request,
+      ObjectFactory objectFactory,
+      JAXBElement<OAIPMHtype> oaiResponse) {
     var errorType = objectFactory.createOAIPMHerrorType();
     errorType.setCode(OAIPMHerrorcodeType.BAD_ARGUMENT);
     errorType.setValue(
@@ -85,7 +87,9 @@ public class ListRecords {
   }
 
   private static JAXBElement<OAIPMHtype> reportCannotDisseminateFormatError(
-      OaiPmhRequest request, ObjectFactory objectFactory, JAXBElement<OAIPMHtype> oaiResponse) {
+      ListRecordsRequest request,
+      ObjectFactory objectFactory,
+      JAXBElement<OAIPMHtype> oaiResponse) {
     var errorType = objectFactory.createOAIPMHerrorType();
     errorType.setCode(OAIPMHerrorcodeType.CANNOT_DISSEMINATE_FORMAT);
     errorType.setValue(HtmlEscapers.htmlEscaper().escape(request.getMetadataPrefix()));
@@ -93,30 +97,34 @@ public class ListRecords {
     return oaiResponse;
   }
 
-  private SearchResult performSearch(OaiPmhRequest request) {
-    var incomingResumptionToken =
-        ResumptionToken.from(VerbType.LIST_RECORDS, request.getResumptionToken());
+  private SearchResult performSearch(ListRecordsRequest request) {
+    var incomingResumptionToken = request.getResumptionToken();
     var setInstance = nonNull(request.getSet()) ? SetInstance.from(request.getSet()) : null;
-    return incomingResumptionToken
-        .map(this::doFollowUpSearch)
-        .orElseGet(() -> doInitialSearch(request.getFrom(), request.getUntil(), setInstance));
+    return nonNull(incomingResumptionToken)
+        ? doFollowUpSearch(incomingResumptionToken)
+        : doInitialSearch(request.getFrom(), request.getUntil(), setInstance);
   }
 
   private JAXBElement<OAIPMHtype> createBaseResponse(
-      OaiPmhRequest context, ObjectFactory objectFactory) {
+      ListRecordsRequest listRecordsRequest, ObjectFactory objectFactory) {
     var oaiResponse = baseResponse(objectFactory);
-    var metadataPrefix = context.getMetadataPrefix();
+    var metadataPrefix = listRecordsRequest.getMetadataPrefix();
     populateListRecordsRequest(
-        context.getFrom(),
-        context.getUntil(),
-        context.getResumptionToken(),
+        listRecordsRequest.getFrom(),
+        listRecordsRequest.getUntil(),
+        nonNull(listRecordsRequest.getResumptionToken())
+            ? listRecordsRequest.getResumptionToken().getValue()
+            : null,
         metadataPrefix,
         oaiResponse.getValue());
     return oaiResponse;
   }
 
   private ListRecordsType createListRecordsResponse(
-      List<RecordType> records, int totalSize, OaiPmhRequest request, ObjectFactory objectFactory) {
+      List<RecordType> records,
+      int totalSize,
+      ListRecordsRequest request,
+      ObjectFactory objectFactory) {
 
     var listRecords = objectFactory.createListRecordsType();
     listRecords.getRecord().addAll(records);
@@ -228,7 +236,10 @@ public class ListRecords {
   private record SearchResult(int totalSize, int pageSize, List<JsonNode> hits) {}
 
   private ResumptionTokenType generateResumptionToken(
-      OaiPmhRequest originalRequest, String current, int totalSize, ObjectFactory objectFactory) {
+      ListRecordsRequest originalRequest,
+      String current,
+      int totalSize,
+      ObjectFactory objectFactory) {
     var inTenMinutes =
         DatatypeFactory.newDefaultInstance()
             .newXMLGregorianCalendar(

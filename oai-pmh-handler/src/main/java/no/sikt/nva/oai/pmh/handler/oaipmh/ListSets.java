@@ -19,7 +19,6 @@ import nva.commons.apigateway.exceptions.BadRequestException;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
 import org.openarchives.oai.pmh.v2.ObjectFactory;
 import org.openarchives.oai.pmh.v2.SetType;
-import org.openarchives.oai.pmh.v2.VerbType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,14 +28,14 @@ public class ListSets {
 
   public ListSets() {}
 
-  public JAXBElement<OAIPMHtype> listSets(ResourceClient resourceClient) {
+  public JAXBElement<OAIPMHtype> listSets(ListSetsRequest request, ResourceClient resourceClient) {
     final ResourceSearchQuery query = buildAllAggregationsQuery();
 
     var instanceTypes = doSearchAndExtractInstanceTypesFromTypeAggregation(resourceClient, query);
     var objectFactory = new ObjectFactory();
     var oaiResponse = baseResponse(objectFactory);
     var value = oaiResponse.getValue();
-    value.getRequest().setVerb(VerbType.LIST_SETS);
+    value.getRequest().setVerb(request.getVerbType());
 
     var listSets = objectFactory.createListSetsType();
     listSets.getSet().addAll(generateSets(instanceTypes, objectFactory));

@@ -4,6 +4,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static java.net.HttpURLConnection.HTTP_INTERNAL_ERROR;
+import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.constants.Words.RESOURCES;
@@ -50,8 +51,8 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.xml.transform.Source;
 import no.sikt.nva.oai.pmh.handler.oaipmh.DefaultOaiPmhMethodRouter;
+import no.sikt.nva.oai.pmh.handler.oaipmh.ListRecordsRequest;
 import no.sikt.nva.oai.pmh.handler.oaipmh.MetadataPrefix;
-import no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhRequest;
 import no.sikt.nva.oai.pmh.handler.oaipmh.ResumptionToken;
 import no.sikt.nva.oai.pmh.handler.oaipmh.Set;
 import no.unit.nva.commons.json.JsonUtils;
@@ -89,6 +90,7 @@ import org.xmlunit.xpath.XPathEngine;
 @WireMockTest
 public class OaiPmhHandlerTest {
 
+  private static final String NO_SET = null;
   private static final String OAI_PMH_NAMESPACE_PREFIX = "oai";
   private static final String OAI_PMH_NAMESPACE = "http://www.openarchives.org/OAI/2.0/";
   private static final String DC_NAMESPACE_PREFIX = "dc";
@@ -157,7 +159,7 @@ public class OaiPmhHandlerTest {
 
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
     assertXmlResponseWithError(
-        response, OAIPMHerrorcodeType.BAD_VERB, "Unknown or no verb supplied.");
+        response, OAIPMHerrorcodeType.BAD_VERB, "Parameter 'verb' is missing.");
   }
 
   @ParameterizedTest
@@ -167,7 +169,10 @@ public class OaiPmhHandlerTest {
     var inputStream = request(verb.value(), method);
 
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
-    assertXmlResponseWithError(response, OAIPMHerrorcodeType.BAD_VERB, "Unsupported verb.");
+    assertXmlResponseWithError(
+        response,
+        OAIPMHerrorcodeType.BAD_VERB,
+        "Parameter 'verb' has a value that is not supported.");
   }
 
   @ParameterizedTest
@@ -178,7 +183,9 @@ public class OaiPmhHandlerTest {
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
 
     assertXmlResponseWithError(
-        response, OAIPMHerrorcodeType.BAD_VERB, "Unknown or no verb supplied.");
+        response,
+        OAIPMHerrorcodeType.BAD_VERB,
+        "Parameter 'verb' has a value that is not supported.");
   }
 
   @ParameterizedTest
@@ -193,7 +200,7 @@ public class OaiPmhHandlerTest {
             .build();
     when(resourceClient.doSearch(argThat(matcher), eq(RESOURCES))).thenReturn(swsResponse());
 
-    var inputStream = request(VerbType.LIST_SETS.value(), method);
+    var inputStream = listSetsRequest(method, null);
 
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
     var xpathEngine = getXpathEngine();
@@ -212,13 +219,27 @@ public class OaiPmhHandlerTest {
 
   @ParameterizedTest
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldReturnOaiPmhErrorWhenUsingResumptionTokenWithListSets(String method)
+      throws IOException, JAXBException {
+    var inputStream = listSetsRequest(method, "someResumptionToken");
+
+    var response = invokeHandlerAndAssertHttpStatus(inputStream, HTTP_OK);
+
+    assertXmlResponseWithError(
+        response,
+        OAIPMHerrorcodeType.BAD_ARGUMENT,
+        "Resumption token not supported for method 'ListSets'");
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldReturnExpectedErrorAndLogWhenSearchFailsForListSets(String method)
       throws IOException, JAXBException {
     final var appender = LogUtils.getTestingAppenderForRootLogger();
 
     doThrow(new RuntimeException(EMPTY_STRING)).when(resourceClient).doSearch(any(), eq(RESOURCES));
 
-    var inputStream = request(VerbType.LIST_SETS.value(), method);
+    var inputStream = listSetsRequest(method, null);
 
     invokeHandlerAndAssertHttpStatus(inputStream, HTTP_INTERNAL_ERROR);
 
@@ -414,15 +435,10 @@ public class OaiPmhHandlerTest {
     var untilDate = "2017-01-01";
     var metadataPrefix = MetadataPrefix.OAI_DC;
     var currentPageFromDate = "2016-01-04T05:48:31Z";
-    var oaiPmhRequest =
-        OaiPmhRequest.parse(
-            VerbType.LIST_RECORDS.value(),
-            fromDate,
-            untilDate,
-            metadataPrefix.getPrefix(),
-            null,
-            null);
-    var resumptionToken = new ResumptionToken(oaiPmhRequest, currentPageFromDate, 8).getValue();
+    var listRecordsRequest =
+        new ListRecordsRequest(fromDate, untilDate, NO_SET, metadataPrefix.getPrefix());
+    var resumptionToken =
+        new ResumptionToken(listRecordsRequest, currentPageFromDate, 8).getValue();
 
     var expectedIdentifiers =
         List.of(
@@ -448,15 +464,11 @@ public class OaiPmhHandlerTest {
     var untilDate = "2017-01-01";
     var currentPageFromDate = "2016-01-07T05:48:31Z";
     var metadataPrefix = MetadataPrefix.OAI_DC;
-    var oaiPmhRequest =
-        OaiPmhRequest.parse(
-            VerbType.LIST_RECORDS.value(),
-            fromDate,
-            untilDate,
-            metadataPrefix.getPrefix(),
-            null,
-            null);
-    var resumptionToken = new ResumptionToken(oaiPmhRequest, currentPageFromDate, 8).getValue();
+    var listRecordsRequest =
+        new ListRecordsRequest(fromDate, untilDate, NO_SET, metadataPrefix.getPrefix());
+
+    var resumptionToken =
+        new ResumptionToken(listRecordsRequest, currentPageFromDate, 8).getValue();
 
     var expectedIdentifiers =
         List.of(
@@ -724,7 +736,7 @@ public class OaiPmhHandlerTest {
               .next()
               .getFirstChild()
               .getNodeValue();
-      var token = ResumptionToken.from(VerbType.LIST_RECORDS, resumptionTokenValue).orElseThrow();
+      var token = ResumptionToken.from(resumptionTokenValue).orElseThrow();
       assertThat(token.originalRequest().getMetadataPrefix(), is(equalTo(metadataPrefix)));
     } else {
       assertNoResumptionToken(xpathEngine, response);
@@ -1156,6 +1168,29 @@ public class OaiPmhHandlerTest {
             OAI_DC_NAMESPACE_PREFIX, OAI_DC_NAMESPACE,
             DC_NAMESPACE_PREFIX, DC_NAMESPACE));
     return xpathEngine;
+  }
+
+  private static InputStream listSetsRequest(String method, String resumptionToken)
+      throws JsonProcessingException {
+    var handlerRequestBuilder =
+        new HandlerRequestBuilder<String>(new ObjectMapper()).withHttpMethod(method);
+
+    if ("get".equalsIgnoreCase(method)) {
+      var queryParameters = new HashMap<String, String>();
+      queryParameters.put("verb", VerbType.LIST_SETS.value());
+      if (nonNull(resumptionToken)) {
+        queryParameters.put("resumptionToken", resumptionToken);
+      }
+      handlerRequestBuilder.withQueryParameters(queryParameters);
+    } else if ("post".equalsIgnoreCase(method)) {
+      var body = new StringBuilder();
+      body.append("verb=").append(VerbType.LIST_SETS.value());
+      if (nonNull(resumptionToken)) {
+        body.append("&resumptionToken=").append(resumptionToken);
+      }
+      handlerRequestBuilder.withBody(body.toString());
+    }
+    return handlerRequestBuilder.build();
   }
 
   private static InputStream request(String verb, String method) throws JsonProcessingException {

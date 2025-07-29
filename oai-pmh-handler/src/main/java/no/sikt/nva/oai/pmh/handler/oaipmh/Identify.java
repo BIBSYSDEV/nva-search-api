@@ -8,7 +8,6 @@ import org.openarchives.oai.pmh.v2.DeletedRecordType;
 import org.openarchives.oai.pmh.v2.GranularityType;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
 import org.openarchives.oai.pmh.v2.ObjectFactory;
-import org.openarchives.oai.pmh.v2.VerbType;
 
 public class Identify {
   private static final String PROTOCOL_VERSION = "2.0";
@@ -18,11 +17,11 @@ public class Identify {
 
   public Identify() {}
 
-  public JAXBElement<OAIPMHtype> identify(URI endpointUri) {
+  public JAXBElement<OAIPMHtype> identify(IdentifyRequest request, URI endpointUri) {
     var objectFactory = new ObjectFactory();
     var oaiResponse = baseResponse(objectFactory);
     var value = oaiResponse.getValue();
-    value.getRequest().setVerb(VerbType.IDENTIFY);
+    value.getRequest().setVerb(request.getVerbType());
 
     var identify = objectFactory.createIdentifyType();
     identify.setBaseURL(endpointUri.toString());
