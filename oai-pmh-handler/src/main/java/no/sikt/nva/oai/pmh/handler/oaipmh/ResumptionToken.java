@@ -82,8 +82,8 @@ public record ResumptionToken(ListRecordsRequest originalRequest, String current
 
     var originalRequest =
         new ListRecordsRequest(
-            OaiPmhDateTime.from(from),
-            OaiPmhDateTime.from(until),
+            nonNull(from) ? OaiPmhDateTime.from(from) : null,
+            nonNull(until) ? OaiPmhDateTime.from(until) : null,
             nonNull(set) ? SetSpec.parse(set) : null,
             MetadataPrefix.fromPrefix(metadataPrefix));
     return Optional.of(new ResumptionToken(originalRequest, current, Integer.parseInt(totalSize)));

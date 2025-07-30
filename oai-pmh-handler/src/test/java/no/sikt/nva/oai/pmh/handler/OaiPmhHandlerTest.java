@@ -436,6 +436,22 @@ public class OaiPmhHandlerTest {
 
   @ParameterizedTest
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldListRecordsOnInitialQueryWithOnlyRequiredParameters(String method) throws Exception {
+    String currentPageFromDate = null;
+    final OaiPmhDateTime fromDate = null;
+    final OaiPmhDateTime untilDate = null;
+    var expectedIdentifiers =
+        List.of(
+            "https://api.unittests.nva.aws.unit.no/publication/019527b847ad-ee78bdbe-3f70-4ff4-930c-b4ace492ea64",
+            "https://api.unittests.nva.aws.unit.no/publication/019527b84693-a86c1cae-24da-4c9d-9bff-e097fd9be2f1",
+            "https://api.unittests.nva.aws.unit.no/publication/019527b845e4-182ebbf0-9481-4a98-aad2-76b617cc1b0c");
+
+    runListRecordsTest(
+        method, currentPageFromDate, fromDate, untilDate, null, 3, expectedIdentifiers, true);
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldListRecordsOnInitialQuery(String method) throws Exception {
     String currentPageFromDate = null;
     var fromDate = OaiPmhDateTime.from("2016-01-01");
@@ -719,20 +735,22 @@ public class OaiPmhHandlerTest {
   }
 
   private void runListRecordsTest(
-      String method,
-      String currentPageFromDate,
-      OaiPmhDateTime fromDate,
-      OaiPmhDateTime untilDate,
-      String resumptionToken,
-      int expectedRecordCount,
-      List<String> expectedIdentifiers,
-      boolean expectResumptionToken)
+      final String method,
+      final String currentPageFromDate,
+      final OaiPmhDateTime fromDate,
+      final OaiPmhDateTime untilDate,
+      final String resumptionToken,
+      final int expectedRecordCount,
+      final List<String> expectedIdentifiers,
+      final boolean expectResumptionToken)
       throws Exception {
 
     var matcher =
         buildMatcher(
-            nonNull(currentPageFromDate) ? currentPageFromDate : fromDate.asString(),
-            untilDate.asString());
+            nonNull(currentPageFromDate)
+                ? currentPageFromDate
+                : nonNull(fromDate) ? fromDate.asString() : null,
+            nonNull(untilDate) ? untilDate.asString() : null);
     var swsResponse = resolveMockResponse(currentPageFromDate, expectedRecordCount);
     when(resourceClient.doSearch(argThat(matcher), any())).thenReturn(swsResponse);
 
@@ -740,8 +758,8 @@ public class OaiPmhHandlerTest {
     var response =
         performListRecordsOperation(
             method,
-            fromDate.asString(),
-            untilDate.asString(),
+            nonNull(fromDate) ? fromDate.asString() : null,
+            nonNull(untilDate) ? untilDate.asString() : null,
             metadataPrefix,
             null,
             resumptionToken);
@@ -784,14 +802,21 @@ public class OaiPmhHandlerTest {
   }
 
   private ResourceSearchQueryMatcher buildMatcher(String from, String until) {
-    return new ResourceSearchQueryMatcher.Builder()
-        .withPageParameter(ResourceParameter.FROM, "0")
-        .withPageParameter(ResourceParameter.SIZE, "3")
-        .withPageParameter(ResourceParameter.SORT, "modifiedDate:asc,identifier")
-        .withSearchParameter(ResourceParameter.AGGREGATION, Words.NONE)
-        .withSearchParameter(ResourceParameter.MODIFIED_SINCE, from)
-        .withSearchParameter(ResourceParameter.MODIFIED_BEFORE, until)
-        .build();
+    var builder =
+        new ResourceSearchQueryMatcher.Builder()
+            .withPageParameter(ResourceParameter.FROM, "0")
+            .withPageParameter(ResourceParameter.SIZE, "3")
+            .withPageParameter(ResourceParameter.SORT, "modifiedDate:asc,identifier")
+            .withSearchParameter(ResourceParameter.AGGREGATION, Words.NONE);
+
+    if (nonNull(from)) {
+      builder.withSearchParameter(ResourceParameter.MODIFIED_SINCE, from);
+    }
+    if (nonNull(until)) {
+      builder.withSearchParameter(ResourceParameter.MODIFIED_BEFORE, until);
+    }
+
+    return builder.build();
   }
 
   private void assertResumptionTokenHasCompleteRecordSize(

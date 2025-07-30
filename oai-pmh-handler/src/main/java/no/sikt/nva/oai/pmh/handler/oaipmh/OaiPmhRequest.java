@@ -52,12 +52,10 @@ public abstract class OaiPmhRequest {
     var until = extractParameter(PARAMETER_NAME_UNTIL, requestInfo, body).orElse(null);
     var set = extractParameter(PARAMETER_NAME_SET, requestInfo, body).orElse(null);
 
-    var setSpec = nonNull(set) ? SetSpec.parse(set) : null;
-
     return new ListRecordsRequest(
-        OaiPmhDateTime.from(from),
-        OaiPmhDateTime.from(until),
-        setSpec,
+        nonNull(from) ? OaiPmhDateTime.from(from) : null,
+        nonNull(until) ? OaiPmhDateTime.from(until) : null,
+        nonNull(set) ? SetSpec.parse(set) : null,
         MetadataPrefix.fromPrefix(metadataPrefix));
   }
 

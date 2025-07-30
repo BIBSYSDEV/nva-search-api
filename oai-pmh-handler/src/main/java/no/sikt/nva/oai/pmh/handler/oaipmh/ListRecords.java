@@ -66,9 +66,11 @@ public class ListRecords {
   private SearchResult performSearch(ListRecordsRequest request) {
     var incomingResumptionToken = request.getResumptionToken();
     var setSpec = request.getSetSpec();
+    var from = nonNull(request.getFrom()) ? request.getFrom().asString() : null;
+    var until = nonNull(request.getUntil()) ? request.getUntil().asString() : null;
     return nonNull(incomingResumptionToken)
         ? doFollowUpSearch(incomingResumptionToken)
-        : doInitialSearch(request.getFrom().asString(), request.getUntil().asString(), setSpec);
+        : doInitialSearch(from, until, setSpec);
   }
 
   private JAXBElement<OAIPMHtype> createBaseResponse(
@@ -76,8 +78,8 @@ public class ListRecords {
     var oaiResponse = baseResponse(objectFactory);
     var metadataPrefix = listRecordsRequest.getMetadataPrefix();
     populateListRecordsRequest(
-        listRecordsRequest.getFrom().asString(),
-        listRecordsRequest.getUntil().asString(),
+        nonNull(listRecordsRequest.getFrom()) ? listRecordsRequest.getFrom().asString() : null,
+        nonNull(listRecordsRequest.getUntil()) ? listRecordsRequest.getUntil().asString() : null,
         nonNull(listRecordsRequest.getResumptionToken())
             ? listRecordsRequest.getResumptionToken().getValue()
             : null,
