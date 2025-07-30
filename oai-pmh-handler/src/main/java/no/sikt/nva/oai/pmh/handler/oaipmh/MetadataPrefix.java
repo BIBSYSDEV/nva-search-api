@@ -27,6 +27,7 @@ public enum MetadataPrefix {
 
   public static MetadataPrefix fromPrefix(String prefix) {
     return Optional.ofNullable(prefixMap.get(prefix))
-        .orElseThrow(() -> new MetadataPrefixNotSupportedException(prefix));
+        .orElseThrow(
+            () -> new MetadataPrefixNotSupportedException("metadataPrefix is not supported."));
   }
 }

@@ -31,7 +31,7 @@ public record ResumptionToken(ListRecordsRequest originalRequest, String current
     unencodedValueBuilder
         .append(METADATA_PREFIX)
         .append(EQUALS)
-        .append(originalRequest.getMetadataPrefix());
+        .append(originalRequest.getMetadataPrefix().getPrefix());
     if (nonNull(originalRequest.getFrom())) {
       unencodedValueBuilder
           .append(AMPERSAND)
@@ -46,12 +46,12 @@ public record ResumptionToken(ListRecordsRequest originalRequest, String current
           .append(EQUALS)
           .append(originalRequest.getUntil().asString());
     }
-    if (nonNull(originalRequest.getSet())) {
+    if (nonNull(originalRequest.getSetSpec())) {
       unencodedValueBuilder
           .append(AMPERSAND)
           .append(SET)
           .append(EQUALS)
-          .append(originalRequest.getSet());
+          .append(originalRequest.getSetSpec().asString());
     }
     if (nonNull(current)) {
       unencodedValueBuilder.append(AMPERSAND).append(CURRENT).append(EQUALS).append(current);
@@ -82,7 +82,10 @@ public record ResumptionToken(ListRecordsRequest originalRequest, String current
 
     var originalRequest =
         new ListRecordsRequest(
-            OaiPmhDateTime.from(from), OaiPmhDateTime.from(until), set, metadataPrefix);
+            OaiPmhDateTime.from(from),
+            OaiPmhDateTime.from(until),
+            nonNull(set) ? SetSpec.parse(set) : null,
+            MetadataPrefix.fromPrefix(metadataPrefix));
     return Optional.of(new ResumptionToken(originalRequest, current, Integer.parseInt(totalSize)));
   }
 }

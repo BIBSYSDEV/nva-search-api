@@ -8,13 +8,13 @@ import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.html.HtmlEscapers;
 import jakarta.xml.bind.JAXBElement;
 import java.math.BigInteger;
 import java.time.ZonedDateTime;
 import java.util.GregorianCalendar;
 import java.util.List;
 import javax.xml.datatype.DatatypeFactory;
+import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec.SetRoot;
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.ResourceParameter;
@@ -23,7 +23,6 @@ import no.unit.nva.search.resource.ResourceSort;
 import no.unit.nva.search.resource.SimplifiedMutator;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import org.openarchives.oai.pmh.v2.ListRecordsType;
-import org.openarchives.oai.pmh.v2.OAIPMHerrorcodeType;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
 import org.openarchives.oai.pmh.v2.ObjectFactory;
 import org.openarchives.oai.pmh.v2.RecordType;
@@ -55,54 +54,21 @@ public class ListRecords {
     var objectFactory = new ObjectFactory();
 
     var oaiResponse = createBaseResponse(request, objectFactory);
-    try {
-      var ignored =
-          nonNull(request.getMetadataPrefix())
-              ? MetadataPrefix.fromPrefix(request.getMetadataPrefix())
-              : MetadataPrefix.OAI_DC;
-      var searchResult = performSearch(request);
-      var records = recordTransformer.transform(searchResult.hits);
-      var listRecords =
-          createListRecordsResponse(records, searchResult.totalSize(), request, objectFactory);
+    var searchResult = performSearch(request);
+    var records = recordTransformer.transform(searchResult.hits);
+    var listRecords =
+        createListRecordsResponse(records, searchResult.totalSize(), request, objectFactory);
 
-      oaiResponse.getValue().setListRecords(listRecords);
-    } catch (MetadataPrefixNotSupportedException e) {
-      return reportCannotDisseminateFormatError(request, objectFactory, oaiResponse);
-    } catch (SetNotSupportedException e) {
-      return reportBadArgumentError(request, objectFactory, oaiResponse);
-    }
-    return oaiResponse;
-  }
-
-  private JAXBElement<OAIPMHtype> reportBadArgumentError(
-      ListRecordsRequest request,
-      ObjectFactory objectFactory,
-      JAXBElement<OAIPMHtype> oaiResponse) {
-    var errorType = objectFactory.createOAIPMHerrorType();
-    errorType.setCode(OAIPMHerrorcodeType.BAD_ARGUMENT);
-    errorType.setValue(
-        "Set '" + HtmlEscapers.htmlEscaper().escape(request.getSet()) + "' is not supported");
-    oaiResponse.getValue().getError().add(errorType);
-    return oaiResponse;
-  }
-
-  private static JAXBElement<OAIPMHtype> reportCannotDisseminateFormatError(
-      ListRecordsRequest request,
-      ObjectFactory objectFactory,
-      JAXBElement<OAIPMHtype> oaiResponse) {
-    var errorType = objectFactory.createOAIPMHerrorType();
-    errorType.setCode(OAIPMHerrorcodeType.CANNOT_DISSEMINATE_FORMAT);
-    errorType.setValue(HtmlEscapers.htmlEscaper().escape(request.getMetadataPrefix()));
-    oaiResponse.getValue().getError().add(errorType);
+    oaiResponse.getValue().setListRecords(listRecords);
     return oaiResponse;
   }
 
   private SearchResult performSearch(ListRecordsRequest request) {
     var incomingResumptionToken = request.getResumptionToken();
-    var setInstance = nonNull(request.getSet()) ? SetInstance.from(request.getSet()) : null;
+    var setSpec = request.getSetSpec();
     return nonNull(incomingResumptionToken)
         ? doFollowUpSearch(incomingResumptionToken)
-        : doInitialSearch(request.getFrom().asString(), request.getUntil().asString(), setInstance);
+        : doInitialSearch(request.getFrom().asString(), request.getUntil().asString(), setSpec);
   }
 
   private JAXBElement<OAIPMHtype> createBaseResponse(
@@ -115,7 +81,7 @@ public class ListRecords {
         nonNull(listRecordsRequest.getResumptionToken())
             ? listRecordsRequest.getResumptionToken().getValue()
             : null,
-        metadataPrefix,
+        metadataPrefix.getPrefix(),
         oaiResponse.getValue());
     return oaiResponse;
   }
@@ -144,21 +110,18 @@ public class ListRecords {
   }
 
   private SearchResult doFollowUpSearch(ResumptionToken resumptionToken) {
-    var setInstance =
-        nonNull(resumptionToken.originalRequest().getSet())
-            ? SetInstance.from(resumptionToken.originalRequest().getSet())
-            : null;
+    var setSpec = resumptionToken.originalRequest().getSetSpec();
     var query =
         buildListRecordsPageQuery(
             resumptionToken.current(),
             resumptionToken.originalRequest().getUntil().asString(),
-            setInstance,
+            setSpec,
             batchSize);
     return doSearch(query, resumptionToken.totalSize());
   }
 
-  private SearchResult doInitialSearch(String from, String until, SetInstance setInstance) {
-    var query = buildListRecordsPageQuery(from, until, setInstance, batchSize);
+  private SearchResult doInitialSearch(String from, String until, SetSpec setSpec) {
+    var query = buildListRecordsPageQuery(from, until, setSpec, batchSize);
     return doSearch(query, null);
   }
 
@@ -178,7 +141,7 @@ public class ListRecords {
   }
 
   private static ResourceSearchQuery buildListRecordsPageQuery(
-      String from, String until, SetInstance setInstance, int batchSize) {
+      String from, String until, SetSpec setSpec, int batchSize) {
     final ResourceSearchQuery query;
     try {
       var builder =
@@ -193,8 +156,10 @@ public class ListRecords {
       if (nonNull(until)) {
         builder.withParameter(ResourceParameter.MODIFIED_BEFORE, until);
       }
-      if (nonNull(setInstance) && Set.PUBLICATION_INSTANCE_TYPE.equals(setInstance.set())) {
-        builder.withParameter(ResourceParameter.INSTANCE_TYPE, setInstance.value());
+      if (nonNull(setSpec)
+          && SetRoot.RESOURCE_TYPE_GENERAL.equals(setSpec.root())
+          && setSpec.children().length > 0) {
+        builder.withParameter(ResourceParameter.INSTANCE_TYPE, setSpec.children()[0]);
       }
       query =
           builder

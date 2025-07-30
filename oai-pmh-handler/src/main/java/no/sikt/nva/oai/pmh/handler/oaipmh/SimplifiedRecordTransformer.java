@@ -7,6 +7,7 @@ import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.Collections;
 import java.util.List;
+import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec.SetRoot;
 import no.unit.nva.search.resource.response.Contributor;
 import no.unit.nva.search.resource.response.PublicationDate;
 import no.unit.nva.search.resource.response.ResourceSearchResponse;
@@ -148,7 +149,9 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
     var headerType = new ObjectFactory().createHeaderType();
     headerType.setIdentifier(response.id().toString());
     headerType.setDatestamp(response.recordMetadata().modifiedDate());
-    headerType.getSetSpec().add(Set.PUBLICATION_INSTANCE_TYPE.getSpec(response.type()));
+    headerType
+        .getSetSpec()
+        .add(new SetSpec(SetRoot.RESOURCE_TYPE_GENERAL, response.type()).asString());
     return headerType;
   }
 }

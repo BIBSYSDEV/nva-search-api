@@ -7,17 +7,17 @@ import org.openarchives.oai.pmh.v2.VerbType;
 public class ListRecordsRequest extends OaiPmhRequest {
   private final OaiPmhDateTime from;
   private final OaiPmhDateTime until;
-  private final String set;
+  private final SetSpec setSpec;
   private final ResumptionToken resumptionToken;
-  private final String metadataPrefix;
+  private final MetadataPrefix metadataPrefix;
 
   public ListRecordsRequest(
-      OaiPmhDateTime from, OaiPmhDateTime until, String set, String metadataPrefix) {
+      OaiPmhDateTime from, OaiPmhDateTime until, SetSpec setSpec, MetadataPrefix metadataPrefix) {
     super();
     this.resumptionToken = null;
     this.from = from;
     this.until = until;
-    this.set = set;
+    this.setSpec = setSpec;
     this.metadataPrefix = metadataPrefix;
   }
 
@@ -26,7 +26,7 @@ public class ListRecordsRequest extends OaiPmhRequest {
     this.resumptionToken = resumptionToken;
     this.from = null;
     this.until = null;
-    this.set = null;
+    this.setSpec = null;
     this.metadataPrefix = null;
   }
 
@@ -38,15 +38,15 @@ public class ListRecordsRequest extends OaiPmhRequest {
     return nonNull(resumptionToken) ? resumptionToken.originalRequest().getUntil() : until;
   }
 
-  public String getSet() {
-    return set;
+  public SetSpec getSetSpec() {
+    return setSpec;
   }
 
   public ResumptionToken getResumptionToken() {
     return resumptionToken;
   }
 
-  public String getMetadataPrefix() {
+  public MetadataPrefix getMetadataPrefix() {
     return nonNull(resumptionToken)
         ? resumptionToken.originalRequest().getMetadataPrefix()
         : metadataPrefix;

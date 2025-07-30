@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec.SetRoot;
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.records.Facet;
 import no.unit.nva.search.common.records.HttpResponseFormatter;
@@ -84,23 +85,25 @@ public class ListSets {
       java.util.Set<String> instanceTypes, ObjectFactory objectFactory) {
     var setTypes = new LinkedList<SetType>();
     var setQualifier = objectFactory.createSetType();
-    setQualifier.setSetSpec(Set.PUBLICATION_INSTANCE_TYPE.getValue());
-    setQualifier.setSetName(Set.PUBLICATION_INSTANCE_TYPE.getValue());
+    setQualifier.setSetSpec(SetRoot.RESOURCE_TYPE_GENERAL.getValue());
+    setQualifier.setSetName(SetRoot.RESOURCE_TYPE_GENERAL.getValue());
 
     setTypes.add(setQualifier);
 
     var subSetTypes =
-        instanceTypes.stream().map(instanceType -> wrap(instanceType, objectFactory)).toList();
+        instanceTypes.stream()
+            .map(instanceType -> new SetSpec(SetRoot.RESOURCE_TYPE_GENERAL, instanceType))
+            .map(setSpec -> wrap(setSpec, objectFactory))
+            .toList();
 
     setTypes.addAll(subSetTypes);
     return setTypes;
   }
 
-  private SetType wrap(String instanceType, ObjectFactory objectFactory) {
+  private SetType wrap(SetSpec setSpec, ObjectFactory objectFactory) {
     var setType = objectFactory.createSetType();
-    setType.setSetSpec(Set.PUBLICATION_INSTANCE_TYPE.getSpec(instanceType));
-    setType.setSetName(instanceType);
-
+    setType.setSetSpec(setSpec.asString());
+    setType.setSetName(setSpec.children()[0]);
     return setType;
   }
 }
