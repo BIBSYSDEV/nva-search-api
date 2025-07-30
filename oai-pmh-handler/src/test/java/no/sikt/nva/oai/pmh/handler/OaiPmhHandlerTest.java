@@ -785,6 +785,14 @@ public class OaiPmhHandlerTest {
       var token = ResumptionToken.from(resumptionTokenValue).orElseThrow();
       assertThat(
           token.originalRequest().getMetadataPrefix().getPrefix(), is(equalTo(metadataPrefix)));
+      var expectedCurrentInToken =
+          nonNull(currentPageFromDate)
+              ? "2016-01-06T08:55:42.820948673Z"
+              : "2016-01-03T08:55:42.820948673Z";
+      assertThat(
+          "Expects current in token to be 1 ms ahead of the last record in page",
+          token.current(),
+          is(equalTo(expectedCurrentInToken)));
     } else {
       assertNoResumptionToken(xpathEngine, response);
     }

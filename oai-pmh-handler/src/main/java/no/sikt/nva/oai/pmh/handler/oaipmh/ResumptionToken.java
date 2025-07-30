@@ -20,12 +20,6 @@ public record ResumptionToken(ListRecordsRequest originalRequest, String current
   private static final String TOTAL_SIZE = "totalSize";
   private static final String AMPERSAND = "&";
 
-  public ResumptionToken(ListRecordsRequest originalRequest, String current, int totalSize) {
-    this.originalRequest = originalRequest;
-    this.current = current;
-    this.totalSize = totalSize;
-  }
-
   public String getValue() {
     var unencodedValueBuilder = new StringBuilder();
     unencodedValueBuilder

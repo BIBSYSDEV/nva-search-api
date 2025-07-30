@@ -3,6 +3,7 @@ package no.sikt.nva.oai.pmh.handler.oaipmh;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhUtils.baseResponse;
+import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 import static no.unit.nva.constants.Words.ZERO;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
@@ -10,9 +11,11 @@ import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADA
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.xml.bind.JAXBElement;
 import java.math.BigInteger;
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Optional;
 import javax.xml.datatype.DatatypeFactory;
 import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec.SetRoot;
 import no.unit.nva.constants.Words;
@@ -21,6 +24,7 @@ import no.unit.nva.search.resource.ResourceParameter;
 import no.unit.nva.search.resource.ResourceSearchQuery;
 import no.unit.nva.search.resource.ResourceSort;
 import no.unit.nva.search.resource.SimplifiedMutator;
+import no.unit.nva.search.resource.response.ResourceSearchResponse;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import org.openarchives.oai.pmh.v2.ListRecordsType;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
@@ -55,12 +59,24 @@ public class ListRecords {
 
     var oaiResponse = createBaseResponse(request, objectFactory);
     var searchResult = performSearch(request);
+    var modifiedDateOfLastHit = extractModifiedDateOfLastHit(searchResult);
+    var nextDateTime =
+        nonNull(modifiedDateOfLastHit) ? modifiedDateOfLastHit.plusNanos(1).toString() : null;
     var records = recordTransformer.transform(searchResult.hits);
     var listRecords =
-        createListRecordsResponse(records, searchResult.totalSize(), request, objectFactory);
+        createListRecordsResponse(
+            records, nextDateTime, searchResult.totalSize(), request, objectFactory);
 
     oaiResponse.getValue().setListRecords(listRecords);
     return oaiResponse;
+  }
+
+  private Instant extractModifiedDateOfLastHit(SearchResult searchResult) {
+    return Optional.ofNullable(searchResult.hits.getLast())
+        .map(hit -> dtoObjectMapper.convertValue(hit, ResourceSearchResponse.class))
+        .map(searchResponse -> searchResponse.recordMetadata().modifiedDate())
+        .map(Instant::parse)
+        .orElse(null);
   }
 
   private SearchResult performSearch(ListRecordsRequest request) {
@@ -90,6 +106,7 @@ public class ListRecords {
 
   private ListRecordsType createListRecordsResponse(
       List<RecordType> records,
+      String nextDateTime,
       int totalSize,
       ListRecordsRequest request,
       ObjectFactory objectFactory) {
@@ -97,18 +114,18 @@ public class ListRecords {
     var listRecords = objectFactory.createListRecordsType();
     listRecords.getRecord().addAll(records);
 
-    var current = extractLastDateTime(records);
     var pageSize = records.size();
-    if (shouldAddResumptionToken(current, pageSize)) {
-      var resumptionTokenType = generateResumptionToken(request, current, totalSize, objectFactory);
+    if (shouldAddResumptionToken(nextDateTime, pageSize)) {
+      var resumptionTokenType =
+          generateResumptionToken(request, nextDateTime, totalSize, objectFactory);
       listRecords.setResumptionToken(resumptionTokenType);
     }
 
     return listRecords;
   }
 
-  private boolean shouldAddResumptionToken(String current, int totalSize) {
-    return nonNull(current) && totalSize >= batchSize;
+  private boolean shouldAddResumptionToken(String nextDateTime, int totalSize) {
+    return nonNull(nextDateTime) && totalSize >= batchSize;
   }
 
   private SearchResult doFollowUpSearch(ResumptionToken resumptionToken) {
@@ -177,14 +194,6 @@ public class ListRecords {
           "Error search for initial page of search results during ListRecords.", e);
     }
     return query;
-  }
-
-  private String extractLastDateTime(List<RecordType> records) {
-    if (records.isEmpty()) {
-      return null;
-    } else {
-      return records.getLast().getHeader().getDatestamp();
-    }
   }
 
   private static void populateListRecordsRequest(
