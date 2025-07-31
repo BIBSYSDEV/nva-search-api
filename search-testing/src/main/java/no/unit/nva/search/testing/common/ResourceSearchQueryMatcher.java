@@ -44,7 +44,7 @@ public final class ResourceSearchQueryMatcher implements ArgumentMatcher<Resourc
   private boolean hasParameters(
       Set<Entry<ResourceParameter, String>> actualParameters,
       Map<ResourceParameter, String> expectedParameters) {
-    return expectedParameters.entrySet().stream().allMatch(actualParameters::contains);
+    return actualParameters.containsAll(expectedParameters.entrySet());
   }
 
   @Override

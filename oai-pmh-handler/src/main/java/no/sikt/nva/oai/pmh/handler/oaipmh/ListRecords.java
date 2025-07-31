@@ -60,53 +60,59 @@ public class ListRecords {
     var oaiResponse = createBaseResponse(request, objectFactory);
     var searchResult = performSearch(request);
     var modifiedDateOfLastHit = extractModifiedDateOfLastHit(searchResult);
-    var nextDateTime =
-        nonNull(modifiedDateOfLastHit) ? modifiedDateOfLastHit.plusNanos(1).toString() : null;
+    var cursorValue =
+        modifiedDateOfLastHit
+            .map(Instant::parse)
+            .map(ListRecords::nextNano)
+            .map(Instant::toString)
+            .orElse(null);
     var records = recordTransformer.transform(searchResult.hits);
     var listRecords =
         createListRecordsResponse(
-            records, nextDateTime, searchResult.totalSize(), request, objectFactory);
+            records,
+            OaiPmhDateTime.from(cursorValue),
+            searchResult.totalSize(),
+            request,
+            objectFactory);
 
     oaiResponse.getValue().setListRecords(listRecords);
     return oaiResponse;
   }
 
-  private Instant extractModifiedDateOfLastHit(SearchResult searchResult) {
-    return Optional.ofNullable(searchResult.hits.getLast())
-        .map(hit -> dtoObjectMapper.convertValue(hit, ResourceSearchResponse.class))
-        .map(searchResponse -> searchResponse.recordMetadata().modifiedDate())
-        .map(Instant::parse)
-        .orElse(null);
+  private static Instant nextNano(Instant instant) {
+    return instant.plusNanos(1);
+  }
+
+  private Optional<String> extractModifiedDateOfLastHit(SearchResult searchResult) {
+    if (searchResult.hits().isEmpty()) {
+      return Optional.empty();
+    }
+
+    var lastHit = searchResult.hits().getLast();
+    var resourceSearchResponse =
+        dtoObjectMapper.convertValue(lastHit, ResourceSearchResponse.class);
+    var modifiedDate = resourceSearchResponse.recordMetadata().modifiedDate();
+    return Optional.of(modifiedDate);
   }
 
   private SearchResult performSearch(ListRecordsRequest request) {
     var incomingResumptionToken = request.getResumptionToken();
     var setSpec = request.getSetSpec();
-    var from = nonNull(request.getFrom()) ? request.getFrom().asString() : null;
-    var until = nonNull(request.getUntil()) ? request.getUntil().asString() : null;
     return nonNull(incomingResumptionToken)
         ? doFollowUpSearch(incomingResumptionToken)
-        : doInitialSearch(from, until, setSpec);
+        : doInitialSearch(request.getFrom(), request.getUntil(), setSpec);
   }
 
   private JAXBElement<OAIPMHtype> createBaseResponse(
       ListRecordsRequest listRecordsRequest, ObjectFactory objectFactory) {
     var oaiResponse = baseResponse(objectFactory);
-    var metadataPrefix = listRecordsRequest.getMetadataPrefix();
-    populateListRecordsRequest(
-        nonNull(listRecordsRequest.getFrom()) ? listRecordsRequest.getFrom().asString() : null,
-        nonNull(listRecordsRequest.getUntil()) ? listRecordsRequest.getUntil().asString() : null,
-        nonNull(listRecordsRequest.getResumptionToken())
-            ? listRecordsRequest.getResumptionToken().getValue()
-            : null,
-        metadataPrefix.getPrefix(),
-        oaiResponse.getValue());
+    populateListRecordsRequest(listRecordsRequest, oaiResponse.getValue());
     return oaiResponse;
   }
 
   private ListRecordsType createListRecordsResponse(
       List<RecordType> records,
-      String nextDateTime,
+      OaiPmhDateTime nextPositionCursor,
       int totalSize,
       ListRecordsRequest request,
       ObjectFactory objectFactory) {
@@ -115,31 +121,30 @@ public class ListRecords {
     listRecords.getRecord().addAll(records);
 
     var pageSize = records.size();
-    if (shouldAddResumptionToken(nextDateTime, pageSize)) {
+    if (shouldAddResumptionToken(nextPositionCursor, pageSize)) {
       var resumptionTokenType =
-          generateResumptionToken(request, nextDateTime, totalSize, objectFactory);
+          generateResumptionToken(request, nextPositionCursor, totalSize, objectFactory);
       listRecords.setResumptionToken(resumptionTokenType);
     }
 
     return listRecords;
   }
 
-  private boolean shouldAddResumptionToken(String nextDateTime, int totalSize) {
-    return nonNull(nextDateTime) && totalSize >= batchSize;
+  private boolean shouldAddResumptionToken(OaiPmhDateTime nextDateTime, int totalSize) {
+    return nextDateTime.isPresent() && totalSize >= batchSize;
   }
 
   private SearchResult doFollowUpSearch(ResumptionToken resumptionToken) {
-    var setSpec = resumptionToken.originalRequest().getSetSpec();
     var query =
         buildListRecordsPageQuery(
-            resumptionToken.current(),
-            resumptionToken.originalRequest().getUntil().asString(),
-            setSpec,
+            resumptionToken.cursor(),
+            resumptionToken.originalRequest().getUntil(),
+            resumptionToken.originalRequest().getSetSpec(),
             batchSize);
     return doSearch(query, resumptionToken.totalSize());
   }
 
-  private SearchResult doInitialSearch(String from, String until, SetSpec setSpec) {
+  private SearchResult doInitialSearch(OaiPmhDateTime from, OaiPmhDateTime until, SetSpec setSpec) {
     var query = buildListRecordsPageQuery(from, until, setSpec, batchSize);
     return doSearch(query, null);
   }
@@ -160,7 +165,7 @@ public class ListRecords {
   }
 
   private static ResourceSearchQuery buildListRecordsPageQuery(
-      String from, String until, SetSpec setSpec, int batchSize) {
+      OaiPmhDateTime from, OaiPmhDateTime until, SetSpec setSpec, int batchSize) {
     final ResourceSearchQuery query;
     try {
       var builder =
@@ -169,13 +174,11 @@ public class ListRecords {
               .withParameter(ResourceParameter.FROM, ZERO)
               .withParameter(ResourceParameter.SIZE, Integer.toString(batchSize))
               .withParameter(ResourceParameter.SORT, MODIFIED_DATE_ASCENDING);
-      if (nonNull(from)) {
-        builder.withParameter(ResourceParameter.MODIFIED_SINCE, from);
-      }
-      if (nonNull(until)) {
-        builder.withParameter(ResourceParameter.MODIFIED_BEFORE, until);
-      }
-      if (nonNull(setSpec)
+      from.ifPresent(
+          fromValue -> builder.withParameter(ResourceParameter.MODIFIED_SINCE, fromValue));
+      until.ifPresent(
+          untilValue -> builder.withParameter(ResourceParameter.MODIFIED_BEFORE, untilValue));
+      if (setSpec.isPresent()
           && SetRoot.RESOURCE_TYPE_GENERAL.equals(setSpec.root())
           && setSpec.children().length > 0) {
         builder.withParameter(ResourceParameter.INSTANCE_TYPE, setSpec.children()[0]);
@@ -197,23 +200,22 @@ public class ListRecords {
   }
 
   private static void populateListRecordsRequest(
-      String from,
-      String until,
-      String incomingResumptionToken,
-      String metadataPrefix,
-      OAIPMHtype oaiPmhType) {
+      ListRecordsRequest request, OAIPMHtype oaiPmhType) {
+    var resumptionTokenValue =
+        nonNull(request.getResumptionToken()) ? request.getResumptionToken().getValue() : null;
     oaiPmhType.getRequest().setVerb(VerbType.LIST_RECORDS);
-    oaiPmhType.getRequest().setResumptionToken(incomingResumptionToken);
-    oaiPmhType.getRequest().setFrom(from);
-    oaiPmhType.getRequest().setUntil(until);
-    oaiPmhType.getRequest().setMetadataPrefix(metadataPrefix);
+    oaiPmhType.getRequest().setResumptionToken(resumptionTokenValue);
+    oaiPmhType.getRequest().setFrom(request.getFrom().getValue().orElse(null));
+    oaiPmhType.getRequest().setUntil(request.getUntil().getValue().orElse(null));
+    oaiPmhType.getRequest().setSet(request.getSetSpec().getValue().orElse(null));
+    oaiPmhType.getRequest().setMetadataPrefix(request.getMetadataPrefix().getPrefix());
   }
 
   private record SearchResult(int totalSize, int pageSize, List<JsonNode> hits) {}
 
   private ResumptionTokenType generateResumptionToken(
       ListRecordsRequest originalRequest,
-      String current,
+      OaiPmhDateTime cursor,
       int totalSize,
       ObjectFactory objectFactory) {
     var inTenMinutes =
@@ -222,7 +224,7 @@ public class ListRecords {
                 GregorianCalendar.from(ZonedDateTime.now().plusHours(RESUMPTION_TOKEN_TTL_HOURS)));
 
     var resumptionTokenType = objectFactory.createResumptionTokenType();
-    var newResumptionToken = new ResumptionToken(originalRequest, current, totalSize);
+    var newResumptionToken = new ResumptionToken(originalRequest, cursor, totalSize);
     resumptionTokenType.setValue(newResumptionToken.getValue());
     resumptionTokenType.setExpirationDate(inTenMinutes);
     resumptionTokenType.setCompleteListSize(BigInteger.valueOf(totalSize));

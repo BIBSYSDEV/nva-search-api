@@ -1,20 +1,22 @@
 package no.sikt.nva.oai.pmh.handler.oaipmh;
 
+import static java.util.Objects.nonNull;
+
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import nva.commons.core.StringUtils;
 
-public record SetSpec(SetRoot root, String... children) {
-
+public record SetSpec(SetRoot root, String... children) implements NullableWrapper<String> {
+  public static final SetSpec EMPTY_INSTANCE = new SetSpec(null);
   private static final String COLON = ":";
   private static final int ZERO = 0;
   private static final int ONE = 1;
 
-  public static SetSpec parse(final String value) {
+  public static SetSpec from(final String value) {
     if (StringUtils.isEmpty(value)) {
-      throw new BadArgumentException("Illegal set spec. Value is empty.");
+      return EMPTY_INSTANCE;
     }
 
     var parts = value.split(COLON);
@@ -26,7 +28,17 @@ public record SetSpec(SetRoot root, String... children) {
     }
   }
 
-  public String asString() {
+  @Override
+  public boolean isPresent() {
+    return nonNull(root);
+  }
+
+  @Override
+  public Optional<String> getValue() {
+    return Optional.ofNullable(root).map(ignored -> stringRepresentation());
+  }
+
+  private String stringRepresentation() {
     var valueBuilder = new StringBuilder(root.value);
     Arrays.stream(children).forEach(child -> valueBuilder.append(COLON).append(child));
     return valueBuilder.toString();

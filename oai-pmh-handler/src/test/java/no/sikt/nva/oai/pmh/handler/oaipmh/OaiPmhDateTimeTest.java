@@ -23,13 +23,13 @@ public class OaiPmhDateTimeTest {
   void shouldHandleDateOnly() {
     var dateTime = OaiPmhDateTime.from("2020-01-01");
 
-    assertThat(dateTime.asString(), is(equalTo("2020-01-01T00:00:00Z")));
+    assertThat(dateTime.getValue().orElseThrow(), is(equalTo("2020-01-01T00:00:00Z")));
   }
 
   @Test
   void shouldHandleDateTime() {
     var dateTime = OaiPmhDateTime.from("2020-01-01T01:02:03Z");
 
-    assertThat(dateTime.asString(), is(equalTo("2020-01-01T01:02:03Z")));
+    assertThat(dateTime.getValue().orElseThrow(), is(equalTo("2020-01-01T01:02:03Z")));
   }
 }

@@ -151,7 +151,7 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
     headerType.setDatestamp(response.recordMetadata().modifiedDate());
     headerType
         .getSetSpec()
-        .add(new SetSpec(SetRoot.RESOURCE_TYPE_GENERAL, response.type()).asString());
+        .add(new SetSpec(SetRoot.RESOURCE_TYPE_GENERAL, response.type()).getValue().orElseThrow());
     return headerType;
   }
 }

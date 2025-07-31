@@ -5,5 +5,5 @@ import java.net.URI;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
 
 public interface OaiPmhMethodRouter {
-  JAXBElement<OAIPMHtype> handleRequest(OaiPmhRequest context, URI endpointUri);
+  JAXBElement<OAIPMHtype> handleRequest(OaiPmhRequest request, URI endpointUri);
 }

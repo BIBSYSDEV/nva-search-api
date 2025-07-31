@@ -39,7 +39,7 @@ public class ListRecordsRequest extends OaiPmhRequest {
   }
 
   public SetSpec getSetSpec() {
-    return setSpec;
+    return nonNull(resumptionToken) ? resumptionToken.originalRequest().getSetSpec() : setSpec;
   }
 
   public ResumptionToken getResumptionToken() {

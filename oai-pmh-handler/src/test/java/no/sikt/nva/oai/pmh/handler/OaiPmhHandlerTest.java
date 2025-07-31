@@ -5,7 +5,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static java.net.HttpURLConnection.HTTP_INTERNAL_ERROR;
 import static java.net.HttpURLConnection.HTTP_OK;
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
@@ -92,7 +91,6 @@ import org.xmlunit.xpath.XPathEngine;
 @WireMockTest
 public class OaiPmhHandlerTest {
 
-  private static final SetSpec NO_SET = null;
   private static final String OAI_PMH_NAMESPACE_PREFIX = "oai";
   private static final String OAI_PMH_NAMESPACE = "http://www.openarchives.org/OAI/2.0/";
   private static final String DC_NAMESPACE_PREFIX = "dc";
@@ -437,25 +435,20 @@ public class OaiPmhHandlerTest {
   @ParameterizedTest
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldListRecordsOnInitialQueryWithOnlyRequiredParameters(String method) throws Exception {
-    String currentPageFromDate = null;
-    final OaiPmhDateTime fromDate = null;
-    final OaiPmhDateTime untilDate = null;
     var expectedIdentifiers =
         List.of(
             "https://api.unittests.nva.aws.unit.no/publication/019527b847ad-ee78bdbe-3f70-4ff4-930c-b4ace492ea64",
             "https://api.unittests.nva.aws.unit.no/publication/019527b84693-a86c1cae-24da-4c9d-9bff-e097fd9be2f1",
             "https://api.unittests.nva.aws.unit.no/publication/019527b845e4-182ebbf0-9481-4a98-aad2-76b617cc1b0c");
 
-    runListRecordsTest(
-        method, currentPageFromDate, fromDate, untilDate, null, 3, expectedIdentifiers, true);
+    runListRecordsTest(method, null, null, null, null, null, null, 3, expectedIdentifiers, true);
   }
 
   @ParameterizedTest
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldListRecordsOnInitialQuery(String method) throws Exception {
-    String currentPageFromDate = null;
-    var fromDate = OaiPmhDateTime.from("2016-01-01");
-    var untilDate = OaiPmhDateTime.from("2017-01-01");
+    var fromDate = "2016-01-01";
+    var untilDate = "2017-01-01";
     var expectedIdentifiers =
         List.of(
             "https://api.unittests.nva.aws.unit.no/publication/019527b847ad-ee78bdbe-3f70-4ff4-930c-b4ace492ea64",
@@ -463,19 +456,49 @@ public class OaiPmhHandlerTest {
             "https://api.unittests.nva.aws.unit.no/publication/019527b845e4-182ebbf0-9481-4a98-aad2-76b617cc1b0c");
 
     runListRecordsTest(
-        method, currentPageFromDate, fromDate, untilDate, null, 3, expectedIdentifiers, true);
+        method, null, fromDate, untilDate, null, null, null, 3, expectedIdentifiers, true);
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldListRecordsOnInitialQueryHarvestingSpecificSet(String method) throws Exception {
+    var fromDate = "2016-01-01";
+    var untilDate = "2017-01-01";
+    var set = "resourceTypeGeneral:AcademicArticle";
+    var expectedIdentifiers =
+        List.of(
+            "https://api.unittests.nva.aws.unit.no/publication/019527b847ad-ee78bdbe-3f70-4ff4-930c-b4ace492ea64",
+            "https://api.unittests.nva.aws.unit.no/publication/019527b84693-a86c1cae-24da-4c9d-9bff-e097fd9be2f1",
+            "https://api.unittests.nva.aws.unit.no/publication/019527b845e4-182ebbf0-9481-4a98-aad2-76b617cc1b0c");
+
+    runListRecordsTest(
+        method,
+        null,
+        fromDate,
+        untilDate,
+        "resourceTypeGeneral",
+        "AcademicArticle",
+        null,
+        3,
+        expectedIdentifiers,
+        true);
   }
 
   @ParameterizedTest
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldListRecordsWithResumptionToken(String method) throws Exception {
-    var fromDate = OaiPmhDateTime.from("2016-01-01");
-    var untilDate = OaiPmhDateTime.from("2017-01-01");
+    var fromDate = "2016-01-01";
+    var untilDate = "2017-01-01";
     var metadataPrefix = MetadataPrefix.OAI_DC;
-    var currentPageFromDate = "2016-01-04T05:48:31Z";
-    var listRecordsRequest = new ListRecordsRequest(fromDate, untilDate, NO_SET, metadataPrefix);
+    var cursor = "2016-01-04T05:48:31.123456789Z";
+    var listRecordsRequest =
+        new ListRecordsRequest(
+            OaiPmhDateTime.from(fromDate),
+            OaiPmhDateTime.from(untilDate),
+            SetSpec.EMPTY_INSTANCE,
+            metadataPrefix);
     var resumptionToken =
-        new ResumptionToken(listRecordsRequest, currentPageFromDate, 8).getValue();
+        new ResumptionToken(listRecordsRequest, OaiPmhDateTime.from(cursor), 8).getValue();
 
     var expectedIdentifiers =
         List.of(
@@ -485,9 +508,11 @@ public class OaiPmhHandlerTest {
 
     runListRecordsTest(
         method,
-        currentPageFromDate,
+        cursor,
         fromDate,
         untilDate,
+        null,
+        null,
         resumptionToken,
         3,
         expectedIdentifiers,
@@ -497,14 +522,19 @@ public class OaiPmhHandlerTest {
   @ParameterizedTest
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldNotReturnResumptionTokenOnLastPage(String method) throws Exception {
-    var fromDate = OaiPmhDateTime.from("2016-01-01");
-    var untilDate = OaiPmhDateTime.from("2017-01-01");
-    var currentPageFromDate = "2016-01-07T05:48:31Z";
+    var fromDate = "2016-01-01";
+    var untilDate = "2017-01-01";
+    var cursor = "2016-01-07T05:48:31.123456789Z";
     var metadataPrefix = MetadataPrefix.OAI_DC;
-    var listRecordsRequest = new ListRecordsRequest(fromDate, untilDate, NO_SET, metadataPrefix);
+    var listRecordsRequest =
+        new ListRecordsRequest(
+            OaiPmhDateTime.from(fromDate),
+            OaiPmhDateTime.from(untilDate),
+            SetSpec.EMPTY_INSTANCE,
+            metadataPrefix);
 
     var resumptionToken =
-        new ResumptionToken(listRecordsRequest, currentPageFromDate, 8).getValue();
+        new ResumptionToken(listRecordsRequest, OaiPmhDateTime.from(cursor), 8).getValue();
 
     var expectedIdentifiers =
         List.of(
@@ -513,9 +543,11 @@ public class OaiPmhHandlerTest {
 
     runListRecordsTest(
         method,
-        currentPageFromDate,
+        cursor,
         fromDate,
         untilDate,
+        null,
+        null,
         resumptionToken,
         2,
         expectedIdentifiers,
@@ -736,33 +768,27 @@ public class OaiPmhHandlerTest {
 
   private void runListRecordsTest(
       final String method,
-      final String currentPageFromDate,
-      final OaiPmhDateTime fromDate,
-      final OaiPmhDateTime untilDate,
+      final String cursor,
+      final String from,
+      final String until,
+      final String setRoot,
+      final String setChild,
       final String resumptionToken,
       final int expectedRecordCount,
       final List<String> expectedIdentifiers,
       final boolean expectResumptionToken)
       throws Exception {
 
-    var matcher =
-        buildMatcher(
-            nonNull(currentPageFromDate)
-                ? currentPageFromDate
-                : nonNull(fromDate) ? fromDate.asString() : null,
-            nonNull(untilDate) ? untilDate.asString() : null);
-    var swsResponse = resolveMockResponse(currentPageFromDate, expectedRecordCount);
+    var matcher = buildMatcher(cursor, from, until, setChild);
+    var swsResponse = resolveMockResponse(cursor, expectedRecordCount);
     when(resourceClient.doSearch(argThat(matcher), any())).thenReturn(swsResponse);
 
     var metadataPrefix = MetadataPrefix.OAI_DC.getPrefix();
+    var setSpec =
+        nonNull(setRoot) && nonNull(setChild) ? String.join(":", setRoot, setChild) : null;
+
     var response =
-        performListRecordsOperation(
-            method,
-            nonNull(fromDate) ? fromDate.asString() : null,
-            nonNull(untilDate) ? untilDate.asString() : null,
-            metadataPrefix,
-            null,
-            resumptionToken);
+        performListRecordsOperation(method, from, until, metadataPrefix, setSpec, resumptionToken);
     var xpathEngine = getXpathEngine();
 
     assertResponseRequestContains(VerbType.LIST_RECORDS, response, xpathEngine);
@@ -785,23 +811,20 @@ public class OaiPmhHandlerTest {
       var token = ResumptionToken.from(resumptionTokenValue).orElseThrow();
       assertThat(
           token.originalRequest().getMetadataPrefix().getPrefix(), is(equalTo(metadataPrefix)));
-      var expectedCurrentInToken =
-          nonNull(currentPageFromDate)
-              ? "2016-01-06T08:55:42.820948673Z"
-              : "2016-01-03T08:55:42.820948673Z";
+      var expectedCursorInToken =
+          nonNull(cursor) ? "2016-01-06T08:55:42.820948673Z" : "2016-01-03T08:55:42.820948673Z";
       assertThat(
-          "Expects current in token to be 1 ms ahead of the last record in page",
-          token.current(),
-          is(equalTo(expectedCurrentInToken)));
+          "Expects cursor in token to be 1 ms ahead of the last record in page",
+          token.cursor().getValue().orElseThrow(),
+          is(equalTo(expectedCursorInToken)));
     } else {
       assertNoResumptionToken(xpathEngine, response);
     }
   }
 
-  private SwsResponse resolveMockResponse(String currentPageFromDate, int expectedRecordCount)
-      throws Exception {
+  private SwsResponse resolveMockResponse(String cursor, int expectedRecordCount) throws Exception {
     return switch (expectedRecordCount) {
-      case 3 -> isNull(currentPageFromDate) ? firstPageSwsResponse() : secondPageSwsResponse();
+      case 3 -> nonNull(cursor) ? secondPageSwsResponse() : firstPageSwsResponse();
       // on context
       case 2 -> lastPageSwsResponse();
       default ->
@@ -809,19 +832,24 @@ public class OaiPmhHandlerTest {
     };
   }
 
-  private ResourceSearchQueryMatcher buildMatcher(String from, String until) {
+  private ResourceSearchQueryMatcher buildMatcher(
+      String cursor, String from, String until, String setChild) {
     var builder =
         new ResourceSearchQueryMatcher.Builder()
             .withPageParameter(ResourceParameter.FROM, "0")
             .withPageParameter(ResourceParameter.SIZE, "3")
             .withPageParameter(ResourceParameter.SORT, "modifiedDate:asc,identifier")
             .withSearchParameter(ResourceParameter.AGGREGATION, Words.NONE);
-
-    if (nonNull(from)) {
-      builder.withSearchParameter(ResourceParameter.MODIFIED_SINCE, from);
+    if (nonNull(cursor)) {
+      builder.withSearchParameter(ResourceParameter.MODIFIED_SINCE, cursor);
+    } else if (nonNull(from)) {
+      builder.withSearchParameter(ResourceParameter.MODIFIED_SINCE, from + "T00:00:00Z");
     }
     if (nonNull(until)) {
-      builder.withSearchParameter(ResourceParameter.MODIFIED_BEFORE, until);
+      builder.withSearchParameter(ResourceParameter.MODIFIED_BEFORE, until + "T00:00:00Z");
+    }
+    if (nonNull(setChild)) {
+      builder.withSearchParameter(ResourceParameter.INSTANCE_TYPE, setChild);
     }
 
     return builder.build();
@@ -855,7 +883,7 @@ public class OaiPmhHandlerTest {
       String from,
       String until,
       String metadataPrefix,
-      String set,
+      String setSpec,
       String resumptionToken)
       throws JAXBException, IOException {
     var inputStream =
@@ -865,7 +893,7 @@ public class OaiPmhHandlerTest {
             from,
             until,
             metadataPrefix,
-            set,
+            setSpec,
             resumptionToken);
 
     return invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
@@ -882,7 +910,7 @@ public class OaiPmhHandlerTest {
   }
 
   private InputStream defaultHitAndRequest() throws JsonProcessingException {
-    return defaultHitAndRequest(null);
+    return defaultHitAndRequest(SetSpec.EMPTY_INSTANCE);
   }
 
   private InputStream defaultHitAndRequest(SetSpec setSpec) throws JsonProcessingException {
@@ -913,7 +941,7 @@ public class OaiPmhHandlerTest {
   }
 
   private InputStream hitAndRequest(ArrayNode hits) throws JsonProcessingException {
-    return hitAndRequest(hits, null);
+    return hitAndRequest(hits, SetSpec.EMPTY_INSTANCE);
   }
 
   private InputStream hitAndRequest(ArrayNode hits, SetSpec setSpec)
@@ -927,9 +955,10 @@ public class OaiPmhHandlerTest {
             .withSearchParameter(ResourceParameter.AGGREGATION, Words.NONE)
             .withSearchParameter(ResourceParameter.MODIFIED_BEFORE, "2016-01-02T00:00:00Z")
             .withSearchParameter(ResourceParameter.MODIFIED_SINCE, "2016-01-01T00:00:00Z");
-    if (nonNull(setSpec) && SetRoot.RESOURCE_TYPE_GENERAL.equals(setSpec.root())) {
-      queryBuilder.withSearchParameter(ResourceParameter.INSTANCE_TYPE, setSpec.children()[0]);
-    }
+    setSpec.ifPresent(
+        ignored ->
+            queryBuilder.withSearchParameter(
+                ResourceParameter.INSTANCE_TYPE, setSpec.children()[0]));
     var resourceQueryMatcher =
         queryBuilder
             .withNamedFilterQuery(
@@ -944,15 +973,14 @@ public class OaiPmhHandlerTest {
     var from = "2016-01-01";
     var until = "2016-01-02";
     var metadataPrefix = MetadataPrefix.OAI_DC.getPrefix();
-    String resumptionToken = null;
     return request(
         VerbType.LIST_RECORDS.value(),
         "GET",
         from,
         until,
         metadataPrefix,
-        nonNull(setSpec) ? setSpec.asString() : null,
-        resumptionToken);
+        setSpec.orElse(null),
+        null);
   }
 
   private InputStream requestWithReportBasicHit() throws JsonProcessingException {

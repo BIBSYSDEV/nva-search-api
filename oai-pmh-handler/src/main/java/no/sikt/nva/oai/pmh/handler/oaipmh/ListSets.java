@@ -102,7 +102,7 @@ public class ListSets {
 
   private SetType wrap(SetSpec setSpec, ObjectFactory objectFactory) {
     var setType = objectFactory.createSetType();
-    setType.setSetSpec(setSpec.asString());
+    setType.setSetSpec(setSpec.getValue().orElseThrow());
     setType.setSetName(setSpec.children()[0]);
     return setType;
   }
