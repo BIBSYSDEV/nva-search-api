@@ -8,9 +8,9 @@ import no.sikt.nva.oai.pmh.handler.JaxbUtils.Namespaces;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
 import org.openarchives.oai.pmh.v2.ObjectFactory;
 
-public class ListMetadataFormats {
+public class ListMetadataFormatsRequestHandler {
 
-  public ListMetadataFormats() {}
+  public ListMetadataFormatsRequestHandler() {}
 
   public JAXBElement<OAIPMHtype> listMetadataFormats(ListMetadataFormatsRequest request) {
     var objectFactory = new ObjectFactory();

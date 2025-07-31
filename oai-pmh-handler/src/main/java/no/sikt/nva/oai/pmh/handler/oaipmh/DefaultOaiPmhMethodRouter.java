@@ -27,12 +27,12 @@ public class DefaultOaiPmhMethodRouter implements OaiPmhMethodRouter {
   public JAXBElement<OAIPMHtype> handleRequest(final OaiPmhRequest request, final URI endpointUri) {
     try {
       return switch (request.getVerbType()) {
-        case LIST_SETS -> new ListSets().listSets((ListSetsRequest) request, resourceClient);
-        case IDENTIFY -> new Identify().identify((IdentifyRequest) request, endpointUri);
+        case LIST_SETS -> new ListSetsRequestHandler().listSets((ListSetsRequest) request, resourceClient);
+        case IDENTIFY -> new IdentifyRequestHandler().identify((IdentifyRequest) request, endpointUri);
         case LIST_METADATA_FORMATS ->
-            new ListMetadataFormats().listMetadataFormats((ListMetadataFormatsRequest) request);
+            new ListMetadataFormatsRequestHandler().listMetadataFormats((ListMetadataFormatsRequest) request);
         case LIST_RECORDS ->
-            new ListRecords(resourceClient, recordTransformer, batchSize)
+            new ListRecordsRequestHandler(resourceClient, recordTransformer, batchSize)
                 .listRecords((ListRecordsRequest) request);
         default -> error(OAIPMHerrorcodeType.BAD_VERB, UNSUPPORTED_VERB);
       };

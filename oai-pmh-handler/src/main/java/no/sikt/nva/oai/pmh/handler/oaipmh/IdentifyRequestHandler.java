@@ -9,13 +9,13 @@ import org.openarchives.oai.pmh.v2.GranularityType;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
 import org.openarchives.oai.pmh.v2.ObjectFactory;
 
-public class Identify {
+public class IdentifyRequestHandler {
   private static final String PROTOCOL_VERSION = "2.0";
   private static final String REPOSITORY_NAME = "NVA-OAI-PMH";
   private static final String EARLIEST_DATESTAMP = "2016-01-01";
   private static final String CONTACT_AT_SIKT_NO = "kontakt@sikt.no";
 
-  public Identify() {}
+  public IdentifyRequestHandler() {}
 
   public JAXBElement<OAIPMHtype> identify(IdentifyRequest request, URI endpointUri) {
     var objectFactory = new ObjectFactory();

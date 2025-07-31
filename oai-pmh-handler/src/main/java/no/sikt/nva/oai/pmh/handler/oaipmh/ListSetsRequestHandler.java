@@ -23,11 +23,11 @@ import org.openarchives.oai.pmh.v2.SetType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ListSets {
-  private static final Logger logger = LoggerFactory.getLogger(ListSets.class);
+public class ListSetsRequestHandler {
+  private static final Logger logger = LoggerFactory.getLogger(ListSetsRequestHandler.class);
   private static final String INSTANCE_TYPE_AGGREGATION_NAME = "type";
 
-  public ListSets() {}
+  public ListSetsRequestHandler() {}
 
   public JAXBElement<OAIPMHtype> listSets(ListSetsRequest request, ResourceClient resourceClient) {
     final ResourceSearchQuery query = buildAllAggregationsQuery();

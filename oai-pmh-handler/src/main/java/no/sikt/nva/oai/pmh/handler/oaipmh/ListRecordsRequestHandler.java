@@ -35,9 +35,9 @@ import org.openarchives.oai.pmh.v2.VerbType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ListRecords {
+public class ListRecordsRequestHandler {
 
-  private static final Logger logger = LoggerFactory.getLogger(ListRecords.class);
+  private static final Logger logger = LoggerFactory.getLogger(ListRecordsRequestHandler.class);
   private static final int RESUMPTION_TOKEN_TTL_HOURS = 24;
   public static final String MODIFIED_DATE_ASCENDING =
       ResourceSort.MODIFIED_DATE.asCamelCase() + ":asc";
@@ -46,7 +46,7 @@ public class ListRecords {
   private final RecordTransformer recordTransformer;
   private final int batchSize;
 
-  public ListRecords(
+  public ListRecordsRequestHandler(
       ResourceClient resourceClient, RecordTransformer recordTransformer, int batchSize) {
     super();
     this.resourceClient = resourceClient;
@@ -63,7 +63,7 @@ public class ListRecords {
     var cursorValue =
         modifiedDateOfLastHit
             .map(Instant::parse)
-            .map(ListRecords::nextNano)
+            .map(ListRecordsRequestHandler::nextNano)
             .map(Instant::toString)
             .orElse(null);
     var records = recordTransformer.transform(searchResult.hits);
