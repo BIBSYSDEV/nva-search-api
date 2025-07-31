@@ -8,7 +8,7 @@ plugins {
 
 repositories {
     mavenCentral()
-    maven { url 'https://jitpack.io' }
+    maven { url = 'https://jitpack.io' }
 }
 
 dependencies {
@@ -18,13 +18,13 @@ dependencies {
 sourceSets {
     test {
         resources {
-            srcDir file('src/test/java')
-            exclude '**/*.java', '*/*.xml'
+            srcDir(file('src/test/java'))
+            exclude('**/*.java', '*/*.xml')
         }
     }
     check {
         resources {
-            exclude '**/*.java', '*/*.xml'
+            exclude('**/*.java', '*/*.xml')
         }
     }
 }
@@ -63,16 +63,16 @@ tasks.named('jacocoTestCoverageVerification', JacocoCoverageVerification) {
             }
         }
     }
-    dependsOn jacocoTestReport
+    dependsOn(jacocoTestReport)
 }
 
 tasks.named('test', Test) {
     useJUnitPlatform()
     testLogging {
-        events 'skipped', 'passed', 'failed'
+        events = [ 'skipped', 'passed', 'failed' ]
     }
     //    environment "ALLOWED_ORIGIN", "*"
-    finalizedBy jacocoTestReport
+    finalizedBy(jacocoTestReport)
 }
 
 spotless {
@@ -81,21 +81,21 @@ spotless {
         googleJavaFormat().reflowLongStrings().formatJavadoc(true).reorderImports(true)
     }
 
-    format 'misc', {
-        target '.gitignore', '.gitattributes', '.editorconfig', '**/*.gradle'
+    format('misc', {
+        target('.gitignore', '.gitattributes', '.editorconfig', '**/*.gradle')
         leadingTabsToSpaces(4)
         trimTrailingWhitespace()
         endWithNewline()
-    }
+    })
 }
 
 // Reformat project before build and test if needed
 tasks.named('build').configure {
-    dependsOn 'spotlessApply'
+    dependsOn('spotlessApply')
 }
 
 tasks.named('test').configure {
-    dependsOn 'spotlessApply'
+    dependsOn('spotlessApply')
 }
 
 pmd {
@@ -107,7 +107,6 @@ pmd {
 
 checkstyle {
     configFile = rootProject.resources.text.fromFile('config/checkstyle/checkstyle.xml').asFile()
-
     showViolations = true
 }
 
@@ -115,7 +114,7 @@ tasks.withType(Checkstyle).configureEach {
     reports {
         xml.required
         html.required
-        html.stylesheet rootProject.resources.text.fromFile('config/checkstyle/checkstyle-simple.xsl')
+        html.stylesheet = rootProject.resources.text.fromFile('config/checkstyle/checkstyle-simple.xsl')
     }
 }
 
