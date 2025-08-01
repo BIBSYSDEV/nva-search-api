@@ -18,7 +18,6 @@ public class OaiPmhRequestHandlerRegistry {
       RecordTransformer recordTransformer,
       int batchSize,
       URI endpointUri) {
-    // Register handlers using suppliers for lazy initialization
     handlerSuppliers.put(VerbType.LIST_SETS, () -> new ListSetsRequestHandler(resourceClient));
     handlerSuppliers.put(VerbType.IDENTIFY, () -> new IdentifyRequestHandler(endpointUri));
     handlerSuppliers.put(VerbType.LIST_METADATA_FORMATS, ListMetadataFormatsRequestHandler::new);
@@ -34,7 +33,6 @@ public class OaiPmhRequestHandlerRegistry {
       throw new BadVerbException("Unsupported verb: " + verbType);
     }
 
-    // Create the handler lazily
     return (OaiPmhRequestHandler<T>) supplier.get();
   }
 }
