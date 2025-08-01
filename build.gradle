@@ -6,3 +6,15 @@ plugins{
 allprojects{
     apply plugin: 'nva.search.service.java-conventions'
 }
+
+def javaVersion = 21
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(javaVersion)
+        vendor = JvmVendorSpec.AMAZON
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = javaVersion
+}
