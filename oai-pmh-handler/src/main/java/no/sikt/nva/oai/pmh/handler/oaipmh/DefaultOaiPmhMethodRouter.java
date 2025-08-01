@@ -11,31 +11,21 @@ import org.openarchives.oai.pmh.v2.ObjectFactory;
 
 public class DefaultOaiPmhMethodRouter implements OaiPmhMethodRouter {
 
-  private static final String UNSUPPORTED_VERB = "Unsupported verb.";
+  private final OaiPmhRequestHandlerRegistry handlerRegistry;
 
-  private final ResourceClient resourceClient;
-  private final RecordTransformer recordTransformer;
-  private final int batchSize;
-
-  public DefaultOaiPmhMethodRouter(ResourceClient resourceClient, int batchSize) {
-    this.resourceClient = resourceClient;
-    this.recordTransformer = new SimplifiedRecordTransformer();
-    this.batchSize = batchSize;
+  public DefaultOaiPmhMethodRouter(ResourceClient resourceClient, int batchSize, URI endpointUri) {
+    this.handlerRegistry =
+        new OaiPmhRequestHandlerRegistry(
+            resourceClient, new SimplifiedRecordTransformer(), batchSize, endpointUri);
   }
 
   @Override
   public JAXBElement<OAIPMHtype> handleRequest(final OaiPmhRequest request, final URI endpointUri) {
+
     try {
-      return switch (request.getVerbType()) {
-        case LIST_SETS -> new ListSetsRequestHandler().listSets((ListSetsRequest) request, resourceClient);
-        case IDENTIFY -> new IdentifyRequestHandler().identify((IdentifyRequest) request, endpointUri);
-        case LIST_METADATA_FORMATS ->
-            new ListMetadataFormatsRequestHandler().listMetadataFormats((ListMetadataFormatsRequest) request);
-        case LIST_RECORDS ->
-            new ListRecordsRequestHandler(resourceClient, recordTransformer, batchSize)
-                .listRecords((ListRecordsRequest) request);
-        default -> error(OAIPMHerrorcodeType.BAD_VERB, UNSUPPORTED_VERB);
-      };
+      // Delegate processing to the appropriate handler
+      var handler = handlerRegistry.getHandler(request.getVerbType());
+      return handler.handleRequest(request);
     } catch (OaiPmhException exception) {
       return error(exception.getCodeType(), exception.getMessage());
     }

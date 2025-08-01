@@ -35,7 +35,7 @@ import org.openarchives.oai.pmh.v2.VerbType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ListRecordsRequestHandler {
+public class ListRecordsRequestHandler implements OaiPmhRequestHandler<ListRecordsRequest> {
 
   private static final Logger logger = LoggerFactory.getLogger(ListRecordsRequestHandler.class);
   private static final int RESUMPTION_TOKEN_TTL_HOURS = 24;
@@ -54,7 +54,8 @@ public class ListRecordsRequestHandler {
     this.batchSize = batchSize;
   }
 
-  public JAXBElement<OAIPMHtype> listRecords(ListRecordsRequest request) {
+  @Override
+  public JAXBElement<OAIPMHtype> handleRequest(ListRecordsRequest request) {
     var objectFactory = new ObjectFactory();
 
     var oaiResponse = createBaseResponse(request, objectFactory);
