@@ -9,6 +9,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec.SetRoot;
+import no.sikt.nva.oai.pmh.handler.oaipmh.request.ListSetsRequest;
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.records.Facet;
 import no.unit.nva.search.common.records.HttpResponseFormatter;
@@ -19,24 +21,27 @@ import nva.commons.apigateway.exceptions.BadRequestException;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
 import org.openarchives.oai.pmh.v2.ObjectFactory;
 import org.openarchives.oai.pmh.v2.SetType;
-import org.openarchives.oai.pmh.v2.VerbType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ListSets {
-  private static final Logger logger = LoggerFactory.getLogger(ListSets.class);
+public class ListSetsRequestHandler implements OaiPmhRequestHandler<ListSetsRequest> {
+  private static final Logger logger = LoggerFactory.getLogger(ListSetsRequestHandler.class);
   private static final String INSTANCE_TYPE_AGGREGATION_NAME = "type";
+  private final ResourceClient resourceClient;
 
-  public ListSets() {}
+  public ListSetsRequestHandler(ResourceClient resourceClient) {
+    this.resourceClient = resourceClient;
+  }
 
-  public JAXBElement<OAIPMHtype> listSets(ResourceClient resourceClient) {
+  @Override
+  public JAXBElement<OAIPMHtype> handleRequest(ListSetsRequest request) {
     final ResourceSearchQuery query = buildAllAggregationsQuery();
 
     var instanceTypes = doSearchAndExtractInstanceTypesFromTypeAggregation(resourceClient, query);
     var objectFactory = new ObjectFactory();
     var oaiResponse = baseResponse(objectFactory);
     var value = oaiResponse.getValue();
-    value.getRequest().setVerb(VerbType.LIST_SETS);
+    value.getRequest().setVerb(request.getVerbType());
 
     var listSets = objectFactory.createListSetsType();
     listSets.getSet().addAll(generateSets(instanceTypes, objectFactory));
@@ -85,23 +90,25 @@ public class ListSets {
       java.util.Set<String> instanceTypes, ObjectFactory objectFactory) {
     var setTypes = new LinkedList<SetType>();
     var setQualifier = objectFactory.createSetType();
-    setQualifier.setSetSpec(Set.PUBLICATION_INSTANCE_TYPE.getValue());
-    setQualifier.setSetName(Set.PUBLICATION_INSTANCE_TYPE.getValue());
+    setQualifier.setSetSpec(SetRoot.RESOURCE_TYPE_GENERAL.getValue());
+    setQualifier.setSetName(SetRoot.RESOURCE_TYPE_GENERAL.getValue());
 
     setTypes.add(setQualifier);
 
     var subSetTypes =
-        instanceTypes.stream().map(instanceType -> wrap(instanceType, objectFactory)).toList();
+        instanceTypes.stream()
+            .map(instanceType -> new SetSpec(SetRoot.RESOURCE_TYPE_GENERAL, instanceType))
+            .map(setSpec -> wrap(setSpec, objectFactory))
+            .toList();
 
     setTypes.addAll(subSetTypes);
     return setTypes;
   }
 
-  private SetType wrap(String instanceType, ObjectFactory objectFactory) {
+  private SetType wrap(SetSpec setSpec, ObjectFactory objectFactory) {
     var setType = objectFactory.createSetType();
-    setType.setSetSpec(Set.PUBLICATION_INSTANCE_TYPE.getSpec(instanceType));
-    setType.setSetName(instanceType);
-
+    setType.setSetSpec(setSpec.getValue().orElseThrow());
+    setType.setSetName(setSpec.children()[0]);
     return setType;
   }
 }

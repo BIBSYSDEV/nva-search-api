@@ -3,27 +3,31 @@ package no.sikt.nva.oai.pmh.handler.oaipmh;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhUtils.baseResponse;
+import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 import static no.unit.nva.constants.Words.ZERO;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.html.HtmlEscapers;
 import jakarta.xml.bind.JAXBElement;
 import java.math.BigInteger;
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Optional;
 import javax.xml.datatype.DatatypeFactory;
+import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec.SetRoot;
+import no.sikt.nva.oai.pmh.handler.oaipmh.request.ListRecordsRequest;
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.ResourceParameter;
 import no.unit.nva.search.resource.ResourceSearchQuery;
 import no.unit.nva.search.resource.ResourceSort;
 import no.unit.nva.search.resource.SimplifiedMutator;
+import no.unit.nva.search.resource.response.ResourceSearchResponse;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import org.openarchives.oai.pmh.v2.ListRecordsType;
-import org.openarchives.oai.pmh.v2.OAIPMHerrorcodeType;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
 import org.openarchives.oai.pmh.v2.ObjectFactory;
 import org.openarchives.oai.pmh.v2.RecordType;
@@ -32,9 +36,9 @@ import org.openarchives.oai.pmh.v2.VerbType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ListRecords {
+public class ListRecordsRequestHandler implements OaiPmhRequestHandler<ListRecordsRequest> {
 
-  private static final Logger logger = LoggerFactory.getLogger(ListRecords.class);
+  private static final Logger logger = LoggerFactory.getLogger(ListRecordsRequestHandler.class);
   private static final int RESUMPTION_TOKEN_TTL_HOURS = 24;
   public static final String MODIFIED_DATE_ASCENDING =
       ResourceSort.MODIFIED_DATE.asCamelCase() + ":asc";
@@ -43,7 +47,7 @@ public class ListRecords {
   private final RecordTransformer recordTransformer;
   private final int batchSize;
 
-  public ListRecords(
+  public ListRecordsRequestHandler(
       ResourceClient resourceClient, RecordTransformer recordTransformer, int batchSize) {
     super();
     this.resourceClient = resourceClient;
@@ -51,106 +55,99 @@ public class ListRecords {
     this.batchSize = batchSize;
   }
 
-  public JAXBElement<OAIPMHtype> listRecords(OaiPmhRequest request) {
+  @Override
+  public JAXBElement<OAIPMHtype> handleRequest(ListRecordsRequest request) {
     var objectFactory = new ObjectFactory();
 
     var oaiResponse = createBaseResponse(request, objectFactory);
-    try {
-      var ignored =
-          nonNull(request.getMetadataPrefix())
-              ? MetadataPrefix.fromPrefix(request.getMetadataPrefix())
-              : MetadataPrefix.OAI_DC;
-      var searchResult = performSearch(request);
-      var records = recordTransformer.transform(searchResult.hits);
-      var listRecords =
-          createListRecordsResponse(records, searchResult.totalSize(), request, objectFactory);
+    var searchResult = performSearch(request);
+    var modifiedDateOfLastHit = extractModifiedDateOfLastHit(searchResult);
+    var cursorValue =
+        modifiedDateOfLastHit
+            .map(Instant::parse)
+            .map(ListRecordsRequestHandler::nextNano)
+            .map(Instant::toString)
+            .orElse(null);
+    var records = recordTransformer.transform(searchResult.hits);
+    var listRecords =
+        createListRecordsResponse(
+            records,
+            OaiPmhDateTime.from(cursorValue),
+            searchResult.totalSize(),
+            request,
+            objectFactory);
 
-      oaiResponse.getValue().setListRecords(listRecords);
-    } catch (MetadataPrefixNotSupportedException e) {
-      return reportCannotDisseminateFormatError(request, objectFactory, oaiResponse);
-    } catch (SetNotSupportedException e) {
-      return reportBadArgumentError(request, objectFactory, oaiResponse);
+    oaiResponse.getValue().setListRecords(listRecords);
+    return oaiResponse;
+  }
+
+  private static Instant nextNano(Instant instant) {
+    return instant.plusNanos(1);
+  }
+
+  private Optional<String> extractModifiedDateOfLastHit(SearchResult searchResult) {
+    if (searchResult.hits().isEmpty()) {
+      return Optional.empty();
     }
-    return oaiResponse;
+
+    var lastHit = searchResult.hits().getLast();
+    var resourceSearchResponse =
+        dtoObjectMapper.convertValue(lastHit, ResourceSearchResponse.class);
+    var modifiedDate = resourceSearchResponse.recordMetadata().modifiedDate();
+    return Optional.of(modifiedDate);
   }
 
-  private JAXBElement<OAIPMHtype> reportBadArgumentError(
-      OaiPmhRequest request, ObjectFactory objectFactory, JAXBElement<OAIPMHtype> oaiResponse) {
-    var errorType = objectFactory.createOAIPMHerrorType();
-    errorType.setCode(OAIPMHerrorcodeType.BAD_ARGUMENT);
-    errorType.setValue(
-        "Set '" + HtmlEscapers.htmlEscaper().escape(request.getSet()) + "' is not supported");
-    oaiResponse.getValue().getError().add(errorType);
-    return oaiResponse;
-  }
-
-  private static JAXBElement<OAIPMHtype> reportCannotDisseminateFormatError(
-      OaiPmhRequest request, ObjectFactory objectFactory, JAXBElement<OAIPMHtype> oaiResponse) {
-    var errorType = objectFactory.createOAIPMHerrorType();
-    errorType.setCode(OAIPMHerrorcodeType.CANNOT_DISSEMINATE_FORMAT);
-    errorType.setValue(HtmlEscapers.htmlEscaper().escape(request.getMetadataPrefix()));
-    oaiResponse.getValue().getError().add(errorType);
-    return oaiResponse;
-  }
-
-  private SearchResult performSearch(OaiPmhRequest request) {
-    var incomingResumptionToken =
-        ResumptionToken.from(VerbType.LIST_RECORDS, request.getResumptionToken());
-    var setInstance = nonNull(request.getSet()) ? SetInstance.from(request.getSet()) : null;
-    return incomingResumptionToken
-        .map(this::doFollowUpSearch)
-        .orElseGet(() -> doInitialSearch(request.getFrom(), request.getUntil(), setInstance));
+  private SearchResult performSearch(ListRecordsRequest request) {
+    var incomingResumptionToken = request.getResumptionToken();
+    var setSpec = request.getSetSpec();
+    return nonNull(incomingResumptionToken)
+        ? doFollowUpSearch(incomingResumptionToken)
+        : doInitialSearch(request.getFrom(), request.getUntil(), setSpec);
   }
 
   private JAXBElement<OAIPMHtype> createBaseResponse(
-      OaiPmhRequest context, ObjectFactory objectFactory) {
+      ListRecordsRequest listRecordsRequest, ObjectFactory objectFactory) {
     var oaiResponse = baseResponse(objectFactory);
-    var metadataPrefix = context.getMetadataPrefix();
-    populateListRecordsRequest(
-        context.getFrom(),
-        context.getUntil(),
-        context.getResumptionToken(),
-        metadataPrefix,
-        oaiResponse.getValue());
+    populateListRecordsRequest(listRecordsRequest, oaiResponse.getValue());
     return oaiResponse;
   }
 
   private ListRecordsType createListRecordsResponse(
-      List<RecordType> records, int totalSize, OaiPmhRequest request, ObjectFactory objectFactory) {
+      List<RecordType> records,
+      OaiPmhDateTime nextPositionCursor,
+      int totalSize,
+      ListRecordsRequest request,
+      ObjectFactory objectFactory) {
 
     var listRecords = objectFactory.createListRecordsType();
     listRecords.getRecord().addAll(records);
 
-    var current = extractLastDateTime(records);
     var pageSize = records.size();
-    if (shouldAddResumptionToken(current, pageSize)) {
-      var resumptionTokenType = generateResumptionToken(request, current, totalSize, objectFactory);
+    if (shouldAddResumptionToken(nextPositionCursor, pageSize)) {
+      var resumptionTokenType =
+          generateResumptionToken(request, nextPositionCursor, totalSize, objectFactory);
       listRecords.setResumptionToken(resumptionTokenType);
     }
 
     return listRecords;
   }
 
-  private boolean shouldAddResumptionToken(String current, int totalSize) {
-    return nonNull(current) && totalSize >= batchSize;
+  private boolean shouldAddResumptionToken(OaiPmhDateTime nextDateTime, int totalSize) {
+    return nextDateTime.isPresent() && totalSize >= batchSize;
   }
 
   private SearchResult doFollowUpSearch(ResumptionToken resumptionToken) {
-    var setInstance =
-        nonNull(resumptionToken.originalRequest().getSet())
-            ? SetInstance.from(resumptionToken.originalRequest().getSet())
-            : null;
     var query =
         buildListRecordsPageQuery(
-            resumptionToken.current(),
+            resumptionToken.cursor(),
             resumptionToken.originalRequest().getUntil(),
-            setInstance,
+            resumptionToken.originalRequest().getSetSpec(),
             batchSize);
     return doSearch(query, resumptionToken.totalSize());
   }
 
-  private SearchResult doInitialSearch(String from, String until, SetInstance setInstance) {
-    var query = buildListRecordsPageQuery(from, until, setInstance, batchSize);
+  private SearchResult doInitialSearch(OaiPmhDateTime from, OaiPmhDateTime until, SetSpec setSpec) {
+    var query = buildListRecordsPageQuery(from, until, setSpec, batchSize);
     return doSearch(query, null);
   }
 
@@ -170,7 +167,7 @@ public class ListRecords {
   }
 
   private static ResourceSearchQuery buildListRecordsPageQuery(
-      String from, String until, SetInstance setInstance, int batchSize) {
+      OaiPmhDateTime from, OaiPmhDateTime until, SetSpec setSpec, int batchSize) {
     final ResourceSearchQuery query;
     try {
       var builder =
@@ -179,14 +176,14 @@ public class ListRecords {
               .withParameter(ResourceParameter.FROM, ZERO)
               .withParameter(ResourceParameter.SIZE, Integer.toString(batchSize))
               .withParameter(ResourceParameter.SORT, MODIFIED_DATE_ASCENDING);
-      if (nonNull(from)) {
-        builder.withParameter(ResourceParameter.MODIFIED_SINCE, from);
-      }
-      if (nonNull(until)) {
-        builder.withParameter(ResourceParameter.MODIFIED_BEFORE, until);
-      }
-      if (nonNull(setInstance) && Set.PUBLICATION_INSTANCE_TYPE.equals(setInstance.set())) {
-        builder.withParameter(ResourceParameter.INSTANCE_TYPE, setInstance.value());
+      from.ifPresent(
+          fromValue -> builder.withParameter(ResourceParameter.MODIFIED_SINCE, fromValue));
+      until.ifPresent(
+          untilValue -> builder.withParameter(ResourceParameter.MODIFIED_BEFORE, untilValue));
+      if (setSpec.isPresent()
+          && SetRoot.RESOURCE_TYPE_GENERAL.equals(setSpec.root())
+          && setSpec.children().length > 0) {
+        builder.withParameter(ResourceParameter.INSTANCE_TYPE, setSpec.children()[0]);
       }
       query =
           builder
@@ -204,38 +201,32 @@ public class ListRecords {
     return query;
   }
 
-  private String extractLastDateTime(List<RecordType> records) {
-    if (records.isEmpty()) {
-      return null;
-    } else {
-      return records.getLast().getHeader().getDatestamp();
-    }
-  }
-
   private static void populateListRecordsRequest(
-      String from,
-      String until,
-      String incomingResumptionToken,
-      String metadataPrefix,
-      OAIPMHtype oaiPmhType) {
+      ListRecordsRequest request, OAIPMHtype oaiPmhType) {
+    var resumptionTokenValue =
+        nonNull(request.getResumptionToken()) ? request.getResumptionToken().getValue() : null;
     oaiPmhType.getRequest().setVerb(VerbType.LIST_RECORDS);
-    oaiPmhType.getRequest().setResumptionToken(incomingResumptionToken);
-    oaiPmhType.getRequest().setFrom(from);
-    oaiPmhType.getRequest().setUntil(until);
-    oaiPmhType.getRequest().setMetadataPrefix(metadataPrefix);
+    oaiPmhType.getRequest().setResumptionToken(resumptionTokenValue);
+    oaiPmhType.getRequest().setFrom(request.getFrom().getValue().orElse(null));
+    oaiPmhType.getRequest().setUntil(request.getUntil().getValue().orElse(null));
+    oaiPmhType.getRequest().setSet(request.getSetSpec().getValue().orElse(null));
+    oaiPmhType.getRequest().setMetadataPrefix(request.getMetadataPrefix().getPrefix());
   }
 
   private record SearchResult(int totalSize, int pageSize, List<JsonNode> hits) {}
 
   private ResumptionTokenType generateResumptionToken(
-      OaiPmhRequest originalRequest, String current, int totalSize, ObjectFactory objectFactory) {
+      ListRecordsRequest originalRequest,
+      OaiPmhDateTime cursor,
+      int totalSize,
+      ObjectFactory objectFactory) {
     var inTenMinutes =
         DatatypeFactory.newDefaultInstance()
             .newXMLGregorianCalendar(
                 GregorianCalendar.from(ZonedDateTime.now().plusHours(RESUMPTION_TOKEN_TTL_HOURS)));
 
     var resumptionTokenType = objectFactory.createResumptionTokenType();
-    var newResumptionToken = new ResumptionToken(originalRequest, current, totalSize);
+    var newResumptionToken = new ResumptionToken(originalRequest, cursor, totalSize);
     resumptionTokenType.setValue(newResumptionToken.getValue());
     resumptionTokenType.setExpirationDate(inTenMinutes);
     resumptionTokenType.setCompleteListSize(BigInteger.valueOf(totalSize));

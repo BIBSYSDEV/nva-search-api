@@ -3,20 +3,20 @@ package no.sikt.nva.oai.pmh.handler;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 import no.sikt.nva.oai.pmh.handler.oaipmh.DefaultOaiPmhMethodRouter;
+import no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhException;
 import no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhMethodRouter;
-import no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhRequest;
+import no.sikt.nva.oai.pmh.handler.oaipmh.request.OaiPmhRequestFactoryRegistry;
 import no.unit.nva.search.resource.ResourceClient;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
-import nva.commons.core.StringUtils;
 import nva.commons.core.paths.UriWrapper;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
 import org.slf4j.Logger;
@@ -25,15 +25,7 @@ import org.slf4j.LoggerFactory;
 public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
   private static final Logger logger = LoggerFactory.getLogger(OaiPmhHandler.class);
 
-  private static final String PARAMETER_NAME_VERB = "verb";
-  private static final String PARAMETER_NAME_FROM = "from";
-  private static final String PARAMETER_NAME_UNTIL = "until";
-  private static final String PARAMETER_NAME_SET = "set";
-  private static final String PARAMETER_NAME_METADATA_PREFIX = "metadataPrefix";
-  private static final String PARAMETER_NAME_RESUMPTION_TOKEN = "resumptionToken";
-  private static final String EMPTY_VERB = "null";
   private static final String HTTPS_SCHEME = "https";
-  private static final String NULL_STRING = "null";
 
   private final XmlSerializer xmlSerializer;
   private final OaiPmhMethodRouter dataProvider;
@@ -65,12 +57,15 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
 
   @JacocoGenerated
   private static OaiPmhMethodRouter defaultOaiPmhMethodRouter() {
-    var batchSize = new Environment().readEnvOpt("LIST_RECORDS_BATCH_SIZE").orElse("250");
+    var enviroment = new Environment();
+    var batchSize = enviroment.readEnvOpt("LIST_RECORDS_BATCH_SIZE").orElse("250");
     return new DefaultOaiPmhMethodRouter(
-        ResourceClient.defaultClient(), Integer.parseInt(batchSize));
+        ResourceClient.defaultClient(),
+        Integer.parseInt(batchSize),
+        generateEndpointUri(enviroment));
   }
 
-  private static URI generateEndpointUri(Environment environment) {
+  protected static URI generateEndpointUri(Environment environment) {
     var apiHost = environment.readEnv("API_HOST");
     var basePath = environment.readEnv("OAI_BASE_PATH");
     return new UriWrapper(HTTPS_SCHEME, apiHost).addChild(basePath).getUri();
@@ -83,32 +78,14 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
 
   @Override
   protected String processInput(String body, RequestInfo requestInfo, Context context) {
-    var oaiPmhRequest = getOaiPmhContext(body, requestInfo);
-    var rootElement = dataProvider.handleRequest(oaiPmhRequest, endpointUri);
-    return xmlSerializer.serialize(rootElement);
-  }
-
-  private OaiPmhRequest getOaiPmhContext(String body, RequestInfo requestInfo) {
-    var verb = extractParameter(PARAMETER_NAME_VERB, requestInfo, body).orElse(EMPTY_VERB);
-    var from = extractParameter(PARAMETER_NAME_FROM, requestInfo, body).orElse(null);
-    var until = extractParameter(PARAMETER_NAME_UNTIL, requestInfo, body).orElse(null);
-    var metadataPrefix =
-        extractParameter(PARAMETER_NAME_METADATA_PREFIX, requestInfo, body).orElse(null);
-    var resumptionToken =
-        extractParameter(PARAMETER_NAME_RESUMPTION_TOKEN, requestInfo, body).orElse(null);
-    var set = extractParameter(PARAMETER_NAME_SET, requestInfo, body).orElse(null);
-
-    return OaiPmhRequest.parse(verb, from, until, metadataPrefix, set, resumptionToken);
-  }
-
-  private Optional<String> extractParameter(
-      String parameterName, RequestInfo requestInfo, String body) {
-    if (StringUtils.isEmpty(body) || NULL_STRING.equals(body)) {
-      return requestInfo.getQueryParameterOpt(parameterName);
-    } else {
-      var bodyParser = FormUrlencodedBodyParser.from(body);
-      return bodyParser.getValue(parameterName);
+    JAXBElement<OAIPMHtype> response;
+    try {
+      var oaiPmhRequest = OaiPmhRequestFactoryRegistry.from(requestInfo, body);
+      response = dataProvider.handleRequest(oaiPmhRequest, endpointUri);
+    } catch (OaiPmhException exception) {
+      response = DefaultOaiPmhMethodRouter.error(exception.getCodeType(), exception.getMessage());
     }
+    return xmlSerializer.serialize(response);
   }
 
   @Override

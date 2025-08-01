@@ -1,23 +1,22 @@
 package no.sikt.nva.oai.pmh.handler.oaipmh;
 
-import static java.util.Objects.nonNull;
-
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import no.sikt.nva.oai.pmh.handler.oaipmh.request.ListRecordsRequest;
 import nva.commons.core.StringUtils;
-import org.openarchives.oai.pmh.v2.VerbType;
 
-public record ResumptionToken(OaiPmhRequest originalRequest, String current, int totalSize) {
+public record ResumptionToken(
+    ListRecordsRequest originalRequest, OaiPmhDateTime cursor, int totalSize) {
   private static final String EQUALS = "=";
   private static final String FROM = "from";
   private static final String UNTIL = "until";
   private static final String SET = "set";
   private static final String METADATA_PREFIX = "metadataPrefix";
-  private static final String CURRENT = "current";
+  private static final String CURSOR = "cursor";
   private static final String TOTAL_SIZE = "totalSize";
   private static final String AMPERSAND = "&";
 
@@ -26,36 +25,34 @@ public record ResumptionToken(OaiPmhRequest originalRequest, String current, int
     unencodedValueBuilder
         .append(METADATA_PREFIX)
         .append(EQUALS)
-        .append(originalRequest.getMetadataPrefix());
-    if (nonNull(originalRequest.getFrom())) {
-      unencodedValueBuilder
-          .append(AMPERSAND)
-          .append(FROM)
-          .append(EQUALS)
-          .append(originalRequest.getFrom());
-    }
-    if (nonNull(originalRequest.getUntil())) {
-      unencodedValueBuilder
-          .append(AMPERSAND)
-          .append(UNTIL)
-          .append(EQUALS)
-          .append(originalRequest.getUntil());
-    }
-    if (nonNull(originalRequest.getSet())) {
-      unencodedValueBuilder
-          .append(AMPERSAND)
-          .append(SET)
-          .append(EQUALS)
-          .append(originalRequest.getSet());
-    }
-    if (nonNull(current)) {
-      unencodedValueBuilder.append(AMPERSAND).append(CURRENT).append(EQUALS).append(current);
-    }
+        .append(originalRequest.getMetadataPrefix().getPrefix());
+
+    originalRequest
+        .getFrom()
+        .ifPresent(
+            value ->
+                unencodedValueBuilder.append(AMPERSAND).append(FROM).append(EQUALS).append(value));
+
+    originalRequest
+        .getUntil()
+        .ifPresent(
+            value ->
+                unencodedValueBuilder.append(AMPERSAND).append(UNTIL).append(EQUALS).append(value));
+
+    originalRequest
+        .getSetSpec()
+        .ifPresent(
+            value ->
+                unencodedValueBuilder.append(AMPERSAND).append(SET).append(EQUALS).append(value));
+
+    cursor.ifPresent(
+        value ->
+            unencodedValueBuilder.append(AMPERSAND).append(CURSOR).append(EQUALS).append(value));
     unencodedValueBuilder.append(AMPERSAND).append(TOTAL_SIZE).append(EQUALS).append(totalSize);
     return URLEncoder.encode(unencodedValueBuilder.toString(), StandardCharsets.UTF_8);
   }
 
-  public static Optional<ResumptionToken> from(VerbType verb, String encodedToken) {
+  public static Optional<ResumptionToken> from(String encodedToken) {
     if (StringUtils.isEmpty(encodedToken)) {
       return Optional.empty();
     }
@@ -72,10 +69,17 @@ public record ResumptionToken(OaiPmhRequest originalRequest, String current, int
     var from = values.get(FROM);
     var until = values.get(UNTIL);
     var set = values.get(SET);
-    var current = values.get(CURRENT);
+    var cursor = values.get(CURSOR);
     var totalSize = values.get(TOTAL_SIZE);
 
-    var originalRequest = OaiPmhRequest.parse(verb.value(), from, until, metadataPrefix, set, null);
-    return Optional.of(new ResumptionToken(originalRequest, current, Integer.parseInt(totalSize)));
+    var originalRequest =
+        new ListRecordsRequest(
+            OaiPmhDateTime.from(from),
+            OaiPmhDateTime.from(until),
+            SetSpec.from(set),
+            MetadataPrefix.fromPrefix(metadataPrefix));
+    return Optional.of(
+        new ResumptionToken(
+            originalRequest, OaiPmhDateTime.from(cursor), Integer.parseInt(totalSize)));
   }
 }

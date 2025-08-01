@@ -1,12 +1,9 @@
 package no.sikt.nva.oai.pmh.handler.oaipmh;
 
-import com.google.common.html.HtmlEscapers;
+import org.openarchives.oai.pmh.v2.OAIPMHerrorcodeType;
 
-public class MetadataPrefixNotSupportedException extends RuntimeException {
-  public MetadataPrefixNotSupportedException(String metadataPrefix) {
-    super(
-        "Metadata prefix '"
-            + HtmlEscapers.htmlEscaper().escape(metadataPrefix)
-            + "' is not supported");
+public class MetadataPrefixNotSupportedException extends OaiPmhException {
+  public MetadataPrefixNotSupportedException(String message) {
+    super(OAIPMHerrorcodeType.CANNOT_DISSEMINATE_FORMAT, message);
   }
 }

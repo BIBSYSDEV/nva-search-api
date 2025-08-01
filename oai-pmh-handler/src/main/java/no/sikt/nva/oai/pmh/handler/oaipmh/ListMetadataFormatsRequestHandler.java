@@ -5,19 +5,23 @@ import static no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhUtils.baseResponse;
 
 import jakarta.xml.bind.JAXBElement;
 import no.sikt.nva.oai.pmh.handler.JaxbUtils.Namespaces;
+import no.sikt.nva.oai.pmh.handler.oaipmh.request.ListMetadataFormatsRequest;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
 import org.openarchives.oai.pmh.v2.ObjectFactory;
-import org.openarchives.oai.pmh.v2.VerbType;
 
-public class ListMetadataFormats {
+public class ListMetadataFormatsRequestHandler
+    implements OaiPmhRequestHandler<ListMetadataFormatsRequest> {
 
-  public ListMetadataFormats() {}
+  public ListMetadataFormatsRequestHandler() {
+    // The handler constructor has no arguments.
+  }
 
-  public JAXBElement<OAIPMHtype> listMetadataFormats() {
+  @Override
+  public JAXBElement<OAIPMHtype> handleRequest(ListMetadataFormatsRequest request) {
     var objectFactory = new ObjectFactory();
     var oaiResponse = baseResponse(objectFactory);
     var value = oaiResponse.getValue();
-    value.getRequest().setVerb(VerbType.LIST_METADATA_FORMATS);
+    value.getRequest().setVerb(request.getVerbType());
 
     var listMetadataFormatsType = objectFactory.createListMetadataFormatsType();
 
