@@ -9,15 +9,19 @@ import org.openarchives.oai.pmh.v2.GranularityType;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
 import org.openarchives.oai.pmh.v2.ObjectFactory;
 
-public class IdentifyRequestHandler {
+public class IdentifyRequestHandler implements OaiPmhRequestHandler<IdentifyRequest> {
   private static final String PROTOCOL_VERSION = "2.0";
   private static final String REPOSITORY_NAME = "NVA-OAI-PMH";
   private static final String EARLIEST_DATESTAMP = "2016-01-01";
   private static final String CONTACT_AT_SIKT_NO = "kontakt@sikt.no";
+  private final URI endpointUri;
 
-  public IdentifyRequestHandler() {}
+  public IdentifyRequestHandler(URI endpointUri) {
+    this.endpointUri = endpointUri;
+  }
 
-  public JAXBElement<OAIPMHtype> identify(IdentifyRequest request, URI endpointUri) {
+  @Override
+  public JAXBElement<OAIPMHtype> handleRequest(IdentifyRequest request) {
     var objectFactory = new ObjectFactory();
     var oaiResponse = baseResponse(objectFactory);
     var value = oaiResponse.getValue();

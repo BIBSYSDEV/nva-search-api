@@ -1309,7 +1309,8 @@ public class OaiPmhHandlerTest {
   private GatewayResponse<String> invokeHandler(
       Environment environment, JaxbXmlSerializer marshaller, InputStream inputStream)
       throws IOException {
-    var dataProvider = new DefaultOaiPmhMethodRouter(resourceClient, 3);
+    var endpointUri = OaiPmhHandler.generateEndpointUri(environment);
+    var dataProvider = new DefaultOaiPmhMethodRouter(resourceClient, 3, endpointUri);
     var handler = new OaiPmhHandler(environment, dataProvider, marshaller);
     handler.handleRequest(inputStream, outputStream, new FakeContext());
 

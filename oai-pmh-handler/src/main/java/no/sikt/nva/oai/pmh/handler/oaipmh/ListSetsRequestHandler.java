@@ -23,13 +23,17 @@ import org.openarchives.oai.pmh.v2.SetType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ListSetsRequestHandler {
+public class ListSetsRequestHandler implements OaiPmhRequestHandler<ListSetsRequest> {
   private static final Logger logger = LoggerFactory.getLogger(ListSetsRequestHandler.class);
   private static final String INSTANCE_TYPE_AGGREGATION_NAME = "type";
+  private final ResourceClient resourceClient;
 
-  public ListSetsRequestHandler() {}
+  public ListSetsRequestHandler(ResourceClient resourceClient) {
+    this.resourceClient = resourceClient;
+  }
 
-  public JAXBElement<OAIPMHtype> listSets(ListSetsRequest request, ResourceClient resourceClient) {
+  @Override
+  public JAXBElement<OAIPMHtype> handleRequest(ListSetsRequest request) {
     final ResourceSearchQuery query = buildAllAggregationsQuery();
 
     var instanceTypes = doSearchAndExtractInstanceTypesFromTypeAggregation(resourceClient, query);
