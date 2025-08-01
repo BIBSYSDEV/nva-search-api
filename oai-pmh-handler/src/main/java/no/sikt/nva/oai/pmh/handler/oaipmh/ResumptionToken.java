@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import no.sikt.nva.oai.pmh.handler.oaipmh.request.ListRecordsRequest;
 import nva.commons.core.StringUtils;
 
 public record ResumptionToken(

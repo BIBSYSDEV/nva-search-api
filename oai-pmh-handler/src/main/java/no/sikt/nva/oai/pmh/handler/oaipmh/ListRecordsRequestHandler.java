@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.xml.datatype.DatatypeFactory;
 import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec.SetRoot;
+import no.sikt.nva.oai.pmh.handler.oaipmh.request.ListRecordsRequest;
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.ResourceParameter;

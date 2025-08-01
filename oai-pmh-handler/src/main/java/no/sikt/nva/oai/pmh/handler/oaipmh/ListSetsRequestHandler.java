@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec.SetRoot;
+import no.sikt.nva.oai.pmh.handler.oaipmh.request.ListSetsRequest;
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.records.Facet;
 import no.unit.nva.search.common.records.HttpResponseFormatter;

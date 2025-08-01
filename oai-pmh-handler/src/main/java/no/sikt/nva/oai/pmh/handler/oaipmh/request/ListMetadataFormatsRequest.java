@@ -1,4 +1,4 @@
-package no.sikt.nva.oai.pmh.handler.oaipmh;
+package no.sikt.nva.oai.pmh.handler.oaipmh.request;
 
 import java.util.Optional;
 import nva.commons.core.JacocoGenerated;

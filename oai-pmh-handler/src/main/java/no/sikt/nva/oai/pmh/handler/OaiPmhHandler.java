@@ -11,7 +11,7 @@ import java.util.List;
 import no.sikt.nva.oai.pmh.handler.oaipmh.DefaultOaiPmhMethodRouter;
 import no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhException;
 import no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhMethodRouter;
-import no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhRequest;
+import no.sikt.nva.oai.pmh.handler.oaipmh.request.OaiPmhRequestFactoryRegistry;
 import no.unit.nva.search.resource.ResourceClient;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
@@ -80,7 +80,7 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
   protected String processInput(String body, RequestInfo requestInfo, Context context) {
     JAXBElement<OAIPMHtype> response;
     try {
-      var oaiPmhRequest = OaiPmhRequest.from(requestInfo, body);
+      var oaiPmhRequest = OaiPmhRequestFactoryRegistry.from(requestInfo, body);
       response = dataProvider.handleRequest(oaiPmhRequest, endpointUri);
     } catch (OaiPmhException exception) {
       response = DefaultOaiPmhMethodRouter.error(exception.getCodeType(), exception.getMessage());

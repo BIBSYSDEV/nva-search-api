@@ -4,6 +4,7 @@ import static no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhUtils.baseResponse;
 
 import jakarta.xml.bind.JAXBElement;
 import java.net.URI;
+import no.sikt.nva.oai.pmh.handler.oaipmh.request.IdentifyRequest;
 import org.openarchives.oai.pmh.v2.DeletedRecordType;
 import org.openarchives.oai.pmh.v2.GranularityType;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;

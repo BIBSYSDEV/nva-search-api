@@ -4,6 +4,7 @@ import static no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhUtils.baseResponse;
 
 import jakarta.xml.bind.JAXBElement;
 import java.net.URI;
+import no.sikt.nva.oai.pmh.handler.oaipmh.request.OaiPmhRequest;
 import no.unit.nva.search.resource.ResourceClient;
 import org.openarchives.oai.pmh.v2.OAIPMHerrorcodeType;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;

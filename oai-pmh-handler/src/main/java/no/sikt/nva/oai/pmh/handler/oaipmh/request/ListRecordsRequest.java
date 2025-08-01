@@ -1,7 +1,11 @@
-package no.sikt.nva.oai.pmh.handler.oaipmh;
+package no.sikt.nva.oai.pmh.handler.oaipmh.request;
 
 import static java.util.Objects.nonNull;
 
+import no.sikt.nva.oai.pmh.handler.oaipmh.MetadataPrefix;
+import no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhDateTime;
+import no.sikt.nva.oai.pmh.handler.oaipmh.ResumptionToken;
+import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec;
 import org.openarchives.oai.pmh.v2.VerbType;
 
 public class ListRecordsRequest extends OaiPmhRequest {
