@@ -28,8 +28,7 @@ public final class OaiPmhDateTime implements NullableWrapper<String> {
     try {
       instant = Instant.parse(value);
       if (instant.getNano() != 0) {
-        throw new BadArgumentException(
-            "datestamp fields with time only supports second granularity");
+        throw new BadArgumentException("datestamp fields with time does not support nanoseconds.");
       }
     } catch (DateTimeParseException e) {
       instant = getInstantFromDate(value);

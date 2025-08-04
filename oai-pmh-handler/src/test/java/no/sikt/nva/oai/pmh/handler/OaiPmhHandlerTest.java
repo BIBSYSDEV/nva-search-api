@@ -464,6 +464,20 @@ public class OaiPmhHandlerTest {
   }
 
   @ParameterizedTest
+  @MethodSource("datestampIssueListRecordsParameterProvider")
+  void shouldReportErrorOnInitialListRecordsWithNanoSecondDataStamp(
+      String method, String from, String until) throws Exception {
+
+    var response =
+        performListRecordsOperation(
+            method, from, until, MetadataPrefix.OAI_DC.getPrefix(), null, null);
+    assertXmlResponseWithError(
+        response,
+        OAIPMHerrorcodeType.BAD_ARGUMENT,
+        "datestamp fields with time does not support nanoseconds.");
+  }
+
+  @ParameterizedTest
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldListRecordsOnInitialQueryWithOnlyRequiredParameters(String method) throws Exception {
     var expectedIdentifiers =
@@ -1370,5 +1384,33 @@ public class OaiPmhHandlerTest {
         Arguments.of(VerbType.LIST_IDENTIFIERS, GET_METHOD),
         Arguments.of(VerbType.GET_RECORD, POST_METHOD),
         Arguments.of(VerbType.LIST_IDENTIFIERS, POST_METHOD));
+  }
+
+  private static Stream<Arguments> datestampIssueListRecordsParameterProvider() {
+    var secondsGranularityDate = "2020-01-01T00:00:00Z";
+    var nanosGranularityDate = "2020-01-01T00:00:00.123456789Z";
+    var nameTemplate =
+        "%s request with nano resolution in %s parameter should report bad argument error.";
+    return Stream.of(
+        Arguments.argumentSet(
+            nameTemplate.formatted(GET_METHOD, "until"),
+            GET_METHOD,
+            secondsGranularityDate,
+            nanosGranularityDate),
+        Arguments.argumentSet(
+            nameTemplate.formatted(GET_METHOD, "from"),
+            GET_METHOD,
+            nanosGranularityDate,
+            secondsGranularityDate),
+        Arguments.argumentSet(
+            nameTemplate.formatted(GET_METHOD, "until"),
+            POST_METHOD,
+            secondsGranularityDate,
+            nanosGranularityDate),
+        Arguments.argumentSet(
+            nameTemplate.formatted(GET_METHOD, "from"),
+            POST_METHOD,
+            nanosGranularityDate,
+            secondsGranularityDate));
   }
 }
