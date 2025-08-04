@@ -528,8 +528,7 @@ public class OaiPmhHandlerTest {
             OaiPmhDateTime.from(untilDate),
             SetSpec.EMPTY_INSTANCE,
             metadataPrefix);
-    var resumptionToken =
-        new ResumptionToken(listRecordsRequest, OaiPmhDateTime.from(cursor), 8).getValue();
+    var resumptionToken = new ResumptionToken(listRecordsRequest, cursor, 8).getValue();
 
     var expectedIdentifiers =
         List.of(
@@ -564,8 +563,7 @@ public class OaiPmhHandlerTest {
             SetSpec.EMPTY_INSTANCE,
             metadataPrefix);
 
-    var resumptionToken =
-        new ResumptionToken(listRecordsRequest, OaiPmhDateTime.from(cursor), 8).getValue();
+    var resumptionToken = new ResumptionToken(listRecordsRequest, cursor, 8).getValue();
 
     var expectedIdentifiers =
         List.of(
@@ -858,7 +856,7 @@ public class OaiPmhHandlerTest {
           nonNull(cursor) ? "2016-01-06T08:55:42.820948673Z" : "2016-01-03T08:55:42.820948673Z";
       assertThat(
           "Expects cursor in token to be 1 ms ahead of the last record in page",
-          token.cursor().getValue().orElseThrow(),
+          token.cursor(),
           is(equalTo(expectedCursorInToken)));
     } else {
       assertNoResumptionToken(xpathEngine, response);

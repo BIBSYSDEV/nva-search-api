@@ -71,11 +71,7 @@ public class ListRecordsRequestHandler implements OaiPmhRequestHandler<ListRecor
     var records = recordTransformer.transform(searchResult.hits);
     var listRecords =
         createListRecordsResponse(
-            records,
-            OaiPmhDateTime.from(cursorValue),
-            searchResult.totalSize(),
-            request,
-            objectFactory);
+            records, cursorValue, searchResult.totalSize(), request, objectFactory);
 
     oaiResponse.getValue().setListRecords(listRecords);
     return oaiResponse;
@@ -114,7 +110,7 @@ public class ListRecordsRequestHandler implements OaiPmhRequestHandler<ListRecor
 
   private ListRecordsType createListRecordsResponse(
       List<RecordType> records,
-      OaiPmhDateTime nextPositionCursor,
+      String cursorValue,
       int totalSize,
       ListRecordsRequest request,
       ObjectFactory objectFactory) {
@@ -123,17 +119,17 @@ public class ListRecordsRequestHandler implements OaiPmhRequestHandler<ListRecor
     listRecords.getRecord().addAll(records);
 
     var pageSize = records.size();
-    if (shouldAddResumptionToken(nextPositionCursor, pageSize)) {
+    if (shouldAddResumptionToken(pageSize)) {
       var resumptionTokenType =
-          generateResumptionToken(request, nextPositionCursor, totalSize, objectFactory);
+          generateResumptionToken(request, cursorValue, totalSize, objectFactory);
       listRecords.setResumptionToken(resumptionTokenType);
     }
 
     return listRecords;
   }
 
-  private boolean shouldAddResumptionToken(OaiPmhDateTime nextDateTime, int totalSize) {
-    return nextDateTime.isPresent() && totalSize >= batchSize;
+  private boolean shouldAddResumptionToken(int totalSize) {
+    return totalSize >= batchSize;
   }
 
   private SearchResult doFollowUpSearch(ResumptionToken resumptionToken) {
@@ -147,7 +143,7 @@ public class ListRecordsRequestHandler implements OaiPmhRequestHandler<ListRecor
   }
 
   private SearchResult doInitialSearch(OaiPmhDateTime from, OaiPmhDateTime until, SetSpec setSpec) {
-    var query = buildListRecordsPageQuery(from, until, setSpec, batchSize);
+    var query = buildListRecordsPageQuery(from.getValue().orElse(null), until, setSpec, batchSize);
     return doSearch(query, null);
   }
 
@@ -167,7 +163,7 @@ public class ListRecordsRequestHandler implements OaiPmhRequestHandler<ListRecor
   }
 
   private static ResourceSearchQuery buildListRecordsPageQuery(
-      OaiPmhDateTime from, OaiPmhDateTime until, SetSpec setSpec, int batchSize) {
+      String from, OaiPmhDateTime until, SetSpec setSpec, int batchSize) {
     final ResourceSearchQuery query;
     try {
       var builder =
@@ -176,15 +172,18 @@ public class ListRecordsRequestHandler implements OaiPmhRequestHandler<ListRecor
               .withParameter(ResourceParameter.FROM, ZERO)
               .withParameter(ResourceParameter.SIZE, Integer.toString(batchSize))
               .withParameter(ResourceParameter.SORT, MODIFIED_DATE_ASCENDING);
-      from.ifPresent(
-          fromValue -> builder.withParameter(ResourceParameter.MODIFIED_SINCE, fromValue));
+      Optional.ofNullable(from)
+          .ifPresent(
+              fromValue -> builder.withParameter(ResourceParameter.MODIFIED_SINCE, fromValue));
       until.ifPresent(
           untilValue -> builder.withParameter(ResourceParameter.MODIFIED_BEFORE, untilValue));
-      if (setSpec.isPresent()
-          && SetRoot.RESOURCE_TYPE_GENERAL.equals(setSpec.root())
-          && setSpec.children().length > 0) {
-        builder.withParameter(ResourceParameter.INSTANCE_TYPE, setSpec.children()[0]);
-      }
+      setSpec.ifPresent(
+          ignored -> {
+            if (isResourceTypeGeneralSpecWithChild(setSpec)) {
+              builder.withParameter(ResourceParameter.INSTANCE_TYPE, setSpec.children()[0]);
+            }
+          });
+
       query =
           builder
               .withAlwaysIncludedFields(SimplifiedMutator.getIncludedFields())
@@ -199,6 +198,10 @@ public class ListRecordsRequestHandler implements OaiPmhRequestHandler<ListRecor
           "Error search for initial page of search results during ListRecords.", e);
     }
     return query;
+  }
+
+  private static boolean isResourceTypeGeneralSpecWithChild(SetSpec setSpec) {
+    return SetRoot.RESOURCE_TYPE_GENERAL.equals(setSpec.root()) && setSpec.children().length > 0;
   }
 
   private static void populateListRecordsRequest(
@@ -217,7 +220,7 @@ public class ListRecordsRequestHandler implements OaiPmhRequestHandler<ListRecor
 
   private ResumptionTokenType generateResumptionToken(
       ListRecordsRequest originalRequest,
-      OaiPmhDateTime cursor,
+      String cursor,
       int totalSize,
       ObjectFactory objectFactory) {
     var inTenMinutes =

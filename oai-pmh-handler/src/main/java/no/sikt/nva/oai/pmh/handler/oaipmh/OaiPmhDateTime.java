@@ -1,7 +1,5 @@
 package no.sikt.nva.oai.pmh.handler.oaipmh;
 
-import static java.util.Objects.nonNull;
-
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -29,15 +27,14 @@ public final class OaiPmhDateTime implements NullableWrapper<String> {
     Instant instant;
     try {
       instant = Instant.parse(value);
+      if (instant.getNano() != 0) {
+        throw new BadArgumentException(
+            "datestamp fields with time only supports second granularity");
+      }
     } catch (DateTimeParseException e) {
       instant = getInstantFromDate(value);
     }
     return new OaiPmhDateTime(instant, value);
-  }
-
-  @Override
-  public boolean isPresent() {
-    return nonNull(instant);
   }
 
   @Override
