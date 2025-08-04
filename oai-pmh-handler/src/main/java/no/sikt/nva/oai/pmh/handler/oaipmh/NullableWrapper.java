@@ -12,7 +12,5 @@ public interface NullableWrapper<T> {
     return getValue().orElse(other);
   }
 
-  boolean isPresent();
-
   Optional<T> getValue();
 }

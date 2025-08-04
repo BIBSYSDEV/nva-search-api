@@ -1,7 +1,5 @@
 package no.sikt.nva.oai.pmh.handler.oaipmh;
 
-import static java.util.Objects.nonNull;
-
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -12,11 +10,13 @@ import java.util.Optional;
 import nva.commons.core.StringUtils;
 
 public final class OaiPmhDateTime implements NullableWrapper<String> {
-  public static final OaiPmhDateTime EMPTY_INSTANCE = new OaiPmhDateTime(null);
+  public static final OaiPmhDateTime EMPTY_INSTANCE = new OaiPmhDateTime(null, null);
   private final Instant instant;
+  private final String originalSource;
 
-  private OaiPmhDateTime(Instant instant) {
+  private OaiPmhDateTime(Instant instant, String originalSource) {
     this.instant = instant;
+    this.originalSource = originalSource;
   }
 
   public static OaiPmhDateTime from(String value) {
@@ -27,15 +27,13 @@ public final class OaiPmhDateTime implements NullableWrapper<String> {
     Instant instant;
     try {
       instant = Instant.parse(value);
+      if (instant.getNano() != 0) {
+        throw new BadArgumentException("datestamp fields with time does not support nanoseconds.");
+      }
     } catch (DateTimeParseException e) {
       instant = getInstantFromDate(value);
     }
-    return new OaiPmhDateTime(instant);
-  }
-
-  @Override
-  public boolean isPresent() {
-    return nonNull(instant);
+    return new OaiPmhDateTime(instant, value);
   }
 
   @Override
@@ -43,6 +41,10 @@ public final class OaiPmhDateTime implements NullableWrapper<String> {
     return Optional.ofNullable(instant)
         .map(localInstant -> ZonedDateTime.ofInstant(localInstant, ZoneId.of("Z")))
         .map(DateTimeFormatter.ISO_DATE_TIME::format);
+  }
+
+  public Optional<String> getOriginalSource() {
+    return Optional.ofNullable(originalSource);
   }
 
   private static Instant getInstantFromDate(String value) {

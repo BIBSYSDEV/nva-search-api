@@ -1,7 +1,5 @@
 package no.sikt.nva.oai.pmh.handler.oaipmh;
 
-import static java.util.Objects.nonNull;
-
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
@@ -26,11 +24,6 @@ public record SetSpec(SetRoot root, String... children) implements NullableWrapp
       return new SetSpec(
           SetRoot.fromValue(parts[ZERO]), Arrays.copyOfRange(parts, ONE, parts.length));
     }
-  }
-
-  @Override
-  public boolean isPresent() {
-    return nonNull(root);
   }
 
   @Override

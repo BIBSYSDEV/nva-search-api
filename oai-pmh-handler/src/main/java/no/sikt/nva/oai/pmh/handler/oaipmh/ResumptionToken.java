@@ -9,8 +9,7 @@ import java.util.stream.Collectors;
 import no.sikt.nva.oai.pmh.handler.oaipmh.request.ListRecordsRequest;
 import nva.commons.core.StringUtils;
 
-public record ResumptionToken(
-    ListRecordsRequest originalRequest, OaiPmhDateTime cursor, int totalSize) {
+public record ResumptionToken(ListRecordsRequest originalRequest, String cursor, int totalSize) {
   private static final String EQUALS = "=";
   private static final String FROM = "from";
   private static final String UNTIL = "until";
@@ -30,14 +29,22 @@ public record ResumptionToken(
     originalRequest
         .getFrom()
         .ifPresent(
-            value ->
-                unencodedValueBuilder.append(AMPERSAND).append(FROM).append(EQUALS).append(value));
+            ignored ->
+                unencodedValueBuilder
+                    .append(AMPERSAND)
+                    .append(FROM)
+                    .append(EQUALS)
+                    .append(originalRequest.getFrom().getOriginalSource().orElseThrow()));
 
     originalRequest
         .getUntil()
         .ifPresent(
-            value ->
-                unencodedValueBuilder.append(AMPERSAND).append(UNTIL).append(EQUALS).append(value));
+            ignored ->
+                unencodedValueBuilder
+                    .append(AMPERSAND)
+                    .append(UNTIL)
+                    .append(EQUALS)
+                    .append(originalRequest.getUntil().getOriginalSource().orElseThrow()));
 
     originalRequest
         .getSetSpec()
@@ -45,10 +52,15 @@ public record ResumptionToken(
             value ->
                 unencodedValueBuilder.append(AMPERSAND).append(SET).append(EQUALS).append(value));
 
-    cursor.ifPresent(
-        value ->
-            unencodedValueBuilder.append(AMPERSAND).append(CURSOR).append(EQUALS).append(value));
-    unencodedValueBuilder.append(AMPERSAND).append(TOTAL_SIZE).append(EQUALS).append(totalSize);
+    unencodedValueBuilder
+        .append(AMPERSAND)
+        .append(CURSOR)
+        .append(EQUALS)
+        .append(cursor)
+        .append(AMPERSAND)
+        .append(TOTAL_SIZE)
+        .append(EQUALS)
+        .append(totalSize);
     return URLEncoder.encode(unencodedValueBuilder.toString(), StandardCharsets.UTF_8);
   }
 
@@ -78,8 +90,6 @@ public record ResumptionToken(
             OaiPmhDateTime.from(until),
             SetSpec.from(set),
             MetadataPrefix.fromPrefix(metadataPrefix));
-    return Optional.of(
-        new ResumptionToken(
-            originalRequest, OaiPmhDateTime.from(cursor), Integer.parseInt(totalSize)));
+    return Optional.of(new ResumptionToken(originalRequest, cursor, Integer.parseInt(totalSize)));
   }
 }

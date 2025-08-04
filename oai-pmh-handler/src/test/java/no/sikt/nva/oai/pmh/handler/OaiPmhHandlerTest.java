@@ -6,17 +6,19 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static java.net.HttpURLConnection.HTTP_INTERNAL_ERROR;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.nonNull;
+import static no.sikt.nva.oai.pmh.handler.oaipmh.request.OaiPmhParameterName.FROM;
+import static no.sikt.nva.oai.pmh.handler.oaipmh.request.OaiPmhParameterName.SET;
+import static no.sikt.nva.oai.pmh.handler.oaipmh.request.OaiPmhParameterName.UNTIL;
+import static no.sikt.nva.oai.pmh.handler.oaipmh.request.OaiPmhParameterName.VERB;
 import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsEmptyIterable.*;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableWithSize.iterableWithSize;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.core.IsNot.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -40,6 +42,7 @@ import java.net.HttpURLConnection;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -56,6 +59,7 @@ import no.sikt.nva.oai.pmh.handler.oaipmh.ResumptionToken;
 import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec;
 import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec.SetRoot;
 import no.sikt.nva.oai.pmh.handler.oaipmh.request.ListRecordsRequest;
+import no.sikt.nva.oai.pmh.handler.oaipmh.request.OaiPmhParameterName;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.records.SwsResponse;
@@ -205,7 +209,10 @@ public class OaiPmhHandlerTest {
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
     var xpathEngine = getXpathEngine();
 
-    assertResponseRequestContains(VerbType.LIST_SETS, response, xpathEngine);
+    var expectedRequestParameters =
+        new EnumMap<OaiPmhParameterName, String>(OaiPmhParameterName.class);
+    expectedRequestParameters.put(VERB, VerbType.LIST_SETS.value());
+    assertResponseRequestContains(expectedRequestParameters, response, xpathEngine);
 
     var listSetSpecNodes =
         xpathEngine.selectNodes("/oai:OAI-PMH/oai:ListSets/oai:set/oai:setSpec", response);
@@ -257,7 +264,10 @@ public class OaiPmhHandlerTest {
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
     var xpathEngine = getXpathEngine();
 
-    assertResponseRequestContains(VerbType.IDENTIFY, response, xpathEngine);
+    var expectedRequestParameters =
+        new EnumMap<OaiPmhParameterName, String>(OaiPmhParameterName.class);
+    expectedRequestParameters.put(VERB, VerbType.IDENTIFY.value());
+    assertResponseRequestContains(expectedRequestParameters, response, xpathEngine);
 
     var repositoryName = getIdentifyChildNodeText(xpathEngine, response, "repositoryName");
     assertThat(repositoryName, is(equalTo("NVA-OAI-PMH")));
@@ -271,7 +281,10 @@ public class OaiPmhHandlerTest {
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
     var xpathEngine = getXpathEngine();
 
-    assertResponseRequestContains(VerbType.IDENTIFY, response, xpathEngine);
+    var expectedRequestParameters =
+        new EnumMap<OaiPmhParameterName, String>(OaiPmhParameterName.class);
+    expectedRequestParameters.put(VERB, VerbType.IDENTIFY.value());
+    assertResponseRequestContains(expectedRequestParameters, response, xpathEngine);
 
     var baseURL = getIdentifyChildNodeText(xpathEngine, response, "baseURL");
 
@@ -286,7 +299,10 @@ public class OaiPmhHandlerTest {
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
     var xpathEngine = getXpathEngine();
 
-    assertResponseRequestContains(VerbType.IDENTIFY, response, xpathEngine);
+    var expectedRequestParameters =
+        new EnumMap<OaiPmhParameterName, String>(OaiPmhParameterName.class);
+    expectedRequestParameters.put(VERB, VerbType.IDENTIFY.value());
+    assertResponseRequestContains(expectedRequestParameters, response, xpathEngine);
 
     var protocolVersion =
         getIdentifyChildNodeText(xpathEngine, response, PROTOCOL_VERSION_NODE_NAME);
@@ -302,7 +318,10 @@ public class OaiPmhHandlerTest {
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
     var xpathEngine = getXpathEngine();
 
-    assertResponseRequestContains(VerbType.IDENTIFY, response, xpathEngine);
+    var expectedRequestParameters =
+        new EnumMap<OaiPmhParameterName, String>(OaiPmhParameterName.class);
+    expectedRequestParameters.put(VERB, VerbType.IDENTIFY.value());
+    assertResponseRequestContains(expectedRequestParameters, response, xpathEngine);
 
     var earliestDatestamp =
         getIdentifyChildNodeText(xpathEngine, response, EARLIEST_DATESTAMP_NODE_NAME);
@@ -318,7 +337,10 @@ public class OaiPmhHandlerTest {
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
     var xpathEngine = getXpathEngine();
 
-    assertResponseRequestContains(VerbType.IDENTIFY, response, xpathEngine);
+    var expectedRequestParameters =
+        new EnumMap<OaiPmhParameterName, String>(OaiPmhParameterName.class);
+    expectedRequestParameters.put(VERB, VerbType.IDENTIFY.value());
+    assertResponseRequestContains(expectedRequestParameters, response, xpathEngine);
 
     var deletedRecord = getIdentifyChildNodeText(xpathEngine, response, DELETED_RECORD_NODE_NAME);
 
@@ -333,7 +355,10 @@ public class OaiPmhHandlerTest {
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
     var xpathEngine = getXpathEngine();
 
-    assertResponseRequestContains(VerbType.IDENTIFY, response, xpathEngine);
+    var expectedRequestParameters =
+        new EnumMap<OaiPmhParameterName, String>(OaiPmhParameterName.class);
+    expectedRequestParameters.put(VERB, VerbType.IDENTIFY.value());
+    assertResponseRequestContains(expectedRequestParameters, response, xpathEngine);
 
     var granularity = getIdentifyChildNodeText(xpathEngine, response, GRANULARITY_NODE_NAME);
 
@@ -348,7 +373,10 @@ public class OaiPmhHandlerTest {
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
     var xpathEngine = getXpathEngine();
 
-    assertResponseRequestContains(VerbType.IDENTIFY, response, xpathEngine);
+    var expectedRequestParameters =
+        new EnumMap<OaiPmhParameterName, String>(OaiPmhParameterName.class);
+    expectedRequestParameters.put(VERB, VerbType.IDENTIFY.value());
+    assertResponseRequestContains(expectedRequestParameters, response, xpathEngine);
 
     var adminEmailNodes =
         xpathEngine.selectNodes("/oai:OAI-PMH/oai:Identify/oai:adminEmail", response);
@@ -366,7 +394,10 @@ public class OaiPmhHandlerTest {
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
     var xpathEngine = getXpathEngine();
 
-    assertResponseRequestContains(VerbType.LIST_METADATA_FORMATS, response, xpathEngine);
+    var expectedRequestParameters =
+        new EnumMap<OaiPmhParameterName, String>(OaiPmhParameterName.class);
+    expectedRequestParameters.put(VERB, VerbType.LIST_METADATA_FORMATS.value());
+    assertResponseRequestContains(expectedRequestParameters, response, xpathEngine);
 
     var metadataFormatNodes =
         xpathEngine.selectNodes(
@@ -430,6 +461,20 @@ public class OaiPmhHandlerTest {
             method, fromDate, untilDate, MetadataPrefix.OAI_DC.getPrefix(), "NA:NA", null);
     assertXmlResponseWithError(
         response, OAIPMHerrorcodeType.BAD_ARGUMENT, "Illegal set spec. Unknown root.");
+  }
+
+  @ParameterizedTest
+  @MethodSource("datestampIssueListRecordsParameterProvider")
+  void shouldReportErrorOnInitialListRecordsWithNanoSecondDataStamp(
+      String method, String from, String until) throws Exception {
+
+    var response =
+        performListRecordsOperation(
+            method, from, until, MetadataPrefix.OAI_DC.getPrefix(), null, null);
+    assertXmlResponseWithError(
+        response,
+        OAIPMHerrorcodeType.BAD_ARGUMENT,
+        "datestamp fields with time does not support nanoseconds.");
   }
 
   @ParameterizedTest
@@ -497,8 +542,7 @@ public class OaiPmhHandlerTest {
             OaiPmhDateTime.from(untilDate),
             SetSpec.EMPTY_INSTANCE,
             metadataPrefix);
-    var resumptionToken =
-        new ResumptionToken(listRecordsRequest, OaiPmhDateTime.from(cursor), 8).getValue();
+    var resumptionToken = new ResumptionToken(listRecordsRequest, cursor, 8).getValue();
 
     var expectedIdentifiers =
         List.of(
@@ -533,8 +577,7 @@ public class OaiPmhHandlerTest {
             SetSpec.EMPTY_INSTANCE,
             metadataPrefix);
 
-    var resumptionToken =
-        new ResumptionToken(listRecordsRequest, OaiPmhDateTime.from(cursor), 8).getValue();
+    var resumptionToken = new ResumptionToken(listRecordsRequest, cursor, 8).getValue();
 
     var expectedIdentifiers =
         List.of(
@@ -571,7 +614,7 @@ public class OaiPmhHandlerTest {
   }
 
   @Test
-  void shouldPopulateRecordHeaderDatestamp() throws IOException, JAXBException {
+  void shouldUseCorrectDateFormatOnHeaderDatestamp() throws IOException, JAXBException {
     var inputStream = defaultHitAndRequest();
 
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
@@ -583,7 +626,7 @@ public class OaiPmhHandlerTest {
             "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:header/oai:datestamp",
             response);
 
-    assertThat(datestamp, is(not(nullValue())));
+    assertThat(datestamp, is(equalTo("2023-01-01T01:02:03Z")));
   }
 
   @Test
@@ -791,7 +834,19 @@ public class OaiPmhHandlerTest {
         performListRecordsOperation(method, from, until, metadataPrefix, setSpec, resumptionToken);
     var xpathEngine = getXpathEngine();
 
-    assertResponseRequestContains(VerbType.LIST_RECORDS, response, xpathEngine);
+    var expectedRequestParameters =
+        new EnumMap<OaiPmhParameterName, String>(OaiPmhParameterName.class);
+    expectedRequestParameters.put(VERB, VerbType.LIST_RECORDS.value());
+    if (nonNull(from)) {
+      expectedRequestParameters.put(FROM, from);
+    }
+    if (nonNull(until)) {
+      expectedRequestParameters.put(UNTIL, until);
+    }
+    if (nonNull(setRoot) && nonNull(setChild)) {
+      expectedRequestParameters.put(SET, setRoot + ":" + setChild);
+    }
+    assertResponseRequestContains(expectedRequestParameters, response, xpathEngine);
 
     var recordNodes = xpathEngine.selectNodes("/oai:OAI-PMH/oai:ListRecords/oai:record", response);
     assertThat(recordNodes, iterableWithSize(expectedRecordCount));
@@ -815,7 +870,7 @@ public class OaiPmhHandlerTest {
           nonNull(cursor) ? "2016-01-06T08:55:42.820948673Z" : "2016-01-03T08:55:42.820948673Z";
       assertThat(
           "Expects cursor in token to be 1 ms ahead of the last record in page",
-          token.cursor().getValue().orElseThrow(),
+          token.cursor(),
           is(equalTo(expectedCursorInToken)));
     } else {
       assertNoResumptionToken(xpathEngine, response);
@@ -1247,18 +1302,20 @@ public class OaiPmhHandlerTest {
   }
 
   private void assertResponseRequestContains(
-      VerbType verbType, Source source, JAXPXPathEngine xpathEngine) {
+      EnumMap<OaiPmhParameterName, String> parameters, Source source, JAXPXPathEngine xpathEngine) {
     var requestNodes = xpathEngine.selectNodes("/oai:OAI-PMH/oai:request", source);
     assertThat(requestNodes, iterableWithSize(1));
 
-    var verb =
-        requestNodes
-            .iterator()
-            .next()
-            .getAttributes()
-            .getNamedItem(VERB_ATTRIBUTE_NAME)
-            .getNodeValue();
-    assertThat(verb, is(equalTo(verbType.value())));
+    var attributes = requestNodes.iterator().next().getAttributes();
+
+    parameters
+        .entrySet()
+        .forEach(
+            entry -> {
+              assertThat(
+                  entry.getValue(),
+                  is(equalTo(attributes.getNamedItem(entry.getKey().getName()).getNodeValue())));
+            });
   }
 
   private static JAXPXPathEngine getXpathEngine() {
@@ -1327,5 +1384,33 @@ public class OaiPmhHandlerTest {
         Arguments.of(VerbType.LIST_IDENTIFIERS, GET_METHOD),
         Arguments.of(VerbType.GET_RECORD, POST_METHOD),
         Arguments.of(VerbType.LIST_IDENTIFIERS, POST_METHOD));
+  }
+
+  private static Stream<Arguments> datestampIssueListRecordsParameterProvider() {
+    var secondsGranularityDate = "2020-01-01T00:00:00Z";
+    var nanosGranularityDate = "2020-01-01T00:00:00.123456789Z";
+    var nameTemplate =
+        "%s request with nano resolution in %s parameter should report bad argument error.";
+    return Stream.of(
+        Arguments.argumentSet(
+            nameTemplate.formatted(GET_METHOD, "until"),
+            GET_METHOD,
+            secondsGranularityDate,
+            nanosGranularityDate),
+        Arguments.argumentSet(
+            nameTemplate.formatted(GET_METHOD, "from"),
+            GET_METHOD,
+            nanosGranularityDate,
+            secondsGranularityDate),
+        Arguments.argumentSet(
+            nameTemplate.formatted(GET_METHOD, "until"),
+            POST_METHOD,
+            secondsGranularityDate,
+            nanosGranularityDate),
+        Arguments.argumentSet(
+            nameTemplate.formatted(GET_METHOD, "from"),
+            POST_METHOD,
+            nanosGranularityDate,
+            secondsGranularityDate));
   }
 }
