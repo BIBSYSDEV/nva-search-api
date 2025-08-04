@@ -6,8 +6,6 @@ import static java.util.Objects.nonNull;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 public class HitBuilder {
@@ -84,8 +82,7 @@ public class HitBuilder {
         "entityDescription",
         entityDescriptionNode(
             title, referenceNode, publicationDateNodeToUse, contributorsPreviewNode));
-    rootNode.put(
-        "modifiedDate", ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+    rootNode.put("modifiedDate", "2023-01-01T01:02:03.123456789Z");
     return rootNode;
   }
 

@@ -30,14 +30,22 @@ public record ResumptionToken(
     originalRequest
         .getFrom()
         .ifPresent(
-            value ->
-                unencodedValueBuilder.append(AMPERSAND).append(FROM).append(EQUALS).append(value));
+            ignored ->
+                unencodedValueBuilder
+                    .append(AMPERSAND)
+                    .append(FROM)
+                    .append(EQUALS)
+                    .append(originalRequest.getFrom().getOriginalSource().orElseThrow()));
 
     originalRequest
         .getUntil()
         .ifPresent(
-            value ->
-                unencodedValueBuilder.append(AMPERSAND).append(UNTIL).append(EQUALS).append(value));
+            ignored ->
+                unencodedValueBuilder
+                    .append(AMPERSAND)
+                    .append(UNTIL)
+                    .append(EQUALS)
+                    .append(originalRequest.getUntil().getOriginalSource().orElseThrow()));
 
     originalRequest
         .getSetSpec()

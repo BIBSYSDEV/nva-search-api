@@ -5,6 +5,9 @@ import static java.util.Objects.nonNull;
 import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec.SetRoot;
@@ -148,10 +151,17 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
   private static HeaderType populateHeaderType(ResourceSearchResponse response) {
     var headerType = new ObjectFactory().createHeaderType();
     headerType.setIdentifier(response.id().toString());
-    headerType.setDatestamp(response.recordMetadata().modifiedDate());
+    var datestamp = toDatestamp(response.recordMetadata().modifiedDate());
+    headerType.setDatestamp(datestamp);
     headerType
         .getSetSpec()
         .add(new SetSpec(SetRoot.RESOURCE_TYPE_GENERAL, response.type()).getValue().orElseThrow());
     return headerType;
+  }
+
+  private static String toDatestamp(String input) {
+    var instant = Instant.parse(input);
+    var truncated = instant.atOffset(ZoneOffset.UTC).withNano(0);
+    return truncated.format(DateTimeFormatter.ISO_INSTANT);
   }
 }

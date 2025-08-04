@@ -207,8 +207,8 @@ public class ListRecordsRequestHandler implements OaiPmhRequestHandler<ListRecor
         nonNull(request.getResumptionToken()) ? request.getResumptionToken().getValue() : null;
     oaiPmhType.getRequest().setVerb(VerbType.LIST_RECORDS);
     oaiPmhType.getRequest().setResumptionToken(resumptionTokenValue);
-    oaiPmhType.getRequest().setFrom(request.getFrom().getValue().orElse(null));
-    oaiPmhType.getRequest().setUntil(request.getUntil().getValue().orElse(null));
+    oaiPmhType.getRequest().setFrom(request.getFrom().getOriginalSource().orElse(null));
+    oaiPmhType.getRequest().setUntil(request.getUntil().getOriginalSource().orElse(null));
     oaiPmhType.getRequest().setSet(request.getSetSpec().getValue().orElse(null));
     oaiPmhType.getRequest().setMetadataPrefix(request.getMetadataPrefix().getPrefix());
   }
