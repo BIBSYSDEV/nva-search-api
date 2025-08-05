@@ -20,7 +20,8 @@ public class OaiPmhRequestHandlerRegistry {
       int batchSize,
       URI endpointUri) {
     handlerSuppliers.put(VerbType.LIST_SETS, () -> new ListSetsRequestHandler(resourceClient));
-    handlerSuppliers.put(VerbType.IDENTIFY, () -> new IdentifyRequestHandler(endpointUri));
+    handlerSuppliers.put(
+        VerbType.IDENTIFY, () -> new IdentifyRequestHandler(endpointUri, resourceClient));
     handlerSuppliers.put(VerbType.LIST_METADATA_FORMATS, ListMetadataFormatsRequestHandler::new);
     handlerSuppliers.put(
         VerbType.LIST_RECORDS,

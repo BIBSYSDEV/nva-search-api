@@ -11,9 +11,9 @@ import static no.sikt.nva.oai.pmh.handler.oaipmh.request.OaiPmhParameterName.SET
 import static no.sikt.nva.oai.pmh.handler.oaipmh.request.OaiPmhParameterName.UNTIL;
 import static no.sikt.nva.oai.pmh.handler.oaipmh.request.OaiPmhParameterName.VERB;
 import static no.unit.nva.constants.Words.RESOURCES;
-import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.collection.IsEmptyIterable.*;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableWithSize.iterableWithSize;
@@ -40,6 +40,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -261,6 +263,8 @@ public class OaiPmhHandlerTest {
   void shouldIdentifyWithRepositoryName(String method) throws IOException, JAXBException {
     var inputStream = request(VerbType.IDENTIFY.value(), method);
 
+    mockEarliestDatestampQuery(false);
+
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
     var xpathEngine = getXpathEngine();
 
@@ -277,6 +281,8 @@ public class OaiPmhHandlerTest {
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldIdentifyWithBaseURL(String method) throws IOException, JAXBException {
     var inputStream = request(VerbType.IDENTIFY.value(), method);
+
+    mockEarliestDatestampQuery(false);
 
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
     var xpathEngine = getXpathEngine();
@@ -295,6 +301,8 @@ public class OaiPmhHandlerTest {
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldIdentifyWithProtocolVersion(String method) throws IOException, JAXBException {
     var inputStream = request(VerbType.IDENTIFY.value(), method);
+
+    mockEarliestDatestampQuery(false);
 
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
     var xpathEngine = getXpathEngine();
@@ -315,6 +323,8 @@ public class OaiPmhHandlerTest {
   void shouldIdentifyWithEarliestDatestamp(String method) throws IOException, JAXBException {
     var inputStream = request(VerbType.IDENTIFY.value(), method);
 
+    mockEarliestDatestampQuery(false);
+
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
     var xpathEngine = getXpathEngine();
 
@@ -326,13 +336,40 @@ public class OaiPmhHandlerTest {
     var earliestDatestamp =
         getIdentifyChildNodeText(xpathEngine, response, EARLIEST_DATESTAMP_NODE_NAME);
 
-    assertThat(earliestDatestamp, is(equalTo("2016-01-01")));
+    assertThat(earliestDatestamp, is(equalTo("2023-01-01T01:02:03Z")));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldIdentifyWithEarliestDatestampCloseToNowIfRepositoryIsEmpty(String method)
+      throws IOException, JAXBException {
+    var inputStream = request(VerbType.IDENTIFY.value(), method);
+
+    mockEarliestDatestampQuery(true);
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    var expectedRequestParameters =
+        new EnumMap<OaiPmhParameterName, String>(OaiPmhParameterName.class);
+    expectedRequestParameters.put(VERB, VerbType.IDENTIFY.value());
+    assertResponseRequestContains(expectedRequestParameters, response, xpathEngine);
+
+    var earliestDatestamp =
+        getIdentifyChildNodeText(xpathEngine, response, EARLIEST_DATESTAMP_NODE_NAME);
+
+    var tolerance = Duration.ofSeconds(5);
+    assertThat(
+        Duration.between(Instant.now(), Instant.parse(earliestDatestamp)).abs(),
+        lessThan(tolerance));
   }
 
   @ParameterizedTest
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldIdentifyWithDeletedRecord(String method) throws IOException, JAXBException {
     var inputStream = request(VerbType.IDENTIFY.value(), method);
+
+    mockEarliestDatestampQuery(false);
 
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
     var xpathEngine = getXpathEngine();
@@ -352,6 +389,8 @@ public class OaiPmhHandlerTest {
   void shouldIdentifyWithGranularity(String method) throws IOException, JAXBException {
     var inputStream = request(VerbType.IDENTIFY.value(), method);
 
+    mockEarliestDatestampQuery(false);
+
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
     var xpathEngine = getXpathEngine();
 
@@ -369,6 +408,8 @@ public class OaiPmhHandlerTest {
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldIdentifyWithAdminEmail(String method) throws IOException, JAXBException {
     var inputStream = request(VerbType.IDENTIFY.value(), method);
+
+    mockEarliestDatestampQuery(false);
 
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
     var xpathEngine = getXpathEngine();
@@ -1001,7 +1042,6 @@ public class OaiPmhHandlerTest {
 
   private InputStream hitAndRequest(ArrayNode hits, SetSpec setSpec)
       throws JsonProcessingException {
-    var scrollId = randomString();
     var queryBuilder =
         new ResourceSearchQueryMatcher.Builder()
             .withPageParameter(ResourceParameter.FROM, "0")
@@ -1023,7 +1063,7 @@ public class OaiPmhHandlerTest {
             .build();
 
     when(resourceClient.doSearch(argThat(resourceQueryMatcher), any()))
-        .thenReturn(initialSwsResponse(hits, scrollId));
+        .thenReturn(initialSwsResponse(hits));
 
     var from = "2016-01-01";
     var until = "2016-01-02";
@@ -1036,6 +1076,33 @@ public class OaiPmhHandlerTest {
         metadataPrefix,
         setSpec.orElse(null),
         null);
+  }
+
+  private void mockEarliestDatestampQuery(boolean emptyRepository) {
+    var hits =
+        emptyRepository
+            ? new ArrayNode(JsonNodeFactory.instance)
+            : new ArrayNode(
+                JsonNodeFactory.instance,
+                List.of(
+                    HitBuilder.academicArticle(port, "The Journal")
+                        .withIdentifier("1")
+                        .withTitle("My title")
+                        .build()));
+    var queryMatcher =
+        new ResourceSearchQueryMatcher.Builder()
+            .withPageParameter(ResourceParameter.FROM, "0")
+            .withPageParameter(ResourceParameter.SIZE, "1")
+            .withPageParameter(ResourceParameter.SORT, "modifiedDate:asc,identifier")
+            .withSearchParameter(ResourceParameter.AGGREGATION, Words.NONE)
+            .withNamedFilterQuery(
+                "status",
+                new TermsQueryBuilderExpectation(
+                    "status.keyword", "PUBLISHED", "PUBLISHED_METADATA"))
+            .build();
+
+    when(resourceClient.doSearch(argThat(queryMatcher), any()))
+        .thenReturn(initialSwsResponse(hits));
   }
 
   private InputStream requestWithReportBasicHit() throws JsonProcessingException {
@@ -1231,7 +1298,7 @@ public class OaiPmhHandlerTest {
         null);
   }
 
-  private SwsResponse initialSwsResponse(JsonNode hits, String scrollId) {
+  private SwsResponse initialSwsResponse(JsonNode hits) {
     var hitList = new ArrayList<Hit>();
     var iterator = hits.elements();
 
@@ -1240,12 +1307,7 @@ public class OaiPmhHandlerTest {
       hitList.add(new Hit("", "", "", 1.0, element, null, List.of()));
     }
     return new SwsResponse(
-        0,
-        false,
-        null,
-        new HitsInfo(new TotalInfo(hitList.size(), ""), 1.0, hitList),
-        null,
-        scrollId);
+        0, false, null, new HitsInfo(new TotalInfo(hitList.size(), ""), 1.0, hitList), null, null);
   }
 
   private SwsResponse firstPageSwsResponse() throws JsonProcessingException {

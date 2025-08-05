@@ -11,6 +11,8 @@ import nva.commons.core.StringUtils;
 
 public final class OaiPmhDateTime implements NullableWrapper<String> {
   public static final OaiPmhDateTime EMPTY_INSTANCE = new OaiPmhDateTime(null, null);
+  private static final DateTimeFormatter OAI_DATE_TIME_FORMATTER =
+      DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'").withZone(ZoneId.of("Z"));
   private final Instant instant;
   private final String originalSource;
 
@@ -40,7 +42,7 @@ public final class OaiPmhDateTime implements NullableWrapper<String> {
   public Optional<String> getValue() {
     return Optional.ofNullable(instant)
         .map(localInstant -> ZonedDateTime.ofInstant(localInstant, ZoneId.of("Z")))
-        .map(DateTimeFormatter.ISO_DATE_TIME::format);
+        .map(OAI_DATE_TIME_FORMATTER::format);
   }
 
   public Optional<String> getOriginalSource() {

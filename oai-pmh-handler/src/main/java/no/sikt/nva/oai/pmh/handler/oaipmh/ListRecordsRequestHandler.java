@@ -23,7 +23,6 @@ import no.unit.nva.constants.Words;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.ResourceParameter;
 import no.unit.nva.search.resource.ResourceSearchQuery;
-import no.unit.nva.search.resource.ResourceSort;
 import no.unit.nva.search.resource.SimplifiedMutator;
 import no.unit.nva.search.resource.response.ResourceSearchResponse;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -40,8 +39,6 @@ public class ListRecordsRequestHandler implements OaiPmhRequestHandler<ListRecor
 
   private static final Logger logger = LoggerFactory.getLogger(ListRecordsRequestHandler.class);
   private static final int RESUMPTION_TOKEN_TTL_HOURS = 24;
-  public static final String MODIFIED_DATE_ASCENDING =
-      ResourceSort.MODIFIED_DATE.asCamelCase() + ":asc";
 
   private final ResourceClient resourceClient;
   private final RecordTransformer recordTransformer;
