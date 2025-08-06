@@ -1,4 +1,4 @@
-package no.sikt.nva.oai.pmh.handler.oaipmh;
+package no.sikt.nva.oai.pmh.handler.oaipmh.handlers;
 
 import static java.util.Objects.isNull;
 
@@ -6,8 +6,10 @@ import java.net.URI;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Supplier;
+import no.sikt.nva.oai.pmh.handler.oaipmh.BadVerbException;
+import no.sikt.nva.oai.pmh.handler.oaipmh.RecordTransformer;
 import no.sikt.nva.oai.pmh.handler.oaipmh.request.OaiPmhRequest;
-import no.unit.nva.search.resource.ResourceClient;
+import no.sikt.nva.oai.pmh.handler.repository.ResourceRepository;
 import org.openarchives.oai.pmh.v2.VerbType;
 
 public class OaiPmhRequestHandlerRegistry {
@@ -15,16 +17,17 @@ public class OaiPmhRequestHandlerRegistry {
       new EnumMap<>(VerbType.class);
 
   public OaiPmhRequestHandlerRegistry(
-      ResourceClient resourceClient,
+      ResourceRepository resourceRepository,
       RecordTransformer recordTransformer,
       int batchSize,
       URI endpointUri) {
-    handlerSuppliers.put(VerbType.LIST_SETS, () -> new ListSetsRequestHandler(resourceClient));
-    handlerSuppliers.put(VerbType.IDENTIFY, () -> new IdentifyRequestHandler(endpointUri));
+    handlerSuppliers.put(VerbType.LIST_SETS, () -> new ListSetsRequestHandler(resourceRepository));
+    handlerSuppliers.put(
+        VerbType.IDENTIFY, () -> new IdentifyRequestHandler(endpointUri, resourceRepository));
     handlerSuppliers.put(VerbType.LIST_METADATA_FORMATS, ListMetadataFormatsRequestHandler::new);
     handlerSuppliers.put(
         VerbType.LIST_RECORDS,
-        () -> new ListRecordsRequestHandler(resourceClient, recordTransformer, batchSize));
+        () -> new ListRecordsRequestHandler(resourceRepository, recordTransformer, batchSize));
   }
 
   @SuppressWarnings("unchecked")

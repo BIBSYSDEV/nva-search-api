@@ -1,4 +1,4 @@
-package no.sikt.nva.oai.pmh.handler.oaipmh;
+package no.sikt.nva.oai.pmh.handler.oaipmh.handlers;
 
 import jakarta.xml.bind.JAXBElement;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;

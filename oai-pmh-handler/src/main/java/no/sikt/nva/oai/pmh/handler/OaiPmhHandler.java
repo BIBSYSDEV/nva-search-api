@@ -12,6 +12,7 @@ import no.sikt.nva.oai.pmh.handler.oaipmh.DefaultOaiPmhMethodRouter;
 import no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhException;
 import no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhMethodRouter;
 import no.sikt.nva.oai.pmh.handler.oaipmh.request.OaiPmhRequestFactoryRegistry;
+import no.sikt.nva.oai.pmh.handler.repository.ResourceClientResourceRepository;
 import no.unit.nva.search.resource.ResourceClient;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
@@ -60,7 +61,7 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
     var enviroment = new Environment();
     var batchSize = enviroment.readEnvOpt("LIST_RECORDS_BATCH_SIZE").orElse("250");
     return new DefaultOaiPmhMethodRouter(
-        ResourceClient.defaultClient(),
+        new ResourceClientResourceRepository(ResourceClient.defaultClient()),
         Integer.parseInt(batchSize),
         generateEndpointUri(enviroment));
   }

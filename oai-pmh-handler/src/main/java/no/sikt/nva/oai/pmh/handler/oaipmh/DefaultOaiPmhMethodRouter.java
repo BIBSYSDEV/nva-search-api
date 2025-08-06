@@ -4,8 +4,10 @@ import static no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhUtils.baseResponse;
 
 import jakarta.xml.bind.JAXBElement;
 import java.net.URI;
+import no.sikt.nva.oai.pmh.handler.oaipmh.handlers.OaiPmhRequestHandlerRegistry;
 import no.sikt.nva.oai.pmh.handler.oaipmh.request.OaiPmhRequest;
-import no.unit.nva.search.resource.ResourceClient;
+import no.sikt.nva.oai.pmh.handler.oaipmh.transformers.SimplifiedRecordTransformer;
+import no.sikt.nva.oai.pmh.handler.repository.ResourceRepository;
 import org.openarchives.oai.pmh.v2.OAIPMHerrorcodeType;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
 import org.openarchives.oai.pmh.v2.ObjectFactory;
@@ -14,10 +16,11 @@ public class DefaultOaiPmhMethodRouter implements OaiPmhMethodRouter {
 
   private final OaiPmhRequestHandlerRegistry handlerRegistry;
 
-  public DefaultOaiPmhMethodRouter(ResourceClient resourceClient, int batchSize, URI endpointUri) {
+  public DefaultOaiPmhMethodRouter(
+      ResourceRepository resourceRepository, int batchSize, URI endpointUri) {
     this.handlerRegistry =
         new OaiPmhRequestHandlerRegistry(
-            resourceClient, new SimplifiedRecordTransformer(), batchSize, endpointUri);
+            resourceRepository, new SimplifiedRecordTransformer(), batchSize, endpointUri);
   }
 
   @Override
