@@ -62,6 +62,7 @@ import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec;
 import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec.SetRoot;
 import no.sikt.nva.oai.pmh.handler.oaipmh.request.ListRecordsRequest;
 import no.sikt.nva.oai.pmh.handler.oaipmh.request.OaiPmhParameterName;
+import no.sikt.nva.oai.pmh.handler.repository.ResourceClientResourceRepository;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.records.SwsResponse;
@@ -203,6 +204,10 @@ public class OaiPmhHandlerTest {
             .withPageParameter(ResourceParameter.FROM, "0")
             .withPageParameter(ResourceParameter.SIZE, "0")
             .withSearchParameter(ResourceParameter.AGGREGATION, "all")
+            .withNamedFilterQuery(
+                "status",
+                new TermsQueryBuilderExpectation(
+                    "status.keyword", "PUBLISHED", "PUBLISHED_METADATA"))
             .build();
     when(resourceClient.doSearch(argThat(matcher), eq(RESOURCES))).thenReturn(swsResponse());
 
@@ -254,8 +259,7 @@ public class OaiPmhHandlerTest {
 
     assertThat(
         appender.getMessages(),
-        containsString(
-            "Failed to search for publication instance types using 'type' aggregation."));
+        containsString("Failed to execute search for resources aggregations."));
   }
 
   @ParameterizedTest
@@ -1370,14 +1374,9 @@ public class OaiPmhHandlerTest {
 
     var attributes = requestNodes.iterator().next().getAttributes();
 
-    parameters
-        .entrySet()
-        .forEach(
-            entry -> {
-              assertThat(
-                  entry.getValue(),
-                  is(equalTo(attributes.getNamedItem(entry.getKey().getName()).getNodeValue())));
-            });
+    parameters.forEach(
+        (key, value) ->
+            assertThat(value, is(equalTo(attributes.getNamedItem(key.getName()).getNodeValue()))));
   }
 
   private static JAXPXPathEngine getXpathEngine() {
@@ -1429,7 +1428,9 @@ public class OaiPmhHandlerTest {
       Environment environment, JaxbXmlSerializer marshaller, InputStream inputStream)
       throws IOException {
     var endpointUri = OaiPmhHandler.generateEndpointUri(environment);
-    var dataProvider = new DefaultOaiPmhMethodRouter(resourceClient, 3, endpointUri);
+    var dataProvider =
+        new DefaultOaiPmhMethodRouter(
+            new ResourceClientResourceRepository(resourceClient), 3, endpointUri);
     var handler = new OaiPmhHandler(environment, dataProvider, marshaller);
     handler.handleRequest(inputStream, outputStream, new FakeContext());
 

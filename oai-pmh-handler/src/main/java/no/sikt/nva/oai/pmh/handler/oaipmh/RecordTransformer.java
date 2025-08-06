@@ -1,9 +1,9 @@
 package no.sikt.nva.oai.pmh.handler.oaipmh;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import java.util.List;
+import no.unit.nva.search.resource.response.ResourceSearchResponse;
 import org.openarchives.oai.pmh.v2.RecordType;
 
 public interface RecordTransformer {
-  List<RecordType> transform(List<JsonNode> hits);
+  List<RecordType> transform(List<ResourceSearchResponse> hits);
 }

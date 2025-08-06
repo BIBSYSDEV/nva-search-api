@@ -1,13 +1,13 @@
-package no.sikt.nva.oai.pmh.handler.oaipmh;
+package no.sikt.nva.oai.pmh.handler.oaipmh.transformers;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhDateTimeUtils.truncateToSeconds;
-import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import java.util.Collections;
 import java.util.List;
+import no.sikt.nva.oai.pmh.handler.oaipmh.RecordTransformer;
+import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec;
 import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec.SetRoot;
 import no.unit.nva.search.resource.response.Contributor;
 import no.unit.nva.search.resource.response.PublicationDate;
@@ -26,15 +26,12 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
   private static final char DASH = '-';
 
   @Override
-  public List<RecordType> transform(List<JsonNode> hits) {
+  public List<RecordType> transform(List<ResourceSearchResponse> hits) {
     if (isNull(hits) || hits.isEmpty()) {
       return Collections.emptyList();
     }
 
-    return hits.stream()
-        .map(hit -> dtoObjectMapper.convertValue(hit, ResourceSearchResponse.class))
-        .map(this::toRecord)
-        .toList();
+    return hits.stream().map(this::toRecord).toList();
   }
 
   private RecordType toRecord(ResourceSearchResponse response) {

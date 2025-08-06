@@ -1,4 +1,4 @@
-package no.sikt.nva.oai.pmh.handler.oaipmh;
+package no.sikt.nva.oai.pmh.handler.repository;
 
 public class ResourceSearchException extends RuntimeException {
 
