@@ -65,7 +65,5 @@ public class SearchImportCandidateAuthHandler extends ApiGatewayHandler<Void, St
 
   @Override
   protected void validateRequest(Void unused, RequestInfo requestInfo, Context context)
-      throws ApiGatewayException {
-    requestInfo.getUserName();
-  }
+      throws ApiGatewayException {}
 }
