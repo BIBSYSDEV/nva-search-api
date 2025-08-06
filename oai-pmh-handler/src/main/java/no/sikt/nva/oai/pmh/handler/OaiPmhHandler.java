@@ -91,7 +91,7 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
 
   @Override
   protected List<MediaType> listSupportedMediaTypes() {
-    return List.of(MediaType.APPLICATION_XML_UTF_8);
+    return List.of(MediaType.XML_UTF_8);
   }
 
   @Override

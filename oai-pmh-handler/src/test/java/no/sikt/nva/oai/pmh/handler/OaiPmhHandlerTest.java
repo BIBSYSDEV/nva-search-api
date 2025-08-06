@@ -31,6 +31,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import jakarta.xml.bind.JAXBContext;
@@ -142,6 +143,14 @@ public class OaiPmhHandlerTest {
         get("/publication/context")
             .willReturn(ok(context).withHeader("Content-Type", "application/json")));
     this.port = wireMockRuntimeInfo.getHttpPort();
+  }
+
+  @ParameterizedTest
+  @MethodSource("allSupportedRequestsPerMethodProvider")
+  void shouldReturnCorrectContentTypeForAllResponses(InputStream request)
+      throws JAXBException, IOException {
+    mockRepository();
+    invokeHandlerAndAssertContentType(request);
   }
 
   @Test
@@ -1356,13 +1365,24 @@ public class OaiPmhHandlerTest {
     return invokeHandlerAndAssertHttpStatus(inputStream, HttpURLConnection.HTTP_OK);
   }
 
-  private Source invokeHandlerAndAssertHttpStatus(InputStream inputStream, int statusCode)
+  private void invokeHandlerAndAssertContentType(InputStream request)
+      throws JAXBException, IOException {
+    var gatewayResponse = invokeHandler(request);
+    assertThat(
+        gatewayResponse.getHeaders().get("Content-Type"), is(equalTo("text/xml; charset=utf-8")));
+  }
+
+  private GatewayResponse<String> invokeHandler(InputStream request)
       throws JAXBException, IOException {
     var context = JAXBContext.newInstance(OAIPMHtype.class);
     var marshaller = context.createMarshaller();
     JaxbUtils.configureMarshaller(marshaller);
-    var gatewayResponse =
-        invokeHandler(environment, new JaxbXmlSerializer(marshaller), inputStream);
+    return invokeHandler(environment, new JaxbXmlSerializer(marshaller), request);
+  }
+
+  private Source invokeHandlerAndAssertHttpStatus(InputStream inputStream, int statusCode)
+      throws JAXBException, IOException {
+    var gatewayResponse = invokeHandler(inputStream);
     assertThat(gatewayResponse.getStatusCode(), is(equalTo(statusCode)));
     return Input.fromString(gatewayResponse.getBody()).build();
   }
@@ -1447,6 +1467,61 @@ public class OaiPmhHandlerTest {
         Arguments.of(VerbType.LIST_IDENTIFIERS, GET_METHOD),
         Arguments.of(VerbType.GET_RECORD, POST_METHOD),
         Arguments.of(VerbType.LIST_IDENTIFIERS, POST_METHOD));
+  }
+
+  static Stream<Arguments> allSupportedRequestsPerMethodProvider() throws JsonProcessingException {
+    return Stream.of(
+        Arguments.argumentSet(
+            "GET Identify should return correct content-type",
+            generateSimpleRequest(GET_METHOD, VerbType.IDENTIFY)),
+        Arguments.argumentSet(
+            "POST Identify should return correct content-type",
+            generateSimpleRequest(POST_METHOD, VerbType.IDENTIFY)),
+        Arguments.argumentSet(
+            "GET ListMetadataFormats should return correct content-type",
+            generateSimpleRequest(GET_METHOD, VerbType.LIST_METADATA_FORMATS)),
+        Arguments.argumentSet(
+            "POST ListMetadataFormats should return correct content-type",
+            generateSimpleRequest(POST_METHOD, VerbType.LIST_METADATA_FORMATS)),
+        Arguments.argumentSet(
+            "GET ListSets should return correct content-type",
+            generateSimpleRequest(GET_METHOD, VerbType.LIST_SETS)),
+        Arguments.argumentSet(
+            "POST ListSets should return correct content-type",
+            generateSimpleRequest(POST_METHOD, VerbType.LIST_SETS)),
+        Arguments.argumentSet(
+            "GET ListRecords should return correct content-type",
+            generateSimpleRequest(GET_METHOD, VerbType.LIST_RECORDS)),
+        Arguments.argumentSet(
+            "GET ListRecords should return correct content-type",
+            generateSimpleRequest(POST_METHOD, VerbType.LIST_RECORDS)));
+  }
+
+  private static InputStream generateSimpleRequest(String method, VerbType verbType)
+      throws JsonProcessingException {
+    var handlerRequestBuilder =
+        new HandlerRequestBuilder<String>(new ObjectMapper()).withHttpMethod(method);
+
+    if (GET_METHOD.equalsIgnoreCase(method)) {
+      addAsQueryParams(verbType.value(), null, null, null, null, null, handlerRequestBuilder);
+    } else if (POST_METHOD.equalsIgnoreCase(method)) {
+      addAsBody(verbType.value(), null, null, null, null, null, handlerRequestBuilder);
+    }
+    return handlerRequestBuilder.build();
+  }
+
+  void mockRepository() {
+    when(resourceClient.doSearch(any(), eq(RESOURCES))).thenReturn(emptySwsResponse());
+  }
+
+  private SwsResponse emptySwsResponse() {
+    return new SwsResponse(
+        0,
+        false,
+        null,
+        new HitsInfo(new TotalInfo(0, null), 0.0, Collections.emptyList()),
+        new ObjectNode(JsonNodeFactory.instance),
+        null);
   }
 
   private static Stream<Arguments> datestampIssueListRecordsParameterProvider() {
