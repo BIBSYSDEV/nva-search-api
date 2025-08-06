@@ -138,13 +138,11 @@ public class ResourceClientResourceRepository implements ResourceRepository {
 
   private static ParameterValidator<ResourceParameter, ResourceSearchQuery>
       buildQueryWithMandatoryParameters(int batchSize) {
-    var queryBuilder =
-        ResourceSearchQuery.builder()
-            .withParameter(ResourceParameter.AGGREGATION, Words.NONE)
-            .withParameter(ResourceParameter.FROM, ZERO)
-            .withParameter(ResourceParameter.SIZE, Integer.toString(batchSize))
-            .withParameter(ResourceParameter.SORT, MODIFIED_DATE_ASCENDING);
-    return queryBuilder;
+    return ResourceSearchQuery.builder()
+        .withParameter(ResourceParameter.AGGREGATION, Words.NONE)
+        .withParameter(ResourceParameter.FROM, ZERO)
+        .withParameter(ResourceParameter.SIZE, Integer.toString(batchSize))
+        .withParameter(ResourceParameter.SORT, MODIFIED_DATE_ASCENDING);
   }
 
   private static ResourceSearchQuery applyFilterAndBuild(

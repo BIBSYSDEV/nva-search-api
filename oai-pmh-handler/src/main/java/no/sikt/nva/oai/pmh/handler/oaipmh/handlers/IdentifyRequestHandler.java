@@ -38,11 +38,10 @@ public class IdentifyRequestHandler implements OaiPmhRequestHandler<IdentifyRequ
     var value = oaiResponse.getValue();
     value.getRequest().setVerb(request.getVerbType());
 
-    var earliestDatestamp = findEarliestDatestamp();
     var identify = objectFactory.createIdentifyType();
     identify.setBaseURL(endpointUri.toString());
     identify.setProtocolVersion(PROTOCOL_VERSION);
-    identify.setEarliestDatestamp(earliestDatestamp);
+    identify.setEarliestDatestamp(findEarliestDatestamp());
     identify.setRepositoryName(REPOSITORY_NAME);
     identify.setGranularity(GranularityType.YYYY_MM_DD_THH_MM_SS_Z);
     identify.setDeletedRecord(DeletedRecordType.NO);
