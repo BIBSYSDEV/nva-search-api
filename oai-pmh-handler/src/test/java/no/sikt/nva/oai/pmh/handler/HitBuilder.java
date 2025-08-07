@@ -6,6 +6,7 @@ import static java.util.Objects.nonNull;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.net.URI;
 import java.util.Arrays;
 
 public class HitBuilder {
@@ -14,6 +15,7 @@ public class HitBuilder {
   private final int port;
   private String identifier;
   private String title;
+  private URI language;
   private String[] contributors = new String[] {};
   private ObjectNode publicationDateNode;
   private boolean publicationDatePresent = true;
@@ -53,6 +55,11 @@ public class HitBuilder {
     return this;
   }
 
+  public HitBuilder withLanguage(URI language) {
+    this.language = language;
+    return this;
+  }
+
   public HitBuilder withContributors(String... contributors) {
     this.contributors = contributors;
     return this;
@@ -81,7 +88,7 @@ public class HitBuilder {
     rootNode.set(
         "entityDescription",
         entityDescriptionNode(
-            title, referenceNode, publicationDateNodeToUse, contributorsPreviewNode));
+            title, referenceNode, language, publicationDateNodeToUse, contributorsPreviewNode));
     rootNode.put("modifiedDate", "2023-01-01T01:02:03.123456789Z");
     return rootNode;
   }
@@ -116,12 +123,16 @@ public class HitBuilder {
   private static ObjectNode entityDescriptionNode(
       String title,
       ObjectNode referenceNode,
+      URI language,
       ObjectNode publicationDateNode,
       ArrayNode contributorsPreviewNode) {
     var node = new ObjectNode(JsonNodeFactory.instance);
     node.set("reference", referenceNode);
-    if (publicationDateNode != null) {
+    if (nonNull(publicationDateNode)) {
       node.set("publicationDate", publicationDateNode);
+    }
+    if (nonNull(language)) {
+      node.put("language", language.toString());
     }
     node.put("mainTitle", title);
     node.set("contributorsPreview", contributorsPreviewNode);

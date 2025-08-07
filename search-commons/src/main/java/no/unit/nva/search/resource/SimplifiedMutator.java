@@ -12,6 +12,7 @@ import static no.unit.nva.constants.Words.ID;
 import static no.unit.nva.constants.Words.IDENTIFIER;
 import static no.unit.nva.constants.Words.IDENTITY;
 import static no.unit.nva.constants.Words.ISBN_LIST;
+import static no.unit.nva.constants.Words.LANGUAGE;
 import static no.unit.nva.constants.Words.MAIN_TITLE;
 import static no.unit.nva.constants.Words.MODIFIED_DATE;
 import static no.unit.nva.constants.Words.MONTH;
@@ -148,6 +149,7 @@ public class SimplifiedMutator implements JsonNodeMutator {
         .withPublishingDetails(fromNodePublishingDetails(source))
         .withOtherIdentifiers(fromNodeOtherIdentifiers(source))
         .withRecordMetadata(fromNodeRecordMetadata(source))
+        .withLanguage(NodeUtils.toUri(source.path(ENTITY_DESCRIPTION).path(LANGUAGE)))
         .build();
   }
 

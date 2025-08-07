@@ -12,6 +12,7 @@ import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec.SetRoot;
 import no.unit.nva.search.resource.response.Contributor;
 import no.unit.nva.search.resource.response.PublicationDate;
 import no.unit.nva.search.resource.response.ResourceSearchResponse;
+import nva.commons.core.paths.UriWrapper;
 import org.openarchives.oai.pmh.v2.ElementType;
 import org.openarchives.oai.pmh.v2.HeaderType;
 import org.openarchives.oai.pmh.v2.MetadataType;
@@ -53,6 +54,7 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
     var oaiDcType = OBJECT_FACTORY.createOaiDcType();
     appendIdentifier(response, oaiDcType);
     appendTitle(response, oaiDcType);
+    appendLanguage(response, oaiDcType);
     appendContributors(response, oaiDcType);
     appendDate(response, oaiDcType);
     appendType(response, oaiDcType);
@@ -86,6 +88,15 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
     var titleElement = OBJECT_FACTORY.createElementType();
     titleElement.setValue(response.mainTitle());
     oaiDcType.getTitleOrCreatorOrSubject().addLast(OBJECT_FACTORY.createTitle(titleElement));
+  }
+
+  private static void appendLanguage(ResourceSearchResponse response, OaiDcType oaiDcType) {
+    if (nonNull(response.language())) {
+      var element = OBJECT_FACTORY.createElementType();
+      var language = UriWrapper.fromUri(response.language()).getLastPathElement();
+      element.setValue(language);
+      oaiDcType.getTitleOrCreatorOrSubject().addLast(OBJECT_FACTORY.createLanguage(element));
+    }
   }
 
   private static void appendPublisher(ResourceSearchResponse response, OaiDcType oaiDcType) {
