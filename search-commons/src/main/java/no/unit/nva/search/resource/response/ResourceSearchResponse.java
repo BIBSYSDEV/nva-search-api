@@ -15,6 +15,7 @@ public record ResourceSearchResponse(
     URI id,
     String identifier,
     String type,
+    URI language,
     OtherIdentifiers otherIdentifiers,
     RecordMetadata recordMetadata,
     String mainTitle,
@@ -35,6 +36,7 @@ public record ResourceSearchResponse(
     private URI id;
     private String identifier;
     private String type;
+    private URI language;
     private OtherIdentifiers otherIdentifiers;
     private RecordMetadata recordMetadata;
     private String mainTitle;
@@ -66,6 +68,11 @@ public record ResourceSearchResponse(
               .path(PUBLICATION_INSTANCE)
               .path(TYPE)
               .textValue();
+      return this;
+    }
+
+    public Builder withLanguage(URI language) {
+      this.language = language;
       return this;
     }
 
@@ -124,6 +131,7 @@ public record ResourceSearchResponse(
           id,
           identifier,
           type,
+          language,
           otherIdentifiers,
           recordMetadata,
           mainTitle,
