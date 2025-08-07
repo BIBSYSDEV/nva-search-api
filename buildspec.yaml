@@ -31,6 +31,7 @@ phases:
         fi
   build:
     commands:
+      - ./gradlew test
       - sam build
   post_build:
     commands:
