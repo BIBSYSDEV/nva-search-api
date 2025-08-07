@@ -3,6 +3,9 @@ package no.sikt.nva.oai.pmh.handler.oaipmh.handlers;
 import static no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhUtils.baseResponse;
 
 import jakarta.xml.bind.JAXBElement;
+import java.net.URI;
+import java.util.Optional;
+import java.util.regex.Pattern;
 import no.sikt.nva.oai.pmh.handler.oaipmh.IdDoesNotExistException;
 import no.sikt.nva.oai.pmh.handler.oaipmh.RecordTransformer;
 import no.sikt.nva.oai.pmh.handler.oaipmh.request.GetRecordRequest;
@@ -16,11 +19,17 @@ import org.openarchives.oai.pmh.v2.VerbType;
 public class GetRecordRequestHandler implements OaiPmhRequestHandler<GetRecordRequest> {
   private final ResourceRepository resourceRepository;
   private final RecordTransformer recordTransformer;
+  private final Pattern localIdPattern;
 
   public GetRecordRequestHandler(
-      ResourceRepository resourceRepository, RecordTransformer recordTransformer) {
+      ResourceRepository resourceRepository,
+      RecordTransformer recordTransformer,
+      URI identifierBaseUri) {
     this.resourceRepository = resourceRepository;
     this.recordTransformer = recordTransformer;
+    this.localIdPattern =
+        Pattern.compile(
+            "^" + identifierBaseUri.toString().replaceAll("\\.", "\\\\.") + "/([^/]+)$");
   }
 
   @Override
@@ -29,9 +38,12 @@ public class GetRecordRequestHandler implements OaiPmhRequestHandler<GetRecordRe
 
     var oaiResponse = createBaseResponse(request, objectFactory);
 
+    var repositoryIdentifier =
+        extractRepositoryIdentifierIfPresent(request.getIdentifier())
+            .orElseThrow(IdDoesNotExistException::new);
     var resource =
         resourceRepository
-            .fetchByIdentifier(request.getIdentifier())
+            .fetchByIdentifier(repositoryIdentifier)
             .orElseThrow(IdDoesNotExistException::new);
 
     var record = recordTransformer.transform(resource);
@@ -39,6 +51,11 @@ public class GetRecordRequestHandler implements OaiPmhRequestHandler<GetRecordRe
 
     oaiResponse.getValue().setGetRecord(getRecord);
     return oaiResponse;
+  }
+
+  private Optional<String> extractRepositoryIdentifierIfPresent(String identifier) {
+    var matcher = localIdPattern.matcher(identifier);
+    return matcher.matches() ? Optional.of(matcher.group(1)) : Optional.empty();
   }
 
   private GetRecordType createGetRecordResponse(RecordType record, ObjectFactory objectFactory) {

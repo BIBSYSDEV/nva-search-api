@@ -17,10 +17,17 @@ public class DefaultOaiPmhMethodRouter implements OaiPmhMethodRouter {
   private final OaiPmhRequestHandlerRegistry handlerRegistry;
 
   public DefaultOaiPmhMethodRouter(
-      ResourceRepository resourceRepository, int batchSize, URI endpointUri) {
+      ResourceRepository resourceRepository,
+      int batchSize,
+      URI endpointUri,
+      URI identifierBaseUri) {
     this.handlerRegistry =
         new OaiPmhRequestHandlerRegistry(
-            resourceRepository, new SimplifiedRecordTransformer(), batchSize, endpointUri);
+            resourceRepository,
+            new SimplifiedRecordTransformer(),
+            batchSize,
+            endpointUri,
+            identifierBaseUri);
   }
 
   @Override

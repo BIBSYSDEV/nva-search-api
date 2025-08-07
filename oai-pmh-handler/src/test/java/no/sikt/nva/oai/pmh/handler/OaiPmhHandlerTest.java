@@ -881,7 +881,7 @@ public class OaiPmhHandlerTest {
   void shouldReturnRecordInGetRecordWhenExists(String method) throws IOException, JAXBException {
     var identifier = UUID.randomUUID().toString();
     var identifierUri = "https://localhost/publication/" + identifier;
-    mockRepositoryQueryForOneRecord(identifier, identifierUri);
+    mockRepositoryQueryForOneRecord(identifier);
     try (var request = createGetRecordRequest(method, identifierUri)) {
       var gatewayResponse = invokeHandler(request);
 
@@ -901,9 +901,11 @@ public class OaiPmhHandlerTest {
 
   @ParameterizedTest
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
-  void shouldReturnErrorInGetRecordWhenNotExist(String method) throws IOException, JAXBException {
-    var identifierUri = "https://localhost/publication/" + UUID.randomUUID();
-    mockRepositoryQueryForNoRecord(identifierUri);
+  void shouldReturnErrorInGetRecordWhenInvalidLocalIdentifierUri(String method)
+      throws IOException, JAXBException {
+    var identifier = UUID.randomUUID().toString();
+    var identifierUri = "https://some.illegal.com/" + identifier;
+    mockRepositoryQueryForOneRecord(identifier);
     try (var request = createGetRecordRequest(method, identifierUri)) {
       var gatewayResponse = invokeHandler(request);
 
@@ -915,14 +917,31 @@ public class OaiPmhHandlerTest {
     }
   }
 
-  private void mockRepositoryQueryForOneRecord(String identifier, String identifierUri) {
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldReturnErrorInGetRecordWhenNotExist(String method) throws IOException, JAXBException {
+    var identifier = UUID.randomUUID().toString();
+    var identifierUri = "https://localhost/publication/" + identifier;
+    mockRepositoryQueryForNoRecord(identifier);
+    try (var request = createGetRecordRequest(method, identifierUri)) {
+      var gatewayResponse = invokeHandler(request);
+
+      assertThat(gatewayResponse.getStatusCode(), is(equalTo(200)));
+
+      var source = Input.fromString(gatewayResponse.getBody()).build();
+      assertXmlResponseWithError(
+          source, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST, "identifier does not exist");
+    }
+  }
+
+  private void mockRepositoryQueryForOneRecord(String identifier) {
     var queryMatcher =
         new ResourceSearchQueryMatcher.Builder()
             .withPageParameter(ResourceParameter.FROM, "0")
             .withPageParameter(ResourceParameter.SIZE, "1")
             .withPageParameter(ResourceParameter.SORT, "modifiedDate:asc,identifier")
             .withSearchParameter(ResourceParameter.AGGREGATION, Words.NONE)
-            .withSearchParameter(ResourceParameter.ID, identifierUri)
+            .withSearchParameter(ResourceParameter.ID, identifier)
             .withNamedFilterQuery(
                 "status",
                 new TermsQueryBuilderExpectation(
@@ -932,14 +951,14 @@ public class OaiPmhHandlerTest {
         .thenReturn(swsResponseWithIdentifiedResource(identifier));
   }
 
-  private void mockRepositoryQueryForNoRecord(String identifierUri) {
+  private void mockRepositoryQueryForNoRecord(String identifier) {
     var queryMatcher =
         new ResourceSearchQueryMatcher.Builder()
             .withPageParameter(ResourceParameter.FROM, "0")
             .withPageParameter(ResourceParameter.SIZE, "1")
             .withPageParameter(ResourceParameter.SORT, "modifiedDate:asc,identifier")
             .withSearchParameter(ResourceParameter.AGGREGATION, Words.NONE)
-            .withSearchParameter(ResourceParameter.ID, identifierUri)
+            .withSearchParameter(ResourceParameter.ID, identifier)
             .withNamedFilterQuery(
                 "status",
                 new TermsQueryBuilderExpectation(
@@ -1608,9 +1627,13 @@ public class OaiPmhHandlerTest {
       Environment environment, JaxbXmlSerializer marshaller, InputStream inputStream)
       throws IOException {
     var endpointUri = OaiPmhHandler.generateEndpointUri(environment);
+    var identifierBaseUri = OaiPmhHandler.generateIdentifierBaseUri(environment);
     var dataProvider =
         new DefaultOaiPmhMethodRouter(
-            new ResourceClientResourceRepository(resourceClient), 3, endpointUri);
+            new ResourceClientResourceRepository(resourceClient),
+            3,
+            endpointUri,
+            identifierBaseUri);
     var handler = new OaiPmhHandler(environment, dataProvider, marshaller);
     handler.handleRequest(inputStream, outputStream, new FakeContext());
 
