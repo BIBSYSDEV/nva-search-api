@@ -51,6 +51,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -116,7 +117,6 @@ public class OaiPmhHandlerTest {
   private static final String GRANULARITY_NODE_NAME = "granularity";
   private static final String CONTACT_AT_SIKT_NO = "kontakt@sikt.no";
   private static final String CODE_ATTRIBUTE_NAME = "code";
-  private static final String VERB_ATTRIBUTE_NAME = "verb";
   private static final String GET_METHOD = "get";
   private static final String POST_METHOD = "post";
   private static final String OAI_DC_NAMESPACE_PREFIX = "oai-dc";
@@ -149,7 +149,7 @@ public class OaiPmhHandlerTest {
   @MethodSource("allSupportedRequestsPerMethodProvider")
   void shouldReturnCorrectContentTypeForAllResponses(InputStream request)
       throws JAXBException, IOException {
-    mockRepository();
+    mockRepositoryWithEmptyResponsesForAllQueries();
     invokeHandlerAndAssertContentType(request);
   }
 
@@ -859,6 +859,108 @@ public class OaiPmhHandlerTest {
         is(IsIterableWithSize.iterableWithSize(1)));
   }
 
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldReturnRecordInGetRecordWhenExists(String method) throws IOException, JAXBException {
+    var identifier = UUID.randomUUID().toString();
+    var identifierUri = "https://localhost/publication/" + identifier;
+    mockRepositoryQueryForOneRecord(identifier, identifierUri);
+    try (var request = createGetRecordRequest(method, identifierUri)) {
+      var gatewayResponse = invokeHandler(request);
+
+      assertThat(gatewayResponse.getStatusCode(), is(equalTo(200)));
+      var source = Input.fromString(gatewayResponse.getBody()).build();
+      var xpathEngine = getXpathEngine();
+      var firstNode =
+          xpathEngine
+              .selectNodes(
+                  "/oai:OAI-PMH/oai:GetRecord/oai:record/oai:header/oai:identifier", source)
+              .iterator()
+              .next();
+
+      assertThat(firstNode.getFirstChild().getNodeValue(), is(equalTo(identifierUri)));
+    }
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldReturnErrorInGetRecordWhenNotExist(String method) throws IOException, JAXBException {
+    var identifierUri = "https://localhost/publication/" + UUID.randomUUID();
+    mockRepositoryQueryForNoRecord(identifierUri);
+    try (var request = createGetRecordRequest(method, identifierUri)) {
+      var gatewayResponse = invokeHandler(request);
+
+      assertThat(gatewayResponse.getStatusCode(), is(equalTo(200)));
+
+      var source = Input.fromString(gatewayResponse.getBody()).build();
+      assertXmlResponseWithError(
+          source, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST, "identifier does not exist");
+    }
+  }
+
+  private void mockRepositoryQueryForOneRecord(String identifier, String identifierUri) {
+    var queryMatcher =
+        new ResourceSearchQueryMatcher.Builder()
+            .withPageParameter(ResourceParameter.FROM, "0")
+            .withPageParameter(ResourceParameter.SIZE, "1")
+            .withPageParameter(ResourceParameter.SORT, "modifiedDate:asc,identifier")
+            .withSearchParameter(ResourceParameter.AGGREGATION, Words.NONE)
+            .withSearchParameter(ResourceParameter.ID, identifierUri)
+            .withNamedFilterQuery(
+                "status",
+                new TermsQueryBuilderExpectation(
+                    "status.keyword", "PUBLISHED", "PUBLISHED_METADATA"))
+            .build();
+    when(resourceClient.doSearch(argThat(queryMatcher), eq(RESOURCES)))
+        .thenReturn(swsResponseWithIdentifiedResource(identifier));
+  }
+
+  private void mockRepositoryQueryForNoRecord(String identifierUri) {
+    var queryMatcher =
+        new ResourceSearchQueryMatcher.Builder()
+            .withPageParameter(ResourceParameter.FROM, "0")
+            .withPageParameter(ResourceParameter.SIZE, "1")
+            .withPageParameter(ResourceParameter.SORT, "modifiedDate:asc,identifier")
+            .withSearchParameter(ResourceParameter.AGGREGATION, Words.NONE)
+            .withSearchParameter(ResourceParameter.ID, identifierUri)
+            .withNamedFilterQuery(
+                "status",
+                new TermsQueryBuilderExpectation(
+                    "status.keyword", "PUBLISHED", "PUBLISHED_METADATA"))
+            .build();
+    when(resourceClient.doSearch(argThat(queryMatcher), eq(RESOURCES)))
+        .thenReturn(emptySwsResponse());
+  }
+
+  private SwsResponse swsResponseWithIdentifiedResource(String identifier) {
+    var identifiedResourceNode =
+        HitBuilder.academicArticle(port, "My journal")
+            .withTitle("My identified academic article")
+            .withContributors("[anonymous]")
+            .withIdentifier(identifier)
+            .build();
+
+    var hitList = new ArrayList<Hit>();
+    hitList.add(new Hit("", "", "", 1.0, identifiedResourceNode, null, List.of()));
+
+    return new SwsResponse(
+        0, false, null, new HitsInfo(new TotalInfo(hitList.size(), ""), 1.0, hitList), null, null);
+  }
+
+  private InputStream createGetRecordRequest(String method, String identifier)
+      throws JsonProcessingException {
+    var requestBuilder = new HandlerRequestBuilder<String>(JsonUtils.dtoObjectMapper);
+
+    if (GET_METHOD.equals(method)) {
+      GetRecordsRequestHelper.applyQueryParams(
+          requestBuilder, identifier, MetadataPrefix.OAI_DC.getPrefix());
+    } else {
+      GetRecordsRequestHelper.applyBody(
+          requestBuilder, identifier, MetadataPrefix.OAI_DC.getPrefix());
+    }
+    return requestBuilder.build();
+  }
+
   private void assertNotPresent(JAXPXPathEngine xpathEngine, String expression, Source source) {
     assertThat(xpathEngine.selectNodes(expression, source), is(emptyIterable()));
   }
@@ -1222,6 +1324,40 @@ public class OaiPmhHandlerTest {
     handlerRequestBuilder.withBody(bodyBuilder.toString());
   }
 
+  private static class GetRecordsRequestHelper {
+    public static void applyQueryParams(
+        HandlerRequestBuilder<String> handlerRequestBuilder,
+        String identifier,
+        String metadataPrefix) {
+      Map<String, String> queryParams = new HashMap<>();
+      queryParams.put("verb", VerbType.GET_RECORD.value());
+      if (nonNull(identifier)) {
+        queryParams.put("identifier", identifier);
+      }
+      if (nonNull(metadataPrefix)) {
+        queryParams.put("metadataPrefix", metadataPrefix);
+      }
+      handlerRequestBuilder.withQueryParameters(queryParams);
+    }
+
+    public static void applyBody(
+        HandlerRequestBuilder<String> handlerRequestBuilder,
+        String identifier,
+        String metadataPrefix)
+        throws JsonProcessingException {
+      var bodyBuilder = new StringBuilder();
+      bodyBuilder.append("verb=").append(VerbType.GET_RECORD.value());
+      if (nonNull(identifier)) {
+        bodyBuilder.append("&identifier=").append(identifier);
+      }
+      if (nonNull(metadataPrefix)) {
+        bodyBuilder.append("&metadataPrefix=").append(metadataPrefix);
+      }
+
+      handlerRequestBuilder.withBody(bodyBuilder.toString());
+    }
+  }
+
   private static void addAsQueryParams(
       String verb,
       String from,
@@ -1463,9 +1599,7 @@ public class OaiPmhHandlerTest {
 
   private static Stream<Arguments> verbsAndMethodCombinations() {
     return Stream.of(
-        Arguments.of(VerbType.GET_RECORD, GET_METHOD),
         Arguments.of(VerbType.LIST_IDENTIFIERS, GET_METHOD),
-        Arguments.of(VerbType.GET_RECORD, POST_METHOD),
         Arguments.of(VerbType.LIST_IDENTIFIERS, POST_METHOD));
   }
 
@@ -1494,7 +1628,13 @@ public class OaiPmhHandlerTest {
             generateSimpleRequest(GET_METHOD, VerbType.LIST_RECORDS)),
         Arguments.argumentSet(
             "GET ListRecords should return correct content-type",
-            generateSimpleRequest(POST_METHOD, VerbType.LIST_RECORDS)));
+            generateSimpleRequest(POST_METHOD, VerbType.LIST_RECORDS)),
+        Arguments.argumentSet(
+            "GET GetRecord should return correct content-type",
+            generateSimpleRequest(GET_METHOD, VerbType.GET_RECORD)),
+        Arguments.argumentSet(
+            "POST GetRecord should return correct content-type",
+            generateSimpleRequest(POST_METHOD, VerbType.GET_RECORD)));
   }
 
   private static InputStream generateSimpleRequest(String method, VerbType verbType)
@@ -1510,7 +1650,7 @@ public class OaiPmhHandlerTest {
     return handlerRequestBuilder.build();
   }
 
-  void mockRepository() {
+  void mockRepositoryWithEmptyResponsesForAllQueries() {
     when(resourceClient.doSearch(any(), eq(RESOURCES))).thenReturn(emptySwsResponse());
   }
 

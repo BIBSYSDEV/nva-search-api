@@ -73,6 +73,26 @@ public class ResourceClientResourceRepository implements ResourceRepository {
     }
   }
 
+  @Override
+  public Optional<ResourceSearchResponse> fetchByIdentifier(String identifier) {
+    var query = buildFetchResourceByIdentifierQuery(identifier);
+    var pagedResponse = doQuery(query);
+    return pagedResponse.hits().isEmpty()
+        ? Optional.empty()
+        : Optional.of(pagedResponse.hits().getFirst());
+  }
+
+  private ResourceSearchQuery buildFetchResourceByIdentifierQuery(String identifier) {
+    var builder = buildQueryWithMandatoryParameters(1);
+    applyIdentifierParameter(builder, identifier);
+    return applyFilterAndBuild(builder);
+  }
+
+  private void applyIdentifierParameter(
+      ParameterValidator<ResourceParameter, ResourceSearchQuery> builder, String identifier) {
+    builder.withParameter(ResourceParameter.ID, identifier);
+  }
+
   private ResourceSearchQuery buildAggregationsQuery() {
     try {
       return ResourceSearchQuery.builder()
