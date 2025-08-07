@@ -26,6 +26,11 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
   private static final char DASH = '-';
 
   @Override
+  public RecordType transform(ResourceSearchResponse resourceSearchResponse) {
+    return toRecord(resourceSearchResponse);
+  }
+
+  @Override
   public List<RecordType> transform(List<ResourceSearchResponse> hits) {
     if (isNull(hits) || hits.isEmpty()) {
       return Collections.emptyList();

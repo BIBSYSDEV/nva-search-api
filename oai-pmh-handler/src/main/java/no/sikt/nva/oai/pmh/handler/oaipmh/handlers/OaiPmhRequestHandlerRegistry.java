@@ -28,6 +28,9 @@ public class OaiPmhRequestHandlerRegistry {
     handlerSuppliers.put(
         VerbType.LIST_RECORDS,
         () -> new ListRecordsRequestHandler(resourceRepository, recordTransformer, batchSize));
+    handlerSuppliers.put(
+        VerbType.GET_RECORD,
+        () -> new GetRecordRequestHandler(resourceRepository, recordTransformer));
   }
 
   @SuppressWarnings("unchecked")

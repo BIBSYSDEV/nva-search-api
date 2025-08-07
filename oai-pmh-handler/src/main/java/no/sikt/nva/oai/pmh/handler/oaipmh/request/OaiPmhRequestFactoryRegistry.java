@@ -16,7 +16,8 @@ public final class OaiPmhRequestFactoryRegistry {
           VerbType.IDENTIFY.value(), new IdentifyRequestFactory(),
           VerbType.LIST_METADATA_FORMATS.value(), new ListMetadataFormatsRequestFactory(),
           VerbType.LIST_SETS.value(), new ListSetsRequestFactory(),
-          VerbType.LIST_RECORDS.value(), new ListRecordsRequestFactory());
+          VerbType.LIST_RECORDS.value(), new ListRecordsRequestFactory(),
+          VerbType.GET_RECORD.value(), new GetRecordsRequestFactory());
 
   private OaiPmhRequestFactoryRegistry() {}
 
