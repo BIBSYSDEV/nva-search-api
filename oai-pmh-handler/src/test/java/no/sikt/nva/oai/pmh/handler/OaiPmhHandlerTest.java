@@ -40,6 +40,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
@@ -121,7 +122,8 @@ public class OaiPmhHandlerTest {
   private static final String POST_METHOD = "post";
   private static final String OAI_DC_NAMESPACE_PREFIX = "oai-dc";
   private static final String OAI_DC_NAMESPACE = "http://www.openarchives.org/OAI/2.0/oai_dc/";
-  public static final String DEFAULT_PUBLICATION_IDENTIFIER = "1";
+  private static final String DEFAULT_PUBLICATION_IDENTIFIER = "1";
+  private static final URI LANGUAGE_ENG = URI.create("http://lexvo.org/id/iso639-3/eng");
 
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
   private Environment environment;
@@ -715,6 +717,21 @@ public class OaiPmhHandlerTest {
   }
 
   @Test
+  void shouldPopulateMetadataDcLanguage() throws IOException, JAXBException {
+    var inputStream = defaultHitAndRequest();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    var language =
+        extractTextNodeValueFromResponse(
+            xpathEngine,
+            "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:metadata/oai-dc:dc/dc:language",
+            response);
+    assertThat(language, is(equalTo("eng")));
+  }
+
+  @Test
   void shouldUsePublicationDateAsRecordMetadataDcDate() throws IOException, JAXBException {
     var inputStream = defaultHitAndRequest();
 
@@ -1152,6 +1169,7 @@ public class OaiPmhHandlerTest {
                     .withIdentifier(DEFAULT_PUBLICATION_IDENTIFIER)
                     .withTitle("My title")
                     .withContributors("Ola Nordmann")
+                    .withLanguage(LANGUAGE_ENG)
                     .build()));
     return hitAndRequest(hits, setSpec);
   }
@@ -1165,6 +1183,7 @@ public class OaiPmhHandlerTest {
                 HitBuilder.academicArticleWithMissingJournalInformation(port)
                     .withIdentifier(DEFAULT_PUBLICATION_IDENTIFIER)
                     .withTitle("My title")
+                    .withLanguage(LANGUAGE_ENG)
                     .withContributors("Ola Nordmann")
                     .build()));
     return hitAndRequest(hits);
@@ -1222,6 +1241,7 @@ public class OaiPmhHandlerTest {
                     HitBuilder.academicArticle(port, "The Journal")
                         .withIdentifier("1")
                         .withTitle("My title")
+                        .withLanguage(LANGUAGE_ENG)
                         .build()));
     var queryMatcher =
         new ResourceSearchQueryMatcher.Builder()
@@ -1247,6 +1267,7 @@ public class OaiPmhHandlerTest {
                 HitBuilder.reportBasic(port, "My publisher name", "My series name")
                     .withIdentifier("1")
                     .withTitle("My title")
+                    .withLanguage(LANGUAGE_ENG)
                     .build()));
     return hitAndRequest(hits);
   }
@@ -1260,6 +1281,7 @@ public class OaiPmhHandlerTest {
                 HitBuilder.reportBasicWithMissingChannelName(port)
                     .withIdentifier("1")
                     .withTitle("My title")
+                    .withLanguage(LANGUAGE_ENG)
                     .build()));
     return hitAndRequest(hits);
   }
@@ -1273,6 +1295,7 @@ public class OaiPmhHandlerTest {
                 HitBuilder.reportBasic(port, "My publisher name", "My series name")
                     .withIdentifier("1")
                     .withTitle("My title")
+                    .withLanguage(LANGUAGE_ENG)
                     .withNoPublicationDate()
                     .build()));
     return hitAndRequest(hits);
@@ -1287,6 +1310,7 @@ public class OaiPmhHandlerTest {
                 HitBuilder.reportBasic(port, "My publisher name", "My series name")
                     .withIdentifier("1")
                     .withTitle("My title")
+                    .withLanguage(LANGUAGE_ENG)
                     .withEmptyPublicationDate()
                     .build()));
     return hitAndRequest(hits);
