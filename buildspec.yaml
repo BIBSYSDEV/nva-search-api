@@ -9,6 +9,12 @@ cache:
   paths:
     - '/root/.gradle/caches/**/*'
 
+reports:
+  nva-search-api-junit-tests:
+    files:
+      - '*/build/test-results/test/TEST-*.xml'
+    file-format: JUNITXML
+
 phases:
   install:
     runtime-versions:
