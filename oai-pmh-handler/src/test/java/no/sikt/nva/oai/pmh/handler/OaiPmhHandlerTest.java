@@ -55,13 +55,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.xml.transform.Source;
+import no.sikt.nva.oai.pmh.handler.data.PublisherChannelBuilder;
 import no.sikt.nva.oai.pmh.handler.data.ResourceDocumentFactory;
-import no.sikt.nva.oai.pmh.handler.data.ResourceDocumentFactory.ChannelBuilder;
+import no.sikt.nva.oai.pmh.handler.data.SerialChannelBuilder;
 import no.sikt.nva.oai.pmh.handler.oaipmh.DefaultOaiPmhMethodRouter;
 import no.sikt.nva.oai.pmh.handler.oaipmh.MetadataPrefix;
 import no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhDateTime;
@@ -138,7 +138,9 @@ public class OaiPmhHandlerTest {
   private static final URI REFERENCE_DOI = URI.create("https://doi.org/10.1234/reference");
   private static final String SERIES_PRINT_ISSN = "2387-2669";
   private static final String SERIES_ONLINE_ISSN = "2387-2660";
+  private static final String PUBLISHER_NAME = "My publisher";
   private static final String JOURNAL_NAME = "My journal";
+  private static final String SERIES_NAME = "My series";
   private static final String RESOURCE_IDENTIFIER = SortableIdentifier.next().toString();
   private static final URI RESOURCE_ID =
       URI.create("https://localhost/publication/" + RESOURCE_IDENTIFIER);
@@ -891,7 +893,7 @@ public class OaiPmhHandlerTest {
             xpathEngine,
             "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:metadata/oai-dc:dc/dc:publisher",
             response);
-    assertThat(publisher, is(equalTo("My publisher name")));
+    assertThat(publisher, is(equalTo(PUBLISHER_NAME)));
   }
 
   @Test
@@ -1231,22 +1233,7 @@ public class OaiPmhHandlerTest {
   }
 
   private InputStream bookAnthologyRequest() throws JsonProcessingException {
-    var bookAnthologyNode =
-        HitBuilder.bookAnthology(
-                port,
-                "The Publisher",
-                "The series",
-                SERIES_PRINT_ISSN,
-                SERIES_ONLINE_ISSN,
-                Set.of(ISBN_IDENTIFIER),
-                REFERENCE_DOI)
-            .withIdentifier(DEFAULT_PUBLICATION_IDENTIFIER)
-            .withTitle("My title")
-            .withContributors("Ola Nordmann")
-            .withLanguage(LANGUAGE_ENG)
-            .build();
-
-    return hitAndRequest(wrapHits(bookAnthologyNode));
+    return hitAndRequest(wrapHits(defaultBookAnthology()));
   }
 
   private InputStream defaultHitAndRequest(SetSpec setSpec) throws JsonProcessingException {
@@ -1258,7 +1245,7 @@ public class OaiPmhHandlerTest {
   }
 
   private ObjectNode defaultAcademicArticle() {
-    var journalBuilder = new ChannelBuilder("Journal", JOURNAL_NAME);
+    var journalBuilder = new SerialChannelBuilder("Journal", JOURNAL_NAME);
     return ResourceDocumentFactory.builder(
             RESOURCE_ID, RESOURCE_TITLE, PUBLICATION_YEAR, PUBLICATION_MONTH, PUBLICATION_DAY)
         .withAdditionalIdentifier(CRISTIN_AS_TYPE, CRISTIN_IDENTIFIER)
@@ -1267,6 +1254,39 @@ public class OaiPmhHandlerTest {
         .withDoi(NVA_DOI)
         .withLanguage(LANGUAGE_ENG)
         .academicArticle(journalBuilder)
+        .withReferenceDoi(REFERENCE_DOI)
+        .apply()
+        .build();
+  }
+
+  private ObjectNode defaultReportBasic() {
+    var publisherBuilder = new PublisherChannelBuilder(PUBLISHER_NAME);
+    var seriesBuilder = new SerialChannelBuilder("Series", SERIES_NAME);
+    return ResourceDocumentFactory.builder(
+            RESOURCE_ID, RESOURCE_TITLE, PUBLICATION_YEAR, PUBLICATION_MONTH, PUBLICATION_DAY)
+        .withAdditionalIdentifier(CRISTIN_AS_TYPE, CRISTIN_IDENTIFIER)
+        .withAdditionalIdentifier(SCOPUS_AS_TYPE, SCOPUS_IDENTIFIER)
+        .withAdditionalIdentifier("HandleIdentifier", HANDLE_IDENTIFIER)
+        .withDoi(NVA_DOI)
+        .withLanguage(LANGUAGE_ENG)
+        .reportBasic(publisherBuilder, seriesBuilder)
+        .withReferenceDoi(REFERENCE_DOI)
+        .apply()
+        .build();
+  }
+
+  private ObjectNode defaultBookAnthology() {
+    var publisherBuilder = new PublisherChannelBuilder(PUBLISHER_NAME);
+    var seriesBuilder =
+        new SerialChannelBuilder("Series", SERIES_NAME)
+            .withOnlineIssn(SERIES_ONLINE_ISSN)
+            .withPrintIssn(SERIES_PRINT_ISSN);
+
+    return ResourceDocumentFactory.builder(
+            RESOURCE_ID, RESOURCE_TITLE, PUBLICATION_YEAR, PUBLICATION_MONTH, PUBLICATION_DAY)
+        .bookAnthology(publisherBuilder)
+        .withSeries(seriesBuilder)
+        .withIsbn(ISBN_IDENTIFIER)
         .withReferenceDoi(REFERENCE_DOI)
         .apply()
         .build();
@@ -1345,59 +1365,51 @@ public class OaiPmhHandlerTest {
   }
 
   private InputStream requestWithReportBasicHit() throws JsonProcessingException {
-    var hits =
-        new ArrayNode(
-            JsonNodeFactory.instance,
-            List.of(
-                HitBuilder.reportBasic(port, "My publisher name", "My series name")
-                    .withIdentifier("1")
-                    .withTitle("My title")
-                    .withLanguage(LANGUAGE_ENG)
-                    .build()));
+    var hits = new ArrayNode(JsonNodeFactory.instance, List.of(defaultReportBasic()));
     return hitAndRequest(hits);
+  }
+
+  private JsonNode reportBasicWithMissingPublisherName() {
+    var reportBasic = defaultReportBasic();
+    var publisherNode =
+        (ObjectNode) reportBasic.at("/entityDescription/reference/publicationContext/publisher");
+    publisherNode.remove("name");
+    return reportBasic;
+  }
+
+  private JsonNode reportBasicWithMissingPublicationDate() {
+    var reportBasic = defaultReportBasic();
+    var entityDescriptionNode = (ObjectNode) reportBasic.at("/entityDescription");
+    entityDescriptionNode.remove("publicationDate");
+    return reportBasic;
+  }
+
+  private JsonNode reportBasicWithEmptyPublicationDate() {
+    var reportBasic = defaultReportBasic();
+    var entityDescriptionNode = (ObjectNode) reportBasic.at("/entityDescription");
+    entityDescriptionNode.remove("publicationDate");
+    entityDescriptionNode.set("publicationDate", JsonNodeFactory.instance.objectNode());
+    return reportBasic;
   }
 
   private InputStream requestWithReportBasicHitWithIncompletePublisherInformation()
       throws JsonProcessingException {
     var hits =
-        new ArrayNode(
-            JsonNodeFactory.instance,
-            List.of(
-                HitBuilder.reportBasicWithMissingChannelName(port)
-                    .withIdentifier("1")
-                    .withTitle("My title")
-                    .withLanguage(LANGUAGE_ENG)
-                    .build()));
+        new ArrayNode(JsonNodeFactory.instance, List.of(reportBasicWithMissingPublisherName()));
     return hitAndRequest(hits);
   }
 
   private InputStream requestWithReportBasicHitMissingPublicationDate()
       throws JsonProcessingException {
     var hits =
-        new ArrayNode(
-            JsonNodeFactory.instance,
-            List.of(
-                HitBuilder.reportBasic(port, "My publisher name", "My series name")
-                    .withIdentifier("1")
-                    .withTitle("My title")
-                    .withLanguage(LANGUAGE_ENG)
-                    .withNoPublicationDate()
-                    .build()));
+        new ArrayNode(JsonNodeFactory.instance, List.of(reportBasicWithMissingPublicationDate()));
     return hitAndRequest(hits);
   }
 
   private InputStream requestWithReportBasicHitEmptyPublicationDate()
       throws JsonProcessingException {
     var hits =
-        new ArrayNode(
-            JsonNodeFactory.instance,
-            List.of(
-                HitBuilder.reportBasic(port, "My publisher name", "My series name")
-                    .withIdentifier("1")
-                    .withTitle("My title")
-                    .withLanguage(LANGUAGE_ENG)
-                    .withEmptyPublicationDate()
-                    .build()));
+        new ArrayNode(JsonNodeFactory.instance, List.of(reportBasicWithEmptyPublicationDate()));
     return hitAndRequest(hits);
   }
 

@@ -3,15 +3,14 @@ package no.sikt.nva.oai.pmh.handler.data;
 import static java.util.Objects.nonNull;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import no.sikt.nva.oai.pmh.handler.data.ResourceDocumentFactory.ChannelBuilder;
 import no.sikt.nva.oai.pmh.handler.data.ResourceDocumentFactory.ResourceDocumentBuilder;
 
 public class AcademicArticleBuilder extends AbstractReferenceBuilder<AcademicArticleBuilder> {
   private final ResourceDocumentBuilder resourceDocumentBuilder;
-  private final ChannelBuilder journalBuilder;
+  private final SerialChannelBuilder journalBuilder;
 
   AcademicArticleBuilder(
-      ResourceDocumentBuilder resourceDocumentBuilder, ChannelBuilder journalBuilder) {
+      ResourceDocumentBuilder resourceDocumentBuilder, SerialChannelBuilder journalBuilder) {
     this.resourceDocumentBuilder = resourceDocumentBuilder;
     this.journalBuilder = journalBuilder;
   }

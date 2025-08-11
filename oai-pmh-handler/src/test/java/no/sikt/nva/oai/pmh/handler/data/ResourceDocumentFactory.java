@@ -30,52 +30,6 @@ public class ResourceDocumentFactory {
     return entityDescriptionNode;
   }
 
-  public static class ChannelBuilder {
-    private final String type;
-    private final String name;
-    private URI id;
-    private String printIssn;
-    private String onlineIssn;
-
-    public ChannelBuilder(String type, String name) {
-      this.type = type;
-      this.name = name;
-    }
-
-    public ChannelBuilder withId(URI id) {
-      this.id = id;
-      return this;
-    }
-
-    public ChannelBuilder withPrintIssn(String printIssn) {
-      this.printIssn = printIssn;
-      return this;
-    }
-
-    public ChannelBuilder withOnlineIssn(String onlineIssn) {
-      this.onlineIssn = onlineIssn;
-      return this;
-    }
-
-    public ObjectNode build() {
-      var channelNode = JsonNodeFactory.instance.objectNode();
-      channelNode.put("name", name);
-      if (nonNull(id)) {
-        channelNode.put("id", id.toString());
-      }
-      if (nonNull(type)) {
-        channelNode.put("type", type);
-      }
-      if (nonNull(printIssn)) {
-        channelNode.put("printIssn", printIssn);
-      }
-      if (nonNull(onlineIssn)) {
-        channelNode.put("onlineIssn", onlineIssn);
-      }
-      return channelNode;
-    }
-  }
-
   public static ResourceDocumentBuilder builder(
       URI id,
       String title,
@@ -184,8 +138,17 @@ public class ResourceDocumentFactory {
       return resourceRoot;
     }
 
-    public AcademicArticleBuilder academicArticle(ChannelBuilder journalBuilder) {
+    public AcademicArticleBuilder academicArticle(SerialChannelBuilder journalBuilder) {
       return new AcademicArticleBuilder(this, journalBuilder);
+    }
+
+    public ReportBasicBuilder reportBasic(
+        PublisherChannelBuilder publisherBuilder, SerialChannelBuilder seriesBuilder) {
+      return new ReportBasicBuilder(this, publisherBuilder, seriesBuilder);
+    }
+
+    public BookAnthologyBuilder bookAnthology(PublisherChannelBuilder publisherBuilder) {
+      return new BookAnthologyBuilder(this, publisherBuilder);
     }
   }
 }
