@@ -20,7 +20,8 @@ public class OaiPmhRequestHandlerRegistry {
       ResourceRepository resourceRepository,
       RecordTransformer recordTransformer,
       int batchSize,
-      URI endpointUri) {
+      URI endpointUri,
+      URI identifierBaseUri) {
     handlerSuppliers.put(VerbType.LIST_SETS, () -> new ListSetsRequestHandler(resourceRepository));
     handlerSuppliers.put(
         VerbType.IDENTIFY, () -> new IdentifyRequestHandler(endpointUri, resourceRepository));
@@ -30,7 +31,8 @@ public class OaiPmhRequestHandlerRegistry {
         () -> new ListRecordsRequestHandler(resourceRepository, recordTransformer, batchSize));
     handlerSuppliers.put(
         VerbType.GET_RECORD,
-        () -> new GetRecordRequestHandler(resourceRepository, recordTransformer));
+        () ->
+            new GetRecordRequestHandler(resourceRepository, recordTransformer, identifierBaseUri));
   }
 
   @SuppressWarnings("unchecked")

@@ -1,8 +1,5 @@
 package no.sikt.nva.oai.pmh.handler;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.ok;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static java.net.HttpURLConnection.HTTP_INTERNAL_ERROR;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.nonNull;
@@ -35,8 +32,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import java.io.ByteArrayOutputStream;
@@ -104,7 +99,6 @@ import org.xmlunit.builder.Input;
 import org.xmlunit.xpath.JAXPXPathEngine;
 import org.xmlunit.xpath.XPathEngine;
 
-@WireMockTest
 public class OaiPmhHandlerTest {
 
   private static final String OAI_PMH_NAMESPACE_PREFIX = "oai";
@@ -128,7 +122,6 @@ public class OaiPmhHandlerTest {
   private static final String POST_METHOD = "post";
   private static final String OAI_DC_NAMESPACE_PREFIX = "oai-dc";
   private static final String OAI_DC_NAMESPACE = "http://www.openarchives.org/OAI/2.0/oai_dc/";
-  private static final String DEFAULT_PUBLICATION_IDENTIFIER = "1";
   private static final URI LANGUAGE_ENG = URI.create("http://lexvo.org/id/iso639-3/eng");
   private static final String HANDLE_IDENTIFIER = "https://hdl.handle.net/11250/2590299";
   private static final String CRISTIN_IDENTIFIER = "1674987";
@@ -152,10 +145,9 @@ public class OaiPmhHandlerTest {
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
   private Environment environment;
   private ResourceClient resourceClient;
-  private int port = 0;
 
   @BeforeEach
-  public void setUp(WireMockRuntimeInfo wireMockRuntimeInfo) {
+  public void setUp() {
     this.environment = mock(Environment.class);
     when(environment.readEnv("ALLOWED_ORIGIN")).thenReturn("*");
     when(environment.readEnv("SEARCH_INFRASTRUCTURE_API_URI"))
@@ -164,11 +156,6 @@ public class OaiPmhHandlerTest {
     when(environment.readEnv("OAI_BASE_PATH")).thenReturn("publication-oai-pmh");
     when(environment.readEnv("COGNITO_AUTHORIZER_URLS")).thenReturn("http://localhost:3000");
     this.resourceClient = mock(ResourceClient.class);
-    var context = IoUtils.stringFromResources(Path.of("publication.context"));
-    stubFor(
-        get("/publication/context")
-            .willReturn(ok(context).withHeader("Content-Type", "application/json")));
-    this.port = wireMockRuntimeInfo.getHttpPort();
   }
 
   @ParameterizedTest
@@ -966,7 +953,7 @@ public class OaiPmhHandlerTest {
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldReturnRecordInGetRecordWhenExists(String method) throws IOException, JAXBException {
     mockRepositoryQueryForOneRecord();
-    try (var request = createGetRecordRequest(method)) {
+    try (var request = createGetRecordRequest(method, RESOURCE_ID.toString())) {
       var gatewayResponse = invokeHandler(request);
 
       assertThat(gatewayResponse.getStatusCode(), is(equalTo(200)));
@@ -985,9 +972,26 @@ public class OaiPmhHandlerTest {
 
   @ParameterizedTest
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldReturnErrorInGetRecordWhenInvalidLocalIdentifierUri(String method)
+      throws IOException, JAXBException {
+    mockRepositoryQueryForOneRecord();
+    var illegalResourceId = URI.create("https://some.illegal.domain/" + RESOURCE_IDENTIFIER);
+    try (var request = createGetRecordRequest(method, illegalResourceId.toString())) {
+      var gatewayResponse = invokeHandler(request);
+
+      assertThat(gatewayResponse.getStatusCode(), is(equalTo(200)));
+
+      var source = Input.fromString(gatewayResponse.getBody()).build();
+      assertXmlResponseWithError(
+          source, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST, "identifier does not exist");
+    }
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldReturnErrorInGetRecordWhenNotExist(String method) throws IOException, JAXBException {
     mockRepositoryQueryForNoRecord();
-    try (var request = createGetRecordRequest(method)) {
+    try (var request = createGetRecordRequest(method, RESOURCE_ID.toString())) {
       var gatewayResponse = invokeHandler(request);
 
       assertThat(gatewayResponse.getStatusCode(), is(equalTo(200)));
@@ -1019,7 +1023,7 @@ public class OaiPmhHandlerTest {
             .withPageParameter(ResourceParameter.SIZE, "1")
             .withPageParameter(ResourceParameter.SORT, "modifiedDate:asc,identifier")
             .withSearchParameter(ResourceParameter.AGGREGATION, Words.NONE)
-            .withSearchParameter(ResourceParameter.ID, RESOURCE_ID.toString())
+            .withSearchParameter(ResourceParameter.ID, RESOURCE_IDENTIFIER)
             .withNamedFilterQuery(
                 "status",
                 new TermsQueryBuilderExpectation(
@@ -1036,7 +1040,7 @@ public class OaiPmhHandlerTest {
             .withPageParameter(ResourceParameter.SIZE, "1")
             .withPageParameter(ResourceParameter.SORT, "modifiedDate:asc,identifier")
             .withSearchParameter(ResourceParameter.AGGREGATION, Words.NONE)
-            .withSearchParameter(ResourceParameter.ID, RESOURCE_ID.toString())
+            .withSearchParameter(ResourceParameter.ID, RESOURCE_IDENTIFIER)
             .withNamedFilterQuery(
                 "status",
                 new TermsQueryBuilderExpectation(
@@ -1056,15 +1060,16 @@ public class OaiPmhHandlerTest {
         0, false, null, new HitsInfo(new TotalInfo(hitList.size(), ""), 1.0, hitList), null, null);
   }
 
-  private InputStream createGetRecordRequest(String method) throws JsonProcessingException {
+  private InputStream createGetRecordRequest(String method, String identifier)
+      throws JsonProcessingException {
     var requestBuilder = new HandlerRequestBuilder<String>(JsonUtils.dtoObjectMapper);
 
     if (GET_METHOD.equals(method)) {
       GetRecordsRequestHelper.applyQueryParams(
-          requestBuilder, RESOURCE_ID.toString(), MetadataPrefix.OAI_DC.getPrefix());
+          requestBuilder, identifier, MetadataPrefix.OAI_DC.getPrefix());
     } else {
       GetRecordsRequestHelper.applyBody(
-          requestBuilder, RESOURCE_ID.toString(), MetadataPrefix.OAI_DC.getPrefix());
+          requestBuilder, identifier, MetadataPrefix.OAI_DC.getPrefix());
     }
     return requestBuilder.build();
   }
@@ -1724,9 +1729,13 @@ public class OaiPmhHandlerTest {
       Environment environment, JaxbXmlSerializer marshaller, InputStream inputStream)
       throws IOException {
     var endpointUri = OaiPmhHandler.generateEndpointUri(environment);
+    var identifierBaseUri = OaiPmhHandler.generateIdentifierBaseUri(environment);
     var dataProvider =
         new DefaultOaiPmhMethodRouter(
-            new ResourceClientResourceRepository(resourceClient), 3, endpointUri);
+            new ResourceClientResourceRepository(resourceClient),
+            3,
+            endpointUri,
+            identifierBaseUri);
     var handler = new OaiPmhHandler(environment, dataProvider, marshaller);
     handler.handleRequest(inputStream, outputStream, new FakeContext());
 

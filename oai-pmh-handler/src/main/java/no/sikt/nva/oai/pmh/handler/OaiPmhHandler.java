@@ -58,18 +58,24 @@ public class OaiPmhHandler extends ApiGatewayHandler<String, String> {
 
   @JacocoGenerated
   private static OaiPmhMethodRouter defaultOaiPmhMethodRouter() {
-    var enviroment = new Environment();
-    var batchSize = enviroment.readEnvOpt("LIST_RECORDS_BATCH_SIZE").orElse("250");
+    var environment = new Environment();
+    var batchSize = environment.readEnvOpt("LIST_RECORDS_BATCH_SIZE").orElse("250");
     return new DefaultOaiPmhMethodRouter(
         new ResourceClientResourceRepository(ResourceClient.defaultClient()),
         Integer.parseInt(batchSize),
-        generateEndpointUri(enviroment));
+        generateEndpointUri(environment),
+        generateIdentifierBaseUri(environment));
   }
 
   protected static URI generateEndpointUri(Environment environment) {
     var apiHost = environment.readEnv("API_HOST");
     var basePath = environment.readEnv("OAI_BASE_PATH");
     return new UriWrapper(HTTPS_SCHEME, apiHost).addChild(basePath).getUri();
+  }
+
+  protected static URI generateIdentifierBaseUri(Environment environment) {
+    var apiHost = environment.readEnv("API_HOST");
+    return new UriWrapper(HTTPS_SCHEME, apiHost).addChild("publication").getUri();
   }
 
   @Override
