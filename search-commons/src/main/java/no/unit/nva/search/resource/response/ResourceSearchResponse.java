@@ -14,6 +14,7 @@ import java.util.Map;
 public record ResourceSearchResponse(
     URI id,
     String identifier,
+    URI doi,
     String type,
     URI language,
     OtherIdentifiers otherIdentifiers,
@@ -37,6 +38,7 @@ public record ResourceSearchResponse(
     private String identifier;
     private String type;
     private URI language;
+    private URI doi;
     private OtherIdentifiers otherIdentifiers;
     private RecordMetadata recordMetadata;
     private String mainTitle;
@@ -73,6 +75,11 @@ public record ResourceSearchResponse(
 
     public Builder withLanguage(URI language) {
       this.language = language;
+      return this;
+    }
+
+    public Builder withDoi(URI doi) {
+      this.doi = doi;
       return this;
     }
 
@@ -130,6 +137,7 @@ public record ResourceSearchResponse(
       return new ResourceSearchResponse(
           id,
           identifier,
+          doi,
           type,
           language,
           otherIdentifiers,

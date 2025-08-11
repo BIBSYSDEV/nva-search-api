@@ -96,8 +96,8 @@ public final class Constants {
   public static final String CONTRIBUTORS_PREVIEW = "contributorsPreview";
   public static final String CONTRIBUTORS_COUNT = "contributorsCount";
   public static final String MANIFESTATIONS = "manifestations";
-  public static final String SCOPUS_IDENTIFIER = "scopusIdentifier";
-  public static final String CRISTIN_IDENTIFIER = "cristinIdentifier";
+  public static final String SCOPUS_IDENTIFIER = "ScopusIdentifier";
+  public static final String CRISTIN_IDENTIFIER = "CristinIdentifier";
 
   public static final String V_2024_12_01_SIMPLER_MODEL = "2024-12-01";
   public static final String PERSON_PREFERENCES = "/person-preferences/";
