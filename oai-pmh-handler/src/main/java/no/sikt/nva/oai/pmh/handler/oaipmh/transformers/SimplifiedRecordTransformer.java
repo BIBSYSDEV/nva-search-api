@@ -6,6 +6,7 @@ import static no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhDateTimeUtils.truncateToS
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import no.sikt.nva.oai.pmh.handler.oaipmh.RecordTransformer;
 import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec;
 import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec.SetRoot;
@@ -53,6 +54,7 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
     var metadata = OBJECT_FACTORY.createMetadataType();
     var oaiDcType = OBJECT_FACTORY.createOaiDcType();
     appendIdentifier(response, oaiDcType);
+    appendAdditionalIdentifiers(response, oaiDcType);
     appendTitle(response, oaiDcType);
     appendLanguage(response, oaiDcType);
     appendContributors(response, oaiDcType);
@@ -77,8 +79,31 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
   }
 
   private static void appendIdentifier(ResourceSearchResponse response, OaiDcType oaiDcType) {
+    appendToOaiDc(oaiDcType, response.id().toString(), null);
+  }
+
+  private static void appendAdditionalIdentifiers(
+      ResourceSearchResponse response, OaiDcType oaiDcType) {
+    appendAll(oaiDcType, response.otherIdentifiers().cristin(), "CRISTIN:");
+    appendAll(oaiDcType, response.otherIdentifiers().scopus(), "SCOPUS:");
+    appendAll(oaiDcType, response.otherIdentifiers().handle(), null);
+    appendAll(oaiDcType, response.otherIdentifiers().isbn(), "ISBN:");
+    appendAll(oaiDcType, response.otherIdentifiers().issn(), "ISSN:");
+    if (nonNull(response.publishingDetails().doi())) {
+      appendToOaiDc(oaiDcType, response.publishingDetails().doi().toString(), null);
+    }
+    if (nonNull(response.doi())) {
+      appendToOaiDc(oaiDcType, response.doi().toString(), null);
+    }
+  }
+
+  private static void appendAll(OaiDcType oaiDcType, Set<String> identifiers, String prefix) {
+    identifiers.forEach(identifier -> appendToOaiDc(oaiDcType, identifier, prefix));
+  }
+
+  private static void appendToOaiDc(OaiDcType oaiDcType, String value, String prefix) {
     var identifierElement = OBJECT_FACTORY.createElementType();
-    identifierElement.setValue(response.id().toString());
+    identifierElement.setValue(nonNull(prefix) ? prefix + value : value);
     oaiDcType
         .getTitleOrCreatorOrSubject()
         .addLast(OBJECT_FACTORY.createIdentifier(identifierElement));

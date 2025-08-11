@@ -100,6 +100,7 @@ public class SimplifiedMutator implements JsonNodeMutator {
         CREATED_DATE,
         MODIFIED_DATE,
         PUBLISHED_DATE,
+        DOI,
         path(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, TYPE),
         path(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, MANIFESTATIONS, ISBN_LIST),
         path(ENTITY_DESCRIPTION, REFERENCE, DOI),
@@ -138,6 +139,7 @@ public class SimplifiedMutator implements JsonNodeMutator {
     return responseBuilder()
         .withId(NodeUtils.toUri(source.path(ID)))
         .withIdentifier(source.path(IDENTIFIER))
+        .withDoi(NodeUtils.toUri(source.path(DOI)))
         .withMainTitle(source.path(ENTITY_DESCRIPTION).path(MAIN_TITLE))
         .withMainLanguageAbstract(source.path(ENTITY_DESCRIPTION).path(ABSTRACT))
         .withDescription(source.path(ENTITY_DESCRIPTION).path(Constants.DESCRIPTION))

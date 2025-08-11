@@ -10,7 +10,9 @@ import static no.sikt.nva.oai.pmh.handler.oaipmh.request.OaiPmhParameterName.FRO
 import static no.sikt.nva.oai.pmh.handler.oaipmh.request.OaiPmhParameterName.SET;
 import static no.sikt.nva.oai.pmh.handler.oaipmh.request.OaiPmhParameterName.UNTIL;
 import static no.sikt.nva.oai.pmh.handler.oaipmh.request.OaiPmhParameterName.VERB;
+import static no.unit.nva.constants.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.constants.Words.RESOURCES;
+import static no.unit.nva.constants.Words.SCOPUS_AS_TYPE;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.lessThan;
@@ -19,6 +21,7 @@ import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInA
 import static org.hamcrest.collection.IsIterableWithSize.iterableWithSize;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsIterableContaining.hasItem;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -52,11 +55,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.xml.transform.Source;
+import no.sikt.nva.oai.pmh.handler.data.ResourceDocumentFactory;
+import no.sikt.nva.oai.pmh.handler.data.ResourceDocumentFactory.ChannelBuilder;
 import no.sikt.nva.oai.pmh.handler.oaipmh.DefaultOaiPmhMethodRouter;
 import no.sikt.nva.oai.pmh.handler.oaipmh.MetadataPrefix;
 import no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhDateTime;
@@ -68,6 +73,7 @@ import no.sikt.nva.oai.pmh.handler.oaipmh.request.OaiPmhParameterName;
 import no.sikt.nva.oai.pmh.handler.repository.ResourceClientResourceRepository;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.constants.Words;
+import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.common.records.SwsResponse.HitsInfo;
 import no.unit.nva.search.common.records.SwsResponse.HitsInfo.Hit;
@@ -124,6 +130,22 @@ public class OaiPmhHandlerTest {
   private static final String OAI_DC_NAMESPACE = "http://www.openarchives.org/OAI/2.0/oai_dc/";
   private static final String DEFAULT_PUBLICATION_IDENTIFIER = "1";
   private static final URI LANGUAGE_ENG = URI.create("http://lexvo.org/id/iso639-3/eng");
+  private static final String HANDLE_IDENTIFIER = "https://hdl.handle.net/11250/2590299";
+  private static final String CRISTIN_IDENTIFIER = "1674987";
+  private static final String SCOPUS_IDENTIFIER = "2-s2.0-85062524387";
+  private static final String ISBN_IDENTIFIER = "978-0-8194-5906-0";
+  private static final URI NVA_DOI = URI.create("https://doi.org/10.1234/nva");
+  private static final URI REFERENCE_DOI = URI.create("https://doi.org/10.1234/reference");
+  private static final String SERIES_PRINT_ISSN = "2387-2669";
+  private static final String SERIES_ONLINE_ISSN = "2387-2660";
+  private static final String JOURNAL_NAME = "My journal";
+  private static final String RESOURCE_IDENTIFIER = SortableIdentifier.next().toString();
+  private static final URI RESOURCE_ID =
+      URI.create("https://localhost/publication/" + RESOURCE_IDENTIFIER);
+  private static final String RESOURCE_TITLE = "My title";
+  private static final String PUBLICATION_YEAR = "2025";
+  private static final String PUBLICATION_MONTH = "01";
+  private static final String PUBLICATION_DAY = "01";
 
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
   private Environment environment;
@@ -666,7 +688,7 @@ public class OaiPmhHandlerTest {
             "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:header/oai:identifier",
             response);
 
-    assertThat(identifier, is(equalTo("https://localhost/publication/1")));
+    assertThat(identifier, is(equalTo(RESOURCE_ID.toString())));
   }
 
   @Test
@@ -717,6 +739,67 @@ public class OaiPmhHandlerTest {
   }
 
   @Test
+  void shouldPopulateNvaDoiAsDcIdentifier() throws IOException, JAXBException {
+    var inputStream = defaultHitAndRequest();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    assertHasIdentifier(response, "https://doi.org/10.1234/nva");
+  }
+
+  @Test
+  void shouldPopulateReferenceDoiAsDcIdentifier() throws IOException, JAXBException {
+    var inputStream = bookAnthologyRequest();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    assertHasIdentifier(response, "https://doi.org/10.1234/reference");
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {SERIES_PRINT_ISSN, SERIES_ONLINE_ISSN})
+  void shouldPopulateIssnAsDcIdentifier(String issn) throws IOException, JAXBException {
+    var inputStream = bookAnthologyRequest();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    assertHasIdentifier(response, "ISSN:" + issn);
+  }
+
+  @Test
+  void shouldPopulateIsbnAsDcIdentifier() throws IOException, JAXBException {
+    var inputStream = bookAnthologyRequest();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+
+    assertHasIdentifier(response, "ISBN:" + ISBN_IDENTIFIER);
+  }
+
+  @Test
+  void shouldPopulateHandleAsDcIdentifier() throws IOException, JAXBException {
+    var inputStream = defaultHitAndRequest();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+
+    assertHasIdentifier(response, HANDLE_IDENTIFIER);
+  }
+
+  @Test
+  void shouldPopulateCristinIdentifierAsDcIdentifier() throws IOException, JAXBException {
+    var inputStream = defaultHitAndRequest();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+
+    assertHasIdentifier(response, "CRISTIN:" + CRISTIN_IDENTIFIER);
+  }
+
+  @Test
+  void shouldPopulateScopusIdentifierAsDcIdentifier() throws IOException, JAXBException {
+    var inputStream = defaultHitAndRequest();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+
+    assertHasIdentifier(response, "SCOPUS:" + SCOPUS_IDENTIFIER);
+  }
+
+  @Test
   void shouldPopulateMetadataDcLanguage() throws IOException, JAXBException {
     var inputStream = defaultHitAndRequest();
 
@@ -743,7 +826,9 @@ public class OaiPmhHandlerTest {
             xpathEngine,
             "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:metadata/oai-dc:dc/dc:date",
             response);
-    assertThat(date, is(equalTo("2020-01-01")));
+    assertThat(
+        date,
+        is(equalTo("%s-%s-%s".formatted(PUBLICATION_YEAR, PUBLICATION_MONTH, PUBLICATION_DAY))));
   }
 
   @Test
@@ -768,13 +853,12 @@ public class OaiPmhHandlerTest {
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
     var xpathEngine = getXpathEngine();
 
-    var type =
+    var id =
         extractTextNodeValueFromResponse(
             xpathEngine,
             "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:metadata/oai-dc:dc/dc:identifier",
             response);
-    assertThat(
-        type, is(equalTo("https://localhost/publication/" + DEFAULT_PUBLICATION_IDENTIFIER)));
+    assertThat(id, is(equalTo(RESOURCE_ID.toString())));
   }
 
   @Test
@@ -811,7 +895,7 @@ public class OaiPmhHandlerTest {
   }
 
   @Test
-  void shouldOmitJournalNameAsPublisherIfDataIsIncomplete() throws IOException, JAXBException {
+  void shouldOmitPublisherNameAsPublisherIfDataIsIncomplete() throws IOException, JAXBException {
     var inputStream = requestWithReportBasicHitWithIncompletePublisherInformation();
 
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
@@ -824,7 +908,7 @@ public class OaiPmhHandlerTest {
   }
 
   @Test
-  void shouldOmitPublisherNameAsPublisherIfDataIsIncomplete() throws IOException, JAXBException {
+  void shouldOmitJournalNameAsPublisherIfDataIsIncomplete() throws IOException, JAXBException {
     var inputStream = academicArticleWithIncompleteJournalInformation();
 
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
@@ -879,10 +963,8 @@ public class OaiPmhHandlerTest {
   @ParameterizedTest
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldReturnRecordInGetRecordWhenExists(String method) throws IOException, JAXBException {
-    var identifier = UUID.randomUUID().toString();
-    var identifierUri = "https://localhost/publication/" + identifier;
-    mockRepositoryQueryForOneRecord(identifier, identifierUri);
-    try (var request = createGetRecordRequest(method, identifierUri)) {
+    mockRepositoryQueryForOneRecord();
+    try (var request = createGetRecordRequest(method)) {
       var gatewayResponse = invokeHandler(request);
 
       assertThat(gatewayResponse.getStatusCode(), is(equalTo(200)));
@@ -895,16 +977,15 @@ public class OaiPmhHandlerTest {
               .iterator()
               .next();
 
-      assertThat(firstNode.getFirstChild().getNodeValue(), is(equalTo(identifierUri)));
+      assertThat(firstNode.getFirstChild().getNodeValue(), is(equalTo(RESOURCE_ID.toString())));
     }
   }
 
   @ParameterizedTest
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldReturnErrorInGetRecordWhenNotExist(String method) throws IOException, JAXBException {
-    var identifierUri = "https://localhost/publication/" + UUID.randomUUID();
-    mockRepositoryQueryForNoRecord(identifierUri);
-    try (var request = createGetRecordRequest(method, identifierUri)) {
+    mockRepositoryQueryForNoRecord();
+    try (var request = createGetRecordRequest(method)) {
       var gatewayResponse = invokeHandler(request);
 
       assertThat(gatewayResponse.getStatusCode(), is(equalTo(200)));
@@ -915,31 +996,45 @@ public class OaiPmhHandlerTest {
     }
   }
 
-  private void mockRepositoryQueryForOneRecord(String identifier, String identifierUri) {
+  private void assertHasIdentifier(Source source, String expectedIdentifier) {
+    var xpathEngine = getXpathEngine();
+    var identifierNodes =
+        xpathEngine.selectNodes(
+            "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:metadata/oai-dc:dc/dc:identifier", source);
+    var identifierNodeIterator = identifierNodes.iterator();
+
+    var identifiers = new HashSet<String>();
+    while (identifierNodeIterator.hasNext()) {
+      identifiers.add(identifierNodeIterator.next().getFirstChild().getNodeValue());
+    }
+    assertThat(identifiers, hasItem(expectedIdentifier));
+  }
+
+  private void mockRepositoryQueryForOneRecord() {
     var queryMatcher =
         new ResourceSearchQueryMatcher.Builder()
             .withPageParameter(ResourceParameter.FROM, "0")
             .withPageParameter(ResourceParameter.SIZE, "1")
             .withPageParameter(ResourceParameter.SORT, "modifiedDate:asc,identifier")
             .withSearchParameter(ResourceParameter.AGGREGATION, Words.NONE)
-            .withSearchParameter(ResourceParameter.ID, identifierUri)
+            .withSearchParameter(ResourceParameter.ID, RESOURCE_ID.toString())
             .withNamedFilterQuery(
                 "status",
                 new TermsQueryBuilderExpectation(
                     "status.keyword", "PUBLISHED", "PUBLISHED_METADATA"))
             .build();
     when(resourceClient.doSearch(argThat(queryMatcher), eq(RESOURCES)))
-        .thenReturn(swsResponseWithIdentifiedResource(identifier));
+        .thenReturn(swsResponseWithIdentifiedResource());
   }
 
-  private void mockRepositoryQueryForNoRecord(String identifierUri) {
+  private void mockRepositoryQueryForNoRecord() {
     var queryMatcher =
         new ResourceSearchQueryMatcher.Builder()
             .withPageParameter(ResourceParameter.FROM, "0")
             .withPageParameter(ResourceParameter.SIZE, "1")
             .withPageParameter(ResourceParameter.SORT, "modifiedDate:asc,identifier")
             .withSearchParameter(ResourceParameter.AGGREGATION, Words.NONE)
-            .withSearchParameter(ResourceParameter.ID, identifierUri)
+            .withSearchParameter(ResourceParameter.ID, RESOURCE_ID.toString())
             .withNamedFilterQuery(
                 "status",
                 new TermsQueryBuilderExpectation(
@@ -949,13 +1044,8 @@ public class OaiPmhHandlerTest {
         .thenReturn(emptySwsResponse());
   }
 
-  private SwsResponse swsResponseWithIdentifiedResource(String identifier) {
-    var identifiedResourceNode =
-        HitBuilder.academicArticle(port, "My journal")
-            .withTitle("My identified academic article")
-            .withContributors("[anonymous]")
-            .withIdentifier(identifier)
-            .build();
+  private SwsResponse swsResponseWithIdentifiedResource() {
+    var identifiedResourceNode = defaultAcademicArticle();
 
     var hitList = new ArrayList<Hit>();
     hitList.add(new Hit("", "", "", 1.0, identifiedResourceNode, null, List.of()));
@@ -964,16 +1054,15 @@ public class OaiPmhHandlerTest {
         0, false, null, new HitsInfo(new TotalInfo(hitList.size(), ""), 1.0, hitList), null, null);
   }
 
-  private InputStream createGetRecordRequest(String method, String identifier)
-      throws JsonProcessingException {
+  private InputStream createGetRecordRequest(String method) throws JsonProcessingException {
     var requestBuilder = new HandlerRequestBuilder<String>(JsonUtils.dtoObjectMapper);
 
     if (GET_METHOD.equals(method)) {
       GetRecordsRequestHelper.applyQueryParams(
-          requestBuilder, identifier, MetadataPrefix.OAI_DC.getPrefix());
+          requestBuilder, RESOURCE_ID.toString(), MetadataPrefix.OAI_DC.getPrefix());
     } else {
       GetRecordsRequestHelper.applyBody(
-          requestBuilder, identifier, MetadataPrefix.OAI_DC.getPrefix());
+          requestBuilder, RESOURCE_ID.toString(), MetadataPrefix.OAI_DC.getPrefix());
     }
     return requestBuilder.build();
   }
@@ -1141,33 +1230,55 @@ public class OaiPmhHandlerTest {
     return defaultHitAndRequest(SetSpec.EMPTY_INSTANCE);
   }
 
+  private InputStream bookAnthologyRequest() throws JsonProcessingException {
+    var bookAnthologyNode =
+        HitBuilder.bookAnthology(
+                port,
+                "The Publisher",
+                "The series",
+                SERIES_PRINT_ISSN,
+                SERIES_ONLINE_ISSN,
+                Set.of(ISBN_IDENTIFIER),
+                REFERENCE_DOI)
+            .withIdentifier(DEFAULT_PUBLICATION_IDENTIFIER)
+            .withTitle("My title")
+            .withContributors("Ola Nordmann")
+            .withLanguage(LANGUAGE_ENG)
+            .build();
+
+    return hitAndRequest(wrapHits(bookAnthologyNode));
+  }
+
   private InputStream defaultHitAndRequest(SetSpec setSpec) throws JsonProcessingException {
-    var hits =
-        new ArrayNode(
-            JsonNodeFactory.instance,
-            List.of(
-                HitBuilder.academicArticle(port, "My journal")
-                    .withIdentifier(DEFAULT_PUBLICATION_IDENTIFIER)
-                    .withTitle("My title")
-                    .withContributors("Ola Nordmann")
-                    .withLanguage(LANGUAGE_ENG)
-                    .build()));
-    return hitAndRequest(hits, setSpec);
+    return hitAndRequest(wrapHits(defaultAcademicArticle()), setSpec);
+  }
+
+  private ArrayNode wrapHits(ObjectNode... hits) {
+    return new ArrayNode(JsonNodeFactory.instance, List.of(hits));
+  }
+
+  private ObjectNode defaultAcademicArticle() {
+    var journalBuilder = new ChannelBuilder("Journal", JOURNAL_NAME);
+    return ResourceDocumentFactory.builder(
+            RESOURCE_ID, RESOURCE_TITLE, PUBLICATION_YEAR, PUBLICATION_MONTH, PUBLICATION_DAY)
+        .withAdditionalIdentifier(CRISTIN_AS_TYPE, CRISTIN_IDENTIFIER)
+        .withAdditionalIdentifier(SCOPUS_AS_TYPE, SCOPUS_IDENTIFIER)
+        .withAdditionalIdentifier("HandleIdentifier", HANDLE_IDENTIFIER)
+        .withDoi(NVA_DOI)
+        .withLanguage(LANGUAGE_ENG)
+        .academicArticle(journalBuilder)
+        .withReferenceDoi(REFERENCE_DOI)
+        .apply()
+        .build();
   }
 
   private InputStream academicArticleWithIncompleteJournalInformation()
       throws JsonProcessingException {
-    var hits =
-        new ArrayNode(
-            JsonNodeFactory.instance,
-            List.of(
-                HitBuilder.academicArticleWithMissingJournalInformation(port)
-                    .withIdentifier(DEFAULT_PUBLICATION_IDENTIFIER)
-                    .withTitle("My title")
-                    .withLanguage(LANGUAGE_ENG)
-                    .withContributors("Ola Nordmann")
-                    .build()));
-    return hitAndRequest(hits);
+    var academicArticle = defaultAcademicArticle();
+    var journalNode =
+        (ObjectNode) academicArticle.at("/entityDescription/reference/publicationContext");
+    journalNode.remove("name");
+    return hitAndRequest(wrapHits(academicArticle));
   }
 
   private InputStream hitAndRequest(ArrayNode hits) throws JsonProcessingException {
@@ -1216,14 +1327,7 @@ public class OaiPmhHandlerTest {
     var hits =
         emptyRepository
             ? new ArrayNode(JsonNodeFactory.instance)
-            : new ArrayNode(
-                JsonNodeFactory.instance,
-                List.of(
-                    HitBuilder.academicArticle(port, "The Journal")
-                        .withIdentifier("1")
-                        .withTitle("My title")
-                        .withLanguage(LANGUAGE_ENG)
-                        .build()));
+            : new ArrayNode(JsonNodeFactory.instance, List.of(defaultAcademicArticle()));
     var queryMatcher =
         new ResourceSearchQueryMatcher.Builder()
             .withPageParameter(ResourceParameter.FROM, "0")

@@ -17,6 +17,7 @@ dependencies {
     implementation libs.bundles.jackson
     implementation libs.bundles.jena
 
+    testImplementation libs.nva.identifiers
     testImplementation libs.xml.unit.core
     testImplementation libs.xml.unit.matchers
     testImplementation libs.bundles.testcontainers
