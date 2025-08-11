@@ -110,6 +110,14 @@ Conditions:
   WithSuffix: !Not [ !Equals [ !Ref Suffix, '' ] ]
 
 Resources:
+  NvaSearchApiCodeBuildReportGroup:
+    Type: AWS::CodeBuild::ReportGroup
+    Properties:
+      Name: "nva-search-api-junit-tests"
+      Type: TEST
+      ExportConfig:
+        ExportConfigType: NO_EXPORT
+
   ApiAccessLogGroup:
     Type: AWS::Logs::LogGroup
 
