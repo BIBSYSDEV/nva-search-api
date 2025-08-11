@@ -11,7 +11,9 @@ public class GetRecordsRequestFactory implements OaiPmhRequestFactory {
 
   @Override
   public OaiPmhRequest create(RequestInfo requestInfo, String body) {
-    var identifier = RequestUtils.extractParameter(IDENTIFIER, requestInfo, body).orElse(null);
+    var identifier =
+        RequestUtils.extractParameter(IDENTIFIER, requestInfo, body)
+            .orElseThrow(() -> new BadArgumentException("identifier is required"));
     var metadataPrefix =
         RequestUtils.extractParameter(METADATA_PREFIX, requestInfo, body)
             .orElseThrow(() -> new BadArgumentException("metadataPrefix is required"));

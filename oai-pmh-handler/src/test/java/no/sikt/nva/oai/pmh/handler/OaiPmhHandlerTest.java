@@ -951,6 +951,21 @@ public class OaiPmhHandlerTest {
 
   @ParameterizedTest
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldReturnErrorInGetRecordWhenIdentifierIsMissing(String method)
+      throws IOException, JAXBException {
+    mockRepositoryQueryForOneRecord();
+    try (var request = createGetRecordRequest(method, null)) {
+      var gatewayResponse = invokeHandler(request);
+
+      assertThat(gatewayResponse.getStatusCode(), is(equalTo(200)));
+      var source = Input.fromString(gatewayResponse.getBody()).build();
+      assertXmlResponseWithError(
+          source, OAIPMHerrorcodeType.BAD_ARGUMENT, "identifier is required");
+    }
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldReturnRecordInGetRecordWhenExists(String method) throws IOException, JAXBException {
     mockRepositoryQueryForOneRecord();
     try (var request = createGetRecordRequest(method, RESOURCE_ID.toString())) {
