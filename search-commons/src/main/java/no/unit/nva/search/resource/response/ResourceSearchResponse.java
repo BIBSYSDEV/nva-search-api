@@ -37,7 +37,6 @@ public record ResourceSearchResponse(
     private String identifier;
     private String type;
     private URI language;
-    private URI doi;
     private OtherIdentifiers otherIdentifiers;
     private RecordMetadata recordMetadata;
     private String mainTitle;
