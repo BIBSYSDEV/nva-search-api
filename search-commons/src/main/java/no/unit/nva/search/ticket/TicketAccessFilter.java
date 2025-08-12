@@ -271,9 +271,10 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
   }
 
   private void validateAssigneeAndOwnerParameters() throws UnauthorizedException {
+    var assignee = Optional.ofNullable(query.parameters().get(ASSIGNEE).as()).orElse("");
     if (Optional.ofNullable(query.parameters().get(OWNER))
         .map(AsType::as)
-        .map(v -> v.equals(query.parameters().get(ASSIGNEE).as()))
+        .map(assignee::equals)
         .orElse(false)) {
       throw new UnauthorizedException(CANNOT_SEARCH_AS_BOTH_ASSIGNEE_AND_OWNER_AT_THE_SAME_TIME);
     }
