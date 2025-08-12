@@ -271,11 +271,20 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
   }
 
   private void validateAssigneeAndOwnerParameters() throws UnauthorizedException {
-    var assignee = Optional.ofNullable(query.parameters().get(ASSIGNEE).as()).orElse("");
-    if (Optional.ofNullable(query.parameters().get(OWNER))
-        .map(AsType::as)
-        .map(assignee::equals)
-        .orElse(false)) {
+    var assigneeOpt =
+        Optional.ofNullable(query.parameters().get(ASSIGNEE))
+            .map(AsType::as)
+            .map(Object::toString)
+            .map(String::trim);
+
+    var ownerOpt =
+        Optional.ofNullable(query.parameters().get(OWNER))
+            .map(AsType::as)
+            .map(Object::toString)
+            .map(String::trim)
+            .filter(s -> !s.isEmpty()); // Owner can be empty and ignored
+
+    if (assigneeOpt.isPresent() && assigneeOpt.equals(ownerOpt)) {
       throw new UnauthorizedException(CANNOT_SEARCH_AS_BOTH_ASSIGNEE_AND_OWNER_AT_THE_SAME_TIME);
     }
   }
