@@ -55,6 +55,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -139,7 +140,6 @@ public class SimplifiedMutator implements JsonNodeMutator {
     return responseBuilder()
         .withId(NodeUtils.toUri(source.path(ID)))
         .withIdentifier(source.path(IDENTIFIER))
-        .withDoi(NodeUtils.toUri(source.path(DOI)))
         .withMainTitle(source.path(ENTITY_DESCRIPTION).path(MAIN_TITLE))
         .withMainLanguageAbstract(source.path(ENTITY_DESCRIPTION).path(ABSTRACT))
         .withDescription(source.path(ENTITY_DESCRIPTION).path(Constants.DESCRIPTION))
@@ -248,13 +248,21 @@ public class SimplifiedMutator implements JsonNodeMutator {
     var publicationContext =
         source.path(ENTITY_DESCRIPTION).path(REFERENCE).path(PUBLICATION_CONTEXT);
 
+    var doiNode = extractDoi(source);
+
     return new PublishingDetails(
         NodeUtils.toUri(publicationContext.path(ID)),
         publicationContext.path(TYPE).textValue(),
         publicationContext.path(NAME).textValue(),
-        NodeUtils.toUri(source.path(ENTITY_DESCRIPTION).path(REFERENCE).path(DOI)),
+        NodeUtils.toUri(doiNode),
         fromNodeRating(publicationContext.path(SERIES)),
         fromNodeRating(publicationContext.path(PUBLISHER)));
+  }
+
+  private JsonNode extractDoi(JsonNode source) {
+    return Optional.of(source.path(ENTITY_DESCRIPTION).path(REFERENCE).path(DOI))
+        .filter(node -> !node.isMissingNode())
+        .orElse(source.path(DOI));
   }
 
   private ScientificRating fromNodeRating(JsonNode node) {

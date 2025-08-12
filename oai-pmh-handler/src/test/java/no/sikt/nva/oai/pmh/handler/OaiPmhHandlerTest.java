@@ -13,6 +13,7 @@ import static no.unit.nva.constants.Words.SCOPUS_AS_TYPE;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.collection.IsEmptyIterable.*;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableWithSize.iterableWithSize;
@@ -50,6 +51,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -728,19 +730,29 @@ public class OaiPmhHandlerTest {
   }
 
   @Test
-  void shouldPopulateNvaDoiAsDcIdentifier() throws IOException, JAXBException {
-    var inputStream = defaultHitAndRequest();
-
-    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
-    assertHasIdentifier(response, "https://doi.org/10.1234/nva");
-  }
-
-  @Test
   void shouldPopulateReferenceDoiAsDcIdentifier() throws IOException, JAXBException {
     var inputStream = bookAnthologyRequest();
 
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
-    assertHasIdentifier(response, "https://doi.org/10.1234/reference");
+    assertHasIdentifier(response, REFERENCE_DOI.toString());
+  }
+
+  @Test
+  void shouldNotPopulateNvaDoiAsDcIdentifierIfReferenceDoiIsPresent()
+      throws IOException, JAXBException {
+    var inputStream = bookAnthologyRequest();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    assertDoesNotHaveIdentifier(response, NVA_DOI.toString());
+  }
+
+  @Test
+  void shouldFallBackToNvaDoiAsDcIdentifierIfReferenceDoiNotPresent()
+      throws IOException, JAXBException {
+    var inputStream = bookAnthologyRequestWithNvaDoiOnly();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    assertHasIdentifier(response, NVA_DOI.toString());
   }
 
   @ParameterizedTest
@@ -1003,6 +1015,16 @@ public class OaiPmhHandlerTest {
   }
 
   private void assertHasIdentifier(Source source, String expectedIdentifier) {
+    var identifiers = extractIdentifiers(source);
+    assertThat(identifiers, hasItem(expectedIdentifier));
+  }
+
+  void assertDoesNotHaveIdentifier(Source source, String identifier) {
+    var identifiers = extractIdentifiers(source);
+    assertThat(identifiers, not(hasItem(identifier)));
+  }
+
+  private static Set<String> extractIdentifiers(Source source) {
     var xpathEngine = getXpathEngine();
     var identifierNodes =
         xpathEngine.selectNodes(
@@ -1013,7 +1035,7 @@ public class OaiPmhHandlerTest {
     while (identifierNodeIterator.hasNext()) {
       identifiers.add(identifierNodeIterator.next().getFirstChild().getNodeValue());
     }
-    assertThat(identifiers, hasItem(expectedIdentifier));
+    return identifiers;
   }
 
   private void mockRepositoryQueryForOneRecord() {
@@ -1241,6 +1263,10 @@ public class OaiPmhHandlerTest {
     return hitAndRequest(wrapHits(defaultBookAnthology()));
   }
 
+  private InputStream bookAnthologyRequestWithNvaDoiOnly() throws JsonProcessingException {
+    return hitAndRequest(wrapHits(bookAnthologyWithNvaDoiOnly()));
+  }
+
   private InputStream defaultHitAndRequest(SetSpec setSpec) throws JsonProcessingException {
     return hitAndRequest(wrapHits(defaultAcademicArticle()), setSpec);
   }
@@ -1289,12 +1315,21 @@ public class OaiPmhHandlerTest {
 
     return ResourceDocumentFactory.builder(
             RESOURCE_ID, RESOURCE_TITLE, PUBLICATION_YEAR, PUBLICATION_MONTH, PUBLICATION_DAY)
+        .withDoi(NVA_DOI)
         .bookAnthology(publisherBuilder)
         .withSeries(seriesBuilder)
         .withIsbn(ISBN_IDENTIFIER)
         .withReferenceDoi(REFERENCE_DOI)
         .apply()
         .build();
+  }
+
+  private ObjectNode bookAnthologyWithNvaDoiOnly() {
+    var bookAnthology = defaultBookAnthology();
+    var referenceNode = (ObjectNode) bookAnthology.at("/entityDescription/reference");
+    referenceNode.remove("doi");
+
+    return bookAnthology;
   }
 
   private InputStream academicArticleWithIncompleteJournalInformation()

@@ -92,9 +92,6 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
     if (nonNull(response.publishingDetails().doi())) {
       appendToOaiDc(oaiDcType, response.publishingDetails().doi().toString(), null);
     }
-    if (nonNull(response.doi())) {
-      appendToOaiDc(oaiDcType, response.doi().toString(), null);
-    }
   }
 
   private static void appendAll(OaiDcType oaiDcType, Set<String> identifiers, String prefix) {
