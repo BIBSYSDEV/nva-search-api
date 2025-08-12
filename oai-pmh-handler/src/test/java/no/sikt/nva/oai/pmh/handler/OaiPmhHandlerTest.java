@@ -963,9 +963,40 @@ public class OaiPmhHandlerTest {
 
   @ParameterizedTest
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldReturnErrorInGetRecordWhenIdentifierIsMissing(String method)
+      throws IOException, JAXBException {
+    mockRepositoryQueryForOneRecord();
+    try (var request = createGetRecordRequest(method, null, MetadataPrefix.OAI_DC.getPrefix())) {
+      var gatewayResponse = invokeHandler(request);
+
+      assertThat(gatewayResponse.getStatusCode(), is(equalTo(200)));
+      var source = Input.fromString(gatewayResponse.getBody()).build();
+      assertXmlResponseWithError(
+          source, OAIPMHerrorcodeType.BAD_ARGUMENT, "identifier is required");
+    }
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
+  void shouldReturnErrorInGetRecordWhenMetadataPrefixIsMissing(String method)
+      throws IOException, JAXBException {
+    mockRepositoryQueryForOneRecord();
+    try (var request = createGetRecordRequest(method, RESOURCE_ID.toString(), null)) {
+      var gatewayResponse = invokeHandler(request);
+
+      assertThat(gatewayResponse.getStatusCode(), is(equalTo(200)));
+      var source = Input.fromString(gatewayResponse.getBody()).build();
+      assertXmlResponseWithError(
+          source, OAIPMHerrorcodeType.BAD_ARGUMENT, "metadataPrefix is required");
+    }
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldReturnRecordInGetRecordWhenExists(String method) throws IOException, JAXBException {
     mockRepositoryQueryForOneRecord();
-    try (var request = createGetRecordRequest(method, RESOURCE_ID.toString())) {
+    try (var request =
+        createGetRecordRequest(method, RESOURCE_ID.toString(), MetadataPrefix.OAI_DC.getPrefix())) {
       var gatewayResponse = invokeHandler(request);
 
       assertThat(gatewayResponse.getStatusCode(), is(equalTo(200)));
@@ -988,7 +1019,9 @@ public class OaiPmhHandlerTest {
       throws IOException, JAXBException {
     mockRepositoryQueryForOneRecord();
     var illegalResourceId = URI.create("https://some.illegal.domain/" + RESOURCE_IDENTIFIER);
-    try (var request = createGetRecordRequest(method, illegalResourceId.toString())) {
+    try (var request =
+        createGetRecordRequest(
+            method, illegalResourceId.toString(), MetadataPrefix.OAI_DC.getPrefix())) {
       var gatewayResponse = invokeHandler(request);
 
       assertThat(gatewayResponse.getStatusCode(), is(equalTo(200)));
@@ -1003,7 +1036,8 @@ public class OaiPmhHandlerTest {
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldReturnErrorInGetRecordWhenNotExist(String method) throws IOException, JAXBException {
     mockRepositoryQueryForNoRecord();
-    try (var request = createGetRecordRequest(method, RESOURCE_ID.toString())) {
+    try (var request =
+        createGetRecordRequest(method, RESOURCE_ID.toString(), MetadataPrefix.OAI_DC.getPrefix())) {
       var gatewayResponse = invokeHandler(request);
 
       assertThat(gatewayResponse.getStatusCode(), is(equalTo(200)));
@@ -1082,16 +1116,14 @@ public class OaiPmhHandlerTest {
         0, false, null, new HitsInfo(new TotalInfo(hitList.size(), ""), 1.0, hitList), null, null);
   }
 
-  private InputStream createGetRecordRequest(String method, String identifier)
-      throws JsonProcessingException {
+  private InputStream createGetRecordRequest(
+      String method, String identifier, String metadataPrefix) throws JsonProcessingException {
     var requestBuilder = new HandlerRequestBuilder<String>(JsonUtils.dtoObjectMapper);
 
     if (GET_METHOD.equals(method)) {
-      GetRecordsRequestHelper.applyQueryParams(
-          requestBuilder, identifier, MetadataPrefix.OAI_DC.getPrefix());
+      GetRecordsRequestHelper.applyQueryParams(requestBuilder, identifier, metadataPrefix);
     } else {
-      GetRecordsRequestHelper.applyBody(
-          requestBuilder, identifier, MetadataPrefix.OAI_DC.getPrefix());
+      GetRecordsRequestHelper.applyBody(requestBuilder, identifier, metadataPrefix);
     }
     return requestBuilder.build();
   }
