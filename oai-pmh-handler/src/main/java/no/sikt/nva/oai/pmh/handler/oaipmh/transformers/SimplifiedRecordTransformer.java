@@ -14,6 +14,7 @@ import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec.SetRoot;
 import no.unit.nva.search.resource.response.Contributor;
 import no.unit.nva.search.resource.response.PublicationDate;
 import no.unit.nva.search.resource.response.ResourceSearchResponse;
+import nva.commons.core.StringUtils;
 import nva.commons.core.paths.UriWrapper;
 import org.openarchives.oai.pmh.v2.ElementType;
 import org.openarchives.oai.pmh.v2.HeaderType;
@@ -69,7 +70,7 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
 
   private static void appendDescriptions(ResourceSearchResponse response, OaiDcType oaiDcType) {
     var mainLanguageAbstract = sanitizeXmlValue(response.mainLanguageAbstract());
-    if (nonNull(mainLanguageAbstract) && !mainLanguageAbstract.isEmpty()) {
+    if (!StringUtils.isEmpty(mainLanguageAbstract)) {
       var descriptionElement = OBJECT_FACTORY.createElementType();
       descriptionElement.setValue(mainLanguageAbstract);
       oaiDcType
@@ -121,7 +122,7 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
 
   private static void appendTitle(ResourceSearchResponse response, OaiDcType oaiDcType) {
     var mainTitle = sanitizeXmlValue(response.mainTitle());
-    if (mainTitle != null && !mainTitle.isEmpty()) {
+    if (!StringUtils.isEmpty(mainTitle)) {
       var titleElement = OBJECT_FACTORY.createElementType();
       titleElement.setValue(mainTitle);
       oaiDcType.getTitleOrCreatorOrSubject().addLast(OBJECT_FACTORY.createTitle(titleElement));
