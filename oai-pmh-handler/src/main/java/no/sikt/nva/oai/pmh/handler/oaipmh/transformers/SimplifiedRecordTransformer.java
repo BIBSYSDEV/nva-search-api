@@ -64,6 +64,7 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
     appendDate(response, oaiDcType);
     appendType(response, oaiDcType);
     appendPublisher(response, oaiDcType);
+    appendSubjects(response, oaiDcType);
     metadata.setAny(OBJECT_FACTORY.createDc(oaiDcType));
     return metadata;
   }
@@ -81,6 +82,19 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
       oaiDcType
           .getTitleOrCreatorOrSubject()
           .addLast(OBJECT_FACTORY.createDescription(descriptionElement));
+    }
+  }
+
+  private static void appendSubjects(ResourceSearchResponse response, OaiDcType oaiDcType) {
+    response.tags().forEach(tag -> appendAsSubject(tag, oaiDcType));
+  }
+
+  private static void appendAsSubject(String subject, OaiDcType oaiDcType) {
+    var sanitizedSubject = sanitizeXmlValue(subject);
+    if (StringUtils.isNotEmpty(sanitizedSubject)) {
+      var subjectElement = OBJECT_FACTORY.createElementType();
+      subjectElement.setValue(sanitizedSubject);
+      oaiDcType.getTitleOrCreatorOrSubject().addLast(OBJECT_FACTORY.createSubject(subjectElement));
     }
   }
 

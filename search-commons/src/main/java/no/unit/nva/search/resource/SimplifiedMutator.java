@@ -29,6 +29,7 @@ import static no.unit.nva.constants.Words.REFERENCE;
 import static no.unit.nva.constants.Words.ROLE;
 import static no.unit.nva.constants.Words.SERIES;
 import static no.unit.nva.constants.Words.STATUS;
+import static no.unit.nva.constants.Words.TAGS;
 import static no.unit.nva.constants.Words.TYPE;
 import static no.unit.nva.constants.Words.VALUE;
 import static no.unit.nva.constants.Words.YEAR;
@@ -120,6 +121,7 @@ public class SimplifiedMutator implements JsonNodeMutator {
         path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, ROLE, TYPE),
         path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, SEQUENCE),
         path(ENTITY_DESCRIPTION, PUBLICATION_DATE),
+        path(ENTITY_DESCRIPTION, TAGS),
         path(ADDITIONAL_IDENTIFIERS, TYPE),
         path(ADDITIONAL_IDENTIFIERS, VALUE));
   }
@@ -144,6 +146,7 @@ public class SimplifiedMutator implements JsonNodeMutator {
         .withMainLanguageAbstract(source.path(ENTITY_DESCRIPTION).path(ABSTRACT))
         .withDescription(source.path(ENTITY_DESCRIPTION).path(Constants.DESCRIPTION))
         .withContributorsCount(source.path(ENTITY_DESCRIPTION).path(CONTRIBUTORS_COUNT))
+        .withTags(fromNodeToTags(source.path(ENTITY_DESCRIPTION).path(TAGS)))
         .withType(source)
         .withAlternativeTitles(fromNodeAlternativeTitles(source))
         .withPublicationDate(fromNodePublicationDate(source))
@@ -153,6 +156,16 @@ public class SimplifiedMutator implements JsonNodeMutator {
         .withRecordMetadata(fromNodeRecordMetadata(source))
         .withLanguage(NodeUtils.toUri(source.path(ENTITY_DESCRIPTION).path(LANGUAGE)))
         .build();
+  }
+
+  private Set<String> fromNodeToTags(JsonNode tagsNode) {
+    if (tagsNode.isMissingNode() || !tagsNode.isArray()) {
+      return Collections.emptySet();
+    }
+
+    var tags = new HashSet<String>();
+    tagsNode.forEach(node -> tags.add(node.asText()));
+    return tags;
   }
 
   private Map<String, String> fromNodeAlternativeTitles(JsonNode source) {
