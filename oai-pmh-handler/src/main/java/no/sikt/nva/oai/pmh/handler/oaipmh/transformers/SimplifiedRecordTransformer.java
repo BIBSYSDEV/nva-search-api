@@ -3,6 +3,7 @@ package no.sikt.nva.oai.pmh.handler.oaipmh.transformers;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhDateTimeUtils.truncateToSeconds;
+import static no.sikt.nva.oai.pmh.handler.oaipmh.transformers.XmlUtils.sanitizeXmlValue;
 
 import java.util.Collections;
 import java.util.List;
@@ -56,6 +57,7 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
     appendIdentifier(response, oaiDcType);
     appendAdditionalIdentifiers(response, oaiDcType);
     appendTitle(response, oaiDcType);
+    appendDescriptions(response, oaiDcType);
     appendLanguage(response, oaiDcType);
     appendContributors(response, oaiDcType);
     appendDate(response, oaiDcType);
@@ -63,6 +65,17 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
     appendPublisher(response, oaiDcType);
     metadata.setAny(OBJECT_FACTORY.createDc(oaiDcType));
     return metadata;
+  }
+
+  private static void appendDescriptions(ResourceSearchResponse response, OaiDcType oaiDcType) {
+    var mainLanguageAbstract = sanitizeXmlValue(response.mainLanguageAbstract());
+    if (nonNull(mainLanguageAbstract) && !mainLanguageAbstract.isEmpty()) {
+      var descriptionElement = OBJECT_FACTORY.createElementType();
+      descriptionElement.setValue(mainLanguageAbstract);
+      oaiDcType
+          .getTitleOrCreatorOrSubject()
+          .addLast(OBJECT_FACTORY.createDescription(descriptionElement));
+    }
   }
 
   private static void appendContributors(ResourceSearchResponse response, OaiDcType oaiDcType) {
@@ -107,9 +120,12 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
   }
 
   private static void appendTitle(ResourceSearchResponse response, OaiDcType oaiDcType) {
-    var titleElement = OBJECT_FACTORY.createElementType();
-    titleElement.setValue(response.mainTitle());
-    oaiDcType.getTitleOrCreatorOrSubject().addLast(OBJECT_FACTORY.createTitle(titleElement));
+    var mainTitle = sanitizeXmlValue(response.mainTitle());
+    if (mainTitle != null && !mainTitle.isEmpty()) {
+      var titleElement = OBJECT_FACTORY.createElementType();
+      titleElement.setValue(mainTitle);
+      oaiDcType.getTitleOrCreatorOrSubject().addLast(OBJECT_FACTORY.createTitle(titleElement));
+    }
   }
 
   private static void appendLanguage(ResourceSearchResponse response, OaiDcType oaiDcType) {

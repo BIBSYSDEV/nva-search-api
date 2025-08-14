@@ -51,7 +51,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -143,6 +142,7 @@ public class OaiPmhHandlerTest {
   private static final String PUBLICATION_YEAR = "2025";
   private static final String PUBLICATION_MONTH = "01";
   private static final String PUBLICATION_DAY = "01";
+  private static final String RESOURCE_ABSTRACT = "My abstract";
 
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
   private Environment environment;
@@ -730,6 +730,15 @@ public class OaiPmhHandlerTest {
   }
 
   @Test
+  void shouldMapAbstractToRecordMetadataDcDescription() throws IOException, JAXBException {
+    var inputStream = defaultHitAndRequest();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+
+    assertHasDescription(response, RESOURCE_ABSTRACT);
+  }
+
+  @Test
   void shouldPopulateReferenceDoiAsDcIdentifier() throws IOException, JAXBException {
     var inputStream = bookAnthologyRequest();
 
@@ -1048,28 +1057,33 @@ public class OaiPmhHandlerTest {
     }
   }
 
+  private void assertHasDescription(Source source, String expectedDescription) {
+    var descriptions = extractValuesFromDcElements("description", source);
+    assertThat(descriptions, hasItem(expectedDescription));
+  }
+
   private void assertHasIdentifier(Source source, String expectedIdentifier) {
-    var identifiers = extractIdentifiers(source);
+    var identifiers = extractValuesFromDcElements("identifier", source);
     assertThat(identifiers, hasItem(expectedIdentifier));
   }
 
   void assertDoesNotHaveIdentifier(Source source, String identifier) {
-    var identifiers = extractIdentifiers(source);
+    var identifiers = extractValuesFromDcElements("identifier", source);
     assertThat(identifiers, not(hasItem(identifier)));
   }
 
-  private static Set<String> extractIdentifiers(Source source) {
+  private static List<String> extractValuesFromDcElements(String element, Source source) {
     var xpathEngine = getXpathEngine();
-    var identifierNodes =
+    var nodes =
         xpathEngine.selectNodes(
-            "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:metadata/oai-dc:dc/dc:identifier", source);
-    var identifierNodeIterator = identifierNodes.iterator();
+            "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:metadata/oai-dc:dc/dc:" + element, source);
+    var nodeIterator = nodes.iterator();
 
-    var identifiers = new HashSet<String>();
-    while (identifierNodeIterator.hasNext()) {
-      identifiers.add(identifierNodeIterator.next().getFirstChild().getNodeValue());
+    var values = new ArrayList<String>();
+    while (nodeIterator.hasNext()) {
+      values.add(nodeIterator.next().getFirstChild().getNodeValue());
     }
-    return identifiers;
+    return values;
   }
 
   private void mockRepositoryQueryForOneRecord() {
@@ -1311,6 +1325,7 @@ public class OaiPmhHandlerTest {
     var journalBuilder = new SerialChannelBuilder("Journal", JOURNAL_NAME);
     return ResourceDocumentFactory.builder(
             RESOURCE_ID, RESOURCE_TITLE, PUBLICATION_YEAR, PUBLICATION_MONTH, PUBLICATION_DAY)
+        .withAbstract(RESOURCE_ABSTRACT)
         .withAdditionalIdentifier(CRISTIN_AS_TYPE, CRISTIN_IDENTIFIER)
         .withAdditionalIdentifier(SCOPUS_AS_TYPE, SCOPUS_IDENTIFIER)
         .withAdditionalIdentifier("HandleIdentifier", HANDLE_IDENTIFIER)
