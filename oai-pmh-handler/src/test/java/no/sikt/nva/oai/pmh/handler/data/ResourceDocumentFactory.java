@@ -15,6 +15,7 @@ public class ResourceDocumentFactory {
 
   private static ObjectNode entityDescription(
       String title,
+      String resourceAbstract,
       URI language,
       ObjectNode referenceNode,
       ObjectNode publicationDateNode,
@@ -27,6 +28,7 @@ public class ResourceDocumentFactory {
     entityDescriptionNode.set("publicationDate", publicationDateNode);
     entityDescriptionNode.set("reference", referenceNode);
     entityDescriptionNode.set("contributors", contributorsNode);
+    entityDescriptionNode.put("abstract", resourceAbstract);
     return entityDescriptionNode;
   }
 
@@ -49,6 +51,7 @@ public class ResourceDocumentFactory {
     private URI doi;
     private final List<ObjectNode> contributorNodes = new ArrayList<>();
     private final List<ObjectNode> additionalIdentifierNodes = new ArrayList<>();
+    private String resourceAbstract;
     private ObjectNode referenceNode;
     private URI language;
 
@@ -66,6 +69,11 @@ public class ResourceDocumentFactory {
       this.publicationYear = publicationYear;
       this.publicationMonth = publicationMonth;
       this.publicationDay = publicationDay;
+    }
+
+    public ResourceDocumentBuilder withAbstract(String resourceAbstract) {
+      this.resourceAbstract = resourceAbstract;
+      return this;
     }
 
     public ResourceDocumentBuilder withDoi(URI doi) {
@@ -120,7 +128,13 @@ public class ResourceDocumentFactory {
       contributorsNode.addAll(contributorNodes);
 
       var entityDescriptionNode =
-          entityDescription(title, language, referenceNode, publicationDateNode, contributorsNode);
+          entityDescription(
+              title,
+              resourceAbstract,
+              language,
+              referenceNode,
+              publicationDateNode,
+              contributorsNode);
 
       var additionalIdentifiersNode = JsonNodeFactory.instance.arrayNode();
       additionalIdentifiersNode.addAll(additionalIdentifierNodes);
