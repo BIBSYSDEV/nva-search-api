@@ -7,6 +7,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsIterableContaining.hasItems;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -77,6 +78,21 @@ class SimplifiedMutatorTest {
     var asDto = objectMapper.treeToValue(mutated, ResourceSearchResponse.class);
     assertThat(asDto.alternativeTitles().size(), is(equalTo(1)));
     assertThat(asDto.alternativeTitles().get(language), is(equalTo(expectedAlternativeTitle)));
+  }
+
+  @Test
+  void shouldMapTags() throws JsonProcessingException {
+    var input = new ObjectMapper().createObjectNode();
+    var entityDescription = new ObjectMapper().createObjectNode();
+    var tags = new ObjectMapper().createArrayNode();
+    tags.add("tag1");
+    tags.add("tag2");
+    entityDescription.set("tags", tags);
+    input.set("entityDescription", entityDescription);
+
+    var mutated = new SimplifiedMutator().transform(input);
+    var asDto = objectMapper.treeToValue(mutated, ResourceSearchResponse.class);
+    assertThat(asDto.tags(), hasItems("tag1", "tag2"));
   }
 
   @Test

@@ -8,7 +8,9 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ResourceDocumentFactory {
   private ResourceDocumentFactory() {}
@@ -20,7 +22,8 @@ public class ResourceDocumentFactory {
       URI language,
       ObjectNode referenceNode,
       ObjectNode publicationDateNode,
-      ArrayNode contributorsNode) {
+      ArrayNode contributorsNode,
+      ArrayNode tagsNode) {
     var entityDescriptionNode = JsonNodeFactory.instance.objectNode();
     entityDescriptionNode.put("mainTitle", title);
     if (nonNull(language)) {
@@ -29,6 +32,7 @@ public class ResourceDocumentFactory {
     entityDescriptionNode.set("publicationDate", publicationDateNode);
     entityDescriptionNode.set("reference", referenceNode);
     entityDescriptionNode.set("contributors", contributorsNode);
+    entityDescriptionNode.set("tags", tagsNode);
     if (nonNull(description)) {
       entityDescriptionNode.put("description", description);
     }
@@ -57,6 +61,7 @@ public class ResourceDocumentFactory {
     private URI doi;
     private final List<ObjectNode> contributorNodes = new ArrayList<>();
     private final List<ObjectNode> additionalIdentifierNodes = new ArrayList<>();
+    private final Set<String> tags = new HashSet<>();
     private String resourceAbstract;
     private String description;
     private ObjectNode referenceNode;
@@ -100,6 +105,11 @@ public class ResourceDocumentFactory {
       return this;
     }
 
+    public ResourceDocumentBuilder withTag(String tag) {
+      this.tags.add(tag);
+      return this;
+    }
+
     public ResourceDocumentBuilder withAdditionalIdentifier(String type, String value) {
       var additionalIdentifierNode = JsonNodeFactory.instance.objectNode();
       additionalIdentifierNode.put("type", type);
@@ -139,6 +149,9 @@ public class ResourceDocumentFactory {
       var contributorsNode = JsonNodeFactory.instance.arrayNode();
       contributorsNode.addAll(contributorNodes);
 
+      var tagsNode = JsonNodeFactory.instance.arrayNode();
+      this.tags.forEach(tagsNode::add);
+
       var entityDescriptionNode =
           entityDescription(
               title,
@@ -147,7 +160,8 @@ public class ResourceDocumentFactory {
               language,
               referenceNode,
               publicationDateNode,
-              contributorsNode);
+              contributorsNode,
+              tagsNode);
 
       var additionalIdentifiersNode = JsonNodeFactory.instance.arrayNode();
       additionalIdentifiersNode.addAll(additionalIdentifierNodes);

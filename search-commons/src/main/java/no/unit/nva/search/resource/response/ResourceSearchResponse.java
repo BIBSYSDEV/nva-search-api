@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public record ResourceSearchResponse(
     URI id,
@@ -25,7 +26,8 @@ public record ResourceSearchResponse(
     PublicationDate publicationDate,
     List<Contributor> contributorsPreview,
     int contributorsCount,
-    PublishingDetails publishingDetails) {
+    PublishingDetails publishingDetails,
+    Set<String> tags) {
 
   public static Builder responseBuilder() {
     return new Builder();
@@ -47,6 +49,7 @@ public record ResourceSearchResponse(
     private List<Contributor> contributorsPreview;
     private int contributorsCount;
     private PublishingDetails publishingDetails;
+    private Set<String> tags;
 
     private Builder() {}
 
@@ -126,6 +129,11 @@ public record ResourceSearchResponse(
       return this;
     }
 
+    public Builder withTags(Set<String> tags) {
+      this.tags = tags;
+      return this;
+    }
+
     public ResourceSearchResponse build() {
       return new ResourceSearchResponse(
           id,
@@ -141,7 +149,8 @@ public record ResourceSearchResponse(
           publicationDate,
           contributorsPreview,
           contributorsCount,
-          publishingDetails);
+          publishingDetails,
+          tags);
     }
   }
 }

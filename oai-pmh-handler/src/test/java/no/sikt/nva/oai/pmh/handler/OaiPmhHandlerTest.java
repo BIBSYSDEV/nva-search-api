@@ -12,6 +12,7 @@ import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.constants.Words.SCOPUS_AS_TYPE;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.collection.IsEmptyIterable.*;
@@ -144,6 +145,8 @@ public class OaiPmhHandlerTest {
   private static final String PUBLICATION_DAY = "01";
   private static final String RESOURCE_ABSTRACT = "My abstract";
   private static final String RESOURCE_DESCRIPTION = "My description";
+  private static final String TAG_BIOLOGY = "Biology";
+  private static final String TAG_MATHEMATICS = "Mathematics";
 
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
   private Environment environment;
@@ -749,6 +752,15 @@ public class OaiPmhHandlerTest {
   }
 
   @Test
+  void shouldMapTagsToRecordMetadataDcSubject() throws IOException, JAXBException {
+    var inputStream = defaultHitAndRequest();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+
+    assertHasSubjects(response, TAG_BIOLOGY, TAG_MATHEMATICS);
+  }
+
+  @Test
   void shouldPopulateReferenceDoiAsDcIdentifier() throws IOException, JAXBException {
     var inputStream = bookAnthologyRequest();
 
@@ -1077,6 +1089,11 @@ public class OaiPmhHandlerTest {
     assertThat(identifiers, hasItem(expectedIdentifier));
   }
 
+  private void assertHasSubjects(Source source, String... expectedSubjects) {
+    var subjects = extractValuesFromDcElements("subject", source);
+    assertThat(subjects, hasItems(expectedSubjects));
+  }
+
   void assertDoesNotHaveIdentifier(Source source, String identifier) {
     var identifiers = extractValuesFromDcElements("identifier", source);
     assertThat(identifiers, not(hasItem(identifier)));
@@ -1342,6 +1359,8 @@ public class OaiPmhHandlerTest {
         .withAdditionalIdentifier("HandleIdentifier", HANDLE_IDENTIFIER)
         .withDoi(NVA_DOI)
         .withLanguage(LANGUAGE_ENG)
+        .withTag(TAG_BIOLOGY)
+        .withTag(TAG_MATHEMATICS)
         .academicArticle(journalBuilder)
         .withReferenceDoi(REFERENCE_DOI)
         .apply()
