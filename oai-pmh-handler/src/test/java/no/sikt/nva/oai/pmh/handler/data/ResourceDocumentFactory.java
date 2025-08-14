@@ -16,6 +16,7 @@ public class ResourceDocumentFactory {
   private static ObjectNode entityDescription(
       String title,
       String resourceAbstract,
+      String description,
       URI language,
       ObjectNode referenceNode,
       ObjectNode publicationDateNode,
@@ -28,7 +29,12 @@ public class ResourceDocumentFactory {
     entityDescriptionNode.set("publicationDate", publicationDateNode);
     entityDescriptionNode.set("reference", referenceNode);
     entityDescriptionNode.set("contributors", contributorsNode);
-    entityDescriptionNode.put("abstract", resourceAbstract);
+    if (nonNull(description)) {
+      entityDescriptionNode.put("description", description);
+    }
+    if (nonNull(resourceAbstract)) {
+      entityDescriptionNode.put("abstract", resourceAbstract);
+    }
     return entityDescriptionNode;
   }
 
@@ -52,6 +58,7 @@ public class ResourceDocumentFactory {
     private final List<ObjectNode> contributorNodes = new ArrayList<>();
     private final List<ObjectNode> additionalIdentifierNodes = new ArrayList<>();
     private String resourceAbstract;
+    private String description;
     private ObjectNode referenceNode;
     private URI language;
 
@@ -106,6 +113,11 @@ public class ResourceDocumentFactory {
       return this;
     }
 
+    public ResourceDocumentBuilder withDescription(String description) {
+      this.description = description;
+      return this;
+    }
+
     void applyType(ObjectNode referenceNode) {
       this.referenceNode = referenceNode;
     }
@@ -131,6 +143,7 @@ public class ResourceDocumentFactory {
           entityDescription(
               title,
               resourceAbstract,
+              description,
               language,
               referenceNode,
               publicationDateNode,

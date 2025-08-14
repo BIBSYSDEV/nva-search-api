@@ -69,10 +69,15 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
   }
 
   private static void appendDescriptions(ResourceSearchResponse response, OaiDcType oaiDcType) {
-    var mainLanguageAbstract = sanitizeXmlValue(response.mainLanguageAbstract());
-    if (!StringUtils.isEmpty(mainLanguageAbstract)) {
+    appendSanitizedDcDescription(response.mainLanguageAbstract(), oaiDcType);
+    appendSanitizedDcDescription(response.description(), oaiDcType);
+  }
+
+  private static void appendSanitizedDcDescription(String value, OaiDcType oaiDcType) {
+    var sanitizedValue = sanitizeXmlValue(value);
+    if (StringUtils.isNotEmpty(sanitizedValue)) {
       var descriptionElement = OBJECT_FACTORY.createElementType();
-      descriptionElement.setValue(mainLanguageAbstract);
+      descriptionElement.setValue(sanitizedValue);
       oaiDcType
           .getTitleOrCreatorOrSubject()
           .addLast(OBJECT_FACTORY.createDescription(descriptionElement));
