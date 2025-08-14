@@ -143,6 +143,7 @@ public class OaiPmhHandlerTest {
   private static final String PUBLICATION_MONTH = "01";
   private static final String PUBLICATION_DAY = "01";
   private static final String RESOURCE_ABSTRACT = "My abstract";
+  private static final String RESOURCE_DESCRIPTION = "My description";
 
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
   private Environment environment;
@@ -739,6 +740,15 @@ public class OaiPmhHandlerTest {
   }
 
   @Test
+  void shouldMapDescriptionToRecordMetadataDcDescription() throws IOException, JAXBException {
+    var inputStream = defaultHitAndRequest();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+
+    assertHasDescription(response, RESOURCE_DESCRIPTION);
+  }
+
+  @Test
   void shouldPopulateReferenceDoiAsDcIdentifier() throws IOException, JAXBException {
     var inputStream = bookAnthologyRequest();
 
@@ -1326,6 +1336,7 @@ public class OaiPmhHandlerTest {
     return ResourceDocumentFactory.builder(
             RESOURCE_ID, RESOURCE_TITLE, PUBLICATION_YEAR, PUBLICATION_MONTH, PUBLICATION_DAY)
         .withAbstract(RESOURCE_ABSTRACT)
+        .withDescription(RESOURCE_DESCRIPTION)
         .withAdditionalIdentifier(CRISTIN_AS_TYPE, CRISTIN_IDENTIFIER)
         .withAdditionalIdentifier(SCOPUS_AS_TYPE, SCOPUS_IDENTIFIER)
         .withAdditionalIdentifier("HandleIdentifier", HANDLE_IDENTIFIER)
