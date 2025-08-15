@@ -142,6 +142,10 @@ public class ResourceClientResourceRepository implements ResourceRepository {
     return SetRoot.RESOURCE_TYPE_GENERAL.equals(setSpec.root()) && setSpec.children().length > 0;
   }
 
+  private static boolean isInstitutionSpecWithChild(SetSpec setSpec) {
+    return SetRoot.INSTITUTION.equals(setSpec.root()) && setSpec.children().length > 0;
+  }
+
   private static ResourceSearchQuery buildPageQuery(
       final String from, final OaiPmhDateTime until, final SetSpec setSpec, final int batchSize) {
     var queryBuilder = buildQueryWithMandatoryParameters(batchSize);
@@ -163,6 +167,9 @@ public class ResourceClientResourceRepository implements ResourceRepository {
         ignored -> {
           if (isResourceTypeGeneralSpecWithChild(setSpec)) {
             queryBuilder.withParameter(ResourceParameter.INSTANCE_TYPE, setSpec.children()[0]);
+          } else if (isInstitutionSpecWithChild(setSpec)) {
+            queryBuilder.withParameter(
+                ResourceParameter.TOP_LEVEL_ORGANIZATION, setSpec.children()[0]);
           }
         });
   }
