@@ -16,5 +16,7 @@ public interface ResourceRepository {
 
   Optional<ResourceSearchResponse> fetchByIdentifier(String identifier);
 
-  public record Sets(Set<String> instanceTypes, Set<String> institutionIdentifiers) {}
+  record KeyValuePair(String key, String value) {}
+
+  record Sets(Set<KeyValuePair> instanceTypes, Set<KeyValuePair> institutionIdentifiers) {}
 }
