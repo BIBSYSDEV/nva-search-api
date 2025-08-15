@@ -22,31 +22,36 @@ public class ListSetsRequestHandler implements OaiPmhRequestHandler<ListSetsRequ
 
   @Override
   public JAXBElement<OAIPMHtype> handleRequest(ListSetsRequest request) {
-    var instanceTypes = resourceRepository.fetchAvailableInstanceTypes();
+    var sets = resourceRepository.fetchSetsFromAggregations();
     var objectFactory = new ObjectFactory();
     var oaiResponse = baseResponse(objectFactory);
     var value = oaiResponse.getValue();
     value.getRequest().setVerb(request.getVerbType());
 
     var listSets = objectFactory.createListSetsType();
-    listSets.getSet().addAll(generateSets(instanceTypes, objectFactory));
+    listSets
+        .getSet()
+        .addAll(generateSets(SetRoot.RESOURCE_TYPE_GENERAL, sets.instanceTypes(), objectFactory));
+    listSets
+        .getSet()
+        .addAll(generateSets(SetRoot.INSTITUTION, sets.institutionIdentifiers(), objectFactory));
     value.setListSets(listSets);
 
     return oaiResponse;
   }
 
   private List<SetType> generateSets(
-      java.util.Set<String> instanceTypes, ObjectFactory objectFactory) {
+      SetRoot setRoot, java.util.Set<String> values, ObjectFactory objectFactory) {
     var setTypes = new LinkedList<SetType>();
     var setQualifier = objectFactory.createSetType();
-    setQualifier.setSetSpec(SetRoot.RESOURCE_TYPE_GENERAL.getValue());
-    setQualifier.setSetName(SetRoot.RESOURCE_TYPE_GENERAL.getValue());
+    setQualifier.setSetSpec(setRoot.getValue());
+    setQualifier.setSetName(setRoot.getValue());
 
     setTypes.add(setQualifier);
 
     var subSetTypes =
-        instanceTypes.stream()
-            .map(instanceType -> new SetSpec(SetRoot.RESOURCE_TYPE_GENERAL, instanceType))
+        values.stream()
+            .map(instanceType -> new SetSpec(setRoot, instanceType))
             .map(setSpec -> wrap(setSpec, objectFactory))
             .toList();
 

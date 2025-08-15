@@ -86,11 +86,86 @@
       }
     },
     "topLevelOrganization": {
-      "doc_count": 0,
+      "doc_count": 14,
       "id": {
         "doc_count_error_upper_bound": 0,
         "sum_other_doc_count": 0,
-        "buckets": []
+        "buckets": [
+          {
+            "key": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0",
+            "doc_count": 2,
+            "labels": {
+              "doc_count": 2,
+              "nn": {
+                "doc_count_error_upper_bound": 0,
+                "sum_other_doc_count": 0,
+                "buckets": []
+              },
+              "nb": {
+                "doc_count_error_upper_bound": 0,
+                "sum_other_doc_count": 0,
+                "buckets": [
+                  {
+                    "key": "Norges teknisk-naturvitenskapelige universitet",
+                    "doc_count": 2
+                  }
+                ]
+              },
+              "en": {
+                "doc_count_error_upper_bound": 0,
+                "sum_other_doc_count": 0,
+                "buckets": [
+                  {
+                    "key": "Norwegian University of Science and Technology",
+                    "doc_count": 2
+                  }
+                ]
+              },
+              "sme": {
+                "doc_count_error_upper_bound": 0,
+                "sum_other_doc_count": 0,
+                "buckets": []
+              }
+            }
+          },
+          {
+            "key": "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0",
+            "doc_count": 2,
+            "labels": {
+              "doc_count": 2,
+              "nn": {
+                "doc_count_error_upper_bound": 0,
+                "sum_other_doc_count": 0,
+                "buckets": []
+              },
+              "nb": {
+                "doc_count_error_upper_bound": 0,
+                "sum_other_doc_count": 0,
+                "buckets": [
+                  {
+                    "key": "Universitetet i Bergen",
+                    "doc_count": 2
+                  }
+                ]
+              },
+              "en": {
+                "doc_count_error_upper_bound": 0,
+                "sum_other_doc_count": 0,
+                "buckets": [
+                  {
+                    "key": "University of Bergen",
+                    "doc_count": 2
+                  }
+                ]
+              },
+              "sme": {
+                "doc_count_error_upper_bound": 0,
+                "sum_other_doc_count": 0,
+                "buckets": []
+              }
+            }
+          }
+        ]
       }
     }
   }

@@ -12,7 +12,9 @@ public interface ResourceRepository {
 
   PagedResponse fetchNextPage(String from, OaiPmhDateTime until, SetSpec setSpec, int pageSize);
 
-  Set<String> fetchAvailableInstanceTypes();
+  Sets fetchSetsFromAggregations();
 
   Optional<ResourceSearchResponse> fetchByIdentifier(String identifier);
+
+  public record Sets(Set<String> instanceTypes, Set<String> institutionIdentifiers) {}
 }
