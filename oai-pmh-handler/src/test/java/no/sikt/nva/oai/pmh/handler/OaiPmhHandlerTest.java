@@ -111,7 +111,10 @@ public class OaiPmhHandlerTest {
   private static final String[] EXPECTED_SET_SPECS = {
     "resourceTypeGeneral",
     "resourceTypeGeneral:AcademicArticle",
-    "resourceTypeGeneral:AcademicChapter"
+    "resourceTypeGeneral:AcademicChapter",
+    "institution",
+    "institution:194.0.0.0",
+    "institution:184.0.0.0"
   };
   private static final String EMPTY_STRING = "";
   private static final String PROTOCOL_VERSION_NODE_NAME = "protocolVersion";

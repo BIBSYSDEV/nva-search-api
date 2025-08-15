@@ -38,7 +38,8 @@ public record SetSpec(SetRoot root, String... children) implements NullableWrapp
   }
 
   public enum SetRoot {
-    RESOURCE_TYPE_GENERAL("resourceTypeGeneral");
+    RESOURCE_TYPE_GENERAL("resourceTypeGeneral"),
+    INSTITUTION("institution");
 
     private static final Map<String, SetRoot> byValueMap = new ConcurrentHashMap<>();
 

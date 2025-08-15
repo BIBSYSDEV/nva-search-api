@@ -1,13 +1,13 @@
 package no.sikt.nva.oai.pmh.handler.repository;
 
 import static no.unit.nva.constants.Words.ALL;
+import static no.unit.nva.constants.Words.TOP_LEVEL_ORGANIZATION;
 import static no.unit.nva.constants.Words.ZERO;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
 
 import java.util.Collections;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhDateTime;
 import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec;
@@ -23,6 +23,7 @@ import no.unit.nva.search.resource.ResourceSort;
 import no.unit.nva.search.resource.SimplifiedMutator;
 import no.unit.nva.search.resource.response.ResourceSearchResponse;
 import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.core.paths.UriWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,17 +57,27 @@ public class ResourceClientResourceRepository implements ResourceRepository {
   }
 
   @Override
-  public Set<String> fetchAvailableInstanceTypes() {
+  public Sets fetchSetsFromAggregations() {
     var query = buildAggregationsQuery();
     try {
-      return query
-          .doSearch(resourceClient, Words.RESOURCES)
-          .toPagedResponse()
-          .aggregations()
-          .getOrDefault(INSTANCE_TYPE_AGGREGATION_NAME, Collections.emptyList())
-          .stream()
-          .map(Facet::key)
-          .collect(Collectors.toSet());
+      var aggregations =
+          query.doSearch(resourceClient, Words.RESOURCES).toPagedResponse().aggregations();
+
+      var instanceTypes =
+          aggregations
+              .getOrDefault(INSTANCE_TYPE_AGGREGATION_NAME, Collections.emptyList())
+              .stream()
+              .map(Facet::key)
+              .collect(Collectors.toSet());
+
+      var institutionIdentifiers =
+          aggregations.getOrDefault(TOP_LEVEL_ORGANIZATION, Collections.emptyList()).stream()
+              .map(Facet::key)
+              .map(UriWrapper::fromUri)
+              .map(UriWrapper::getLastPathElement)
+              .collect(Collectors.toSet());
+
+      return new Sets(instanceTypes, institutionIdentifiers);
     } catch (RuntimeException e) {
       LOGGER.error("Failed to execute search for resources aggregations.", e);
       throw new ResourceSearchException("Error searching for resources aggregations.", e);
