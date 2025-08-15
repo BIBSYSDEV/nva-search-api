@@ -9,6 +9,7 @@ import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec;
 import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec.SetRoot;
 import no.sikt.nva.oai.pmh.handler.oaipmh.request.ListSetsRequest;
 import no.sikt.nva.oai.pmh.handler.repository.ResourceRepository;
+import no.sikt.nva.oai.pmh.handler.repository.ResourceRepository.KeyValuePair;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
 import org.openarchives.oai.pmh.v2.ObjectFactory;
 import org.openarchives.oai.pmh.v2.SetType;
@@ -41,7 +42,7 @@ public class ListSetsRequestHandler implements OaiPmhRequestHandler<ListSetsRequ
   }
 
   private List<SetType> generateSets(
-      SetRoot setRoot, java.util.Set<String> values, ObjectFactory objectFactory) {
+      SetRoot setRoot, java.util.Set<KeyValuePair> values, ObjectFactory objectFactory) {
     var setTypes = new LinkedList<SetType>();
     var setQualifier = objectFactory.createSetType();
     setQualifier.setSetSpec(setRoot.getValue());
@@ -50,19 +51,17 @@ public class ListSetsRequestHandler implements OaiPmhRequestHandler<ListSetsRequ
     setTypes.add(setQualifier);
 
     var subSetTypes =
-        values.stream()
-            .map(instanceType -> new SetSpec(setRoot, instanceType))
-            .map(setSpec -> wrap(setSpec, objectFactory))
-            .toList();
+        values.stream().map(keyValuePair -> wrap(setRoot, keyValuePair, objectFactory)).toList();
 
     setTypes.addAll(subSetTypes);
     return setTypes;
   }
 
-  private SetType wrap(SetSpec setSpec, ObjectFactory objectFactory) {
+  private SetType wrap(SetRoot root, KeyValuePair keyValuePair, ObjectFactory objectFactory) {
     var setType = objectFactory.createSetType();
+    var setSpec = new SetSpec(root, keyValuePair.key());
     setType.setSetSpec(setSpec.getValue().orElseThrow());
-    setType.setSetName(setSpec.children()[0]);
+    setType.setSetName(keyValuePair.value());
     return setType;
   }
 }
