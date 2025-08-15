@@ -85,7 +85,6 @@ import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.Environment;
 import nva.commons.core.ioutils.IoUtils;
 import nva.commons.logutils.LogUtils;
-import org.hamcrest.collection.IsIterableWithSize;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -982,7 +981,7 @@ public class OaiPmhHandlerTest {
   }
 
   @Test
-  void shouldUseSetIfSuppliedInListRecords() throws IOException, JAXBException {
+  void shouldUseResourceTypeGeneralSetIfSuppliedInListRecords() throws IOException, JAXBException {
     var inputStream =
         defaultHitAndRequest(new SetSpec(SetRoot.RESOURCE_TYPE_GENERAL, "AcademicArticle"));
 
@@ -992,7 +991,20 @@ public class OaiPmhHandlerTest {
     assertThat(
         xpathEngine.selectNodes(
             "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:metadata/oai-dc:dc/dc:date", response),
-        is(IsIterableWithSize.iterableWithSize(1)));
+        is(iterableWithSize(1)));
+  }
+
+  @Test
+  void shouldUseInstitutionSetIfSuppliedInListRecords() throws IOException, JAXBException {
+    var inputStream = defaultHitAndRequest(new SetSpec(SetRoot.INSTITUTION, "194.0.0.0"));
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+    var xpathEngine = getXpathEngine();
+
+    assertThat(
+        xpathEngine.selectNodes(
+            "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:metadata/oai-dc:dc/dc:date", response),
+        is(iterableWithSize(1)));
   }
 
   @ParameterizedTest
@@ -1436,9 +1448,18 @@ public class OaiPmhHandlerTest {
             .withSearchParameter(ResourceParameter.MODIFIED_BEFORE, "2016-01-02T00:00:00Z")
             .withSearchParameter(ResourceParameter.MODIFIED_SINCE, "2016-01-01T00:00:00Z");
     setSpec.ifPresent(
-        ignored ->
-            queryBuilder.withSearchParameter(
-                ResourceParameter.INSTANCE_TYPE, setSpec.children()[0]));
+        ignored -> {
+          if (setSpec.children().length == 0) {
+            return;
+          }
+          var child = setSpec.children()[0];
+          switch (setSpec.root()) {
+            case RESOURCE_TYPE_GENERAL ->
+                queryBuilder.withSearchParameter(ResourceParameter.INSTANCE_TYPE, child);
+            case INSTITUTION ->
+                queryBuilder.withSearchParameter(ResourceParameter.TOP_LEVEL_ORGANIZATION, child);
+          }
+        });
     var resourceQueryMatcher =
         queryBuilder
             .withNamedFilterQuery(
