@@ -54,6 +54,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.xml.transform.Source;
@@ -101,7 +102,7 @@ import org.xmlunit.builder.Input;
 import org.xmlunit.xpath.JAXPXPathEngine;
 import org.xmlunit.xpath.XPathEngine;
 
-public class OaiPmhHandlerTest {
+class OaiPmhHandlerTest {
 
   private static final String OAI_PMH_NAMESPACE_PREFIX = "oai";
   private static final String OAI_PMH_NAMESPACE = "http://www.openarchives.org/OAI/2.0/";
@@ -157,7 +158,7 @@ public class OaiPmhHandlerTest {
   private ResourceClient resourceClient;
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     this.environment = mock(Environment.class);
     when(environment.readEnv("ALLOWED_ORIGIN")).thenReturn("*");
     when(environment.readEnv("SEARCH_INFRASTRUCTURE_API_URI"))
@@ -579,7 +580,6 @@ public class OaiPmhHandlerTest {
   void shouldListRecordsOnInitialQueryHarvestingSpecificSet(String method) throws Exception {
     var fromDate = "2016-01-01";
     var untilDate = "2017-01-01";
-    var set = "resourceTypeGeneral:AcademicArticle";
     var expectedIdentifiers =
         List.of(
             "https://api.unittests.nva.aws.unit.no/publication/019527b847ad-ee78bdbe-3f70-4ff4-930c-b4ace492ea64",
@@ -1601,7 +1601,7 @@ public class OaiPmhHandlerTest {
   }
 
   private static class GetRecordsRequestHelper {
-    public static void applyQueryParams(
+    static void applyQueryParams(
         HandlerRequestBuilder<String> handlerRequestBuilder,
         String identifier,
         String metadataPrefix) {
@@ -1616,7 +1616,7 @@ public class OaiPmhHandlerTest {
       handlerRequestBuilder.withQueryParameters(queryParams);
     }
 
-    public static void applyBody(
+    static void applyBody(
         HandlerRequestBuilder<String> handlerRequestBuilder,
         String identifier,
         String metadataPrefix)
@@ -1982,18 +1982,16 @@ public class OaiPmhHandlerTest {
             node -> {
               var spec = getChildNodeValue(node, "setSpec");
               var name = getChildNodeValue(node, "setName");
-              return new SetInfo(spec, name);
+              return new SetInfo(spec.orElseThrow(), name.orElseThrow());
             })
         .collect(Collectors.toSet());
   }
 
-  private static String getChildNodeValue(Node parent, String childName) {
-    for (int i = 0; i < parent.getChildNodes().getLength(); i++) {
-      var child = parent.getChildNodes().item(i);
-      if (childName.equals(child.getNodeName()) && child.getFirstChild() != null) {
-        return child.getFirstChild().getNodeValue();
-      }
-    }
-    return null;
+  private static Optional<String> getChildNodeValue(Node parent, String childName) {
+    return IntStream.range(0, parent.getChildNodes().getLength())
+        .mapToObj(parent.getChildNodes()::item)
+        .filter(item -> childName.equals(item.getNodeName()) && nonNull(item.getFirstChild()))
+        .map(item -> item.getFirstChild().getNodeValue())
+        .findFirst();
   }
 }
