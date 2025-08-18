@@ -68,13 +68,12 @@ public class ResourceClientResourceRepository implements ResourceRepository {
               .getOrDefault(INSTANCE_TYPE_AGGREGATION_NAME, Collections.emptyList())
               .stream()
               .map(Facet::key)
+              .map(key -> new KeyValuePair(key, key))
               .collect(Collectors.toSet());
 
       var institutionIdentifiers =
           aggregations.getOrDefault(TOP_LEVEL_ORGANIZATION, Collections.emptyList()).stream()
-              .map(Facet::key)
-              .map(UriWrapper::fromUri)
-              .map(UriWrapper::getLastPathElement)
+              .map(ResourceClientResourceRepository::topLevelOrganizationFacetToKeyValuePair)
               .collect(Collectors.toSet());
 
       return new Sets(instanceTypes, institutionIdentifiers);
@@ -82,6 +81,11 @@ public class ResourceClientResourceRepository implements ResourceRepository {
       LOGGER.error("Failed to execute search for resources aggregations.", e);
       throw new ResourceSearchException("Error searching for resources aggregations.", e);
     }
+  }
+
+  private static KeyValuePair topLevelOrganizationFacetToKeyValuePair(Facet facet) {
+    var key = UriWrapper.fromUri(facet.key()).getLastPathElement();
+    return new KeyValuePair(key, facet.labels().getOrDefault("en", key));
   }
 
   @Override

@@ -52,7 +52,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.xml.transform.Source;
@@ -100,21 +102,22 @@ import org.xmlunit.builder.Input;
 import org.xmlunit.xpath.JAXPXPathEngine;
 import org.xmlunit.xpath.XPathEngine;
 
-public class OaiPmhHandlerTest {
+class OaiPmhHandlerTest {
 
   private static final String OAI_PMH_NAMESPACE_PREFIX = "oai";
   private static final String OAI_PMH_NAMESPACE = "http://www.openarchives.org/OAI/2.0/";
   private static final String DC_NAMESPACE_PREFIX = "dc";
   private static final String DC_NAMESPACE = "http://purl.org/dc/elements/1.1/";
 
-  private static final String[] EXPECTED_SET_SPECS = {
-    "resourceTypeGeneral",
-    "resourceTypeGeneral:AcademicArticle",
-    "resourceTypeGeneral:AcademicChapter",
-    "institution",
-    "institution:194.0.0.0",
-    "institution:184.0.0.0"
-  };
+  private static final SetInfo[] EXPECTED_SET_INFO =
+      new SetInfo[] {
+        new SetInfo("resourceTypeGeneral", "resourceTypeGeneral"),
+        new SetInfo("resourceTypeGeneral:AcademicArticle", "AcademicArticle"),
+        new SetInfo("resourceTypeGeneral:AcademicChapter", "AcademicChapter"),
+        new SetInfo("institution", "institution"),
+        new SetInfo("institution:194.0.0.0", "Norwegian University of Science and Technology"),
+        new SetInfo("institution:184.0.0.0", "University of Bergen")
+      };
   private static final String EMPTY_STRING = "";
   private static final String PROTOCOL_VERSION_NODE_NAME = "protocolVersion";
   private static final String EARLIEST_DATESTAMP_NODE_NAME = "earliestDatestamp";
@@ -155,7 +158,7 @@ public class OaiPmhHandlerTest {
   private ResourceClient resourceClient;
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     this.environment = mock(Environment.class);
     when(environment.readEnv("ALLOWED_ORIGIN")).thenReturn("*");
     when(environment.readEnv("SEARCH_INFRASTRUCTURE_API_URI"))
@@ -251,14 +254,7 @@ public class OaiPmhHandlerTest {
     expectedRequestParameters.put(VERB, VerbType.LIST_SETS.value());
     assertResponseRequestContains(expectedRequestParameters, response, xpathEngine);
 
-    var listSetSpecNodes =
-        xpathEngine.selectNodes("/oai:OAI-PMH/oai:ListSets/oai:set/oai:setSpec", response);
-    var actualSetSpecs =
-        StreamSupport.stream(listSetSpecNodes.spliterator(), false)
-            .map(Node::getFirstChild)
-            .map(Node::getNodeValue)
-            .collect(Collectors.toSet());
-    assertThat(actualSetSpecs, containsInAnyOrder(EXPECTED_SET_SPECS));
+    assertThat(extractSetInfo(xpathEngine, response), containsInAnyOrder(EXPECTED_SET_INFO));
   }
 
   @ParameterizedTest
@@ -584,7 +580,6 @@ public class OaiPmhHandlerTest {
   void shouldListRecordsOnInitialQueryHarvestingSpecificSet(String method) throws Exception {
     var fromDate = "2016-01-01";
     var untilDate = "2017-01-01";
-    var set = "resourceTypeGeneral:AcademicArticle";
     var expectedIdentifiers =
         List.of(
             "https://api.unittests.nva.aws.unit.no/publication/019527b847ad-ee78bdbe-3f70-4ff4-930c-b4ace492ea64",
@@ -1606,7 +1601,7 @@ public class OaiPmhHandlerTest {
   }
 
   private static class GetRecordsRequestHelper {
-    public static void applyQueryParams(
+    static void applyQueryParams(
         HandlerRequestBuilder<String> handlerRequestBuilder,
         String identifier,
         String metadataPrefix) {
@@ -1621,7 +1616,7 @@ public class OaiPmhHandlerTest {
       handlerRequestBuilder.withQueryParameters(queryParams);
     }
 
-    public static void applyBody(
+    static void applyBody(
         HandlerRequestBuilder<String> handlerRequestBuilder,
         String identifier,
         String metadataPrefix)
@@ -1975,5 +1970,28 @@ public class OaiPmhHandlerTest {
             POST_METHOD,
             nanosGranularityDate,
             secondsGranularityDate));
+  }
+
+  private record SetInfo(String spec, String name) {}
+
+  private static Set<SetInfo> extractSetInfo(XPathEngine xPathEngine, Source source) {
+    var setNodes = xPathEngine.selectNodes("/oai:OAI-PMH/oai:ListSets/oai:set", source);
+
+    return StreamSupport.stream(setNodes.spliterator(), false)
+        .map(
+            node -> {
+              var spec = getChildNodeValue(node, "setSpec");
+              var name = getChildNodeValue(node, "setName");
+              return new SetInfo(spec.orElseThrow(), name.orElseThrow());
+            })
+        .collect(Collectors.toSet());
+  }
+
+  private static Optional<String> getChildNodeValue(Node parent, String childName) {
+    return IntStream.range(0, parent.getChildNodes().getLength())
+        .mapToObj(parent.getChildNodes()::item)
+        .filter(item -> childName.equals(item.getNodeName()) && nonNull(item.getFirstChild()))
+        .map(item -> item.getFirstChild().getNodeValue())
+        .findFirst();
   }
 }
