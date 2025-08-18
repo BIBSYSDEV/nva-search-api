@@ -17,6 +17,9 @@
       "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
       "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
     ],
+    "curatingInstitutions": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    ],
     "entityDescription": {
       "type": "EntityDescription",
       "alternativeAbstracts": {},
