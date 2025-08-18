@@ -4,6 +4,7 @@ import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 import static no.unit.nva.constants.Words.ABSTRACT;
 import static no.unit.nva.constants.Words.AFFILIATIONS;
 import static no.unit.nva.constants.Words.CREATED_DATE;
+import static no.unit.nva.constants.Words.CURATING_INSTITUTIONS;
 import static no.unit.nva.constants.Words.DAY;
 import static no.unit.nva.constants.Words.DOI;
 import static no.unit.nva.constants.Words.DOT;
@@ -50,6 +51,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -103,6 +105,7 @@ public class SimplifiedMutator implements JsonNodeMutator {
         MODIFIED_DATE,
         PUBLISHED_DATE,
         DOI,
+        CURATING_INSTITUTIONS,
         path(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, TYPE),
         path(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, MANIFESTATIONS, ISBN_LIST),
         path(ENTITY_DESCRIPTION, REFERENCE, DOI),
@@ -155,7 +158,19 @@ public class SimplifiedMutator implements JsonNodeMutator {
         .withOtherIdentifiers(fromNodeOtherIdentifiers(source))
         .withRecordMetadata(fromNodeRecordMetadata(source))
         .withLanguage(NodeUtils.toUri(source.path(ENTITY_DESCRIPTION).path(LANGUAGE)))
+        .withParticipatingOrganizations(extractParticipatingOrganizations(source))
         .build();
+  }
+
+  private Set<URI> extractParticipatingOrganizations(JsonNode source) {
+    var curatingInstitutions = source.path(CURATING_INSTITUTIONS);
+    if (curatingInstitutions.isMissingNode() || !curatingInstitutions.isArray()) {
+      return Collections.emptySet();
+    }
+
+    var participatingOrganizations = new HashSet<URI>();
+    curatingInstitutions.forEach(node -> participatingOrganizations.add(URI.create(node.asText())));
+    return participatingOrganizations;
   }
 
   private Set<String> fromNodeToTags(JsonNode tagsNode) {

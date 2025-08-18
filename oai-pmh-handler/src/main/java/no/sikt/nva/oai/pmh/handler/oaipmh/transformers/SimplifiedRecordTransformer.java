@@ -225,6 +225,14 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
     headerType
         .getSetSpec()
         .add(new SetSpec(SetRoot.RESOURCE_TYPE_GENERAL, response.type()).getValue().orElseThrow());
+    response.participatingOrganizations().stream()
+        .map(UriWrapper::fromUri)
+        .map(UriWrapper::getLastPathElement)
+        .forEach(
+            identifier ->
+                headerType
+                    .getSetSpec()
+                    .add(new SetSpec(SetRoot.INSTITUTION, identifier).getValue().orElseThrow()));
     return headerType;
   }
 }

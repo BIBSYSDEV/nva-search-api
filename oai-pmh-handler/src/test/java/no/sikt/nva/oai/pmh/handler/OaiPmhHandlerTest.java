@@ -86,6 +86,7 @@ import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.Environment;
 import nva.commons.core.ioutils.IoUtils;
+import nva.commons.core.paths.UriWrapper;
 import nva.commons.logutils.LogUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -152,7 +153,16 @@ class OaiPmhHandlerTest {
   private static final String RESOURCE_DESCRIPTION = "My description";
   private static final String TAG_BIOLOGY = "Biology";
   private static final String TAG_MATHEMATICS = "Mathematics";
-
+  private static final String NTNU_IDENTIFIER = "194.0.0.0";
+  private static final URI NTNU_ID =
+      UriWrapper.fromUri("https://localhost/cristin/organization")
+          .addChild(NTNU_IDENTIFIER)
+          .getUri();
+  private static final String UIB_IDENTIFIER = "184.0.0.0";
+  private static final URI UIB_ID =
+      UriWrapper.fromUri("https://localhost/cristin/organization")
+          .addChild(UIB_IDENTIFIER)
+          .getUri();
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
   private Environment environment;
   private ResourceClient resourceClient;
@@ -706,13 +716,18 @@ class OaiPmhHandlerTest {
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
     var xpathEngine = getXpathEngine();
 
-    var setSpec =
-        extractTextNodeValueFromResponse(
-            xpathEngine,
-            "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:header/oai:setSpec",
-            response);
+    var setSpecNodes =
+        xpathEngine.selectNodes(
+            "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:header/oai:setSpec", response);
 
-    assertThat(setSpec, is(equalTo("resourceTypeGeneral:AcademicArticle")));
+    var setSpecs =
+        StreamSupport.stream(setSpecNodes.spliterator(), false).map(Node::getTextContent).toList();
+    assertThat(
+        setSpecs,
+        containsInAnyOrder(
+            "resourceTypeGeneral:AcademicArticle",
+            "institution:" + NTNU_IDENTIFIER,
+            "institution:" + UIB_IDENTIFIER));
   }
 
   @Test
@@ -1371,6 +1386,8 @@ class OaiPmhHandlerTest {
         .withLanguage(LANGUAGE_ENG)
         .withTag(TAG_BIOLOGY)
         .withTag(TAG_MATHEMATICS)
+        .withCuratingInstitution(NTNU_ID)
+        .withCuratingInstitution(UIB_ID)
         .academicArticle(journalBuilder)
         .withReferenceDoi(REFERENCE_DOI)
         .apply()
