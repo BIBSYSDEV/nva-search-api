@@ -85,7 +85,8 @@ public class ResourceClientResourceRepository implements ResourceRepository {
 
   private static KeyValuePair topLevelOrganizationFacetToKeyValuePair(Facet facet) {
     var key = UriWrapper.fromUri(facet.key()).getLastPathElement();
-    return new KeyValuePair(key, facet.labels().getOrDefault("en", key));
+    var englishLabel = Optional.ofNullable(facet.labels().get("en"));
+    return new KeyValuePair(key, englishLabel.orElse(key));
   }
 
   @Override
