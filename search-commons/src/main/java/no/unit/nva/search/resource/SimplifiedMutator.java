@@ -169,8 +169,14 @@ public class SimplifiedMutator implements JsonNodeMutator {
     }
 
     var participatingOrganizations = new HashSet<URI>();
-    curatingInstitutions.forEach(node -> participatingOrganizations.add(URI.create(node.asText())));
+    curatingInstitutions.forEach(
+        node -> this.appendParticipatingOrganization(participatingOrganizations, node));
     return participatingOrganizations;
+  }
+
+  private void appendParticipatingOrganization(
+      Set<URI> participatingOrganizations, JsonNode curatingInstitutionNode) {
+    participatingOrganizations.add(URI.create(curatingInstitutionNode.asText()));
   }
 
   private Set<String> fromNodeToTags(JsonNode tagsNode) {
