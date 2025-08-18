@@ -8,6 +8,7 @@ import static no.unit.nva.constants.Words.TYPE;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,12 +28,14 @@ public record ResourceSearchResponse(
     List<Contributor> contributorsPreview,
     int contributorsCount,
     PublishingDetails publishingDetails,
-    Set<String> tags) {
+    Set<String> tags,
+    Set<URI> participatingOrganizations) {
 
   public static Builder responseBuilder() {
     return new Builder();
   }
 
+  @SuppressWarnings("PMD.TooManyFields")
   public static final class Builder {
 
     private URI id;
@@ -49,7 +52,8 @@ public record ResourceSearchResponse(
     private List<Contributor> contributorsPreview;
     private int contributorsCount;
     private PublishingDetails publishingDetails;
-    private Set<String> tags;
+    private Set<String> tags = Collections.emptySet();
+    private Set<URI> participatingOrganizations = Collections.emptySet();
 
     private Builder() {}
 
@@ -134,6 +138,11 @@ public record ResourceSearchResponse(
       return this;
     }
 
+    public Builder withParticipatingOrganizations(Set<URI> participatingOrganizations) {
+      this.participatingOrganizations = participatingOrganizations;
+      return this;
+    }
+
     public ResourceSearchResponse build() {
       return new ResourceSearchResponse(
           id,
@@ -150,7 +159,8 @@ public record ResourceSearchResponse(
           contributorsPreview,
           contributorsCount,
           publishingDetails,
-          tags);
+          tags,
+          participatingOrganizations);
     }
   }
 }

@@ -62,6 +62,7 @@ public class ResourceDocumentFactory {
     private final List<ObjectNode> contributorNodes = new ArrayList<>();
     private final List<ObjectNode> additionalIdentifierNodes = new ArrayList<>();
     private final Set<String> tags = new HashSet<>();
+    private final Set<URI> curatingInstitutions = new HashSet<>();
     private String resourceAbstract;
     private String description;
     private ObjectNode referenceNode;
@@ -107,6 +108,11 @@ public class ResourceDocumentFactory {
 
     public ResourceDocumentBuilder withTag(String tag) {
       this.tags.add(tag);
+      return this;
+    }
+
+    public ResourceDocumentBuilder withCuratingInstitution(URI curatingInstitution) {
+      this.curatingInstitutions.add(curatingInstitution);
       return this;
     }
 
@@ -163,9 +169,6 @@ public class ResourceDocumentFactory {
               contributorsNode,
               tagsNode);
 
-      var additionalIdentifiersNode = JsonNodeFactory.instance.arrayNode();
-      additionalIdentifiersNode.addAll(additionalIdentifierNodes);
-
       var resourceRoot = JsonNodeFactory.instance.objectNode();
       resourceRoot.put("id", id.toString());
       resourceRoot.set("entityDescription", entityDescriptionNode);
@@ -174,9 +177,25 @@ public class ResourceDocumentFactory {
       }
       resourceRoot.put("modifiedDate", "2023-01-01T01:02:03.123456789Z");
 
+      var additionalIdentifiersNode = getAdditionalIdentifiersNode();
       resourceRoot.set("additionalIdentifiers", additionalIdentifiersNode);
 
+      var curatingInstitutionsNode = curatingInstitutionsNode();
+      resourceRoot.set("curatingInstitutions", curatingInstitutionsNode);
+
       return resourceRoot;
+    }
+
+    private ArrayNode getAdditionalIdentifiersNode() {
+      var additionalIdentifiersNode = JsonNodeFactory.instance.arrayNode();
+      additionalIdentifiersNode.addAll(additionalIdentifierNodes);
+      return additionalIdentifiersNode;
+    }
+
+    private ArrayNode curatingInstitutionsNode() {
+      var curatingInstitutions = JsonNodeFactory.instance.arrayNode();
+      this.curatingInstitutions.forEach(uri -> curatingInstitutions.add(uri.toString()));
+      return curatingInstitutions;
     }
 
     public AcademicArticleBuilder academicArticle(SerialChannelBuilder journalBuilder) {
