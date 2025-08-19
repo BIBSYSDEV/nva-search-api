@@ -203,9 +203,13 @@ public class SimplifiedMutator implements JsonNodeMutator {
 
   public static Optional<String> getOptionalTextFromNamedField(JsonNode source, String field) {
     return Optional.ofNullable(source.get(field))
-        .filter(node -> !node.isNull())
+        .filter(SimplifiedMutator::nodeIsTextualWithContent)
         .map(JsonNode::asText)
         .filter(StringUtils::isNotBlank);
+  }
+
+  private static boolean nodeIsTextualWithContent(JsonNode node) {
+    return !node.isNull() && node.isTextual();
   }
 
   private OtherIdentifiers fromNodeOtherIdentifiers(JsonNode source) {
