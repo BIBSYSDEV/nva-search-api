@@ -9,6 +9,7 @@ import static no.unit.nva.constants.Words.DAY;
 import static no.unit.nva.constants.Words.DOI;
 import static no.unit.nva.constants.Words.DOT;
 import static no.unit.nva.constants.Words.ENTITY_DESCRIPTION;
+import static no.unit.nva.constants.Words.HANDLE;
 import static no.unit.nva.constants.Words.ID;
 import static no.unit.nva.constants.Words.IDENTIFIER;
 import static no.unit.nva.constants.Words.IDENTITY;
@@ -73,6 +74,7 @@ import no.unit.nva.search.resource.response.PublishingDetails;
 import no.unit.nva.search.resource.response.RecordMetadata;
 import no.unit.nva.search.resource.response.ResourceSearchResponse;
 import no.unit.nva.search.resource.response.ScientificRating;
+import nva.commons.core.StringUtils;
 
 public class SimplifiedMutator implements JsonNodeMutator {
 
@@ -105,6 +107,7 @@ public class SimplifiedMutator implements JsonNodeMutator {
         MODIFIED_DATE,
         PUBLISHED_DATE,
         DOI,
+        HANDLE,
         CURATING_INSTITUTIONS,
         path(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, TYPE),
         path(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, MANIFESTATIONS, ISBN_LIST),
@@ -198,16 +201,24 @@ public class SimplifiedMutator implements JsonNodeMutator {
     return objectMapper.convertValue(source, new TypeReference<>() {});
   }
 
+  public static Optional<String> getOptionalTextFromNamedField(JsonNode source, String field) {
+    return Optional.ofNullable(source.get(field))
+        .filter(node -> !node.isNull())
+        .map(JsonNode::asText)
+        .filter(StringUtils::isNotBlank);
+  }
+
   private OtherIdentifiers fromNodeOtherIdentifiers(JsonNode source) {
     var isbnsInManifestations = isbnsInManifestations(source);
     var isbnsInPublicationContext = extractIsbnsInPublicationContext(source);
     var isbns =
         Stream.concat(isbnsInPublicationContext.stream(), isbnsInManifestations.stream()).toList();
     var issns = fromNodeIssns(source);
-
     var handleIdentifiers = new ArrayList<String>();
     var cristinIdentifiers = new ArrayList<String>();
     var scopusIdentifiers = new ArrayList<String>();
+    getOptionalTextFromNamedField(source, HANDLE).ifPresent(handleIdentifiers::add);
+
     source
         .path(ADDITIONAL_IDENTIFIERS)
         .iterator()

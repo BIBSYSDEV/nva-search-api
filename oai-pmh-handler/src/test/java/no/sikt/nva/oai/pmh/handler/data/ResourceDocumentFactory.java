@@ -59,6 +59,7 @@ public class ResourceDocumentFactory {
     private final String publicationMonth;
     private final String publicationDay;
     private URI doi;
+    private URI handle;
     private final List<ObjectNode> contributorNodes = new ArrayList<>();
     private final List<ObjectNode> additionalIdentifierNodes = new ArrayList<>();
     private final Set<String> tags = new HashSet<>();
@@ -91,6 +92,11 @@ public class ResourceDocumentFactory {
 
     public ResourceDocumentBuilder withDoi(URI doi) {
       this.doi = doi;
+      return this;
+    }
+
+    public ResourceDocumentBuilder withHandle(URI handle) {
+      this.handle = handle;
       return this;
     }
 
@@ -174,6 +180,9 @@ public class ResourceDocumentFactory {
       resourceRoot.set("entityDescription", entityDescriptionNode);
       if (nonNull(doi)) {
         resourceRoot.put("doi", doi.toString());
+      }
+      if (nonNull(handle)) {
+        resourceRoot.put("handle", handle.toString());
       }
       resourceRoot.put("modifiedDate", "2023-01-01T01:02:03.123456789Z");
 
