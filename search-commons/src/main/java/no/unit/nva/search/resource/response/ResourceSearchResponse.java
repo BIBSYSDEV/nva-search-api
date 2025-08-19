@@ -29,7 +29,7 @@ public record ResourceSearchResponse(
     int contributorsCount,
     PublishingDetails publishingDetails,
     Set<String> tags,
-    Set<URI> participatingOrganizations) {
+    Set<Organization> participatingOrganizations) {
 
   public static Builder responseBuilder() {
     return new Builder();
@@ -53,7 +53,7 @@ public record ResourceSearchResponse(
     private int contributorsCount;
     private PublishingDetails publishingDetails;
     private Set<String> tags = Collections.emptySet();
-    private Set<URI> participatingOrganizations = Collections.emptySet();
+    private Set<Organization> participatingOrganizations = Collections.emptySet();
 
     private Builder() {}
 
@@ -138,7 +138,7 @@ public record ResourceSearchResponse(
       return this;
     }
 
-    public Builder withParticipatingOrganizations(Set<URI> participatingOrganizations) {
+    public Builder withParticipatingOrganizations(Set<Organization> participatingOrganizations) {
       this.participatingOrganizations = participatingOrganizations;
       return this;
     }

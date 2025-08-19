@@ -7,11 +7,14 @@ import static no.sikt.nva.oai.pmh.handler.oaipmh.transformers.XmlUtils.sanitizeX
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 import no.sikt.nva.oai.pmh.handler.oaipmh.RecordTransformer;
 import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec;
 import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec.SetRoot;
 import no.unit.nva.search.resource.response.Contributor;
+import no.unit.nva.search.resource.response.Organization;
 import no.unit.nva.search.resource.response.PublicationDate;
 import no.unit.nva.search.resource.response.ResourceSearchResponse;
 import nva.commons.core.StringUtils;
@@ -28,6 +31,9 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
   private static final ObjectFactory OBJECT_FACTORY = new ObjectFactory();
   private static final String JOURNAL = "Journal";
   private static final char DASH = '-';
+  private static final String LANGUAGE_EN = "en";
+  private static final String LANGUAGE_NB = "nb";
+  private static final String LANGUAGE_NN = "nn";
 
   @Override
   public RecordType transform(ResourceSearchResponse resourceSearchResponse) {
@@ -100,15 +106,40 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
 
   private static void appendContributors(ResourceSearchResponse response, OaiDcType oaiDcType) {
     response.contributorsPreview().stream()
-        .map(SimplifiedRecordTransformer::toCreatorElement)
+        .map(SimplifiedRecordTransformer::toContributorElement)
         .forEach(
-            e -> oaiDcType.getTitleOrCreatorOrSubject().addLast(OBJECT_FACTORY.createCreator(e)));
+            elementType ->
+                oaiDcType
+                    .getTitleOrCreatorOrSubject()
+                    .addLast(OBJECT_FACTORY.createContributor(elementType)));
+
+    response.participatingOrganizations().stream()
+        .map(SimplifiedRecordTransformer::toContributorElement)
+        .forEach(
+            elementType ->
+                oaiDcType
+                    .getTitleOrCreatorOrSubject()
+                    .addLast(OBJECT_FACTORY.createContributor(elementType)));
   }
 
-  private static ElementType toCreatorElement(Contributor contributor) {
-    var creatorElement = OBJECT_FACTORY.createElementType();
-    creatorElement.setValue(contributor.identity().name());
-    return creatorElement;
+  private static ElementType toContributorElement(Contributor contributor) {
+    var contributorElement = OBJECT_FACTORY.createElementType();
+    contributorElement.setValue(contributor.identity().name());
+    return contributorElement;
+  }
+
+  private static ElementType toContributorElement(Organization organization) {
+    var contributorElement = OBJECT_FACTORY.createElementType();
+    contributorElement.setValue(extractOrganizationName(organization));
+    return contributorElement;
+  }
+
+  private static String extractOrganizationName(Organization organization) {
+    return Stream.of(LANGUAGE_EN, LANGUAGE_NB, LANGUAGE_NN)
+        .map(lang -> organization.labels().get(lang))
+        .filter(Objects::nonNull)
+        .findFirst()
+        .orElse(UriWrapper.fromUri(organization.id()).getLastPathElement());
   }
 
   private static void appendIdentifier(ResourceSearchResponse response, OaiDcType oaiDcType) {
@@ -226,6 +257,7 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
         .getSetSpec()
         .add(new SetSpec(SetRoot.RESOURCE_TYPE_GENERAL, response.type()).getValue().orElseThrow());
     response.participatingOrganizations().stream()
+        .map(Organization::id)
         .map(UriWrapper::fromUri)
         .map(UriWrapper::getLastPathElement)
         .forEach(identifier -> appendInstitutionSetSpec(headerType, identifier));

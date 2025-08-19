@@ -10,6 +10,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class ResourceDocumentFactory {
@@ -31,7 +32,7 @@ public class ResourceDocumentFactory {
     }
     entityDescriptionNode.set("publicationDate", publicationDateNode);
     entityDescriptionNode.set("reference", referenceNode);
-    entityDescriptionNode.set("contributors", contributorsNode);
+    entityDescriptionNode.set("contributorsPreview", contributorsNode);
     entityDescriptionNode.set("tags", tagsNode);
     if (nonNull(description)) {
       entityDescriptionNode.put("description", description);
@@ -63,7 +64,7 @@ public class ResourceDocumentFactory {
     private final List<ObjectNode> contributorNodes = new ArrayList<>();
     private final List<ObjectNode> additionalIdentifierNodes = new ArrayList<>();
     private final Set<String> tags = new HashSet<>();
-    private final Set<URI> curatingInstitutions = new HashSet<>();
+    private final ArrayNode topLevelOrganizationsNode = JsonNodeFactory.instance.arrayNode();
     private String resourceAbstract;
     private String description;
     private ObjectNode referenceNode;
@@ -117,8 +118,15 @@ public class ResourceDocumentFactory {
       return this;
     }
 
-    public ResourceDocumentBuilder withCuratingInstitution(URI curatingInstitution) {
-      this.curatingInstitutions.add(curatingInstitution);
+    public ResourceDocumentBuilder withTopLevelOrganization(URI id, Map<String, String> labels) {
+      var topLevelOrganizationNode = JsonNodeFactory.instance.objectNode();
+      topLevelOrganizationNode.put("id", id.toString());
+      if (nonNull(labels) && !labels.isEmpty()) {
+        var labelsNode = JsonNodeFactory.instance.objectNode();
+        labels.forEach(labelsNode::put);
+        topLevelOrganizationNode.set("labels", labelsNode);
+      }
+      this.topLevelOrganizationsNode.add(topLevelOrganizationNode);
       return this;
     }
 
@@ -189,8 +197,7 @@ public class ResourceDocumentFactory {
       var additionalIdentifiersNode = getAdditionalIdentifiersNode();
       resourceRoot.set("additionalIdentifiers", additionalIdentifiersNode);
 
-      var curatingInstitutionsNode = curatingInstitutionsNode();
-      resourceRoot.set("curatingInstitutions", curatingInstitutionsNode);
+      resourceRoot.set("topLevelOrganizations", this.topLevelOrganizationsNode);
 
       return resourceRoot;
     }
@@ -199,12 +206,6 @@ public class ResourceDocumentFactory {
       var additionalIdentifiersNode = JsonNodeFactory.instance.arrayNode();
       additionalIdentifiersNode.addAll(additionalIdentifierNodes);
       return additionalIdentifiersNode;
-    }
-
-    private ArrayNode curatingInstitutionsNode() {
-      var curatingInstitutions = JsonNodeFactory.instance.arrayNode();
-      this.curatingInstitutions.forEach(uri -> curatingInstitutions.add(uri.toString()));
-      return curatingInstitutions;
     }
 
     public AcademicArticleBuilder academicArticle(SerialChannelBuilder journalBuilder) {
