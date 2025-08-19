@@ -116,7 +116,7 @@ class OaiPmhHandlerTest {
         new SetInfo("resourceTypeGeneral:AcademicArticle", "AcademicArticle"),
         new SetInfo("resourceTypeGeneral:AcademicChapter", "AcademicChapter"),
         new SetInfo("institution", "institution"),
-        new SetInfo("institution:194.0.0.0", "Norwegian University of Science and Technology"),
+        new SetInfo("institution:194.0.0.0", "194.0.0.0"),
         new SetInfo("institution:184.0.0.0", "University of Bergen")
       };
   private static final String EMPTY_STRING = "";
