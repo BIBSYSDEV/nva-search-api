@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ResourceClientResourceRepository implements ResourceRepository {
+
   private static final Logger LOGGER =
       LoggerFactory.getLogger(ResourceClientResourceRepository.class);
   private static final String ASCENDING = "asc";
@@ -35,6 +36,7 @@ public class ResourceClientResourceRepository implements ResourceRepository {
   private static final String MODIFIED_DATE_ASCENDING =
       ResourceSort.MODIFIED_DATE.asCamelCase() + COLON + ASCENDING;
   private static final String INSTANCE_TYPE_AGGREGATION_NAME = "type";
+  private static final String LANGUAGE_ENGLISH = "en";
 
   private final ResourceClient resourceClient;
 
@@ -85,7 +87,7 @@ public class ResourceClientResourceRepository implements ResourceRepository {
 
   private static KeyValuePair topLevelOrganizationFacetToKeyValuePair(Facet facet) {
     var key = UriWrapper.fromUri(facet.key()).getLastPathElement();
-    var englishLabel = Optional.ofNullable(facet.labels().get("en"));
+    var englishLabel = Optional.ofNullable(facet.labels().get(LANGUAGE_ENGLISH));
     return new KeyValuePair(key, englishLabel.orElse(key));
   }
 

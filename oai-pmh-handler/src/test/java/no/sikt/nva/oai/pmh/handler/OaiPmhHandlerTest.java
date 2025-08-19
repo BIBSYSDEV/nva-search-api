@@ -132,6 +132,7 @@ class OaiPmhHandlerTest {
   private static final String OAI_DC_NAMESPACE = "http://www.openarchives.org/OAI/2.0/oai_dc/";
   private static final URI LANGUAGE_ENG = URI.create("http://lexvo.org/id/iso639-3/eng");
   private static final String HANDLE_IDENTIFIER = "https://hdl.handle.net/11250/2590299";
+  private static final URI ROOT_HANDLE = URI.create("https://hdl.handle.net/11250/26000");
   private static final String CRISTIN_IDENTIFIER = "1674987";
   private static final String SCOPUS_IDENTIFIER = "2-s2.0-85062524387";
   private static final String ISBN_IDENTIFIER = "978-0-8194-5906-0";
@@ -816,13 +817,14 @@ class OaiPmhHandlerTest {
     assertHasIdentifier(response, "ISBN:" + ISBN_IDENTIFIER);
   }
 
-  @Test
-  void shouldPopulateHandleAsDcIdentifier() throws IOException, JAXBException {
+  @ParameterizedTest
+  @MethodSource("handleTestArgumentProvider")
+  void shouldPopulateHandleAsDcIdentifier(String handle) throws IOException, JAXBException {
     var inputStream = defaultHitAndRequest();
 
     var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
 
-    assertHasIdentifier(response, HANDLE_IDENTIFIER);
+    assertHasIdentifier(response, handle);
   }
 
   @Test
@@ -1124,6 +1126,12 @@ class OaiPmhHandlerTest {
     assertThat(identifiers, not(hasItem(identifier)));
   }
 
+  static Stream<Arguments> handleTestArgumentProvider() {
+    return Stream.of(
+        Arguments.argumentSet("Root handle", ROOT_HANDLE.toString()),
+        Arguments.argumentSet("Additional identifier handle", HANDLE_IDENTIFIER));
+  }
+
   private static List<String> extractValuesFromDcElements(String element, Source source) {
     var xpathEngine = getXpathEngine();
     var nodes =
@@ -1383,6 +1391,7 @@ class OaiPmhHandlerTest {
         .withAdditionalIdentifier(SCOPUS_AS_TYPE, SCOPUS_IDENTIFIER)
         .withAdditionalIdentifier("HandleIdentifier", HANDLE_IDENTIFIER)
         .withDoi(NVA_DOI)
+        .withHandle(ROOT_HANDLE)
         .withLanguage(LANGUAGE_ENG)
         .withTag(TAG_BIOLOGY)
         .withTag(TAG_MATHEMATICS)
