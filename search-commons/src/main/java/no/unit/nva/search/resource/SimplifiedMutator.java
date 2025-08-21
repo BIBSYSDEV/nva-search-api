@@ -14,6 +14,7 @@ import static no.unit.nva.constants.Words.ID;
 import static no.unit.nva.constants.Words.IDENTIFIER;
 import static no.unit.nva.constants.Words.IDENTITY;
 import static no.unit.nva.constants.Words.ISBN_LIST;
+import static no.unit.nva.constants.Words.LABELS;
 import static no.unit.nva.constants.Words.LANGUAGE;
 import static no.unit.nva.constants.Words.MAIN_TITLE;
 import static no.unit.nva.constants.Words.MODIFIED_DATE;
@@ -32,6 +33,7 @@ import static no.unit.nva.constants.Words.ROLE;
 import static no.unit.nva.constants.Words.SERIES;
 import static no.unit.nva.constants.Words.STATUS;
 import static no.unit.nva.constants.Words.TAGS;
+import static no.unit.nva.constants.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.constants.Words.TYPE;
 import static no.unit.nva.constants.Words.VALUE;
 import static no.unit.nva.constants.Words.YEAR;
@@ -52,7 +54,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -68,6 +69,7 @@ import no.unit.nva.search.resource.response.Affiliation;
 import no.unit.nva.search.resource.response.Contributor;
 import no.unit.nva.search.resource.response.Identity;
 import no.unit.nva.search.resource.response.NodeUtils;
+import no.unit.nva.search.resource.response.Organization;
 import no.unit.nva.search.resource.response.OtherIdentifiers;
 import no.unit.nva.search.resource.response.PublicationDate;
 import no.unit.nva.search.resource.response.PublishingDetails;
@@ -108,7 +110,8 @@ public class SimplifiedMutator implements JsonNodeMutator {
         PUBLISHED_DATE,
         DOI,
         HANDLE,
-        CURATING_INSTITUTIONS,
+        CURATING_INSTITUTIONS, // consider removing
+        path(TOP_LEVEL_ORGANIZATIONS, ID, LABELS),
         path(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, TYPE),
         path(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, MANIFESTATIONS, ISBN_LIST),
         path(ENTITY_DESCRIPTION, REFERENCE, DOI),
@@ -165,21 +168,16 @@ public class SimplifiedMutator implements JsonNodeMutator {
         .build();
   }
 
-  private Set<URI> extractParticipatingOrganizations(JsonNode source) {
-    var curatingInstitutions = source.path(CURATING_INSTITUTIONS);
-    if (curatingInstitutions.isMissingNode() || !curatingInstitutions.isArray()) {
+  private Set<Organization> extractParticipatingOrganizations(JsonNode source) {
+    var topLevelOrganizations = source.path(TOP_LEVEL_ORGANIZATIONS);
+    if (topLevelOrganizations.isMissingNode() || !topLevelOrganizations.isArray()) {
       return Collections.emptySet();
     }
 
-    var participatingOrganizations = new HashSet<URI>();
-    curatingInstitutions.forEach(
-        node -> this.appendParticipatingOrganization(participatingOrganizations, node));
+    var participatingOrganizations = new HashSet<Organization>();
+    topLevelOrganizations.forEach(
+        node -> participatingOrganizations.add(Organization.fromJsonNode(node)));
     return participatingOrganizations;
-  }
-
-  private void appendParticipatingOrganization(
-      Set<URI> participatingOrganizations, JsonNode curatingInstitutionNode) {
-    participatingOrganizations.add(URI.create(curatingInstitutionNode.asText()));
   }
 
   private Set<String> fromNodeToTags(JsonNode tagsNode) {

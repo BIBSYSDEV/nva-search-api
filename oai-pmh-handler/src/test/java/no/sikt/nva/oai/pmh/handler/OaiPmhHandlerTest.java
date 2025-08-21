@@ -7,7 +7,10 @@ import static no.sikt.nva.oai.pmh.handler.oaipmh.request.OaiPmhParameterName.FRO
 import static no.sikt.nva.oai.pmh.handler.oaipmh.request.OaiPmhParameterName.SET;
 import static no.sikt.nva.oai.pmh.handler.oaipmh.request.OaiPmhParameterName.UNTIL;
 import static no.sikt.nva.oai.pmh.handler.oaipmh.request.OaiPmhParameterName.VERB;
+import static no.unit.nva.constants.Words.BOKMAAL_CODE;
 import static no.unit.nva.constants.Words.CRISTIN_AS_TYPE;
+import static no.unit.nva.constants.Words.ENGLISH_CODE;
+import static no.unit.nva.constants.Words.NYNORSK_CODE;
 import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.constants.Words.SCOPUS_AS_TYPE;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -164,6 +167,18 @@ class OaiPmhHandlerTest {
       UriWrapper.fromUri("https://localhost/cristin/organization")
           .addChild(UIB_IDENTIFIER)
           .getUri();
+  private static final String NTNU_LABEL_ENGLISH = "Norwegian University of Science and Technology";
+  private static final Map<String, String> NTNU_LABELS =
+      Map.of(
+          ENGLISH_CODE, NTNU_LABEL_ENGLISH,
+          BOKMAAL_CODE, "Norges teknisk-naturvitenskapelige universitet",
+          NYNORSK_CODE, "Noregs teknisk-naturvitskaplege universitet");
+
+  private static final String UIB_LABEL_ENGLISH = "University of Bergen";
+  private static final Map<String, String> UIB_LABELS =
+      Map.of(ENGLISH_CODE, UIB_LABEL_ENGLISH, BOKMAAL_CODE, "Universitetet i Bergen");
+  private static final String CONTRIBUTOR_NAME_1 = "Ola Nordmann";
+  private static final String CONTRIBUTOR_NAME_2 = "Kari Nordkvinne";
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
   private Environment environment;
   private ResourceClient resourceClient;
@@ -744,6 +759,29 @@ class OaiPmhHandlerTest {
             "/oai:OAI-PMH/oai:ListRecords/oai:record/oai:metadata/oai-dc:dc/dc:title",
             response);
     assertThat(title, is(equalTo("My title")));
+  }
+
+  @Test
+  void shouldUseContributorNameAsRecordMetadataDcContributor() throws IOException, JAXBException {
+    var inputStream = defaultHitAndRequest();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+
+    var contributors = extractValuesFromDcElements("contributor", response);
+
+    assertThat(contributors, hasItems(CONTRIBUTOR_NAME_1, CONTRIBUTOR_NAME_2));
+  }
+
+  @Test
+  void shouldUseTopLevelOrganizationLabelAsRecordMetadataDcContributor()
+      throws IOException, JAXBException {
+    var inputStream = defaultHitAndRequest();
+
+    var response = invokeHandlerAndAssertHttpStatusCodeOk(inputStream);
+
+    var contributors = extractValuesFromDcElements("contributor", response);
+
+    assertThat(contributors, hasItems(NTNU_LABEL_ENGLISH, UIB_LABEL_ENGLISH));
   }
 
   @Test
@@ -1395,8 +1433,10 @@ class OaiPmhHandlerTest {
         .withLanguage(LANGUAGE_ENG)
         .withTag(TAG_BIOLOGY)
         .withTag(TAG_MATHEMATICS)
-        .withCuratingInstitution(NTNU_ID)
-        .withCuratingInstitution(UIB_ID)
+        .withTopLevelOrganization(NTNU_ID, NTNU_LABELS)
+        .withTopLevelOrganization(UIB_ID, UIB_LABELS)
+        .withContributor(CONTRIBUTOR_NAME_1, null)
+        .withContributor(CONTRIBUTOR_NAME_2, null)
         .academicArticle(journalBuilder)
         .withReferenceDoi(REFERENCE_DOI)
         .apply()
