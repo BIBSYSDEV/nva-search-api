@@ -76,11 +76,8 @@ import no.unit.nva.search.resource.response.RecordMetadata;
 import no.unit.nva.search.resource.response.ResourceSearchResponse;
 import no.unit.nva.search.resource.response.ScientificRating;
 import nva.commons.core.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SimplifiedMutator implements JsonNodeMutator {
-  private static final Logger LOGGER = LoggerFactory.getLogger(SimplifiedMutator.class);
 
   private static final String HANDLE_IDENTIFIER = "HandleIdentifier";
   private static final String CORRESPONDING_AUTHOR = "correspondingAuthor";
@@ -173,16 +170,12 @@ public class SimplifiedMutator implements JsonNodeMutator {
   private Set<Organization> extractParticipatingOrganizations(JsonNode source) {
     var topLevelOrganizations = source.path(TOP_LEVEL_ORGANIZATIONS);
     if (topLevelOrganizations.isMissingNode() || !topLevelOrganizations.isArray()) {
-      LOGGER.info(
-          "Found no top level organizations: {}",
-          attempt(() -> dtoObjectMapper.writeValueAsString(source)).orElseThrow());
       return Collections.emptySet();
     }
 
     var participatingOrganizations = new HashSet<Organization>();
     topLevelOrganizations.forEach(
         node -> participatingOrganizations.add(Organization.fromJsonNode(node)));
-    LOGGER.info("Found {} participating organizations", participatingOrganizations.size());
     return participatingOrganizations;
   }
 
