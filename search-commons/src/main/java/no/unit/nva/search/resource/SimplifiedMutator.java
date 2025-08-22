@@ -4,7 +4,6 @@ import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 import static no.unit.nva.constants.Words.ABSTRACT;
 import static no.unit.nva.constants.Words.AFFILIATIONS;
 import static no.unit.nva.constants.Words.CREATED_DATE;
-import static no.unit.nva.constants.Words.CURATING_INSTITUTIONS;
 import static no.unit.nva.constants.Words.DAY;
 import static no.unit.nva.constants.Words.DOI;
 import static no.unit.nva.constants.Words.DOT;
@@ -77,11 +76,14 @@ import no.unit.nva.search.resource.response.RecordMetadata;
 import no.unit.nva.search.resource.response.ResourceSearchResponse;
 import no.unit.nva.search.resource.response.ScientificRating;
 import nva.commons.core.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SimplifiedMutator implements JsonNodeMutator {
+  private static final Logger LOGGER = LoggerFactory.getLogger(SimplifiedMutator.class);
 
-  public static final String HANDLE_IDENTIFIER = "HandleIdentifier";
-  public static final String CORRESPONDING_AUTHOR = "correspondingAuthor";
+  private static final String HANDLE_IDENTIFIER = "HandleIdentifier";
+  private static final String CORRESPONDING_AUTHOR = "correspondingAuthor";
   private final ObjectMapper objectMapper = dtoObjectMapper.copy();
 
   public SimplifiedMutator() {
@@ -110,8 +112,8 @@ public class SimplifiedMutator implements JsonNodeMutator {
         PUBLISHED_DATE,
         DOI,
         HANDLE,
-        CURATING_INSTITUTIONS, // consider removing
-        path(TOP_LEVEL_ORGANIZATIONS, ID, LABELS),
+        path(TOP_LEVEL_ORGANIZATIONS, ID),
+        path(TOP_LEVEL_ORGANIZATIONS, LABELS),
         path(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, TYPE),
         path(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, MANIFESTATIONS, ISBN_LIST),
         path(ENTITY_DESCRIPTION, REFERENCE, DOI),
@@ -171,12 +173,16 @@ public class SimplifiedMutator implements JsonNodeMutator {
   private Set<Organization> extractParticipatingOrganizations(JsonNode source) {
     var topLevelOrganizations = source.path(TOP_LEVEL_ORGANIZATIONS);
     if (topLevelOrganizations.isMissingNode() || !topLevelOrganizations.isArray()) {
+      LOGGER.info(
+          "Found no top level organizations: {}",
+          attempt(() -> dtoObjectMapper.writeValueAsString(source)).orElseThrow());
       return Collections.emptySet();
     }
 
     var participatingOrganizations = new HashSet<Organization>();
     topLevelOrganizations.forEach(
         node -> participatingOrganizations.add(Organization.fromJsonNode(node)));
+    LOGGER.info("Found {} participating organizations", participatingOrganizations.size());
     return participatingOrganizations;
   }
 

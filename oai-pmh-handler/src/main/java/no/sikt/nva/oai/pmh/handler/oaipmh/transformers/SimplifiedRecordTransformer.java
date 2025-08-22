@@ -5,11 +5,10 @@ import static java.util.Objects.nonNull;
 import static no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhDateTimeUtils.truncateToSeconds;
 import static no.sikt.nva.oai.pmh.handler.oaipmh.transformers.XmlUtils.sanitizeXmlValue;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Stream;
 import no.sikt.nva.oai.pmh.handler.oaipmh.RecordTransformer;
 import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec;
 import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec.SetRoot;
@@ -34,6 +33,9 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
   private static final String LANGUAGE_EN = "en";
   private static final String LANGUAGE_NB = "nb";
   private static final String LANGUAGE_NN = "nn";
+  private static final String[] LANGUAGE_KEYS_IN_ORDER_OF_PREFERENCE = {
+    LANGUAGE_EN, LANGUAGE_NB, LANGUAGE_NN
+  };
 
   @Override
   public RecordType transform(ResourceSearchResponse resourceSearchResponse) {
@@ -135,9 +137,9 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
   }
 
   private static String extractOrganizationName(Organization organization) {
-    return Stream.of(LANGUAGE_EN, LANGUAGE_NB, LANGUAGE_NN)
-        .map(lang -> organization.labels().get(lang))
-        .filter(Objects::nonNull)
+    return Arrays.stream(LANGUAGE_KEYS_IN_ORDER_OF_PREFERENCE)
+        .map(languageKey -> organization.labels().get(languageKey))
+        .filter(StringUtils::isNotBlank)
         .findFirst()
         .orElse(UriWrapper.fromUri(organization.id()).getLastPathElement());
   }
