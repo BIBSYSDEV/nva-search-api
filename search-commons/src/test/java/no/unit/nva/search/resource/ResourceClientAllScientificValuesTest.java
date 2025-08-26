@@ -229,7 +229,7 @@ public class ResourceClientAllScientificValuesTest {
   }
 
   @Test
-  void shouldReturnUnconfirmedJournalWhenSearchingForJournal()
+  void shouldReturnDocumentWithUnconfirmedJournalWhenSearchingForJournal()
       throws IOException, BadRequestException {
     var journalTitle = randomString();
     var json =
@@ -261,7 +261,7 @@ public class ResourceClientAllScientificValuesTest {
   }
 
   @Test
-  void shouldReturnUnconfirmedSeriesWhenSearchingForSeries()
+  void shouldReturnDocumentWithUnconfirmedSeriesWhenSearchingForSeries()
       throws IOException, BadRequestException {
     var seriesTitle = randomString();
     var json =
@@ -295,7 +295,7 @@ public class ResourceClientAllScientificValuesTest {
   }
 
   @Test
-  void shouldReturnUnconfirmedPublisherWhenSearchingForPublisher()
+  void shouldReturnDocumentWithUnconfirmedPublisherWhenSearchingForPublisher()
       throws IOException, BadRequestException {
     var publisherName = randomString();
     var json =
