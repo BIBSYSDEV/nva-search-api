@@ -29,6 +29,7 @@ import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
 import no.unit.nva.indexingclient.models.IndexDocument;
 import no.unit.nva.search.common.records.HttpResponseFormatter;
 import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.core.paths.UriWrapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -225,6 +226,108 @@ public class ResourceClientAllScientificValuesTest {
     var response = doSearchWithUri(ALL_SCIENTIFIC_VALUES_UNASSIGNED_AND_LEVEL_ZERO);
     var hits = response.toPagedResponse().hits();
     assertTrue(hits.isEmpty());
+  }
+
+  @Test
+  void shouldReturnDocumentWithUnconfirmedJournalWhenSearchingForJournal()
+      throws IOException, BadRequestException {
+    var journalTitle = randomString();
+    var json =
+        """
+            {
+              "type": "Publication",
+              "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
+              "entityDescription": {
+                "type": "EntityDescription",
+                "reference": {
+                  "type": "Reference",
+                  "publicationContext": {
+                    "type": "UnconfirmedJournal",
+                    "title": "%s"
+                  }
+                }
+              }
+            }
+        """
+            .formatted(journalTitle);
+    createIndexAndIndexDocument(json);
+
+    var response =
+        doSearchWithUri(
+            UriWrapper.fromUri("https://x.org/")
+                .addQueryParameter("journal", journalTitle)
+                .getUri());
+    assertFalse(response.toPagedResponse().hits().isEmpty());
+  }
+
+  @Test
+  void shouldReturnDocumentWithUnconfirmedSeriesWhenSearchingForSeries()
+      throws IOException, BadRequestException {
+    var seriesTitle = randomString();
+    var json =
+        """
+            {
+              "type": "Publication",
+              "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
+              "entityDescription": {
+                "type": "EntityDescription",
+                "reference": {
+                  "type": "Reference",
+                  "publicationContext": {
+                    "type": "Report",
+                    "series": {
+                      "type": "UnconfirmedSeries",
+                      "title": "%s"
+                    }
+                  }
+                }
+              }
+            }
+        """
+            .formatted(seriesTitle);
+    createIndexAndIndexDocument(json);
+
+    var response =
+        doSearchWithUri(
+            UriWrapper.fromUri("https://x.org/").addQueryParameter("series", seriesTitle).getUri());
+
+    assertFalse(response.toPagedResponse().hits().isEmpty());
+  }
+
+  @Test
+  void shouldReturnDocumentWithUnconfirmedPublisherWhenSearchingForPublisher()
+      throws IOException, BadRequestException {
+    var publisherName = randomString();
+    var json =
+        """
+            {
+                  "type": "Publication",
+                  "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
+                  "entityDescription": {
+                    "type": "EntityDescription",
+                    "reference": {
+                      "type": "Reference",
+                      "publicationContext": {
+                        "type": "Report",
+                        "publisher": {
+                          "type": "UnconfirmedPublisher",
+                          "name": "%s"
+                        }
+                      }
+                    }
+                  }
+                }
+        """
+            .formatted(publisherName);
+    createIndexAndIndexDocument(json);
+
+    var response =
+        doSearchWithUri(
+            UriWrapper.fromUri("https://x.org/")
+                .addQueryParameter("publisher", publisherName)
+                .getUri());
+
+    assertFalse(response.toPagedResponse().hits().isEmpty());
   }
 
   private static HttpResponseFormatter<ResourceParameter> doSearchWithUri(URI searchUri)
