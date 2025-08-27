@@ -157,7 +157,7 @@ class ResourceClientTest {
   static void setUp() {
     var cachedJwtProvider = setupMockedCachedJwtProvider();
     var mochedHttpClient = mock(HttpClient.class);
-    var userSettingsClient = new UserSettingsClient(mochedHttpClient, cachedJwtProvider);
+    var userSettingsClient = new UserSettingsClient(mochedHttpClient);
     var response = mockedFutureHttpResponse(Path.of(USER_SETTINGS_JSON));
     when(mochedHttpClient.sendAsync(any(), any()))
         .thenReturn(response)
@@ -382,8 +382,7 @@ class ResourceClientTest {
   void userSettingsNotFoundReturn200()
       throws IOException, InterruptedException, BadRequestException {
     var mochedHttpClient = mock(HttpClient.class);
-    var userSettingsClient =
-        new UserSettingsClient(mochedHttpClient, setupMockedCachedJwtProvider());
+    var userSettingsClient = new UserSettingsClient(mochedHttpClient);
     var mockedResponse = mockedHttpResponse(USER_SETTINGS_EMPTY_JSON, 200);
     when(mochedHttpClient.send(any(), any())).thenReturn(mockedResponse);
     var searchClient =
@@ -411,8 +410,7 @@ class ResourceClientTest {
   void userSettingsNotFoundReturn404()
       throws IOException, InterruptedException, BadRequestException {
     var mochedHttpClient = mock(HttpClient.class);
-    var userSettingsClient =
-        new UserSettingsClient(mochedHttpClient, setupMockedCachedJwtProvider());
+    var userSettingsClient = new UserSettingsClient(mochedHttpClient);
     var mockedResponse = mockedHttpResponse(USER_SETTINGS_EMPTY_JSON, 404);
     when(mochedHttpClient.send(any(), any())).thenReturn(mockedResponse);
     var searchClient =
@@ -440,8 +438,7 @@ class ResourceClientTest {
   void userSettingsFailsIOException()
       throws IOException, InterruptedException, BadRequestException {
     var mochedHttpClient = mock(HttpClient.class);
-    var userSettingsClient =
-        new UserSettingsClient(mochedHttpClient, setupMockedCachedJwtProvider());
+    var userSettingsClient = new UserSettingsClient(mochedHttpClient);
     when(mochedHttpClient.send(any(), any())).thenThrow(new IOException(NOT_FOUND));
     var searchClient =
         new ResourceClient(
@@ -468,8 +465,7 @@ class ResourceClientTest {
   void userSettingsFailswithWrongFormat()
       throws IOException, InterruptedException, BadRequestException {
     var mochedHttpClient = mock(HttpClient.class);
-    var userSettingsClient =
-        new UserSettingsClient(mochedHttpClient, setupMockedCachedJwtProvider());
+    var userSettingsClient = new UserSettingsClient(mochedHttpClient);
     when(mochedHttpClient.send(any(), any()))
         .thenReturn(mockedHttpResponse(USER_SETTINGS_EMPTY_JSON, 200));
     var searchClient =

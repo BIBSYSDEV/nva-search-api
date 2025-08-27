@@ -31,7 +31,7 @@ public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceSearch
   private final UserSettingsClient userSettingsClient;
 
   public ResourceClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
-    this(client, cachedJwtProvider, new UserSettingsClient(client, cachedJwtProvider));
+    this(client, cachedJwtProvider, new UserSettingsClient(client));
   }
 
   public ResourceClient(

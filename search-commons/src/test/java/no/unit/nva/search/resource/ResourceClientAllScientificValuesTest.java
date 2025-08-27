@@ -47,7 +47,7 @@ public class ResourceClientAllScientificValuesTest {
   public static void setUp() {
     var cachedJwtProvider = setupMockedCachedJwtProvider();
     var mochedHttpClient = mock(HttpClient.class);
-    var userSettingsClient = new UserSettingsClient(mochedHttpClient, cachedJwtProvider);
+    var userSettingsClient = new UserSettingsClient(mochedHttpClient);
     var response = mockedFutureHttpResponse(Path.of(USER_SETTINGS_JSON));
     when(mochedHttpClient.sendAsync(any(), any()))
         .thenReturn(response)

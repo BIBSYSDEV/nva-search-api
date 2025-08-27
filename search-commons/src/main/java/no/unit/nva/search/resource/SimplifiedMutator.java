@@ -75,6 +75,7 @@ import no.unit.nva.search.resource.response.PublishingDetails;
 import no.unit.nva.search.resource.response.RecordMetadata;
 import no.unit.nva.search.resource.response.ResourceSearchResponse;
 import no.unit.nva.search.resource.response.ScientificRating;
+import nva.commons.core.JacocoGenerated;
 import nva.commons.core.StringUtils;
 
 public class SimplifiedMutator implements JsonNodeMutator {
@@ -91,14 +92,17 @@ public class SimplifiedMutator implements JsonNodeMutator {
                 JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL));
   }
 
+  @JacocoGenerated
   public static String path(String... path) {
     return String.join(DOT, path);
   }
 
+  @JacocoGenerated
   public static List<String> getExcludedFields() {
     return GLOBAL_EXCLUDED_FIELDS;
   }
 
+  @JacocoGenerated
   public static List<String> getIncludedFields() {
     return List.of(
         ID,
@@ -205,6 +209,7 @@ public class SimplifiedMutator implements JsonNodeMutator {
         .filter(StringUtils::isNotBlank);
   }
 
+  @JacocoGenerated
   private static boolean nodeIsTextualWithContent(JsonNode node) {
     return !node.isNull() && node.isTextual();
   }
