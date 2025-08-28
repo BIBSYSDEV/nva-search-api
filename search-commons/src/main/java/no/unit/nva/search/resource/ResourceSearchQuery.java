@@ -35,7 +35,6 @@ import static no.unit.nva.search.resource.ResourceParameter.SEARCH_AFTER;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
 import static no.unit.nva.search.resource.ResourceSort.INVALID;
-import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import static org.opensearch.index.query.QueryBuilders.matchQuery;
 
@@ -74,7 +73,6 @@ import org.opensearch.search.sort.SortOrder;
  */
 @SuppressWarnings("PMD.GodClass")
 public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
-  private static final String EXCLUDED_RESOURCE_FIELDS = "entityDescription.contributors";
   private final ResourceStreamBuilders streamBuilders;
   private final ResourceAccessFilter filterBuilder;
   private final Map<String, String> additionalQueryParameters = new HashMap<>();
@@ -232,16 +230,13 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
   private void addPromotedPublications(UserSettingsClient client, BoolQueryBuilder builder) {
 
-    var result = attempt(() -> client.doSearch(this, Words.RESOURCES));
-    if (result.isSuccess()) {
-      AtomicInteger i = new AtomicInteger();
-      var promoted = result.get().promotedPublications();
-      promoted.forEach(
-          identifier ->
-              builder.should(
-                  matchQuery(IDENTIFIER_KEYWORD, identifier)
-                      .boost(calculateBoostValue(i, promoted.size()))));
-    }
+    var i = new AtomicInteger();
+    var promotedPublications = client.fetchPromotedPublications(parameters().get(CONTRIBUTOR).as());
+    promotedPublications.forEach(
+        identifier ->
+            builder.should(
+                matchQuery(IDENTIFIER_KEYWORD, identifier)
+                    .boost(calculateBoostValue(i, promotedPublications.size()))));
   }
 
   @Override

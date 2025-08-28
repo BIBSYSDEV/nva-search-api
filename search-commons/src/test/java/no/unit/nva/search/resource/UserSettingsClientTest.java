@@ -1,89 +1,134 @@
 package no.unit.nva.search.resource;
 
-import static no.unit.nva.common.EntrySetTools.queryToMapEntries;
-import static no.unit.nva.common.MockedHttpResponse.mockedFutureFailed;
-import static no.unit.nva.common.MockedHttpResponse.mockedFutureHttpResponse;
-import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search.resource.ResourceParameter.FROM;
-import static no.unit.nva.search.resource.ResourceParameter.SIZE;
-import static nva.commons.core.StringUtils.EMPTY_STRING;
-import static nva.commons.core.attempt.Try.attempt;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static java.net.HttpURLConnection.HTTP_BAD_GATEWAY;
+import static java.net.HttpURLConnection.HTTP_OK;
+import static no.unit.nva.testutils.RandomDataGenerator.randomString;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.stream.Stream;
-import no.unit.nva.constants.Words;
-import no.unit.nva.search.common.records.UserSettings;
-import nva.commons.apigateway.exceptions.ApiGatewayException;
-import nva.commons.core.attempt.Failure;
-import nva.commons.core.attempt.FunctionWithException;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.net.http.HttpClient.Version;
+import java.net.http.HttpHeaders;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.util.Map;
+import java.util.Optional;
+import javax.net.ssl.SSLSession;
+import nva.commons.logutils.LogUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 class UserSettingsClientTest {
 
-  public static final String SAMPLE_USER_SETTINGS_RESPONSE = "user_settings.json";
-  private static final Logger logger = LoggerFactory.getLogger(UserSettingsClientTest.class);
   private static UserSettingsClient userSettingsClient;
+  private static HttpClient httpClient;
 
-  @BeforeAll
-  public static void setUp() {
-    var mochedHttpClient = mock(HttpClient.class);
-    var cachedJwtProvider = setupMockedCachedJwtProvider();
-    userSettingsClient = new UserSettingsClient(mochedHttpClient, cachedJwtProvider);
-    final var path = Path.of(SAMPLE_USER_SETTINGS_RESPONSE);
-
-    when(mochedHttpClient.sendAsync(any(), any()))
-        .thenReturn(mockedFutureHttpResponse(EMPTY_STRING))
-        .thenReturn(mockedFutureFailed())
-        .thenReturn(mockedFutureHttpResponse(path))
-        .thenReturn(mockedFutureHttpResponse(path));
+  @BeforeEach
+  public void setUp() {
+    httpClient = mock(HttpClient.class);
+    userSettingsClient = new UserSettingsClient(httpClient);
   }
 
-  static Stream<URI> uriProvider() {
-    return Stream.of(
-        URI.create(
-            "https://example.com/?contributor=http://hello.worl.test.orgd&modified_before=2019-01-01"),
-        URI.create(
-            "https://example.com/?contributor=https://api.dev.nva.aws.unit.no/cristin/person/1269057"),
-        URI.create(
-            "https://example.com/?contributor=https%3A%2F%2Fapi.dev.nva.aws.unit"
-                + ".no%2Fcristin%2Fperson%2F1269057&orderBy=UNIT_ID:asc,title:desc"),
-        URI.create(
-            "https://example.com/?contributor=https://api.dev.nva.aws.unit.no/cristin/person/1269051"));
+  @Test
+  void shouldReturnPromotedPublicationsOnSuccess() throws IOException, InterruptedException {
+    var contributorId = randomString();
+    var value =
+        FakeHttpResponse.create(
+            """
+            {
+              "promotedPublications": [
+                "https://api.dev.nva.aws.unit.no/publication/123",
+                "https://api.dev.nva.aws.unit.no/publication/456"
+              ]
+            }
+            """,
+            HTTP_OK);
+    when(httpClient.send(any(HttpRequest.class), eq(BodyHandlers.ofString()))).thenReturn(value);
+    var promotedPublications = userSettingsClient.fetchPromotedPublications(contributorId);
+
+    assertFalse(promotedPublications.isEmpty());
   }
 
-  @ParameterizedTest
-  @MethodSource("uriProvider")
-  void searchWithUriReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
-    var resourceAwsQuery =
-        ResourceSearchQuery.builder()
-            .fromTestQueryParameters(queryToMapEntries(uri))
-            .withRequiredParameters(FROM, SIZE)
-            .build();
-    var promotedPublications =
-        attempt(() -> userSettingsClient.doSearch(resourceAwsQuery, Words.RESOURCES))
-            .map(UserSettings::promotedPublications)
-            .orElse(logExceptionAndContinue());
-    assertNotNull(promotedPublications);
+  @Test
+  void shouldReturnEmptyListOnFailureAndLogResponseThatFailed()
+      throws IOException, InterruptedException {
+    var contributorId = randomString();
+    when(httpClient.send(any(HttpRequest.class), eq(BodyHandlers.ofString())))
+        .thenReturn(FakeHttpResponse.create("{}", HTTP_BAD_GATEWAY));
+
+    var logger = LogUtils.getTestingAppenderForRootLogger();
+    var promotedPublications = userSettingsClient.fetchPromotedPublications(contributorId);
+
+    assertTrue(
+        logger
+            .getMessages()
+            .contains(
+                String.format("Failed to fetch user settings for contributor %s", contributorId)));
+    assertTrue(promotedPublications.isEmpty());
   }
 
-  private FunctionWithException<Failure<List<String>>, List<String>, RuntimeException>
-      logExceptionAndContinue() {
-    return (e) -> {
-      if (e.isFailure()) {
-        logger.error(e.getException().getMessage());
-      }
-      return List.of();
-    };
+  @Test
+  void shouldNotSendAuthorizationHeaderWhenRequestingPromotedPublications()
+      throws IOException, InterruptedException {
+    var contributorId = randomString();
+    when(httpClient.send(any(HttpRequest.class), eq(BodyHandlers.ofString())))
+        .thenReturn(FakeHttpResponse.create("{}", HTTP_BAD_GATEWAY));
+
+    userSettingsClient.fetchPromotedPublications(contributorId);
+
+    var requestCaptor = ArgumentCaptor.forClass(HttpRequest.class);
+    verify(httpClient).send(requestCaptor.capture(), eq(BodyHandlers.ofString()));
+    assertFalse(requestCaptor.getValue().headers().map().containsKey("Authorization"));
+  }
+
+  private record FakeHttpResponse(String body, int statuCode) implements HttpResponse<String> {
+
+    public static FakeHttpResponse create(String body, int statuCode) {
+      return new FakeHttpResponse(body, statuCode);
+    }
+
+    @Override
+    public int statusCode() {
+      return statuCode;
+    }
+
+    @Override
+    public HttpRequest request() {
+      return null;
+    }
+
+    @Override
+    public Optional<HttpResponse<String>> previousResponse() {
+      return Optional.empty();
+    }
+
+    @Override
+    public HttpHeaders headers() {
+      return HttpHeaders.of(Map.of(), (s1, s2) -> true);
+    }
+
+    @Override
+    public Optional<SSLSession> sslSession() {
+      return Optional.empty();
+    }
+
+    @Override
+    public URI uri() {
+      return null;
+    }
+
+    @Override
+    public Version version() {
+      return null;
+    }
   }
 }
