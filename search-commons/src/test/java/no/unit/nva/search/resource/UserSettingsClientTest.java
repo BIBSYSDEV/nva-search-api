@@ -7,21 +7,16 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.http.HttpClient;
-import java.net.http.HttpClient.Version;
-import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
-import java.util.Map;
-import java.util.Optional;
-import javax.net.ssl.SSLSession;
 import nva.commons.logutils.LogUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,7 +37,7 @@ class UserSettingsClientTest {
   void shouldReturnPromotedPublicationsOnSuccess() throws IOException, InterruptedException {
     var contributorId = randomString();
     var value =
-        FakeHttpResponse.create(
+        createResponse(
             """
             {
               "promotedPublications": [
@@ -62,8 +57,10 @@ class UserSettingsClientTest {
   void shouldReturnEmptyListOnFailureAndLogResponseThatFailed()
       throws IOException, InterruptedException {
     var contributorId = randomString();
-    when(httpClient.send(any(HttpRequest.class), eq(BodyHandlers.ofString())))
-        .thenReturn(FakeHttpResponse.create("{}", HTTP_BAD_GATEWAY));
+    var response = createResponse("{}", HTTP_BAD_GATEWAY);
+    lenient()
+        .when(httpClient.send(any(HttpRequest.class), eq(BodyHandlers.ofString())))
+        .thenReturn(response);
 
     var logger = LogUtils.getTestingAppenderForRootLogger();
     var promotedPublications = userSettingsClient.fetchPromotedPublications(contributorId);
@@ -80,8 +77,8 @@ class UserSettingsClientTest {
   void shouldNotSendAuthorizationHeaderWhenRequestingPromotedPublications()
       throws IOException, InterruptedException {
     var contributorId = randomString();
-    when(httpClient.send(any(HttpRequest.class), eq(BodyHandlers.ofString())))
-        .thenReturn(FakeHttpResponse.create("{}", HTTP_BAD_GATEWAY));
+    var response = createResponse("{}", HTTP_BAD_GATEWAY);
+    when(httpClient.send(any(HttpRequest.class), eq(BodyHandlers.ofString()))).thenReturn(response);
 
     userSettingsClient.fetchPromotedPublications(contributorId);
 
@@ -90,45 +87,11 @@ class UserSettingsClientTest {
     assertFalse(requestCaptor.getValue().headers().map().containsKey("Authorization"));
   }
 
-  private record FakeHttpResponse(String body, int statuCode) implements HttpResponse<String> {
-
-    public static FakeHttpResponse create(String body, int statuCode) {
-      return new FakeHttpResponse(body, statuCode);
-    }
-
-    @Override
-    public int statusCode() {
-      return statuCode;
-    }
-
-    @Override
-    public HttpRequest request() {
-      return null;
-    }
-
-    @Override
-    public Optional<HttpResponse<String>> previousResponse() {
-      return Optional.empty();
-    }
-
-    @Override
-    public HttpHeaders headers() {
-      return HttpHeaders.of(Map.of(), (s1, s2) -> true);
-    }
-
-    @Override
-    public Optional<SSLSession> sslSession() {
-      return Optional.empty();
-    }
-
-    @Override
-    public URI uri() {
-      return null;
-    }
-
-    @Override
-    public Version version() {
-      return null;
-    }
+  private HttpResponse<String> createResponse(String body, int statusCode) {
+    @SuppressWarnings("unchecked")
+    var response = (HttpResponse<String>) mock(HttpResponse.class);
+    when(response.body()).thenReturn(body);
+    when(response.statusCode()).thenReturn(statusCode);
+    return response;
   }
 }
