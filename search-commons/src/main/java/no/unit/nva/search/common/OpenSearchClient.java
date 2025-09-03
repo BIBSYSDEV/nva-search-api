@@ -78,6 +78,11 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
     return completableFuture.thenApplyAsync(
         response -> {
           if (response.statusCode() != HTTP_OK) {
+            logger.error(
+                "OpenSearch query {} failed with status code: {} and body: {}",
+                response.request().uri(),
+                response.statusCode(),
+                response.body());
             throw new OpenSearchClientException(response.statusCode(), response.body());
           }
           return attempt(() -> jsonToResponse(response)).map(logAndReturnResult()).orElseThrow();
