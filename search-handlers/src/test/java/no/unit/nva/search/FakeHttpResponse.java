@@ -1,5 +1,7 @@
 package no.unit.nva.search;
 
+import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
+
 import java.net.URI;
 import java.net.http.HttpClient.Version;
 import java.net.http.HttpHeaders;
@@ -22,7 +24,7 @@ public class FakeHttpResponse implements HttpResponse<Object> {
 
   @Override
   public HttpRequest request() {
-    return null;
+    return HttpRequest.newBuilder().uri(randomUri()).build();
   }
 
   @Override
