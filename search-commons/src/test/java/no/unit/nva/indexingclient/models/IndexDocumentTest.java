@@ -18,9 +18,11 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.time.Instant;
 import java.util.stream.Stream;
 import no.unit.nva.identifiers.SortableIdentifier;
 import org.junit.jupiter.api.Test;
@@ -118,6 +120,24 @@ class IndexDocumentTest {
   void shouldThrowExceptionWhenValidatingAndMissingMandatoryFields(
       IndexDocument invalidIndexDocument) {
     assertThrows(Exception.class, invalidIndexDocument::validate);
+  }
+
+  @Test
+  void shouldSetTimestampAutomaticallyOnIndexDocuments() throws JsonProcessingException {
+    var beforeCreation = Instant.now();
+    var indexDocument = new IndexDocument(randomConsumptionAttributes(), randomJsonObject());
+    var afterCreation = Instant.now();
+
+    var json = objectMapperWithEmpty.writeValueAsString(indexDocument);
+    var jsonNode = objectMapperWithEmpty.readTree(json);
+
+    var timestampText = jsonNode.get("body").get("indexDocumentCreatedAt").asText();
+    var timestamp = Instant.parse(timestampText);
+
+    assertTrue(
+        !timestamp.isBefore(beforeCreation) && !timestamp.isAfter(afterCreation),
+        String.format(
+            "Timestamp %s should be between %s and %s", timestamp, beforeCreation, afterCreation));
   }
 
   private EventConsumptionAttributes randomConsumptionAttributes() {

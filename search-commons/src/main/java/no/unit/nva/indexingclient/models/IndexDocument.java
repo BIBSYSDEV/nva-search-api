@@ -14,6 +14,8 @@ import static nva.commons.core.attempt.Try.attempt;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.Optional;
 import no.unit.nva.commons.json.JsonSerializable;
@@ -30,6 +32,12 @@ public record IndexDocument(
   static final String IMPORT_CANDIDATE = "ImportCandidate";
   static final String TICKET = "Ticket";
   static final String RESOURCE = "Resource";
+
+  public IndexDocument {
+    if (resource instanceof ObjectNode objectNode && !objectNode.has("indexDocumentCreatedAt")) {
+      objectNode.put("indexDocumentCreatedAt", Instant.now().toString());
+    }
+  }
 
   public static IndexDocument fromJsonString(String json) {
     return attempt(() -> objectMapperWithEmpty.readValue(json, IndexDocument.class)).orElseThrow();
