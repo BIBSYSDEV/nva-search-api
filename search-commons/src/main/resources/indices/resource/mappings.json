@@ -120,6 +120,9 @@
       "relations": {
         "hasParts": "partOf"
       }
+    },
+    "indexDocumentCreatedAt": {
+      "type": "date"
     }
   }
 }

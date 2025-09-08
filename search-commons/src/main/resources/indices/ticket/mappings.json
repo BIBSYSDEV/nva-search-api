@@ -45,6 +45,9 @@
           "type": "flat_object"
         }
       }
+    },
+    "indexDocumentCreatedAt": {
+      "type": "date"
     }
   }
 }
