@@ -44,13 +44,13 @@ public class ShardRoutingService {
 
     var parentIdentifier = extractParentIdentifier(resource);
     if (StringUtils.isNotBlank(parentIdentifier)) {
-      logger.info("Using parent identifier '{}' for routing", parentIdentifier);
+      logger.debug("Using parent identifier '{}' for routing", parentIdentifier);
       return parentIdentifier;
     }
 
     var docIdentifier = extractFieldValue(resource, IDENTIFIER_FIELD);
     if (StringUtils.isNotBlank(docIdentifier)) {
-      logger.info("Using document identifier '{}' for routing", docIdentifier);
+      logger.debug("Using document identifier '{}' for routing", docIdentifier);
       return docIdentifier;
     }
 
