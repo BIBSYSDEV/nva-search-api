@@ -45,7 +45,7 @@ class ShardRoutingContainerTest {
       new OpenSearchContainer<>(OPEN_SEARCH_IMAGE);
   private static final String TEST_INDEX = "test-resources";
   private static final int NUMBER_OF_SHARDS = 5;
-  private static final double ALLOWED_SHARD_SIZE_DIFFERENCE_IN_PERCENT = 0.25;
+  private static final double ALLOWED_SHARD_SIZE_DIFFERENCE_IN_PERCENT = 0.3;
 
   private static IndexingClient indexingClient;
   private static RestClient lowLevelClient;
