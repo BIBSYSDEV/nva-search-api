@@ -9,6 +9,7 @@ import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createDocumentW
 import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createStandalonePublicationDocument;
 import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.toIndexDocument;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -44,6 +45,7 @@ class ShardRoutingContainerTest {
       new OpenSearchContainer<>(OPEN_SEARCH_IMAGE);
   private static final String TEST_INDEX = "test-resources";
   private static final int NUMBER_OF_SHARDS = 5;
+  private static final double ALLOWED_SHARD_SIZE_DIFFERENCE_IN_PERCENT = 0.25;
 
   private static IndexingClient indexingClient;
   private static RestClient lowLevelClient;
@@ -94,7 +96,7 @@ class ShardRoutingContainerTest {
     var shardDistribution = getActualShardDistribution();
 
     // Then documents should be distributed across multiple shards evenly
-    assertEvenDistribution(shardDistribution, publicationCount, 0.25);
+    assertEvenDistribution(shardDistribution, publicationCount);
   }
 
   @Test
@@ -178,7 +180,7 @@ class ShardRoutingContainerTest {
     var shardDistribution = getActualShardDistribution();
 
     // Then documents should be distributed (may not be perfectly even with small count)
-    assertTrue(shardDistribution.size() > 0, "Should have documents in at least one shard");
+    assertFalse(shardDistribution.isEmpty(), "Should have documents in at least one shard");
     assertEquals(
         documentCount,
         shardDistribution.values().stream().mapToInt(Integer::intValue).sum(),
@@ -318,8 +320,7 @@ class ShardRoutingContainerTest {
       var hits = responseJson.path("hits").path("hits");
       if (!hits.isEmpty()) {
         var hit = hits.get(0);
-        var routing = hit.path("_routing").asText();
-        return routing;
+        return hit.path("_routing").asText();
       } else {
         throw new IllegalStateException("Document not found: " + documentId);
       }
@@ -328,10 +329,9 @@ class ShardRoutingContainerTest {
     }
   }
 
-  private void assertEvenDistribution(
-      Map<String, Integer> shardCounts, int totalDocuments, double tolerancePercent) {
+  private void assertEvenDistribution(Map<String, Integer> shardCounts, int totalDocuments) {
     var expectedPerShard = (double) totalDocuments / NUMBER_OF_SHARDS;
-    var tolerance = expectedPerShard * tolerancePercent;
+    var tolerance = expectedPerShard * ALLOWED_SHARD_SIZE_DIFFERENCE_IN_PERCENT;
 
     for (var shard : shardCounts.entrySet()) {
       assertEquals(expectedPerShard, shard.getValue(), tolerance);
@@ -348,7 +348,7 @@ class ShardRoutingContainerTest {
 
   private void addDocumentsToIndex(Collection<IndexDocument> documents) {
     try {
-      documents.forEach(doc -> addSingleDocumentToIndex(doc));
+      documents.forEach(this::addSingleDocumentToIndex);
       indexingClient.refreshIndex(TEST_INDEX);
     } catch (Exception e) {
       throw new RuntimeException(e);

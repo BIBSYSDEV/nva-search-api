@@ -25,14 +25,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.time.Instant;
 import java.util.stream.Stream;
 import no.unit.nva.identifiers.SortableIdentifier;
-import no.unit.nva.indexingclient.ShardRoutingService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class IndexDocumentTest {
-  private static final ShardRoutingService shardRoutingService = new ShardRoutingService();
 
   public static Stream<IndexDocument> invalidConsumptionAttributes() {
     var consumptionAttributesMissingIndexName =
