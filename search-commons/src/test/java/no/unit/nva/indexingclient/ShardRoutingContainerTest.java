@@ -88,14 +88,11 @@ class ShardRoutingContainerTest {
   @Test
   @DisplayName("Should distribute standalone publications across multiple shards")
   void shouldDistributeStandalonePublicationsAcrossShards() {
-    // Given many standalone publication documents
     var publicationCount = 1000;
-    indexManyStandalonePublications(publicationCount);
+    addDocumentsToIndex(createIndependentPublications(1000));
 
-    // When querying OpenSearch for actual shard distribution
     var shardDistribution = getActualShardDistribution();
 
-    // Then documents should be distributed across multiple shards evenly
     assertEvenDistribution(shardDistribution, publicationCount);
   }
 
@@ -117,7 +114,7 @@ class ShardRoutingContainerTest {
       assertEquals(anthologyShardId, chapterShardId);
     }
 
-    for (int i = 0; i < chapterIds.size(); i++) {
+    for (var i = 0; i < chapterIds.size(); i++) {
       assertEquals(
           anthologyShardId,
           chapterShardIds.get(i),
@@ -126,46 +123,19 @@ class ShardRoutingContainerTest {
                   + "Anthology shard: %s, Chapter shard: %s",
               chapterIds.get(i), anthologyId, anthologyShardId, chapterShardIds.get(i)));
     }
-
-    logger.info(
-        "Parent-child co-location verified: anthology and {} chapters all in shard {}",
-        chapterIds.size(),
-        anthologyShardId);
   }
 
   @Test
   @DisplayName("Should handle mixed documents with proper routing")
   void shouldHandleMixedDocumentsWithProperRouting() {
-    // Given a mix of different publication types
-    var anthologyCount = 10;
-    var chaptersPerAnthology = 5;
-    var standalonePublicationCount = 950;
-    var publicationCount =
-        standalonePublicationCount + anthologyCount + anthologyCount * chaptersPerAnthology;
+    var anthologiesAndChapters = createAnthologiesAndChapters(20, 5);
+    var otherPublications = createIndependentPublications(950);
+    addDocumentsToIndex(anthologiesAndChapters);
+    addDocumentsToIndex(otherPublications);
+    var numberOfPublications = anthologiesAndChapters.size() + otherPublications.size();
 
-    var indexDocuments = new ArrayList<IndexDocument>();
-    for (int i = 0; i < anthologyCount; i++) {
-      var anthologyIdentifier = SortableIdentifier.next().toString();
-      indexDocuments.add(toIndexDocument(createAnthologyDocument(anthologyIdentifier), TEST_INDEX));
-      for (int j = 0; j < anthologyCount; j++) {
-        var chapterIdentifier = SortableIdentifier.next().toString();
-        indexDocuments.add(
-            toIndexDocument(
-                createChapterDocument(chapterIdentifier, anthologyIdentifier), TEST_INDEX));
-      }
-    }
-    for (int i = 0; i < standalonePublicationCount; i++) {
-      indexDocuments.add(
-          toIndexDocument(
-              createAnthologyDocument(SortableIdentifier.next().toString()), TEST_INDEX));
-    }
-    addDocumentsToIndex(indexDocuments);
-
-    // When querying OpenSearch for actual shard distribution
     var shardDistribution = getActualShardDistribution();
-
-    // Then documents should be distributed across multiple shards evenly
-    assertEvenDistribution(shardDistribution, publicationCount);
+    assertEvenDistribution(shardDistribution, numberOfPublications);
   }
 
   @Test
@@ -173,7 +143,7 @@ class ShardRoutingContainerTest {
   void shouldRouteDocumentsWithIdFieldCorrectly() {
     // Given documents with id field instead of identifier
     var documentCount = 10;
-    for (int i = 0; i < documentCount; i++) {
+    for (var i = 0; i < documentCount; i++) {
       var documentId = "doc-with-id-" + i;
       addDocumentsToIndex(createDocumentWithIdField(documentId));
     }
@@ -243,14 +213,30 @@ class ShardRoutingContainerTest {
             "joinField", Map.of("type", "join", "relations", Map.of("hasParts", "partOf"))));
   }
 
-  private void indexManyStandalonePublications(int count) {
+  private static ArrayList<IndexDocument> createIndependentPublications(int numberOfPublications) {
     var indexDocuments = new ArrayList<IndexDocument>();
-    for (int i = 0; i < count; i++) {
-      var publicationId = "publication-" + i;
-      var publicationDocument = createStandalonePublicationDocument(publicationId);
-      indexDocuments.add(toIndexDocument(publicationDocument, TEST_INDEX));
+    for (var i = 0; i < numberOfPublications; i++) {
+      indexDocuments.add(
+          toIndexDocument(
+              createAnthologyDocument(SortableIdentifier.next().toString()), TEST_INDEX));
     }
-    addDocumentsToIndex(indexDocuments);
+    return indexDocuments;
+  }
+
+  private static ArrayList<IndexDocument> createAnthologiesAndChapters(
+      int numberOfAnthologies, int chaptersPerAnthology) {
+    var indexDocuments = new ArrayList<IndexDocument>();
+    for (var i = 0; i < numberOfAnthologies; i++) {
+      var anthologyIdentifier = SortableIdentifier.next().toString();
+      indexDocuments.add(toIndexDocument(createAnthologyDocument(anthologyIdentifier), TEST_INDEX));
+      for (var j = 0; j < chaptersPerAnthology; j++) {
+        var chapterIdentifier = SortableIdentifier.next().toString();
+        indexDocuments.add(
+            toIndexDocument(
+                createChapterDocument(chapterIdentifier, anthologyIdentifier), TEST_INDEX));
+      }
+    }
+    return indexDocuments;
   }
 
   private void indexAnthologyWithChapters(String anthologyId, List<String> chapterIds) {
