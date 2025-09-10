@@ -21,6 +21,7 @@ public class ShardRoutingService {
   private static final String PART_OF = "partOf";
   private static final String IDENTIFIER_FIELD = "identifier";
   private static final String ID_FIELD = "id";
+  private static final String PARENT_IDENTIFIER_NOT_FOUND = "PARENT_IDENTIFIER_NOT_FOUND";
 
   public ShardRoutingService() {}
 
@@ -61,8 +62,8 @@ public class ShardRoutingService {
     }
 
     logger.warn(
-        "No identifier, id, or parent found in resource, using document string for routing");
-    return resource.toString();
+        "No identifier, id, or parent found in resource, using hashed document string for routing");
+    return String.valueOf(resource.toString().hashCode());
   }
 
   /**
@@ -103,6 +104,8 @@ public class ShardRoutingService {
     }
 
     var parentId = parent.asText();
-    return StringUtils.isNotBlank(parentId) ? parentId : null;
+    return StringUtils.isNotBlank(parentId) && !PARENT_IDENTIFIER_NOT_FOUND.equals(parentId)
+        ? parentId
+        : null;
   }
 }

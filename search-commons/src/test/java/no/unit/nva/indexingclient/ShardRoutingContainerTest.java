@@ -10,7 +10,6 @@ import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createStandalon
 import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.toIndexDocument;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
@@ -21,6 +20,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexingclient.models.IndexDocument;
 import no.unit.nva.indexingclient.models.RestHighLevelClientWrapper;
 import org.apache.hc.core5.http.HttpHost;
@@ -136,34 +136,36 @@ class ShardRoutingContainerTest {
   @Test
   @DisplayName("Should handle mixed documents with proper routing")
   void shouldHandleMixedDocumentsWithProperRouting() {
-    // Given mixed document types: standalone publications and anthology with chapters
-    indexManyStandalonePublications(50);
+    // Given a mix of different publication types
+    var anthologyCount = 10;
+    var chaptersPerAnthology = 5;
+    var standalonePublicationCount = 950;
+    var publicationCount =
+        standalonePublicationCount + anthologyCount + anthologyCount * chaptersPerAnthology;
 
-    var anthologyId = "mixed-anthology-456";
-    var chapterIds = List.of("mixed-chapter-1", "mixed-chapter-2");
-    indexAnthologyWithChapters(anthologyId, chapterIds);
+    var indexDocuments = new ArrayList<IndexDocument>();
+    for (int i = 0; i < anthologyCount; i++) {
+      var anthologyIdentifier = SortableIdentifier.next().toString();
+      indexDocuments.add(toIndexDocument(createAnthologyDocument(anthologyIdentifier), TEST_INDEX));
+      for (int j = 0; j < anthologyCount; j++) {
+        var chapterIdentifier = SortableIdentifier.next().toString();
+        indexDocuments.add(
+            toIndexDocument(
+                createChapterDocument(chapterIdentifier, anthologyIdentifier), TEST_INDEX));
+      }
+    }
+    for (int i = 0; i < standalonePublicationCount; i++) {
+      indexDocuments.add(
+          toIndexDocument(
+              createAnthologyDocument(SortableIdentifier.next().toString()), TEST_INDEX));
+    }
+    addDocumentsToIndex(indexDocuments);
 
-    // When querying for distribution
-    var totalDocuments = 50 + 1 + 2; // publications + anthology + chapters
+    // When querying OpenSearch for actual shard distribution
     var shardDistribution = getActualShardDistribution();
 
-    // Then should have good distribution
-    assertTrue(shardDistribution.size() > 1, "Should use multiple shards");
-    assertEquals(
-        totalDocuments,
-        shardDistribution.values().stream().mapToInt(Integer::intValue).sum(),
-        "Should have indexed all documents");
-
-    // And parent-child should still be co-located
-    var anthologyShardId = getDocumentShardId(anthologyId);
-    chapterIds.forEach(
-        chapterId ->
-            assertEquals(
-                anthologyShardId,
-                getDocumentShardId(chapterId),
-                "Chapter should be co-located with anthology"));
-
-    logger.info("Mixed document routing verified with distribution: {}", shardDistribution);
+    // Then documents should be distributed across multiple shards evenly
+    assertEvenDistribution(shardDistribution, publicationCount);
   }
 
   @Test

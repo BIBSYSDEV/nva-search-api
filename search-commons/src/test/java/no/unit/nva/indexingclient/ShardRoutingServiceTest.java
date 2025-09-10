@@ -12,6 +12,7 @@ import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createChapterDo
 import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createDocumentNode;
 import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createDocumentWithBothIdentifierAndId;
 import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createDocumentWithIdField;
+import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createDocumentWithIdentifierField;
 import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createResourceAndGetRoutingKey;
 import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createResourceWithJoinField;
 import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createStandalonePublicationDocument;
@@ -35,8 +36,8 @@ class ShardRoutingServiceTest {
   void shouldUseParentIdentifierForChildDocuments() {
     // Given a child document with joinField containing parent reference
     var parentIdentifier = randomUUID().toString();
-    var resource = createResourceWithJoinField(parentIdentifier);
-    resource.put(IDENTIFIER_FIELD, randomUUID().toString());
+    var identifier = randomUUID().toString();
+    var resource = createChapterDocument(identifier, parentIdentifier);
 
     // When calculating routing key
     var routingKey = ShardRoutingService.calculateRoutingKey(resource);
@@ -50,8 +51,7 @@ class ShardRoutingServiceTest {
   void shouldUseDocumentIdentifierWhenNoParent() {
     // Given a document with only identifier field
     var identifier = randomUUID().toString();
-    var resource = createDocumentNode();
-    resource.put(IDENTIFIER_FIELD, identifier);
+    var resource = createDocumentWithIdentifierField(identifier);
 
     // When calculating routing key
     var routingKey = ShardRoutingService.calculateRoutingKey(resource);
@@ -112,6 +112,21 @@ class ShardRoutingServiceTest {
   }
 
   @Test
+  @DisplayName("Should handle PARENT_IDENTIFIER_NOT_FOUND placeholder gracefully")
+  void shouldHandleParentIdentifierNotFoundPlaceholderGracefully() {
+    // Given a document with PARENT_IDENTIFIER_NOT_FOUND placeholder
+    var identifier = "document-with-placeholder-parent";
+    var resource = createResourceWithJoinField("PARENT_IDENTIFIER_NOT_FOUND");
+    resource.put(IDENTIFIER_FIELD, identifier);
+
+    // When calculating routing key
+    var routingKey = ShardRoutingService.calculateRoutingKey(resource);
+
+    // Then should fall back to identifier (ignoring the placeholder)
+    assertEquals(identifier, routingKey);
+  }
+
+  @Test
   @DisplayName("Should handle null identifier gracefully")
   void shouldHandleNullIdentifierGracefully() {
     // Given a document with null identifier
@@ -121,10 +136,9 @@ class ShardRoutingServiceTest {
     // When calculating routing key
     var routingKey = ShardRoutingService.calculateRoutingKey(resource);
 
-    // Then should generate consistent routing key based on document hash
-    assertEquals(resource.toString(), routingKey);
+    // Then should generate consistent hashed routing key based on document hash
+    assertEquals(String.valueOf(resource.toString().hashCode()), routingKey);
   }
-
 
   @Test
   @DisplayName("Should produce consistent routing keys for same identifier")
@@ -192,7 +206,6 @@ class ShardRoutingServiceTest {
         "Chapter routing should be based on parent anthology identifier");
   }
 
-
   @Test
   @DisplayName("Should handle mixed scenario with multiple anthologies and chapters")
   void shouldHandleMixedScenarioWithMultipleAnthologiesAndChapters() {
@@ -208,7 +221,7 @@ class ShardRoutingServiceTest {
       var anthologyRequest = anthologyIndexDocument.toIndexRequest();
 
       // Create chapter documents for this anthology
-      for (int j = 0; j < chaptersPerAnthology; j++) {
+      for (var j = 0; j < chaptersPerAnthology; j++) {
         var chapterId = anthologyId + "-chapter-" + j;
         var chapterDocument = createChapterDocument(chapterId, anthologyId);
         var chapterIndexDocument = toIndexDocument(chapterDocument, RESOURCES_INDEX);
@@ -224,15 +237,13 @@ class ShardRoutingServiceTest {
     }
   }
 
-
-
   @ParameterizedTest
   @ValueSource(ints = {10, 100})
   @DisplayName("Should generate unique and consistent routing keys for publications")
   void shouldGenerateUniqueAndConsistentRoutingKeysForPublications(int totalDocuments) {
     // Given many different publication documents
     var routingKeys = new ArrayList<String>();
-    for (int i = 0; i < totalDocuments; i++) {
+    for (var i = 0; i < totalDocuments; i++) {
       var publicationDocument = createStandalonePublicationDocument("publication-" + i);
       var indexDocument = toIndexDocument(publicationDocument, RESOURCES_INDEX);
 
@@ -241,7 +252,7 @@ class ShardRoutingServiceTest {
     }
 
     // Then routing keys should match publication identifiers
-    for (int i = 0; i < totalDocuments; i++) {
+    for (var i = 0; i < totalDocuments; i++) {
       var expectedId = "publication-" + i;
       assertEquals(
           expectedId, routingKeys.get(i), "Routing key should match publication identifier");
