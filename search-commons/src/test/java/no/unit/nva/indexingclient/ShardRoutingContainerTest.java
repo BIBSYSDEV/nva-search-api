@@ -7,16 +7,19 @@ import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createAnthology
 import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createChapterDocument;
 import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createDocumentWithIdField;
 import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createStandalonePublicationDocument;
+import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.toIndexDocument;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import no.unit.nva.identifiers.SortableIdentifier;
-import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
 import no.unit.nva.indexingclient.models.IndexDocument;
 import no.unit.nva.indexingclient.models.RestHighLevelClientWrapper;
 import org.apache.hc.core5.http.HttpHost;
@@ -168,36 +171,20 @@ class ShardRoutingContainerTest {
     var documentCount = 10;
     for (int i = 0; i < documentCount; i++) {
       var documentId = "doc-with-id-" + i;
-      var document = createDocumentWithIdField(documentId);
-      var indexDocument =
-          new IndexDocument(
-              new EventConsumptionAttributes(TEST_INDEX, SortableIdentifier.next()), document);
-
-      try {
-        indexingClient.addDocumentToIndex(indexDocument);
-      } catch (IOException e) {
-        throw new RuntimeException("Failed to index document with id field", e);
-      }
+      addDocumentsToIndex(createDocumentWithIdField(documentId));
     }
 
-    try {
-      indexingClient.refreshIndex(TEST_INDEX);
-      logger.info("Indexed {} documents with id field", documentCount);
+    // When querying for distribution
+    var shardDistribution = getActualShardDistribution();
 
-      // When querying for distribution
-      var shardDistribution = getActualShardDistribution();
+    // Then documents should be distributed (may not be perfectly even with small count)
+    assertTrue(shardDistribution.size() > 0, "Should have documents in at least one shard");
+    assertEquals(
+        documentCount,
+        shardDistribution.values().stream().mapToInt(Integer::intValue).sum(),
+        "Should have indexed all documents with id field");
 
-      // Then documents should be distributed (may not be perfectly even with small count)
-      assertTrue(shardDistribution.size() > 0, "Should have documents in at least one shard");
-      assertEquals(
-          documentCount,
-          shardDistribution.values().stream().mapToInt(Integer::intValue).sum(),
-          "Should have indexed all documents with id field");
-
-      logger.info("ID field routing verified with distribution: {}", shardDistribution);
-    } catch (IOException e) {
-      throw new RuntimeException("Failed to refresh index", e);
-    }
+    logger.info("ID field routing verified with distribution: {}", shardDistribution);
   }
 
   @Test
@@ -206,13 +193,8 @@ class ShardRoutingContainerTest {
     // Given a publication document indexed with routing
     var publicationId = "routing-consistency-test";
     var publicationDocument = createStandalonePublicationDocument(publicationId);
-    var indexDocument =
-        new IndexDocument(
-            new EventConsumptionAttributes(TEST_INDEX, SortableIdentifier.next()),
-            publicationDocument);
-
-    indexingClient.addDocumentToIndex(indexDocument);
-    indexingClient.refreshIndex(TEST_INDEX);
+    var indexDocument = toIndexDocument(publicationDocument, TEST_INDEX);
+    addDocumentsToIndex(indexDocument);
 
     // When getting the document's shard location
     var originalShardId = getDocumentShardId(publicationId);
@@ -221,8 +203,7 @@ class ShardRoutingContainerTest {
     indexingClient.deleteIndex(TEST_INDEX);
     createTestIndex();
 
-    indexingClient.addDocumentToIndex(indexDocument);
-    indexingClient.refreshIndex(TEST_INDEX);
+    addDocumentsToIndex(indexDocument);
 
     var newShardId = getDocumentShardId(publicationId);
 
@@ -259,51 +240,29 @@ class ShardRoutingContainerTest {
   }
 
   private void indexManyStandalonePublications(int count) {
-    try {
-      for (int i = 0; i < count; i++) {
-        var publicationId = "publication-" + i;
-        var publicationDocument = createStandalonePublicationDocument(publicationId);
-        var indexDocument =
-            new IndexDocument(
-                new EventConsumptionAttributes(TEST_INDEX, SortableIdentifier.next()),
-                publicationDocument);
-
-        indexingClient.addDocumentToIndex(indexDocument);
-      }
-
-      // Refresh index to make documents searchable
-      indexingClient.refreshIndex(TEST_INDEX);
-      logger.info("Indexed {} standalone publications", count);
-    } catch (IOException e) {
-      throw new RuntimeException("Failed to index publications", e);
+    var indexDocuments = new ArrayList<IndexDocument>();
+    for (int i = 0; i < count; i++) {
+      var publicationId = "publication-" + i;
+      var publicationDocument = createStandalonePublicationDocument(publicationId);
+      indexDocuments.add(toIndexDocument(publicationDocument, TEST_INDEX));
     }
+    addDocumentsToIndex(indexDocuments);
   }
 
   private void indexAnthologyWithChapters(String anthologyId, List<String> chapterIds) {
-    try {
-      // Index anthology (parent document)
-      var anthologyDocument = createAnthologyDocument(anthologyId);
-      var anthologyIndexDocument =
-          new IndexDocument(
-              new EventConsumptionAttributes(TEST_INDEX, SortableIdentifier.next()),
-              anthologyDocument);
-      indexingClient.addDocumentToIndex(anthologyIndexDocument);
+    var indexDocuments = new ArrayList<IndexDocument>();
 
-      // Index chapters (child documents)
-      for (var chapterId : chapterIds) {
-        var chapterDocument = createChapterDocument(chapterId, anthologyId);
-        var chapterIndexDocument =
-            new IndexDocument(
-                new EventConsumptionAttributes(TEST_INDEX, SortableIdentifier.next()),
-                chapterDocument);
-        indexingClient.addDocumentToIndex(chapterIndexDocument);
-      }
+    // Index anthology (parent document)
+    var anthologyDocument = createAnthologyDocument(anthologyId);
+    indexDocuments.add(toIndexDocument(anthologyDocument, TEST_INDEX));
 
-      // Refresh index to make documents searchable
-      indexingClient.refreshIndex(TEST_INDEX);
-    } catch (IOException e) {
-      throw new RuntimeException("Failed to index anthology with chapters", e);
+    // Index chapters (child documents)
+    for (var chapterId : chapterIds) {
+      var chapterDocument = createChapterDocument(chapterId, anthologyId);
+      indexDocuments.add(toIndexDocument(chapterDocument, TEST_INDEX));
     }
+
+    addDocumentsToIndex(indexDocuments);
   }
 
   /**
@@ -356,17 +315,12 @@ class ShardRoutingContainerTest {
       var responseBody = response.getEntity().getContent().readAllBytes();
       var responseJson = objectMapperWithEmpty.readTree(responseBody);
 
-      logger.info("Search response for document '{}': {}", documentId, responseJson);
-
       var hits = responseJson.path("hits").path("hits");
       if (!hits.isEmpty()) {
         var hit = hits.get(0);
         var routing = hit.path("_routing").asText();
-        logger.info("Found document '{}' with routing: {}", documentId, routing);
         return routing;
       } else {
-        var totalHits = responseJson.path("hits").path("total").path("value").asInt();
-        logger.error("Document '{}' not found. Total hits: {}", documentId, totalHits);
         throw new IllegalStateException("Document not found: " + documentId);
       }
     } catch (IOException e) {
@@ -379,16 +333,35 @@ class ShardRoutingContainerTest {
     var expectedPerShard = (double) totalDocuments / NUMBER_OF_SHARDS;
     var tolerance = expectedPerShard * tolerancePercent;
 
-    shardCounts
-        .values()
-        .forEach(
-            count -> {
-              var delta = Math.abs(count - expectedPerShard);
-              assertTrue(
-                  delta <= tolerance,
-                  String.format(
-                      "Shard has %d documents, expected %.0f ±%.0f (actual delta: %.1f)",
-                      count, expectedPerShard, tolerance, delta));
-            });
+    for (var shard : shardCounts.entrySet()) {
+      assertEquals(expectedPerShard, shard.getValue(), tolerance);
+    }
+  }
+
+  private void addSingleDocumentToIndex(IndexDocument indexDocument) {
+    try {
+      indexingClient.addDocumentToIndex(indexDocument);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private void addDocumentsToIndex(Collection<IndexDocument> documents) {
+    try {
+      documents.forEach(doc -> addSingleDocumentToIndex(doc));
+      indexingClient.refreshIndex(TEST_INDEX);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private void addDocumentsToIndex(IndexDocument... documents) {
+    addDocumentsToIndex(List.of(documents));
+  }
+
+  private void addDocumentsToIndex(ObjectNode... documents) {
+    var indexDocuments =
+        Arrays.stream(documents).map(doc -> toIndexDocument(doc, TEST_INDEX)).toList();
+    addDocumentsToIndex(indexDocuments);
   }
 }

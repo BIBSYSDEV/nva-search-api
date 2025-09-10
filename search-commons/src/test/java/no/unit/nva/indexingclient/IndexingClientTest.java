@@ -151,24 +151,28 @@ class IndexingClientTest {
   }
 
   @Test
-  void shouldNotThrowExceptionWhenTryingToDeleteNonExistingDocument() throws IOException {
-    RestHighLevelClientWrapper restHighLevelClient = mock(RestHighLevelClientWrapper.class);
-    BulkByScrollResponse nothingFoundResponse = mock(BulkByScrollResponse.class);
-    when(nothingFoundResponse.getDeleted()).thenReturn(0L);
-    when(restHighLevelClient.deleteByQuery(any(), any())).thenReturn(nothingFoundResponse);
-    IndexingClient indexingClient = new IndexingClient(restHighLevelClient, cachedJwtProvider);
-    assertDoesNotThrow(() -> indexingClient.removeDocumentFromResourcesIndex("1234"));
+  void shouldNotThrowExceptionWhenTryingToDeleteNonExistingDocument() {
+    var clientReturningNotFound = getIndexClientReturningNotFoundForDeleteRequests();
+    assertDoesNotThrow(() -> clientReturningNotFound.removeDocumentFromResourcesIndex("1234"));
   }
 
   @Test
-  void shouldNotThrowExceptionWhenTryingToDeleteNonExistingDocumentFromImportCandidateIndex()
-      throws IOException {
-    RestHighLevelClientWrapper restHighLevelClient = mock(RestHighLevelClientWrapper.class);
-    BulkByScrollResponse nothingFoundResponse = mock(BulkByScrollResponse.class);
+  void shouldNotThrowExceptionWhenTryingToDeleteNonExistingDocumentFromImportCandidateIndex() {
+    var clientReturningNotFound = getIndexClientReturningNotFoundForDeleteRequests();
+    assertDoesNotThrow(
+        () -> clientReturningNotFound.removeDocumentFromImportCandidateIndex("1234"));
+  }
+
+  private IndexingClient getIndexClientReturningNotFoundForDeleteRequests() {
+    var restHighLevelClient = mock(RestHighLevelClientWrapper.class);
+    var nothingFoundResponse = mock(BulkByScrollResponse.class);
     when(nothingFoundResponse.getDeleted()).thenReturn(0L);
-    when(restHighLevelClient.deleteByQuery(any(), any())).thenReturn(nothingFoundResponse);
-    IndexingClient indexingClient = new IndexingClient(restHighLevelClient, cachedJwtProvider);
-    assertDoesNotThrow(() -> indexingClient.removeDocumentFromImportCandidateIndex("1234"));
+    try {
+      when(restHighLevelClient.deleteByQuery(any(), any())).thenReturn(nothingFoundResponse);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    return new IndexingClient(restHighLevelClient, cachedJwtProvider);
   }
 
   @Test

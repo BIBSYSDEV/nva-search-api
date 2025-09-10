@@ -80,9 +80,16 @@ public record IndexDocument(
         .orElseThrow(() -> new RuntimeException(MISSING_IDENTIFIER_IN_RESOURCE));
   }
 
+  public IndexRequest toIndexRequest() {
+    var routingKey = ShardRoutingService.calculateRoutingKey(resource);
+    return new IndexRequest(getIndexName())
+        .source(serializeResource(), XContentType.JSON)
+        .routing(routingKey)
+        .id(getDocumentIdentifier());
+  }
+
   public IndexRequest toIndexRequest(ShardRoutingService shardRoutingService) {
-    Objects.requireNonNull(shardRoutingService, "ShardRoutingService cannot be null");
-    var routingKey = shardRoutingService.calculateRoutingKey(resource);
+    var routingKey = ShardRoutingService.calculateRoutingKey(resource);
     return new IndexRequest(getIndexName())
         .source(serializeResource(), XContentType.JSON)
         .routing(routingKey)
