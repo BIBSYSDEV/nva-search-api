@@ -26,19 +26,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** Class for avoiding mocking/spying the ES final classes. */
-public class RestHighLevelClientWrapper {
+public record RestHighLevelClientWrapper(RestHighLevelClient client) {
 
   private static final Logger logger = LoggerFactory.getLogger(RestHighLevelClientWrapper.class);
 
   private static final String SEARCH_INFRASTRUCTURE_API_URI =
       ENVIRONMENT.readEnv("SEARCH_INFRASTRUCTURE_API_URI");
   private static final String INITIAL_LOG_MESSAGE = "Connecting to search infrastructure at {}";
-
-  private final RestHighLevelClient client;
-
-  public RestHighLevelClientWrapper(RestHighLevelClient client) {
-    this.client = client;
-  }
 
   public RestHighLevelClientWrapper(RestClientBuilder clientBuilder) {
     this(new RestHighLevelClient(clientBuilder));
@@ -62,8 +56,9 @@ public class RestHighLevelClientWrapper {
    *
    * @return the contained client
    */
+  @Override
   @JacocoGenerated
-  public RestHighLevelClient getClient() {
+  public RestHighLevelClient client() {
     logger.warn("Use getClient only for finding which methods you need to add to the wrapper");
     return this.client;
   }

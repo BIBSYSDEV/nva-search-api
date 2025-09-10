@@ -1,6 +1,5 @@
 package no.unit.nva.indexingclient;
 
-import static no.unit.nva.constants.Defaults.DEFAULT_SHARD_ID;
 import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.indexingclient.models.RestHighLevelClientWrapper.defaultRestHighLevelClientWrapper;
@@ -32,7 +31,6 @@ import org.opensearch.action.bulk.BulkRequest;
 import org.opensearch.action.bulk.BulkResponse;
 import org.opensearch.action.delete.DeleteRequest;
 import org.opensearch.action.delete.DeleteResponse;
-import org.opensearch.action.index.IndexRequest;
 import org.opensearch.action.support.ActiveShardCount;
 import org.opensearch.action.support.WriteRequest.RefreshPolicy;
 import org.opensearch.client.indices.CreateIndexRequest;
@@ -81,8 +79,8 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
     openSearchClient.indices().refresh(refreshRequest, getRequestOptions());
   }
 
-  private static DeleteRequest deleteDocumentRequest(String index, String identifier) {
-    return new DeleteRequest(index, identifier).routing(DEFAULT_SHARD_ID);
+  private DeleteRequest deleteDocumentRequest(String index, String identifier) {
+    return new DeleteRequest(index, identifier);
   }
 
   public Void addDocumentToIndex(IndexDocument indexDocument) throws IOException {
@@ -95,18 +93,18 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
   /**
    * Removes a document from Opensearch index.
    *
-   * @param identifier og document
+   * @param identifier the identifier of the document
    */
   public void removeDocumentFromResourcesIndex(String identifier) throws IOException {
     var deleteRequest = deleteDocumentRequest(RESOURCES, identifier);
     var deleteResponse = openSearchClient.delete(deleteRequest, getRequestOptions());
-    loggWarningIfNotFound(identifier, deleteResponse);
+    logWarningIfNotFound(identifier, deleteResponse);
   }
 
   public void removeDocumentFromImportCandidateIndex(String identifier) throws IOException {
     var deleteRequest = deleteDocumentRequest(IMPORT_CANDIDATES_INDEX, identifier);
     var deleteResponse = openSearchClient.delete(deleteRequest, getRequestOptions());
-    loggWarningIfNotFound(identifier, deleteResponse);
+    logWarningIfNotFound(identifier, deleteResponse);
   }
 
   public Void createIndex(String indexName) throws IOException {
@@ -144,10 +142,9 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
   }
 
   private BulkResponse insertBatch(List<IndexDocument> bulk) throws IOException {
-    List<IndexRequest> indexRequests =
-        bulk.stream().parallel().map(IndexDocument::toIndexRequest).toList();
+    var indexRequests = bulk.stream().parallel().map(IndexDocument::toIndexRequest).toList();
 
-    BulkRequest request = new BulkRequest();
+    var request = new BulkRequest();
     indexRequests.forEach(request::add);
     request.setRefreshPolicy(RefreshPolicy.WAIT_UNTIL);
     request.waitForActiveShards(ActiveShardCount.ONE);
@@ -168,7 +165,7 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
         .orElseThrow();
   }
 
-  private void loggWarningIfNotFound(String identifier, DeleteResponse deleteResponse) {
+  private void logWarningIfNotFound(String identifier, DeleteResponse deleteResponse) {
     if (deleteResponse.getResult() == DocWriteResponse.Result.NOT_FOUND) {
       logger.warn(DOCUMENT_WITH_ID_WAS_NOT_FOUND_IN_SEARCH_INFRASTRUCTURE, identifier);
     }

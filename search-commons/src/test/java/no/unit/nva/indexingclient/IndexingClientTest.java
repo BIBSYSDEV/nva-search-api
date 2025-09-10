@@ -66,7 +66,7 @@ class IndexingClientTest {
   private CachedJwtProvider cachedJwtProvider;
 
   @BeforeEach
-  public void init() throws IOException {
+  void init() throws IOException {
     cachedJwtProvider = setupMockedCachedJwtProvider();
     esClient = setupMockEsClient();
     indexingClient = new IndexingClient(esClient, cachedJwtProvider);
@@ -152,24 +152,28 @@ class IndexingClientTest {
   }
 
   @Test
-  void shouldNotThrowExceptionWhenTryingToDeleteNonExistingDocument() throws IOException {
-    RestHighLevelClientWrapper restHighLevelClient = mock(RestHighLevelClientWrapper.class);
-    DeleteResponse nothingFoundResponse = mock(DeleteResponse.class);
-    when(nothingFoundResponse.getResult()).thenReturn(DocWriteResponse.Result.NOT_FOUND);
-    when(restHighLevelClient.delete(any(), any())).thenReturn(nothingFoundResponse);
-    IndexingClient indexingClient = new IndexingClient(restHighLevelClient, cachedJwtProvider);
-    assertDoesNotThrow(() -> indexingClient.removeDocumentFromResourcesIndex("1234"));
+  void shouldNotThrowExceptionWhenTryingToDeleteNonExistingDocument() {
+    var clientReturningNotFound = getIndexClientReturningNotFoundForDeleteRequests();
+    assertDoesNotThrow(() -> clientReturningNotFound.removeDocumentFromResourcesIndex("1234"));
   }
 
   @Test
-  void shouldNotThrowExceptionWhenTryingToDeleteNonExistingDocumentFromImportCandidateIndex()
-      throws IOException {
-    RestHighLevelClientWrapper restHighLevelClient = mock(RestHighLevelClientWrapper.class);
-    DeleteResponse nothingFoundResponse = mock(DeleteResponse.class);
+  void shouldNotThrowExceptionWhenTryingToDeleteNonExistingDocumentFromImportCandidateIndex() {
+    var clientReturningNotFound = getIndexClientReturningNotFoundForDeleteRequests();
+    assertDoesNotThrow(
+        () -> clientReturningNotFound.removeDocumentFromImportCandidateIndex("1234"));
+  }
+
+  private IndexingClient getIndexClientReturningNotFoundForDeleteRequests() {
+    var restHighLevelClient = mock(RestHighLevelClientWrapper.class);
+    var nothingFoundResponse = mock(DeleteResponse.class);
     when(nothingFoundResponse.getResult()).thenReturn(DocWriteResponse.Result.NOT_FOUND);
-    when(restHighLevelClient.delete(any(), any())).thenReturn(nothingFoundResponse);
-    IndexingClient indexingClient = new IndexingClient(restHighLevelClient, cachedJwtProvider);
-    assertDoesNotThrow(() -> indexingClient.removeDocumentFromImportCandidateIndex("1234"));
+    try {
+      when(restHighLevelClient.delete(any(), any())).thenReturn(nothingFoundResponse);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    return new IndexingClient(restHighLevelClient, cachedJwtProvider);
   }
 
   @Test

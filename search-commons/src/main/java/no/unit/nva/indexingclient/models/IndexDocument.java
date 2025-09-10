@@ -1,6 +1,5 @@
 package no.unit.nva.indexingclient.models;
 
-import static no.unit.nva.constants.Defaults.DEFAULT_SHARD_ID;
 import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.constants.ErrorMessages.MISSING_IDENTIFIER_IN_RESOURCE;
 import static no.unit.nva.constants.ErrorMessages.MISSING_INDEX_NAME_IN_RESOURCE;
@@ -20,6 +19,7 @@ import java.util.Objects;
 import java.util.Optional;
 import no.unit.nva.commons.json.JsonSerializable;
 import no.unit.nva.identifiers.SortableIdentifier;
+import no.unit.nva.indexingclient.ShardRoutingService;
 import nva.commons.core.StringUtils;
 import org.opensearch.action.index.IndexRequest;
 import org.opensearch.common.xcontent.XContentType;
@@ -81,9 +81,10 @@ public record IndexDocument(
   }
 
   public IndexRequest toIndexRequest() {
+    var routingKey = ShardRoutingService.calculateRoutingKey(resource);
     return new IndexRequest(getIndexName())
         .source(serializeResource(), XContentType.JSON)
-        .routing(DEFAULT_SHARD_ID)
+        .routing(routingKey)
         .id(getDocumentIdentifier());
   }
 
