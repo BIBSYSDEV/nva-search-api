@@ -42,16 +42,17 @@ import nva.commons.secrets.SecretsReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import org.opensearch.action.DocWriteResponse;
 import org.opensearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.opensearch.action.admin.indices.refresh.RefreshRequest;
 import org.opensearch.action.bulk.BulkRequest;
 import org.opensearch.action.bulk.BulkResponse;
+import org.opensearch.action.delete.DeleteResponse;
 import org.opensearch.action.index.IndexRequest;
 import org.opensearch.action.index.IndexResponse;
 import org.opensearch.client.IndicesClient;
 import org.opensearch.client.RequestOptions;
 import org.opensearch.client.indices.CreateIndexRequest;
-import org.opensearch.index.reindex.BulkByScrollResponse;
 
 class IndexingClientTest {
 
@@ -165,10 +166,10 @@ class IndexingClientTest {
 
   private IndexingClient getIndexClientReturningNotFoundForDeleteRequests() {
     var restHighLevelClient = mock(RestHighLevelClientWrapper.class);
-    var nothingFoundResponse = mock(BulkByScrollResponse.class);
-    when(nothingFoundResponse.getDeleted()).thenReturn(0L);
+    var nothingFoundResponse = mock(DeleteResponse.class);
+    when(nothingFoundResponse.getResult()).thenReturn(DocWriteResponse.Result.NOT_FOUND);
     try {
-      when(restHighLevelClient.deleteByQuery(any(), any())).thenReturn(nothingFoundResponse);
+      when(restHighLevelClient.delete(any(), any())).thenReturn(nothingFoundResponse);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

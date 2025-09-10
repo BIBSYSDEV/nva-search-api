@@ -10,6 +10,8 @@ import org.opensearch.action.admin.indices.refresh.RefreshRequest;
 import org.opensearch.action.admin.indices.refresh.RefreshResponse;
 import org.opensearch.action.bulk.BulkRequest;
 import org.opensearch.action.bulk.BulkResponse;
+import org.opensearch.action.delete.DeleteRequest;
+import org.opensearch.action.delete.DeleteResponse;
 import org.opensearch.action.index.IndexRequest;
 import org.opensearch.action.index.IndexResponse;
 import org.opensearch.action.search.SearchRequest;
@@ -20,25 +22,17 @@ import org.opensearch.client.RequestOptions;
 import org.opensearch.client.RestClient;
 import org.opensearch.client.RestClientBuilder;
 import org.opensearch.client.RestHighLevelClient;
-import org.opensearch.index.reindex.BulkByScrollResponse;
-import org.opensearch.index.reindex.DeleteByQueryRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** Class for avoiding mocking/spying the ES final classes. */
-public class RestHighLevelClientWrapper {
+public record RestHighLevelClientWrapper(RestHighLevelClient client) {
 
   private static final Logger logger = LoggerFactory.getLogger(RestHighLevelClientWrapper.class);
 
   private static final String SEARCH_INFRASTRUCTURE_API_URI =
       ENVIRONMENT.readEnv("SEARCH_INFRASTRUCTURE_API_URI");
   private static final String INITIAL_LOG_MESSAGE = "Connecting to search infrastructure at {}";
-
-  private final RestHighLevelClient client;
-
-  public RestHighLevelClientWrapper(RestHighLevelClient client) {
-    this.client = client;
-  }
 
   public RestHighLevelClientWrapper(RestClientBuilder clientBuilder) {
     this(new RestHighLevelClient(clientBuilder));
@@ -62,8 +56,9 @@ public class RestHighLevelClientWrapper {
    *
    * @return the contained client
    */
+  @Override
   @JacocoGenerated
-  public RestHighLevelClient getClient() {
+  public RestHighLevelClient client() {
     logger.warn("Use getClient only for finding which methods you need to add to the wrapper");
     return this.client;
   }
@@ -81,9 +76,9 @@ public class RestHighLevelClientWrapper {
   }
 
   @JacocoGenerated
-  public BulkByScrollResponse deleteByQuery(
-      DeleteByQueryRequest deleteByQueryRequest, RequestOptions requestOptions) throws IOException {
-    return client.deleteByQuery(deleteByQueryRequest, requestOptions);
+  public DeleteResponse delete(DeleteRequest deleteRequest, RequestOptions requestOptions)
+      throws IOException {
+    return client.delete(deleteRequest, requestOptions);
   }
 
   @JacocoGenerated

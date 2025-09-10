@@ -24,10 +24,13 @@ import no.unit.nva.search.common.jwt.CognitoAuthenticator;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.Try;
 import nva.commons.secrets.SecretsReader;
+import org.opensearch.action.DocWriteResponse;
 import org.opensearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.opensearch.action.admin.indices.refresh.RefreshRequest;
 import org.opensearch.action.bulk.BulkRequest;
 import org.opensearch.action.bulk.BulkResponse;
+import org.opensearch.action.delete.DeleteRequest;
+import org.opensearch.action.delete.DeleteResponse;
 import org.opensearch.action.support.ActiveShardCount;
 import org.opensearch.action.support.WriteRequest.RefreshPolicy;
 import org.opensearch.client.indices.CreateIndexRequest;
@@ -35,9 +38,6 @@ import org.opensearch.client.indices.GetMappingsRequest;
 import org.opensearch.cluster.metadata.MappingMetadata;
 import org.opensearch.common.compress.CompressedXContent;
 import org.opensearch.core.common.bytes.BytesReference;
-import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.index.reindex.BulkByScrollResponse;
-import org.opensearch.index.reindex.DeleteByQueryRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,13 +79,8 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
     openSearchClient.indices().refresh(refreshRequest, getRequestOptions());
   }
 
-  private DeleteByQueryRequest deleteDocumentRequest(String index, String identifier) {
-    // Use delete-by-query to find and delete the document across all shards
-    // This eliminates routing guesswork and works reliably for both parent and child documents
-    var deleteByQuery = new DeleteByQueryRequest(index);
-    deleteByQuery.setQuery(QueryBuilders.termQuery("_id", identifier));
-    deleteByQuery.setRefresh(true);
-    return deleteByQuery;
+  private DeleteRequest deleteDocumentRequest(String index, String identifier) {
+    return new DeleteRequest(index, identifier);
   }
 
   public Void addDocumentToIndex(IndexDocument indexDocument) throws IOException {
@@ -102,13 +97,13 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
    */
   public void removeDocumentFromResourcesIndex(String identifier) throws IOException {
     var deleteRequest = deleteDocumentRequest(RESOURCES, identifier);
-    var deleteResponse = openSearchClient.deleteByQuery(deleteRequest, getRequestOptions());
+    var deleteResponse = openSearchClient.delete(deleteRequest, getRequestOptions());
     logWarningIfNotFound(identifier, deleteResponse);
   }
 
   public void removeDocumentFromImportCandidateIndex(String identifier) throws IOException {
     var deleteRequest = deleteDocumentRequest(IMPORT_CANDIDATES_INDEX, identifier);
-    var deleteResponse = openSearchClient.deleteByQuery(deleteRequest, getRequestOptions());
+    var deleteResponse = openSearchClient.delete(deleteRequest, getRequestOptions());
     logWarningIfNotFound(identifier, deleteResponse);
   }
 
@@ -170,8 +165,8 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
         .orElseThrow();
   }
 
-  private void logWarningIfNotFound(String identifier, BulkByScrollResponse deleteResponse) {
-    if (deleteResponse.getDeleted() == 0) {
+  private void logWarningIfNotFound(String identifier, DeleteResponse deleteResponse) {
+    if (deleteResponse.getResult() == DocWriteResponse.Result.NOT_FOUND) {
       logger.warn(DOCUMENT_WITH_ID_WAS_NOT_FOUND_IN_SEARCH_INFRASTRUCTURE, identifier);
     }
   }
