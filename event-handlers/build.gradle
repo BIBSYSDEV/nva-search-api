@@ -23,6 +23,7 @@ dependencies {
 }
 
 test {
+    environment "NUMBER_OF_SHARDS", "5"
     environment "SEARCH_INFRASTRUCTURE_API_URI", "localhost"
     environment "SEARCH_INFRASTRUCTURE_AUTH_URI", "localhost"
 }

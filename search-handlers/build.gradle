@@ -37,6 +37,7 @@ test {
     environment "COGNITO_HOST", "https://example.org"
     environment "API_HOST", "localhost"
     environment "COGNITO_AUTHORIZER_URLS", "http://localhost:3000"
+    environment "NUMBER_OF_SHARDS", "5"
     environment "SEARCH_INFRASTRUCTURE_API_URI", "https://example.org"
     environment "SEARCH_INFRASTRUCTURE_AUTH_URI", "https://example.org"
     environment "EXPORT_SEARCH_RESULTS_SIZE", "100"

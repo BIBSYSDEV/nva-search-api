@@ -25,12 +25,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.time.Instant;
 import java.util.stream.Stream;
 import no.unit.nva.identifiers.SortableIdentifier;
+import no.unit.nva.indexingclient.ShardRoutingService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class IndexDocumentTest {
+  private static final ShardRoutingService shardRoutingService = new ShardRoutingService(3);
 
   public static Stream<IndexDocument> invalidConsumptionAttributes() {
     var consumptionAttributesMissingIndexName =
@@ -58,7 +60,7 @@ class IndexDocumentTest {
   void shouldReturnOpenSearchIndexRequestWithIndexNameSpecifiedByConsumptionAttributes() {
     var consumptionAttributes = randomConsumptionAttributes();
     var indexDocument = new IndexDocument(consumptionAttributes, randomJsonObject());
-    var indexRequest = indexDocument.toIndexRequest();
+    var indexRequest = indexDocument.toIndexRequest(shardRoutingService);
     assertThat(indexRequest.index(), is(equalTo(consumptionAttributes.index())));
   }
 
@@ -138,6 +140,29 @@ class IndexDocumentTest {
         !timestamp.isBefore(beforeCreation) && !timestamp.isAfter(afterCreation),
         String.format(
             "Timestamp %s should be between %s and %s", timestamp, beforeCreation, afterCreation));
+  }
+
+  @Test
+  void shouldUseShardRoutingServiceWhenProvided() {
+    var shardRoutingService = new ShardRoutingService(5);
+    var indexDocument = new IndexDocument(randomConsumptionAttributes(), randomJsonObject());
+
+    var indexRequest = indexDocument.toIndexRequest(shardRoutingService);
+
+    assertThat(indexRequest.index(), is(equalTo(indexDocument.getIndexName())));
+    assertThat(indexRequest.id(), is(equalTo(indexDocument.getDocumentIdentifier())));
+
+    // Verify routing is not the default shard
+    var routing = indexRequest.routing();
+    assertNotNull(routing);
+    assertTrue(routing.matches("[0-4]")); // Should be 0-4 for 5 shards
+  }
+
+  @Test
+  void shouldThrowExceptionWhenShardRoutingServiceIsNull() {
+    var indexDocument = new IndexDocument(randomConsumptionAttributes(), randomJsonObject());
+
+    assertThrows(NullPointerException.class, () -> indexDocument.toIndexRequest(null));
   }
 
   private EventConsumptionAttributes randomConsumptionAttributes() {

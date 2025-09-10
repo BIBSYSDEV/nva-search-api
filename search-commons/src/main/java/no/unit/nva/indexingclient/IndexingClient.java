@@ -1,6 +1,5 @@
 package no.unit.nva.indexingclient;
 
-import static no.unit.nva.constants.Defaults.DEFAULT_SHARD_ID;
 import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.indexingclient.models.RestHighLevelClientWrapper.defaultRestHighLevelClientWrapper;
@@ -17,6 +16,7 @@ import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import no.unit.nva.commons.json.JsonUtils;
+import no.unit.nva.constants.Defaults;
 import no.unit.nva.indexingclient.models.AuthenticatedOpenSearchClientWrapper;
 import no.unit.nva.indexingclient.models.IndexDocument;
 import no.unit.nva.indexingclient.models.RestHighLevelClientWrapper;
@@ -25,14 +25,10 @@ import no.unit.nva.search.common.jwt.CognitoAuthenticator;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.Try;
 import nva.commons.secrets.SecretsReader;
-import org.opensearch.action.DocWriteResponse;
 import org.opensearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.opensearch.action.admin.indices.refresh.RefreshRequest;
 import org.opensearch.action.bulk.BulkRequest;
 import org.opensearch.action.bulk.BulkResponse;
-import org.opensearch.action.delete.DeleteRequest;
-import org.opensearch.action.delete.DeleteResponse;
-import org.opensearch.action.index.IndexRequest;
 import org.opensearch.action.support.ActiveShardCount;
 import org.opensearch.action.support.WriteRequest.RefreshPolicy;
 import org.opensearch.client.indices.CreateIndexRequest;
@@ -40,6 +36,9 @@ import org.opensearch.client.indices.GetMappingsRequest;
 import org.opensearch.cluster.metadata.MappingMetadata;
 import org.opensearch.common.compress.CompressedXContent;
 import org.opensearch.core.common.bytes.BytesReference;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.index.reindex.BulkByScrollResponse;
+import org.opensearch.index.reindex.DeleteByQueryRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +46,10 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
 
   public static final int BULK_SIZE = 100;
   private static final Logger logger = LoggerFactory.getLogger(IndexingClient.class);
+  private static final int NUMBER_OF_SHARDS =
+      Integer.parseInt(Defaults.ENVIRONMENT.readEnv("NUMBER_OF_SHARDS"));
+  private static final ShardRoutingService shardRoutingService =
+      new ShardRoutingService(NUMBER_OF_SHARDS);
 
   private static final String INITIAL_LOG_MESSAGE = "Adding document [{}] to -> {}";
   private static final String DOCUMENT_WITH_ID_WAS_NOT_FOUND_IN_SEARCH_INFRASTRUCTURE =
@@ -81,32 +84,37 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
     openSearchClient.indices().refresh(refreshRequest, getRequestOptions());
   }
 
-  private static DeleteRequest deleteDocumentRequest(String index, String identifier) {
-    return new DeleteRequest(index, identifier).routing(DEFAULT_SHARD_ID);
+  private DeleteByQueryRequest deleteDocumentRequest(String index, String identifier) {
+    // Use delete-by-query to find and delete the document across all shards
+    // This eliminates routing guesswork and works reliably for both parent and child documents
+    var deleteByQuery = new DeleteByQueryRequest(index);
+    deleteByQuery.setQuery(QueryBuilders.termQuery("_id", identifier));
+    deleteByQuery.setRefresh(true);
+    return deleteByQuery;
   }
 
   public Void addDocumentToIndex(IndexDocument indexDocument) throws IOException {
     logger.debug(
         INITIAL_LOG_MESSAGE, indexDocument.getDocumentIdentifier(), indexDocument.getIndexName());
-    openSearchClient.index(indexDocument.toIndexRequest(), getRequestOptions());
+    openSearchClient.index(indexDocument.toIndexRequest(shardRoutingService), getRequestOptions());
     return null;
   }
 
   /**
    * Removes a document from Opensearch index.
    *
-   * @param identifier og document
+   * @param identifier of document
    */
   public void removeDocumentFromResourcesIndex(String identifier) throws IOException {
     var deleteRequest = deleteDocumentRequest(RESOURCES, identifier);
-    var deleteResponse = openSearchClient.delete(deleteRequest, getRequestOptions());
-    loggWarningIfNotFound(identifier, deleteResponse);
+    var deleteResponse = openSearchClient.deleteByQuery(deleteRequest, getRequestOptions());
+    logWarningIfNotFound(identifier, deleteResponse);
   }
 
   public void removeDocumentFromImportCandidateIndex(String identifier) throws IOException {
     var deleteRequest = deleteDocumentRequest(IMPORT_CANDIDATES_INDEX, identifier);
-    var deleteResponse = openSearchClient.delete(deleteRequest, getRequestOptions());
-    loggWarningIfNotFound(identifier, deleteResponse);
+    var deleteResponse = openSearchClient.deleteByQuery(deleteRequest, getRequestOptions());
+    logWarningIfNotFound(identifier, deleteResponse);
   }
 
   public Void createIndex(String indexName) throws IOException {
@@ -144,10 +152,10 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
   }
 
   private BulkResponse insertBatch(List<IndexDocument> bulk) throws IOException {
-    List<IndexRequest> indexRequests =
-        bulk.stream().parallel().map(IndexDocument::toIndexRequest).toList();
+    var indexRequests =
+        bulk.stream().parallel().map(doc -> doc.toIndexRequest(shardRoutingService)).toList();
 
-    BulkRequest request = new BulkRequest();
+    var request = new BulkRequest();
     indexRequests.forEach(request::add);
     request.setRefreshPolicy(RefreshPolicy.WAIT_UNTIL);
     request.waitForActiveShards(ActiveShardCount.ONE);
@@ -168,8 +176,8 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
         .orElseThrow();
   }
 
-  private void loggWarningIfNotFound(String identifier, DeleteResponse deleteResponse) {
-    if (deleteResponse.getResult() == DocWriteResponse.Result.NOT_FOUND) {
+  private void logWarningIfNotFound(String identifier, BulkByScrollResponse deleteResponse) {
+    if (deleteResponse.getDeleted() == 0) {
       logger.warn(DOCUMENT_WITH_ID_WAS_NOT_FOUND_IN_SEARCH_INFRASTRUCTURE, identifier);
     }
   }

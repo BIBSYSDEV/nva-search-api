@@ -42,17 +42,16 @@ import nva.commons.secrets.SecretsReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.opensearch.action.DocWriteResponse;
 import org.opensearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.opensearch.action.admin.indices.refresh.RefreshRequest;
 import org.opensearch.action.bulk.BulkRequest;
 import org.opensearch.action.bulk.BulkResponse;
-import org.opensearch.action.delete.DeleteResponse;
 import org.opensearch.action.index.IndexRequest;
 import org.opensearch.action.index.IndexResponse;
 import org.opensearch.client.IndicesClient;
 import org.opensearch.client.RequestOptions;
 import org.opensearch.client.indices.CreateIndexRequest;
+import org.opensearch.index.reindex.BulkByScrollResponse;
 
 class IndexingClientTest {
 
@@ -66,7 +65,7 @@ class IndexingClientTest {
   private CachedJwtProvider cachedJwtProvider;
 
   @BeforeEach
-  public void init() throws IOException {
+  void init() throws IOException {
     cachedJwtProvider = setupMockedCachedJwtProvider();
     esClient = setupMockEsClient();
     indexingClient = new IndexingClient(esClient, cachedJwtProvider);
@@ -154,9 +153,9 @@ class IndexingClientTest {
   @Test
   void shouldNotThrowExceptionWhenTryingToDeleteNonExistingDocument() throws IOException {
     RestHighLevelClientWrapper restHighLevelClient = mock(RestHighLevelClientWrapper.class);
-    DeleteResponse nothingFoundResponse = mock(DeleteResponse.class);
-    when(nothingFoundResponse.getResult()).thenReturn(DocWriteResponse.Result.NOT_FOUND);
-    when(restHighLevelClient.delete(any(), any())).thenReturn(nothingFoundResponse);
+    BulkByScrollResponse nothingFoundResponse = mock(BulkByScrollResponse.class);
+    when(nothingFoundResponse.getDeleted()).thenReturn(0L);
+    when(restHighLevelClient.deleteByQuery(any(), any())).thenReturn(nothingFoundResponse);
     IndexingClient indexingClient = new IndexingClient(restHighLevelClient, cachedJwtProvider);
     assertDoesNotThrow(() -> indexingClient.removeDocumentFromResourcesIndex("1234"));
   }
@@ -165,9 +164,9 @@ class IndexingClientTest {
   void shouldNotThrowExceptionWhenTryingToDeleteNonExistingDocumentFromImportCandidateIndex()
       throws IOException {
     RestHighLevelClientWrapper restHighLevelClient = mock(RestHighLevelClientWrapper.class);
-    DeleteResponse nothingFoundResponse = mock(DeleteResponse.class);
-    when(nothingFoundResponse.getResult()).thenReturn(DocWriteResponse.Result.NOT_FOUND);
-    when(restHighLevelClient.delete(any(), any())).thenReturn(nothingFoundResponse);
+    BulkByScrollResponse nothingFoundResponse = mock(BulkByScrollResponse.class);
+    when(nothingFoundResponse.getDeleted()).thenReturn(0L);
+    when(restHighLevelClient.deleteByQuery(any(), any())).thenReturn(nothingFoundResponse);
     IndexingClient indexingClient = new IndexingClient(restHighLevelClient, cachedJwtProvider);
     assertDoesNotThrow(() -> indexingClient.removeDocumentFromImportCandidateIndex("1234"));
   }
