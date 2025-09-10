@@ -1,7 +1,6 @@
 package no.unit.nva.indexingclient;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -25,14 +24,13 @@ class ShardRoutingIntegrationTest {
 
   private static final Logger logger = LoggerFactory.getLogger(ShardRoutingIntegrationTest.class);
   private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-  private static final int NUMBER_OF_SHARDS = 5;
   private static final String RESOURCES_INDEX = "resources";
 
   private ShardRoutingService shardRoutingService;
 
   @BeforeEach
   void setUp() {
-    shardRoutingService = new ShardRoutingService(NUMBER_OF_SHARDS);
+    shardRoutingService = new ShardRoutingService();
   }
 
   @Test
@@ -64,71 +62,46 @@ class ShardRoutingIntegrationTest {
         chapterIndexRequest.routing(),
         "Anthology and chapter must be in the same shard for join operations");
 
-    // And the routing key should be based on the anthology identifier
-    var expectedRoutingKey = String.valueOf(Math.abs(anthologyId.hashCode()) % NUMBER_OF_SHARDS);
+    // And the routing key should be the anthology identifier itself
     assertEquals(
-        expectedRoutingKey,
+        anthologyId,
         anthologyIndexRequest.routing(),
         "Anthology routing should be based on its identifier");
     assertEquals(
-        expectedRoutingKey,
+        anthologyId,
         chapterIndexRequest.routing(),
         "Chapter routing should be based on parent anthology identifier");
   }
 
   @Test
-  @DisplayName("Should generate valid shard IDs for standalone publications")
-  void shouldGenerateValidShardIds() {
+  @DisplayName("Should generate valid routing keys for standalone publications")
+  void shouldGenerateValidRoutingKeys() {
     // Given routing keys for many standalone publications
     var routingKeys = generateStandalonePublicationRoutingKeys(1000);
 
-    // When validating shard IDs
-    // Then all should be within valid range
-    for (var routingKey : routingKeys) {
-      var shardId = Integer.parseInt(routingKey);
-      assertTrue(
-          shardId >= 0 && shardId < NUMBER_OF_SHARDS,
-          "Shard ID "
-              + shardId
-              + " should be within valid range [0-"
-              + (NUMBER_OF_SHARDS - 1)
-              + "]");
+    // When validating routing keys
+    // Then all should be non-empty strings matching publication IDs
+    for (int i = 0; i < routingKeys.size(); i++) {
+      var routingKey = routingKeys.get(i);
+      var expectedId = "publication-" + i;
+      assertEquals(expectedId, routingKey, "Routing key should match publication identifier");
     }
   }
 
   @Test
-  @DisplayName("Should distribute standalone publications across all available shards")
-  void shouldDistributeAcrossAllShards() {
+  @DisplayName("Should generate unique routing keys for different publications")
+  void shouldGenerateUniqueRoutingKeys() {
     // Given routing keys for many standalone publications
     var routingKeys = generateStandalonePublicationRoutingKeys(1000);
 
-    // When analyzing shard usage
-    var usedShards = new boolean[NUMBER_OF_SHARDS];
-    for (var routingKey : routingKeys) {
-      var shardId = Integer.parseInt(routingKey);
-      usedShards[shardId] = true;
-    }
+    // When analyzing routing key uniqueness
+    var uniqueRoutingKeys = new HashSet<>(routingKeys);
 
-    // Then all shards should be utilized
-    for (int i = 0; i < NUMBER_OF_SHARDS; i++) {
-      assertTrue(usedShards[i], "Shard " + i + " should have at least one document");
-    }
-  }
-
-  @Test
-  @DisplayName("Should achieve reasonably even distribution of standalone publications")
-  void shouldAchieveEvenDistribution() {
-    // Given routing keys for many standalone publications
-    var routingKeys = generateStandalonePublicationRoutingKeys(1000);
-
-    // When analyzing distribution
-    var shardCounts = new HashMap<String, Integer>();
-    for (var routingKey : routingKeys) {
-      shardCounts.merge(routingKey, 1, Integer::sum);
-    }
-
-    // Then distribution should be reasonably even
-    assertEvenDistribution(shardCounts, 1000, 0.25);
+    // Then all routing keys should be unique (each publication has unique identifier)
+    assertEquals(
+        routingKeys.size(),
+        uniqueRoutingKeys.size(),
+        "All routing keys should be unique since each publication has unique identifier");
   }
 
   @Test
@@ -183,11 +156,10 @@ class ShardRoutingIntegrationTest {
 
     // When calculating routing for index operations
     var indexRequest = indexDocument.toIndexRequest(shardRoutingService);
-    var expectedRoutingKey = String.valueOf(Math.abs(publicationId.hashCode()) % NUMBER_OF_SHARDS);
 
     // Then routing should be consistent and predictable
     assertEquals(
-        expectedRoutingKey,
+        publicationId,
         indexRequest.routing(),
         "Routing should be consistent for documents with same identifier");
   }
@@ -249,8 +221,8 @@ class ShardRoutingIntegrationTest {
 
   @ParameterizedTest
   @ValueSource(ints = {100, 1_000})
-  @DisplayName("Should achieve dynamic distribution across all shards")
-  void shouldAchieveDynamicDistributionAcrossAllShards(int totalDocuments) {
+  @DisplayName("Should generate consistent routing keys for publications")
+  void shouldGenerateConsistentRoutingKeysForPublications(int totalDocuments) {
     // Given many different publication documents
     var routingKeys = new ArrayList<String>();
     for (int i = 0; i < totalDocuments; i++) {
@@ -264,44 +236,80 @@ class ShardRoutingIntegrationTest {
       routingKeys.add(indexRequest.routing());
     }
 
-    // Then documents should be distributed across all shards
-    var shardCounts = countDocumentsPerShard(routingKeys);
+    // Then routing keys should match publication identifiers
+    for (int i = 0; i < totalDocuments; i++) {
+      var expectedId = "publication-" + i;
+      assertEquals(
+          expectedId, routingKeys.get(i), "Routing key should match publication identifier");
+    }
+
+    // And all routing keys should be unique
+    var uniqueRoutingKeys = new HashSet<>(routingKeys);
+    assertEquals(totalDocuments, uniqueRoutingKeys.size(), "All routing keys should be unique");
+
+    logger.info(
+        "Generated {} consistent routing keys for {} documents",
+        uniqueRoutingKeys.size(),
+        totalDocuments);
+  }
+
+  @Test
+  @DisplayName("Should use id field when identifier field is not present")
+  void shouldUseIdFieldWhenIdentifierNotPresent() {
+    // Given a document with id field but no identifier field
+    var documentId = "doc-with-id-123";
+    var documentWithId = createDocumentWithIdField(documentId);
+    var indexDocument =
+        new IndexDocument(
+            new EventConsumptionAttributes(RESOURCES_INDEX, SortableIdentifier.next()),
+            documentWithId);
+
+    // When calculating routing key
+    var indexRequest = indexDocument.toIndexRequest(shardRoutingService);
+
+    // Then routing key should be the id value
     assertEquals(
-        NUMBER_OF_SHARDS,
-        shardCounts.size(),
-        String.format("Should use all shards. Actual distribution: %s", shardCounts));
-
-    // And distribution should be reasonably even (within 25% tolerance)
-    assertEvenDistribution(shardCounts, totalDocuments, 0.25);
-
-    // Log distribution for verification
-    logger.info("Dynamic sharding distribution across {} documents:", totalDocuments);
-    for (int i = 0; i < NUMBER_OF_SHARDS; i++) {
-      var count = shardCounts.get(String.valueOf(i));
-      logger.info("  Shard {}: {} documents", i, count);
-    }
+        documentId,
+        indexRequest.routing(),
+        "Routing should use id field when identifier is not present");
   }
 
-  private Map<String, Integer> countDocumentsPerShard(Collection<String> routingKeys) {
-    var shardCounts = new HashMap<String, Integer>();
-    for (var routingKey : routingKeys) {
-      shardCounts.merge(routingKey, 1, Integer::sum);
-    }
-    return shardCounts;
+  @Test
+  @DisplayName("Should prefer identifier over id field when both are present")
+  void shouldPreferIdentifierOverIdField() {
+    // Given a document with both identifier and id fields
+    var identifierValue = "identifier-123";
+    var idValue = "id-456";
+    var documentWithBoth = createDocumentWithBothIdentifierAndId(identifierValue, idValue);
+    var indexDocument =
+        new IndexDocument(
+            new EventConsumptionAttributes(RESOURCES_INDEX, SortableIdentifier.next()),
+            documentWithBoth);
+
+    // When calculating routing key
+    var indexRequest = indexDocument.toIndexRequest(shardRoutingService);
+
+    // Then routing key should prefer identifier over id
+    assertEquals(
+        identifierValue,
+        indexRequest.routing(),
+        "Routing should prefer identifier field over id field");
   }
 
-  /**
-   * Asserts that document distribution across shards is reasonably even.
-   *
-   * @param shardCounts map of shard ID to document count
-   * @param totalDocuments total number of documents
-   * @param tolerancePercent acceptable deviation from expected distribution (e.g., 0.3 for 30%)
-   */
-  private void assertEvenDistribution(
-      Map<String, Integer> shardCounts, int totalDocuments, double tolerancePercent) {
-    var expectedPerShard = (double) totalDocuments / NUMBER_OF_SHARDS;
-    var tolerance = expectedPerShard * tolerancePercent;
+  private ObjectNode createDocumentWithIdField(String idValue) {
+    var document = OBJECT_MAPPER.createObjectNode();
+    document.put("id", idValue);
+    document.put("type", "Publication");
+    document.put("title", "Publication with ID: " + idValue);
+    return document;
+  }
 
-    shardCounts.values().forEach(count -> assertEquals(count, expectedPerShard, tolerance));
+  private ObjectNode createDocumentWithBothIdentifierAndId(String identifierValue, String idValue) {
+    var document = OBJECT_MAPPER.createObjectNode();
+    document.put("identifier", identifierValue);
+    document.put("id", idValue);
+    document.put("type", "Publication");
+    document.put("title", "Publication with both fields");
+    return document;
   }
 }

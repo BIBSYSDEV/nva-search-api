@@ -16,7 +16,6 @@ import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import no.unit.nva.commons.json.JsonUtils;
-import no.unit.nva.constants.Defaults;
 import no.unit.nva.indexingclient.models.AuthenticatedOpenSearchClientWrapper;
 import no.unit.nva.indexingclient.models.IndexDocument;
 import no.unit.nva.indexingclient.models.RestHighLevelClientWrapper;
@@ -46,10 +45,7 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
 
   public static final int BULK_SIZE = 100;
   private static final Logger logger = LoggerFactory.getLogger(IndexingClient.class);
-  private static final int NUMBER_OF_SHARDS =
-      Integer.parseInt(Defaults.ENVIRONMENT.readEnv("NUMBER_OF_SHARDS"));
-  private static final ShardRoutingService shardRoutingService =
-      new ShardRoutingService(NUMBER_OF_SHARDS);
+  private static final ShardRoutingService shardRoutingService = new ShardRoutingService();
 
   private static final String INITIAL_LOG_MESSAGE = "Adding document [{}] to -> {}";
   private static final String DOCUMENT_WITH_ID_WAS_NOT_FOUND_IN_SEARCH_INFRASTRUCTURE =

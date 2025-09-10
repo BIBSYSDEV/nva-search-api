@@ -32,7 +32,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class IndexDocumentTest {
-  private static final ShardRoutingService shardRoutingService = new ShardRoutingService(3);
+  private static final ShardRoutingService shardRoutingService = new ShardRoutingService();
 
   public static Stream<IndexDocument> invalidConsumptionAttributes() {
     var consumptionAttributesMissingIndexName =
@@ -140,22 +140,6 @@ class IndexDocumentTest {
         !timestamp.isBefore(beforeCreation) && !timestamp.isAfter(afterCreation),
         String.format(
             "Timestamp %s should be between %s and %s", timestamp, beforeCreation, afterCreation));
-  }
-
-  @Test
-  void shouldUseShardRoutingServiceWhenProvided() {
-    var shardRoutingService = new ShardRoutingService(5);
-    var indexDocument = new IndexDocument(randomConsumptionAttributes(), randomJsonObject());
-
-    var indexRequest = indexDocument.toIndexRequest(shardRoutingService);
-
-    assertThat(indexRequest.index(), is(equalTo(indexDocument.getIndexName())));
-    assertThat(indexRequest.id(), is(equalTo(indexDocument.getDocumentIdentifier())));
-
-    // Verify routing is not the default shard
-    var routing = indexRequest.routing();
-    assertNotNull(routing);
-    assertTrue(routing.matches("[0-4]")); // Should be 0-4 for 5 shards
   }
 
   @Test

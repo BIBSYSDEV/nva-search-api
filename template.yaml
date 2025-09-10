@@ -19,7 +19,6 @@ Globals:
         API_HOST: !Sub 'api.${CustomDomain}'
         LARGE_API_RESPONSES_BUCKET: !Ref LargeApiResponsesBucketName
         COGNITO_AUTHORIZER_URLS: !Join [",", !Ref CognitoAuthorizerUrls]
-        NUMBER_OF_SHARDS: !Ref NumberOfShards
   Api:
     Cors:
       AllowMethods: "'PUT, GET,OPTIONS,DELETE,POST'"
@@ -93,12 +92,6 @@ Parameters:
   ElasticSearchSize:
     Type: String
     Default: dummy-value
-  NumberOfShards:
-    Type: Number
-    Default: 5
-    Description: Number of shards in the OpenSearch cluster for document distribution
-    MinValue: 1
-    MaxValue: 100
   SlackSnsArn:
     Type: AWS::SSM::Parameter::Value<String>
     Default: '/NVA/Monitoring/SlackSnsArn'
