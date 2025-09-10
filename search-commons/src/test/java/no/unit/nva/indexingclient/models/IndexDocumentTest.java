@@ -60,7 +60,7 @@ class IndexDocumentTest {
   void shouldReturnOpenSearchIndexRequestWithIndexNameSpecifiedByConsumptionAttributes() {
     var consumptionAttributes = randomConsumptionAttributes();
     var indexDocument = new IndexDocument(consumptionAttributes, randomJsonObject());
-    var indexRequest = indexDocument.toIndexRequest(shardRoutingService);
+    var indexRequest = indexDocument.toIndexRequest();
     assertThat(indexRequest.index(), is(equalTo(consumptionAttributes.index())));
   }
 

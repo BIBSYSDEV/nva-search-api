@@ -45,7 +45,6 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
 
   public static final int BULK_SIZE = 100;
   private static final Logger logger = LoggerFactory.getLogger(IndexingClient.class);
-  private static final ShardRoutingService shardRoutingService = new ShardRoutingService();
 
   private static final String INITIAL_LOG_MESSAGE = "Adding document [{}] to -> {}";
   private static final String DOCUMENT_WITH_ID_WAS_NOT_FOUND_IN_SEARCH_INFRASTRUCTURE =
@@ -92,7 +91,7 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
   public Void addDocumentToIndex(IndexDocument indexDocument) throws IOException {
     logger.debug(
         INITIAL_LOG_MESSAGE, indexDocument.getDocumentIdentifier(), indexDocument.getIndexName());
-    openSearchClient.index(indexDocument.toIndexRequest(shardRoutingService), getRequestOptions());
+    openSearchClient.index(indexDocument.toIndexRequest(), getRequestOptions());
     return null;
   }
 
@@ -148,8 +147,7 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
   }
 
   private BulkResponse insertBatch(List<IndexDocument> bulk) throws IOException {
-    var indexRequests =
-        bulk.stream().parallel().map(doc -> doc.toIndexRequest(shardRoutingService)).toList();
+    var indexRequests = bulk.stream().parallel().map(IndexDocument::toIndexRequest).toList();
 
     var request = new BulkRequest();
     indexRequests.forEach(request::add);

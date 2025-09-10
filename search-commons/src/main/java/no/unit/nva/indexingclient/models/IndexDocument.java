@@ -88,14 +88,6 @@ public record IndexDocument(
         .id(getDocumentIdentifier());
   }
 
-  public IndexRequest toIndexRequest(ShardRoutingService shardRoutingService) {
-    var routingKey = ShardRoutingService.calculateRoutingKey(resource);
-    return new IndexRequest(getIndexName())
-        .source(serializeResource(), XContentType.JSON)
-        .routing(routingKey)
-        .id(getDocumentIdentifier());
-  }
-
   private String serializeResource() {
     return attempt(() -> objectMapperWithEmpty.writeValueAsString(resource)).orElseThrow();
   }
