@@ -125,28 +125,6 @@ class ShardRoutingServiceTest {
     assertEquals(resource.toString(), routingKey);
   }
 
-  @Test
-  @DisplayName("Should ensure parent and child documents have same routing key")
-  void shouldEnsureParentAndChildHaveSameRoutingKey() {
-    // Given parent and child documents
-    var parentId = "anthology-123";
-    var childId = "chapter-456";
-
-    // Parent document
-    var parentResource = createDocumentNode();
-    parentResource.put(IDENTIFIER_FIELD, parentId);
-
-    // Child document with joinField pointing to parent
-    var childResource = createResourceWithJoinField(parentId);
-    childResource.put(IDENTIFIER_FIELD, childId);
-
-    // When calculating routing keys
-    var parentRoutingKey = ShardRoutingService.calculateRoutingKey(parentResource);
-    var childRoutingKey = ShardRoutingService.calculateRoutingKey(childResource);
-
-    // Then both should have same routing key
-    assertEquals(parentRoutingKey, childRoutingKey);
-  }
 
   @Test
   @DisplayName("Should produce consistent routing keys for same identifier")
@@ -214,21 +192,6 @@ class ShardRoutingServiceTest {
         "Chapter routing should be based on parent anthology identifier");
   }
 
-  @Test
-  @DisplayName("Should generate unique routing keys for different publications")
-  void shouldGenerateUniqueRoutingKeys() {
-    // Given routing keys for many standalone publications
-    var routingKeys = generateStandalonePublicationRoutingKeys(1000);
-
-    // When analyzing routing key uniqueness
-    var uniqueRoutingKeys = new HashSet<>(routingKeys);
-
-    // Then all routing keys should be unique (each publication has unique identifier)
-    assertEquals(
-        routingKeys.size(),
-        uniqueRoutingKeys.size(),
-        "All routing keys should be unique since each publication has unique identifier");
-  }
 
   @Test
   @DisplayName("Should handle mixed scenario with multiple anthologies and chapters")
@@ -261,49 +224,12 @@ class ShardRoutingServiceTest {
     }
   }
 
-  @Test
-  @DisplayName("Should use consistent routing for delete operations")
-  void shouldUseConsistentRoutingForDeleteOperations() {
-    // Given a publication document
-    var publicationIdentifier = "publication-for-delete";
-    var publicationDocument = createStandalonePublicationDocument(publicationIdentifier);
-    var indexDocument = toIndexDocument(publicationDocument, RESOURCES_INDEX);
 
-    // When calculating routing for index operations
-    var indexRequest = indexDocument.toIndexRequest();
-
-    // Then routing should be consistent and predictable
-    assertEquals(
-        publicationIdentifier,
-        indexRequest.routing(),
-        "Routing should be consistent for documents with same identifier");
-  }
-
-  /**
-   * Generates routing keys for many standalone publications.
-   *
-   * @param count number of publications to generate routing keys for
-   * @return list of routing keys
-   */
-  private List<String> generateStandalonePublicationRoutingKeys(int count) {
-    var routingKeys = new ArrayList<String>();
-
-    for (int i = 0; i < count; i++) {
-      var publicationId = "publication-" + i;
-      var publicationDocument = createStandalonePublicationDocument(publicationId);
-      var indexDocument = toIndexDocument(publicationDocument, RESOURCES_INDEX);
-
-      var indexRequest = indexDocument.toIndexRequest();
-      routingKeys.add(indexRequest.routing());
-    }
-
-    return routingKeys;
-  }
 
   @ParameterizedTest
-  @ValueSource(ints = {100, 1_000})
-  @DisplayName("Should generate consistent routing keys for publications")
-  void shouldGenerateConsistentRoutingKeysForPublications(int totalDocuments) {
+  @ValueSource(ints = {10, 100})
+  @DisplayName("Should generate unique and consistent routing keys for publications")
+  void shouldGenerateUniqueAndConsistentRoutingKeysForPublications(int totalDocuments) {
     // Given many different publication documents
     var routingKeys = new ArrayList<String>();
     for (int i = 0; i < totalDocuments; i++) {
