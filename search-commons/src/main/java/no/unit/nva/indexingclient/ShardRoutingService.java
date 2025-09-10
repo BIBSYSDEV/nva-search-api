@@ -56,7 +56,7 @@ public class ShardRoutingService {
 
     var docId = extractFieldValue(resource, ID_FIELD);
     if (StringUtils.isNotBlank(docId)) {
-      logger.info("Using document id '{}' for routing", docId);
+      logger.debug("Using document id '{}' for routing", docId);
       return docId;
     }
 
