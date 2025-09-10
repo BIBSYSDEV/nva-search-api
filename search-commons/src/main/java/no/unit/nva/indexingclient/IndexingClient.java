@@ -98,7 +98,7 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
   /**
    * Removes a document from Opensearch index.
    *
-   * @param identifier of document
+   * @param identifier the identifier of the document
    */
   public void removeDocumentFromResourcesIndex(String identifier) throws IOException {
     var deleteRequest = deleteDocumentRequest(RESOURCES, identifier);
