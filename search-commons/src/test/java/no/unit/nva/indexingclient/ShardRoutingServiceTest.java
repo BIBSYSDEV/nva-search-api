@@ -1,19 +1,18 @@
 package no.unit.nva.indexingclient;
 
 import static java.util.UUID.randomUUID;
-import static no.unit.nva.testutils.RandomDataGenerator.randomString;
+import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createExampleDocument;
+import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createResourceAndGetRoutingKey;
+import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createResourceWithJoinField;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class ShardRoutingServiceTest {
 
-  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
   private static final String IDENTIFIER_FIELD = "identifier";
   private static final String JOIN_FIELD = "joinField";
   private static final String JOIN_FIELD_PARENT = "parent";
@@ -122,13 +121,6 @@ class ShardRoutingServiceTest {
     assertEquals(resource.toString(), routingKey);
   }
 
-  private static ObjectNode createExampleDocument() {
-    var resource = OBJECT_MAPPER.createObjectNode();
-    var randomFieldName = randomString();
-    resource.put(randomFieldName, randomUUID().toString());
-    return resource;
-  }
-
   @Test
   @DisplayName("Should ensure parent and child documents have same routing key")
   void shouldEnsureParentAndChildHaveSameRoutingKey() {
@@ -203,20 +195,5 @@ class ShardRoutingServiceTest {
 
     // Then should fall back to identifier
     assertEquals(identifier, routingKey);
-  }
-
-  private ObjectNode createResourceWithJoinField(String parentId) {
-    var resource = createExampleDocument();
-    var joinField = OBJECT_MAPPER.createObjectNode();
-    joinField.put(JOIN_FIELD_NAME, ShardRoutingServiceTest.PART_OF);
-    joinField.put(JOIN_FIELD_PARENT, parentId);
-    resource.set(JOIN_FIELD, joinField);
-    return resource;
-  }
-
-  private String createResourceAndGetRoutingKey(String identifier) {
-    var resource = createExampleDocument();
-    resource.put(IDENTIFIER_FIELD, identifier);
-    return shardRoutingService.calculateRoutingKey(resource);
   }
 }

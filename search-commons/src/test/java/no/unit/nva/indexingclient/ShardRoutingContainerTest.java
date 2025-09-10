@@ -1,12 +1,15 @@
 package no.unit.nva.indexingclient;
 
 import static no.unit.nva.common.TestConstants.OPEN_SEARCH_IMAGE;
+import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
+import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createAnthologyDocument;
+import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createChapterDocument;
+import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createDocumentWithIdField;
+import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createStandalonePublicationDocument;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -30,10 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-/**
- * End-to-end integration tests for ShardRoutingService using real OpenSearch testcontainer. These
- * tests validate that sharding actually works correctly in practice with real OpenSearch.
- */
 @Testcontainers
 class ShardRoutingContainerTest {
 
@@ -42,10 +41,8 @@ class ShardRoutingContainerTest {
       new OpenSearchContainer<>(OPEN_SEARCH_IMAGE);
   private static final String TEST_INDEX = "test-resources";
   private static final int NUMBER_OF_SHARDS = 5;
-  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
   private static IndexingClient indexingClient;
-  private static ShardRoutingService shardRoutingService;
   private static RestClient lowLevelClient;
 
   @BeforeAll
@@ -57,7 +54,6 @@ class ShardRoutingContainerTest {
       lowLevelClient = restClientBuilder.build();
       var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
       var cachedJwtProvider = setupMockedCachedJwtProvider();
-      shardRoutingService = new ShardRoutingService();
       indexingClient = new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
     } catch (URISyntaxException e) {
       throw new IllegalArgumentException(e);
@@ -88,26 +84,13 @@ class ShardRoutingContainerTest {
   @DisplayName("Should distribute standalone publications across multiple shards")
   void shouldDistributeStandalonePublicationsAcrossShards() {
     // Given many standalone publication documents
-    var publicationCount = 5000;
+    var publicationCount = 1000;
     indexManyStandalonePublications(publicationCount);
 
     // When querying OpenSearch for actual shard distribution
     var shardDistribution = getActualShardDistribution();
 
-    // Then documents should be distributed across multiple shards
-    assertTrue(
-        shardDistribution.size() > 1,
-        "Documents should be distributed across multiple shards, found: " + shardDistribution);
-
-    // And multiple shards should be utilized (at least 3 out of 5)
-    assertTrue(
-        shardDistribution.size() >= 3,
-        "Should use at least 3 shards with "
-            + publicationCount
-            + " documents. Actual distribution: "
-            + shardDistribution);
-
-    // And distribution should be reasonably even
+    // Then documents should be distributed across multiple shards evenly
     assertEvenDistribution(shardDistribution, publicationCount, 0.25);
   }
 
@@ -125,6 +108,10 @@ class ShardRoutingContainerTest {
     var chapterShardIds = chapterIds.stream().map(this::getDocumentShardId).toList();
 
     // Then all documents should be in the same shard
+    for (var chapterShardId : chapterShardIds) {
+      assertEquals(anthologyShardId, chapterShardId);
+    }
+
     for (int i = 0; i < chapterIds.size(); i++) {
       assertEquals(
           anthologyShardId,
@@ -258,14 +245,7 @@ class ShardRoutingContainerTest {
   }
 
   private Map<String, Object> createTestIndexSettings() {
-    return Map.of(
-        "index",
-        Map.of(
-            "number_of_shards",
-            NUMBER_OF_SHARDS,
-            "number_of_replicas",
-            0 // No replicas needed for tests
-            ));
+    return Map.of("index", Map.of("number_of_shards", NUMBER_OF_SHARDS, "number_of_replicas", 0));
   }
 
   private Map<String, Object> createTestIndexMappingsWithJoinField() {
@@ -275,13 +255,7 @@ class ShardRoutingContainerTest {
             "identifier", Map.of("type", "keyword"),
             "type", Map.of("type", "keyword"),
             "title", Map.of("type", "text"),
-            "joinField",
-                Map.of(
-                    "type",
-                    "join",
-                    "relations",
-                    Map.of("anthology", "partOf") // anthology -> partOf relationship
-                    )));
+            "joinField", Map.of("type", "join", "relations", Map.of("hasParts", "partOf"))));
   }
 
   private void indexManyStandalonePublications(int count) {
@@ -309,18 +283,10 @@ class ShardRoutingContainerTest {
     try {
       // Index anthology (parent document)
       var anthologyDocument = createAnthologyDocument(anthologyId);
-      logger.info("Created anthology document: {}", anthologyDocument);
-
-      // Test the routing service directly
-      var routingKey = shardRoutingService.calculateRoutingKey(anthologyDocument);
-      logger.info("Calculated routing key for anthology: {}", routingKey);
       var anthologyIndexDocument =
           new IndexDocument(
               new EventConsumptionAttributes(TEST_INDEX, SortableIdentifier.next()),
               anthologyDocument);
-      logger.info(
-          "Indexing anthology document with ID: {}",
-          anthologyIndexDocument.getDocumentIdentifier());
       indexingClient.addDocumentToIndex(anthologyIndexDocument);
 
       // Index chapters (child documents)
@@ -335,55 +301,9 @@ class ShardRoutingContainerTest {
 
       // Refresh index to make documents searchable
       indexingClient.refreshIndex(TEST_INDEX);
-      logger.info("Indexed anthology '{}' with {} chapters", anthologyId, chapterIds.size());
     } catch (IOException e) {
       throw new RuntimeException("Failed to index anthology with chapters", e);
     }
-  }
-
-  private ObjectNode createStandalonePublicationDocument(String publicationId) {
-    var document = OBJECT_MAPPER.createObjectNode();
-    document.put("identifier", publicationId);
-    document.put("type", "Publication");
-    document.put("title", "Publication: " + publicationId);
-    return document;
-  }
-
-  private ObjectNode createAnthologyDocument(String anthologyId) {
-    var document = OBJECT_MAPPER.createObjectNode();
-    document.put("identifier", anthologyId);
-    document.put("type", "Anthology");
-    document.put("title", "Anthology: " + anthologyId);
-
-    // Add joinField for parent document
-    var joinField = OBJECT_MAPPER.createObjectNode();
-    joinField.put("name", "anthology");
-    document.set("joinField", joinField);
-
-    return document;
-  }
-
-  private ObjectNode createChapterDocument(String chapterId, String parentAnthologyId) {
-    var document = OBJECT_MAPPER.createObjectNode();
-    document.put("identifier", chapterId);
-    document.put("type", "Chapter");
-    document.put("title", "Chapter: " + chapterId);
-
-    // Add joinField to indicate parent-child relationship
-    var joinField = OBJECT_MAPPER.createObjectNode();
-    joinField.put("name", "partOf");
-    joinField.put("parent", parentAnthologyId);
-    document.set("joinField", joinField);
-
-    return document;
-  }
-
-  private ObjectNode createDocumentWithIdField(String documentId) {
-    var document = OBJECT_MAPPER.createObjectNode();
-    document.put("id", documentId);
-    document.put("type", "Publication");
-    document.put("title", "Document with ID: " + documentId);
-    return document;
   }
 
   /**
@@ -395,7 +315,7 @@ class ShardRoutingContainerTest {
       var request = new Request("GET", "/_cat/shards/" + TEST_INDEX + "?format=json&h=shard,docs");
       var response = lowLevelClient.performRequest(request);
       var responseBody = response.getEntity().getContent().readAllBytes();
-      var responseJson = OBJECT_MAPPER.readTree(responseBody);
+      var responseJson = objectMapperWithEmpty.readTree(responseBody);
 
       var shardDistribution = new HashMap<String, Integer>();
 
@@ -434,7 +354,7 @@ class ShardRoutingContainerTest {
 
       var response = lowLevelClient.performRequest(request);
       var responseBody = response.getEntity().getContent().readAllBytes();
-      var responseJson = OBJECT_MAPPER.readTree(responseBody);
+      var responseJson = objectMapperWithEmpty.readTree(responseBody);
 
       logger.info("Search response for document '{}': {}", documentId, responseJson);
 

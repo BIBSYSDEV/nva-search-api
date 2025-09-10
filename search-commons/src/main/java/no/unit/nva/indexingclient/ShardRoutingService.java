@@ -11,15 +11,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Service responsible for calculating routing keys to distribute documents across OpenSearch shards
  * while ensuring parent-child documents are co-located in the same shard.
- *
- * <p>Routing logic priority:
- *
- * <ol>
- *   <li>If document has `joinField.parent`, use parent identifier for routing
- *   <li>If document has `identifier` field, use document identifier for routing
- *   <li>If document has `id` field, use document id for routing
- *   <li>Otherwise, use document string representation for routing
- * </ol>
  */
 public class ShardRoutingService {
 
@@ -36,14 +27,6 @@ public class ShardRoutingService {
   /**
    * Calculates the routing key for the given resource document.
    *
-   * <p>This method implements the routing logic to ensure:
-   *
-   * <ul>
-   *   <li>Parent-child documents are co-located in the same shard
-   *   <li>Documents are distributed evenly across all shards
-   *   <li>Consistent routing for the same identifier
-   * </ul>
-   *
    * <p>Routing priority order:
    *
    * <ol>
@@ -54,7 +37,7 @@ public class ShardRoutingService {
    * </ol>
    *
    * @param resource the JSON resource document to calculate routing for
-   * @return the routing key as the identifier string (OpenSearch will hash this to determine shard)
+   * @return the string to be used as routing key (OpenSearch will hash this to determine shard)
    */
   public static String calculateRoutingKey(JsonNode resource) {
     Objects.requireNonNull(resource, "Resource cannot be null");

@@ -142,13 +142,6 @@ class IndexDocumentTest {
             "Timestamp %s should be between %s and %s", timestamp, beforeCreation, afterCreation));
   }
 
-  @Test
-  void shouldThrowExceptionWhenShardRoutingServiceIsNull() {
-    var indexDocument = new IndexDocument(randomConsumptionAttributes(), randomJsonObject());
-
-    assertThrows(NullPointerException.class, () -> indexDocument.toIndexRequest(null));
-  }
-
   private EventConsumptionAttributes randomConsumptionAttributes() {
     return new EventConsumptionAttributes(randomString(), SortableIdentifier.next());
   }

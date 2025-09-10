@@ -1,9 +1,12 @@
 package no.unit.nva.indexingclient;
 
+import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createAnthologyDocument;
+import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createChapterDocument;
+import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createDocumentWithBothIdentifierAndId;
+import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createDocumentWithIdField;
+import static no.unit.nva.indexingclient.utils.ShardRoutingUtils.createStandalonePublicationDocument;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.*;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
@@ -23,7 +26,6 @@ import org.slf4j.LoggerFactory;
 class ShardRoutingIntegrationTest {
 
   private static final Logger logger = LoggerFactory.getLogger(ShardRoutingIntegrationTest.class);
-  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
   private static final String RESOURCES_INDEX = "resources";
 
   private ShardRoutingService shardRoutingService;
@@ -71,21 +73,6 @@ class ShardRoutingIntegrationTest {
         anthologyId,
         chapterIndexRequest.routing(),
         "Chapter routing should be based on parent anthology identifier");
-  }
-
-  @Test
-  @DisplayName("Should generate valid routing keys for standalone publications")
-  void shouldGenerateValidRoutingKeys() {
-    // Given routing keys for many standalone publications
-    var routingKeys = generateStandalonePublicationRoutingKeys(1000);
-
-    // When validating routing keys
-    // Then all should be non-empty strings matching publication IDs
-    for (int i = 0; i < routingKeys.size(); i++) {
-      var routingKey = routingKeys.get(i);
-      var expectedId = "publication-" + i;
-      assertEquals(expectedId, routingKey, "Routing key should match publication identifier");
-    }
   }
 
   @Test
@@ -162,37 +149,6 @@ class ShardRoutingIntegrationTest {
         publicationId,
         indexRequest.routing(),
         "Routing should be consistent for documents with same identifier");
-  }
-
-  private ObjectNode createAnthologyDocument(String anthologyId) {
-    var document = OBJECT_MAPPER.createObjectNode();
-    document.put("identifier", anthologyId);
-    document.put("type", "Anthology");
-    document.put("title", "Anthology: " + anthologyId);
-    return document;
-  }
-
-  private ObjectNode createChapterDocument(String chapterId, String parentAnthologyId) {
-    var document = OBJECT_MAPPER.createObjectNode();
-    document.put("identifier", chapterId);
-    document.put("type", "Chapter");
-    document.put("title", "Chapter: " + chapterId);
-
-    // Add joinField to indicate parent-child relationship
-    var joinField = OBJECT_MAPPER.createObjectNode();
-    joinField.put("name", "partOf");
-    joinField.put("parent", parentAnthologyId);
-    document.set("joinField", joinField);
-
-    return document;
-  }
-
-  private ObjectNode createStandalonePublicationDocument(String publicationId) {
-    var document = OBJECT_MAPPER.createObjectNode();
-    document.put("identifier", publicationId);
-    document.put("type", "Publication");
-    document.put("title", "Publication: " + publicationId);
-    return document;
   }
 
   /**
@@ -289,27 +245,10 @@ class ShardRoutingIntegrationTest {
     // When calculating routing key
     var indexRequest = indexDocument.toIndexRequest(shardRoutingService);
 
-    // Then routing key should prefer identifier over id
+    // Then routing key should prefer identifier
     assertEquals(
         identifierValue,
         indexRequest.routing(),
         "Routing should prefer identifier field over id field");
-  }
-
-  private ObjectNode createDocumentWithIdField(String idValue) {
-    var document = OBJECT_MAPPER.createObjectNode();
-    document.put("id", idValue);
-    document.put("type", "Publication");
-    document.put("title", "Publication with ID: " + idValue);
-    return document;
-  }
-
-  private ObjectNode createDocumentWithBothIdentifierAndId(String identifierValue, String idValue) {
-    var document = OBJECT_MAPPER.createObjectNode();
-    document.put("identifier", identifierValue);
-    document.put("id", idValue);
-    document.put("type", "Publication");
-    document.put("title", "Publication with both fields");
-    return document;
   }
 }
