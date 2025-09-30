@@ -1,7 +1,5 @@
 package no.unit.nva.indexingclient;
 
-import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
-import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.indexingclient.models.RestHighLevelClientWrapper.defaultRestHighLevelClientWrapper;
 import static nva.commons.core.attempt.Try.attempt;
 
@@ -94,15 +92,10 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
    * Removes a document from Opensearch index.
    *
    * @param identifier the identifier of the document
+   * @param index
    */
-  public void removeDocumentFromResourcesIndex(String identifier) throws IOException {
-    var deleteRequest = deleteDocumentRequest(RESOURCES, identifier);
-    var deleteResponse = openSearchClient.delete(deleteRequest, getRequestOptions());
-    logWarningIfNotFound(identifier, deleteResponse);
-  }
-
-  public void removeDocumentFromImportCandidateIndex(String identifier) throws IOException {
-    var deleteRequest = deleteDocumentRequest(IMPORT_CANDIDATES_INDEX, identifier);
+  public void removeDocumentFromIndex(String identifier, String index) throws IOException {
+    var deleteRequest = deleteDocumentRequest(index, identifier);
     var deleteResponse = openSearchClient.delete(deleteRequest, getRequestOptions());
     logWarningIfNotFound(identifier, deleteResponse);
   }

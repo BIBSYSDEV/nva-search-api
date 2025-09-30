@@ -48,13 +48,10 @@ public class FakeIndexingClient extends IndexingClient {
   }
 
   @Override
-  public void removeDocumentFromResourcesIndex(String identifier) throws IOException {
-    indexContents.forEach((index, set) -> removeDocument(set, identifier));
-  }
-
-  @Override
-  public void removeDocumentFromImportCandidateIndex(String identifier) throws IOException {
-    indexContents.forEach((index, set) -> removeDocument(set, identifier));
+  public void removeDocumentFromIndex(String identifier, String index) throws IOException {
+    if (indexContents.containsKey(index)) {
+      indexContents.get(index).remove(identifier);
+    }
   }
 
   @Override
@@ -74,10 +71,6 @@ public class FakeIndexingClient extends IndexingClient {
   public Set<JsonNode> listAllDocuments(String indexName) {
     return new HashSet<>(
         this.indexContents.getOrDefault(indexName, Collections.emptyMap()).values());
-  }
-
-  private void removeDocument(Map<String, JsonNode> jsonNodes, String identifier) {
-    jsonNodes.remove(identifier);
   }
 
   private List<BulkResponse> constructSampleBulkResponse(Collection<IndexDocument> indexDocuments) {

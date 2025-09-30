@@ -2,6 +2,8 @@ package no.unit.nva.indexingclient;
 
 import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
+import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.indexingclient.IndexingClient.BULK_SIZE;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
@@ -154,14 +156,14 @@ class IndexingClientTest {
   @Test
   void shouldNotThrowExceptionWhenTryingToDeleteNonExistingDocument() {
     var clientReturningNotFound = getIndexClientReturningNotFoundForDeleteRequests();
-    assertDoesNotThrow(() -> clientReturningNotFound.removeDocumentFromResourcesIndex("1234"));
+    assertDoesNotThrow(() -> clientReturningNotFound.removeDocumentFromIndex("1234", RESOURCES));
   }
 
   @Test
   void shouldNotThrowExceptionWhenTryingToDeleteNonExistingDocumentFromImportCandidateIndex() {
     var clientReturningNotFound = getIndexClientReturningNotFoundForDeleteRequests();
     assertDoesNotThrow(
-        () -> clientReturningNotFound.removeDocumentFromImportCandidateIndex("1234"));
+        () -> clientReturningNotFound.removeDocumentFromIndex("1234", IMPORT_CANDIDATES_INDEX));
   }
 
   private IndexingClient getIndexClientReturningNotFoundForDeleteRequests() {

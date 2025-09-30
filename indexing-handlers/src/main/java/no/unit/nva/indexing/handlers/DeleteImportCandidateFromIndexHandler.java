@@ -1,5 +1,7 @@
 package no.unit.nva.indexing.handlers;
 
+import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
+
 import com.amazonaws.services.lambda.runtime.Context;
 import no.unit.nva.events.handlers.DestinationsEventBridgeEventHandler;
 import no.unit.nva.events.models.AwsEventBridgeDetail;
@@ -36,7 +38,8 @@ public class DeleteImportCandidateFromIndexHandler
       AwsEventBridgeEvent<AwsEventBridgeDetail<DeleteImportCandidateEvent>> event,
       Context context) {
     try {
-      indexingClient.removeDocumentFromImportCandidateIndex(input.identifier().toString());
+      indexingClient.removeDocumentFromIndex(
+          input.identifier().toString(), IMPORT_CANDIDATES_INDEX);
       logger.info(REMOVED_FROM_INDEX_MESSAGE);
     } catch (Exception e) {
       logError(e);

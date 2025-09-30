@@ -32,6 +32,8 @@ import nva.commons.core.Environment;
 import nva.commons.core.paths.UriWrapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class ExternalUpdatesEventHandlerTest {
 
@@ -70,7 +72,7 @@ public class ExternalUpdatesEventHandlerTest {
   @Test
   void shouldFailOnUnknownActionInS3Event() {
     var s3Uri = randomUri();
-    var messageBody = generateMessageBody(s3Uri);
+    var messageBody = generateMessageBody(s3Uri, "PublicationService.Resource.Deleted");
     var eventReference = stringFromResources(Path.of("s3EventReferenceWithUnexpectedAction.json"));
     var fixture = prepareForTesting(s3Uri, eventReference, messageBody, new FakeIndexingClient());
 
@@ -82,7 +84,7 @@ public class ExternalUpdatesEventHandlerTest {
   @Test
   void shouldFailWhenNotAbleToParseS3EventData() {
     var s3Uri = randomUri();
-    var messageBody = generateMessageBody(s3Uri);
+    var messageBody = generateMessageBody(s3Uri, "PublicationService.Resource.Deleted");
     var unparsableS3EventReference =
         stringFromResources(Path.of("unparsableS3EventReference.json"));
     var fixture =
@@ -109,7 +111,7 @@ public class ExternalUpdatesEventHandlerTest {
   @Test
   void shouldRemoveDocumentFromIndex() throws IOException {
     var s3Uri = randomUri();
-    var messageBody = generateMessageBody(s3Uri);
+    var messageBody = generateMessageBody(s3Uri, "PublicationService.Resource.Deleted");
 
     var identifier = SortableIdentifier.next();
     var eventReference = generateEventReference(identifier);
@@ -128,10 +130,40 @@ public class ExternalUpdatesEventHandlerTest {
     assertThat(indexingClient.listAllDocuments("resources"), iterableWithSize(0));
   }
 
+  @ParameterizedTest
+  @ValueSource(
+      strings = {
+        "PublicationService.Resource.Deleted",
+        "PublicationService.PublishingRequest.Deleted",
+        "PublicationService.FilesApprovalThesis.Deleted",
+        "PublicationService.GeneralSupportRequest.Deleted",
+        "PublicationService.DoiRequest.Deleted"
+      })
+  void shouldRemoveDocumentFromTicketsIndex(String topic) throws IOException {
+    var s3Uri = randomUri();
+    var messageBody = generateMessageBody(s3Uri, topic);
+
+    var identifier = SortableIdentifier.next();
+    var eventReference = generateEventReference(identifier);
+
+    var indexingClient = new FakeIndexingClient();
+    indexingClient.addDocumentToIndex(
+        new IndexDocument(
+            new EventConsumptionAttributes("resources", identifier),
+            new ObjectNode(JsonNodeFactory.instance)));
+
+    var fixture = prepareForTesting(s3Uri, eventReference, messageBody, indexingClient);
+
+    assertDoesNotThrow(
+        () -> fixture.handler().handleRequest(fixture.sqsEvent(), new FakeContext()));
+
+    assertThat(indexingClient.listAllDocuments("tickets"), iterableWithSize(0));
+  }
+
   @Test
   void shouldFailIfNotAbleToReachIndex() {
     var uri = randomUri();
-    var messageBody = generateMessageBody(uri);
+    var messageBody = generateMessageBody(uri, "PublicationService.Resource.Deleted");
 
     var identifier = SortableIdentifier.next();
     var eventReference = generateEventReference(identifier);
@@ -149,8 +181,8 @@ public class ExternalUpdatesEventHandlerTest {
     return String.format(eventReferenceTemplate, identifier);
   }
 
-  private static String generateMessageBody(URI uri) {
-    return String.format(MESSAGE_BODY_TEMPLATE, uri);
+  private static String generateMessageBody(URI uri, String topic) {
+    return String.format(MESSAGE_BODY_TEMPLATE, uri).replace("__TOPIC__", topic);
   }
 
   private Fixture prepareForTesting(

@@ -4,19 +4,15 @@ import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static nva.commons.core.attempt.Try.attempt;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Set;
 import no.unit.nva.events.models.AwsEventBridgeDetail;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
 import no.unit.nva.identifiers.SortableIdentifier;
@@ -59,10 +55,11 @@ public class DeleteImportCandidateFromIndexHandlerTest {
     indexingClient =
         new DeleteImportCandidateFromIndexHandlerTest.FakeIndexingClientThrowingException();
     handler = new DeleteImportCandidateFromIndexHandler(indexingClient);
-    try (var eventReference = createEventBridgeEvent(SortableIdentifier.next())) {
-      assertThrows(
-          RuntimeException.class, () -> handler.handleRequest(eventReference, output, CONTEXT));
-    }
+    assertThrows(
+        RuntimeException.class,
+        () ->
+            handler.handleRequest(
+                createEventBridgeEvent(SortableIdentifier.next()), output, CONTEXT));
   }
 
   @Test
@@ -70,22 +67,20 @@ public class DeleteImportCandidateFromIndexHandlerTest {
     var resourceIdentifier = SortableIdentifier.next();
     var sampleDocument = createSampleResource(resourceIdentifier);
     indexingClient.addDocumentToIndex(sampleDocument);
-    try (var eventReference = createEventBridgeEvent(resourceIdentifier)) {
-      handler.handleRequest(eventReference, output, CONTEXT);
-    }
-    Set<JsonNode> allIndexedDocuments = indexingClient.listAllDocuments(IMPORT_CANDIDATES_INDEX);
-    assertThat(allIndexedDocuments, not(contains(sampleDocument.resource())));
+    handler.handleRequest(createEventBridgeEvent(resourceIdentifier), output, CONTEXT);
+    var allIndexedDocuments = indexingClient.listAllDocuments(IMPORT_CANDIDATES_INDEX);
+    assertTrue(allIndexedDocuments.isEmpty());
   }
 
   private InputStream createEventBridgeEvent(SortableIdentifier resourceIdentifier)
       throws IOException {
-    DeleteResourceEvent deleteResourceEvent =
-        new DeleteResourceEvent(DeleteImportCandidateEvent.EVENT_TOPIC, resourceIdentifier);
+    var deleteResourceEvent =
+        new DeleteImportCandidateEvent(DeleteImportCandidateEvent.EVENT_TOPIC, resourceIdentifier);
 
-    AwsEventBridgeDetail<DeleteResourceEvent> detail = new AwsEventBridgeDetail<>();
+    AwsEventBridgeDetail<DeleteImportCandidateEvent> detail = new AwsEventBridgeDetail<>();
     detail.setResponsePayload(deleteResourceEvent);
 
-    AwsEventBridgeEvent<AwsEventBridgeDetail<DeleteResourceEvent>> event =
+    AwsEventBridgeEvent<AwsEventBridgeDetail<DeleteImportCandidateEvent>> event =
         new AwsEventBridgeEvent<>();
     event.setDetail(detail);
 
@@ -95,7 +90,7 @@ public class DeleteImportCandidateFromIndexHandlerTest {
   static class FakeIndexingClientThrowingException extends FakeIndexingClient {
 
     @Override
-    public void removeDocumentFromImportCandidateIndex(String identifier) throws IOException {
+    public void removeDocumentFromIndex(String identifier, String index) throws IOException {
       throw new IOException(SOMETHING_BAD_HAPPENED);
     }
   }
