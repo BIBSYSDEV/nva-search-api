@@ -89,12 +89,12 @@ public class ExternalUpdatesEventHandler implements RequestHandler<SQSEvent, Voi
     }
 
     try {
-      indexingClient.removeDocumentFromIndex(
-          updateEvent.oldData().identifier(), getIndexForTopic(eventReference));
+      var index = getIndexForTopic(eventReference);
       logger.info(
           String.format(
-              "Removed document with identifier %s from the index!",
-              updateEvent.oldData().identifier()));
+              "Removing document with identifier %s from the index %s",
+              updateEvent.oldData().identifier(), index));
+      indexingClient.removeDocumentFromIndex(updateEvent.oldData().identifier(), index);
     } catch (IOException e) {
       throw new EventHandlingException("Failed to remove document from resources index", e);
     }
