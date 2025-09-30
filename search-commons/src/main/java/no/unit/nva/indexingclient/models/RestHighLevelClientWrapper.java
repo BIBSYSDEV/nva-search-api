@@ -22,6 +22,8 @@ import org.opensearch.client.RequestOptions;
 import org.opensearch.client.RestClient;
 import org.opensearch.client.RestClientBuilder;
 import org.opensearch.client.RestHighLevelClient;
+import org.opensearch.index.reindex.BulkByScrollResponse;
+import org.opensearch.index.reindex.DeleteByQueryRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,6 +87,12 @@ public record RestHighLevelClientWrapper(RestHighLevelClient client) {
   public UpdateResponse update(UpdateRequest updateRequest, RequestOptions requestOptions)
       throws IOException {
     return client.update(updateRequest, requestOptions);
+  }
+
+  @JacocoGenerated
+  public BulkByScrollResponse deleteByQuery(
+      DeleteByQueryRequest deleteByQueryRequest, RequestOptions requestOptions) throws IOException {
+    return client.deleteByQuery(deleteByQueryRequest, requestOptions);
   }
 
   @JacocoGenerated
