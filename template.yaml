@@ -868,7 +868,11 @@ Resources:
         detail:
           responsePayload:
             topic:
-              - "PublicationService.Resource.Deleted"
+              - PublicationService.Resource.Deleted
+              - PublicationService.PublishingRequest.Deleted
+              - PublicationService.FilesApprovalThesis.Deleted
+              - PublicationService.GeneralSupportRequest.Deleted
+              - PublicationService.DoiRequest.Deleted
       Targets:
         - Arn: !GetAtt ExternalUpdatesQueue.Arn
           Id: ExternalUpdatesQueueTarget
