@@ -1085,11 +1085,10 @@ class ResourceClientTest {
   }
 
   @Test
-  void shouldRemoveDocumentFromIndexWithShards()
-      throws BadRequestException, IOException, InterruptedException {
+  void shouldRemoveDocumentFromIndexWithShards() throws BadRequestException, IOException {
     var indexDocument = indexDocumentWithIdentifier();
     indexingClient.addDocumentToIndex(indexDocument);
-    Thread.sleep(1000);
+    indexingClient.refreshIndex(RESOURCES);
     var response = fetchDocumentWithId(indexDocument);
 
     var pagedSearchResourceDto = response.toPagedResponse();
