@@ -38,7 +38,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 public class ExternalUpdatesEventHandlerTest {
 
   private static final String MESSAGE_BODY_TEMPLATE =
-      stringFromResources(Path.of("sqsMessageBodyTemplate.json"));
+      stringFromResources(Path.of("sqsMessageBodyTemplate.json.template"));
   private Environment environment;
 
   @BeforeEach
@@ -158,6 +158,27 @@ public class ExternalUpdatesEventHandlerTest {
         () -> fixture.handler().handleRequest(fixture.sqsEvent(), new FakeContext()));
 
     assertThat(indexingClient.listAllDocuments("tickets"), iterableWithSize(0));
+  }
+
+  @Test
+  void shouldFailOnUnsupportedTopic() throws IOException {
+    var s3Uri = randomUri();
+    var messageBody = generateMessageBody(s3Uri, randomString());
+
+    var identifier = SortableIdentifier.next();
+    var eventReference = generateEventReference(identifier);
+
+    var indexingClient = new FakeIndexingClient();
+    indexingClient.addDocumentToIndex(
+        new IndexDocument(
+            new EventConsumptionAttributes("resources", identifier),
+            new ObjectNode(JsonNodeFactory.instance)));
+
+    var fixture = prepareForTesting(s3Uri, eventReference, messageBody, indexingClient);
+
+    assertThrows(
+        EventHandlingException.class,
+        () -> fixture.handler().handleRequest(fixture.sqsEvent(), new FakeContext()));
   }
 
   @Test
