@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import java.nio.file.Path;
+import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.search.resource.response.ResourceSearchResponse;
 import org.junit.jupiter.api.Test;
 
@@ -130,5 +131,15 @@ class SimplifiedMutatorTest {
             .get(0);
     var result = new SimplifiedMutator().transform(json);
     assertNotNull(result);
+  }
+
+  @Test
+  void shouldHandleOrgsWithoutLabels() throws JsonProcessingException {
+    var json =
+        JsonUtils.dtoObjectMapper.readTree(stringFromResources(Path.of("no_org_labels.json")));
+    var result = new SimplifiedMutator().transform(json);
+    var response = JsonUtils.dtoObjectMapper.treeToValue(result, ResourceSearchResponse.class);
+    var firstOrg = response.participatingOrganizations().stream().findFirst().orElseThrow();
+    assertThat(firstOrg.labels().isEmpty(), is(true));
   }
 }
