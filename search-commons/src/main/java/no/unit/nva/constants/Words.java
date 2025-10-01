@@ -48,7 +48,6 @@ public final class Words {
   public static final String CUSTOMER_ID = "customerId";
   public static final String DAY = "day";
   public static final String DOI = "doi";
-  public static final String DOIREQUESTS_INDEX = "doirequests";
   public static final String DOT = ".";
   public static final String ENGLISH_CODE = "en";
   public static final String ENTITY_DESCRIPTION = "entityDescription";
@@ -81,7 +80,6 @@ public final class Words {
   public static final String LICENSE = "license";
   public static final String MAIN_TITLE = "mainTitle";
   public static final String MESSAGES = "messages";
-  public static final String MESSAGES_INDEX = "messages";
   public static final String META_INFO = "metaInfo";
   public static final String MODIFIED_DATE = "modifiedDate";
   public static final String MONTH = "month";
@@ -111,7 +109,6 @@ public final class Words {
   public static final String PUBLICATION_STATUS = "publicationStatus";
   public static final String PUBLISHED_DATE = "publishedDate";
   public static final String PUBLISHER = "publisher";
-  public static final String PUBLISHING_REQUESTS_INDEX = "publishingrequests";
   public static final String Q = "q";
   public static final String QUOTE = "'";
   public static final String REFERENCE = "reference";

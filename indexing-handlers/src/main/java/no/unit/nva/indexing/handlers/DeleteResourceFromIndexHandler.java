@@ -1,5 +1,7 @@
 package no.unit.nva.indexing.handlers;
 
+import static no.unit.nva.constants.Words.RESOURCES;
+
 import com.amazonaws.services.lambda.runtime.Context;
 import no.unit.nva.events.handlers.DestinationsEventBridgeEventHandler;
 import no.unit.nva.events.models.AwsEventBridgeDetail;
@@ -33,7 +35,7 @@ public class DeleteResourceFromIndexHandler
       AwsEventBridgeEvent<AwsEventBridgeDetail<DeleteResourceEvent>> event,
       Context context) {
     try {
-      indexingClient.removeDocumentFromResourcesIndex(input.getIdentifier().toString());
+      indexingClient.removeDocumentFromIndex(input.getIdentifier().toString(), RESOURCES);
     } catch (Exception e) {
       logError(e);
       throw new RuntimeException(e);

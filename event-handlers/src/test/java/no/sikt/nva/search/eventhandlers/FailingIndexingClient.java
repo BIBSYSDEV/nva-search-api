@@ -24,12 +24,7 @@ public class FailingIndexingClient extends IndexingClient {
   }
 
   @Override
-  public void removeDocumentFromResourcesIndex(String identifier) throws IOException {
-    throw failingException;
-  }
-
-  @Override
-  public void removeDocumentFromImportCandidateIndex(String identifier) throws IOException {
+  public void removeDocumentFromIndex(String identifier, String index) throws IOException {
     throw failingException;
   }
 

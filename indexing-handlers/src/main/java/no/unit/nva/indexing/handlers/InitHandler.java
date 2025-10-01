@@ -3,7 +3,6 @@ package no.unit.nva.indexing.handlers;
 import static no.unit.nva.constants.IndexMappingsAndSettings.RESOURCE_MAPPINGS;
 import static no.unit.nva.constants.IndexMappingsAndSettings.RESOURCE_SETTINGS;
 import static no.unit.nva.constants.IndexMappingsAndSettings.TICKET_MAPPINGS;
-import static no.unit.nva.constants.Words.PUBLISHING_REQUESTS_INDEX;
 import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.constants.Words.TICKETS;
 import static no.unit.nva.indexingclient.IndexingClient.defaultIndexingClient;
@@ -28,8 +27,7 @@ public class InitHandler implements RequestHandler<Object, String> {
   private static final List<IndexRequest> INDEXES =
       List.of(
           new IndexRequest(RESOURCES, RESOURCE_MAPPINGS.asJson(), RESOURCE_SETTINGS.asJson()),
-          new IndexRequest(TICKETS, TICKET_MAPPINGS.asJson()),
-          new IndexRequest(PUBLISHING_REQUESTS_INDEX));
+          new IndexRequest(TICKETS, TICKET_MAPPINGS.asJson()));
   private static final Logger logger = LoggerFactory.getLogger(InitHandler.class);
   private final IndexingClient indexingClient;
 
