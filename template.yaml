@@ -748,6 +748,24 @@ Resources:
 
   #============================Alarms===============================================================
 
+  ExternalUpdatesEventHandlerDLQAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: Search-api external updates dlq queue threshold exceeded
+      AlarmDescription: If this alarm is triggered, then check sqs messages on ExternalUpdatesEventHandlerDLQ.
+      MetricName: ApproximateNumberOfMessagesVisible
+      Namespace: AWS/SQS
+      Statistic: Sum
+      Dimensions:
+        - Name: QueueName
+          Value: !GetAtt ExternalUpdatesEventHandlerDLQ.QueueName
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      AlarmActions:
+        - !Ref SlackSnsArn
+
   RecoveryQueueAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
@@ -868,7 +886,11 @@ Resources:
         detail:
           responsePayload:
             topic:
-              - "PublicationService.Resource.Deleted"
+              - PublicationService.Resource.Deleted
+              - PublicationService.PublishingRequest.Deleted
+              - PublicationService.FilesApprovalThesis.Deleted
+              - PublicationService.GeneralSupportRequest.Deleted
+              - PublicationService.DoiRequest.Deleted
       Targets:
         - Arn: !GetAtt ExternalUpdatesQueue.Arn
           Id: ExternalUpdatesQueueTarget
@@ -935,3 +957,11 @@ Resources:
           Type: SQS
           Properties:
             Queue: !GetAtt ExternalUpdatesQueue.Arn
+      EventInvokeConfig:
+        DestinationConfig:
+          OnFailure:
+            Type: SQS
+            Destination: !GetAtt ExternalUpdatesEventHandlerDLQ.Arn
+
+  ExternalUpdatesEventHandlerDLQ:
+    Type: AWS::SQS::Queue

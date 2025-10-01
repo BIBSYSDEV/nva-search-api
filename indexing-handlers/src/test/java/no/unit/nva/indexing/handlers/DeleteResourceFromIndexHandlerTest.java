@@ -7,22 +7,18 @@ import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static nva.commons.core.attempt.Try.attempt;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Set;
 import no.unit.nva.events.models.AwsEventBridgeDetail;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
 import no.unit.nva.identifiers.SortableIdentifier;
-import no.unit.nva.indexing.model.DeleteImportCandidateEvent;
 import no.unit.nva.indexing.testutils.FakeIndexingClient;
 import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
 import no.unit.nva.indexingclient.models.IndexDocument;
@@ -34,7 +30,7 @@ import org.mockito.Mockito;
 
 public class DeleteResourceFromIndexHandlerTest {
 
-  public static final String RESOURCES_INDEX = "resource";
+  public static final String RESOURCES_INDEX = "resources";
 
   public static final String SOMETHING_BAD_HAPPENED = "Something bad happened";
   private static final Context CONTEXT = Mockito.mock(Context.class);
@@ -83,8 +79,9 @@ public class DeleteResourceFromIndexHandlerTest {
     indexingClient.addDocumentToIndex(sampleDocument);
     var eventReference = createEventBridgeEvent(resourceIdentifier);
     handler.handleRequest(eventReference, output, CONTEXT);
-    Set<JsonNode> allIndexedDocuments = indexingClient.listAllDocuments(RESOURCES_INDEX);
-    assertThat(allIndexedDocuments, not(contains(sampleDocument.resource())));
+    var allIndexedDocuments = indexingClient.listAllDocuments(RESOURCES_INDEX);
+
+    assertTrue(allIndexedDocuments.isEmpty());
   }
 
   private IndexDocument createSampleResorce(SortableIdentifier resourceIdentifier) {
@@ -94,7 +91,7 @@ public class DeleteResourceFromIndexHandlerTest {
   private InputStream createEventBridgeEvent(SortableIdentifier resourceIdentifier)
       throws IOException {
     DeleteResourceEvent deleteResourceEvent =
-        new DeleteResourceEvent(DeleteImportCandidateEvent.EVENT_TOPIC, resourceIdentifier);
+        new DeleteResourceEvent(DeleteResourceEvent.EVENT_TOPIC, resourceIdentifier);
 
     AwsEventBridgeDetail<DeleteResourceEvent> detail = new AwsEventBridgeDetail<>();
     detail.setResponsePayload(deleteResourceEvent);
@@ -109,7 +106,7 @@ public class DeleteResourceFromIndexHandlerTest {
   static class FakeIndexingClientThrowingException extends FakeIndexingClient {
 
     @Override
-    public void removeDocumentFromResourcesIndex(String identifier) throws IOException {
+    public void removeDocumentFromIndex(String identifier, String index) throws IOException {
       throw new IOException(SOMETHING_BAD_HAPPENED);
     }
   }

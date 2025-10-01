@@ -12,12 +12,6 @@ public class IndexRequest {
   private final Map<String, Object> mappings;
   private final Map<String, Object> settings;
 
-  public IndexRequest(String name) {
-    this.name = name;
-    this.mappings = Collections.emptyMap();
-    this.settings = Collections.emptyMap();
-  }
-
   public IndexRequest(String name, String jsonMappings) {
     this.name = name;
     this.mappings = jsonToJavaMap(jsonMappings);

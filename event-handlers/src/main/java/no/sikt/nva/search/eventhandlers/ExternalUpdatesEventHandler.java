@@ -1,5 +1,7 @@
 package no.sikt.nva.search.eventhandlers;
 
+import static no.unit.nva.constants.Words.RESOURCES;
+import static no.unit.nva.constants.Words.TICKETS;
 import static nva.commons.core.attempt.Try.attempt;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -10,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import no.unit.nva.commons.json.JsonUtils;
@@ -30,9 +33,15 @@ public class ExternalUpdatesEventHandler implements RequestHandler<SQSEvent, Voi
   private static final Logger logger = LoggerFactory.getLogger(ExternalUpdatesEventHandler.class);
   private static final TypeReference<AwsEventBridgeEvent<AwsEventBridgeDetail<EventReference>>>
       SQS_VALUE_TYPE_REF = new TypeReference<>() {};
-  private static final String RESOURCE_DELETED_TOPIC = "PublicationService.Resource.Deleted";
   private static final String EVENTS_BUCKET_NAME_ENV = "EVENTS_BUCKET_NAME";
   private static final String REMOVE_ACTION = "REMOVE";
+  private static final Map<String, String> SUPPORTED_TOPICS =
+      Map.of(
+          "PublicationService.Resource.Deleted", RESOURCES,
+          "PublicationService.PublishingRequest.Deleted", TICKETS,
+          "PublicationService.FilesApprovalThesis.Deleted", TICKETS,
+          "PublicationService.GeneralSupportRequest.Deleted", TICKETS,
+          "PublicationService.DoiRequest.Deleted", TICKETS);
 
   private final S3Driver s3Driver;
   private final IndexingClient indexingClient;
@@ -62,7 +71,7 @@ public class ExternalUpdatesEventHandler implements RequestHandler<SQSEvent, Voi
   }
 
   private void processPayload(EventReference eventReference) {
-    if (!RESOURCE_DELETED_TOPIC.equals(eventReference.getTopic())) {
+    if (!SUPPORTED_TOPICS.containsKey(eventReference.getTopic())) {
       logger.error(
           "Got external update event with message on unknown topic {}", eventReference.getTopic());
       throw new EventHandlingException(
@@ -80,14 +89,19 @@ public class ExternalUpdatesEventHandler implements RequestHandler<SQSEvent, Voi
     }
 
     try {
-      indexingClient.removeDocumentFromResourcesIndex(updateEvent.oldData().identifier());
+      var index = getIndexForTopic(eventReference);
+      var identifier = updateEvent.oldData().identifier();
       logger.info(
           String.format(
-              "Removed document with identifier %s from the index!",
-              updateEvent.oldData().identifier()));
+              "Removing document with identifier %s from the index %s", identifier, index));
+      indexingClient.removeDocumentFromIndex(identifier, index);
     } catch (IOException e) {
       throw new EventHandlingException("Failed to remove document from resources index", e);
     }
+  }
+
+  private static String getIndexForTopic(EventReference eventReference) {
+    return SUPPORTED_TOPICS.get(eventReference.getTopic());
   }
 
   private RuntimeException logAndThrow(Failure<UpdateEvent> updateEventFailure) {

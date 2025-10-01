@@ -1095,7 +1095,7 @@ class ResourceClientTest {
 
     assertThat(pagedSearchResourceDto.hits(), hasSize(1));
 
-    indexingClient.removeDocumentFromResourcesIndex(indexDocument.getDocumentIdentifier());
+    indexingClient.removeDocumentFromIndex(indexDocument.getDocumentIdentifier(), RESOURCES);
     indexingClient.refreshIndex(RESOURCES);
     var responseAfterDeletion = fetchDocumentWithId(indexDocument);
 

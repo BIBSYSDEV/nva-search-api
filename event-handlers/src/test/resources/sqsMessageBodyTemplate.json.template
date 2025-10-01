@@ -1,7 +1,7 @@
 {
   "detail": {
     "responsePayload": {
-      "topic": "PublicationService.Resource.Deleted",
+      "topic": "__TOPIC__",
       "uri": "%s"
     }
   }
