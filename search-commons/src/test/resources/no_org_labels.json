@@ -1,0 +1,197 @@
+{
+  "type": "Publication",
+    "publicationContextUris": [
+      "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2023"
+    ],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619e3bbaf39",
+    "filesStatus": "noFiles",
+    "associatedArtifacts": [
+      {
+        "type": "NullAssociatedArtifact"
+      }
+    ],
+    "createdDate": "2023-11-06T08:46:26.204053625Z",
+    "contributorOrganizations": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    ],
+    "curatingInstitutions": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    ],
+    "entityDescription": {
+      "type": "EntityDescription",
+      "alternativeAbstracts": {},
+      "contributorsCount": 1,
+      "contributors": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
+              "type": "Organization",
+              "countryCode": "IQ",
+              "labels": {
+                "nn": "Al-Iraqia University",
+                "nb": "Al-Iraqia University",
+                "en": "Al-Iraqia University"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.1.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Avdeling for kunde og kommunikasjon",
+                "nb": "Avdeling for kunde og kommunikasjon",
+                "en": "The Customer and Communication Department"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "en": "Norwegian Defence University College",
+                "nb": "Forsvarets høgskole"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136254",
+            "type": "Identity",
+            "name": "Kjetil Møkkelgjerd",
+            "orcId": "https://sandbox.orcid.org/0000-0003-4147-3499",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        }
+      ],
+      "contributorsPreview": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
+              "type": "Organization",
+              "countryCode": "IQ",
+              "labels": {
+                "nn": "Al-Iraqia University",
+                "nb": "Al-Iraqia University",
+                "en": "Al-Iraqia University"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.1.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Avdeling for kunde og kommunikasjon",
+                "nb": "Avdeling for kunde og kommunikasjon",
+                "en": "The Customer and Communication Department"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "en": "Norwegian Defence University College",
+                "nb": "Forsvarets høgskole"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136254",
+            "type": "Identity",
+            "name": "Kjetil Møkkelgjerd",
+            "orcId": "https://sandbox.orcid.org/0000-0003-4147-3499",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        }
+      ],
+      "mainTitle": "Kjetils ticket test",
+      "language": "http://lexvo.org/id/iso639-3/nor",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "day": "6",
+        "month": "11",
+        "year": "2023"
+      },
+      "reference": {
+        "type": "Reference",
+        "doi": "https://doi.org/10.1371/journal.pone.0047887",
+        "publicationContext": {
+          "type": "Report",
+          "isbnList": [
+            "9788202535032"
+          ],
+          "publisher": {
+            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2023",
+            "identifier": "944351B3-DC14-4F62-9939-7A2793D6F0B1",
+            "type": "Publisher",
+            "isbnPrefix": "978-91-27",
+            "name": "Natur och kultur -deleted",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalForlagInfo?pid=944351B3-DC14-4F62-9939-7A2793D6F0B1",
+            "scientificValue": "LevelTwo",
+            "valid": true
+          },
+          "series": {
+            "type": "Series",
+            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/series/B24919B5-5DC4-4787-8D84-7922852we373/2024",
+            "identifier": "B24919B5-5DC4-4787-8D84-7922852we373",
+            "name": "Some series nr2",
+            "onlineIssn": "2327-3461",
+            "printIssn": "2327-3453",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/nvakanal?pid=B24919B5-5DC4-4787-8D84-7922852we373",
+            "scientificValue": "Unassigned"
+          }
+        },
+        "publicationInstance": {
+          "type": "ReportResearch",
+          "pages": {
+            "type": "MonographPages",
+            "illustrated": false
+          }
+        }
+      }
+    },
+    "identifier": "018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619e3bbaf39",
+    "modelVersion": "0.20.54",
+    "modifiedDate": "2023-11-06T08:48:11.943422687Z",
+    "nviType": "NonNviCandidate",
+    "projects": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/project/1433422",
+        "type": "ResearchProject",
+        "name": "Utvikling av eplekaken"
+      }
+    ],
+    "publishedDate": "2023-11-06T08:48:11.936406187Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "1136254@20754.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    },
+    "status": "DELETED",
+    "topLevelOrganizations": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+      }
+    ],
+    "joinField": {
+      "name": "hasParts"
+    }
+  }
