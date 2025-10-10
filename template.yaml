@@ -227,7 +227,20 @@ Resources:
     Properties:
       AccessLogSetting:
         DestinationArn: !GetAtt ApiAccessLogGroup.Arn
-        Format: '{ "apiId": "$context.apiId", "requestId": "$context.requestId", "requestTime": "$context.requestTime", "requestTimeEpoch": "$context.requestTimeEpoch", "httpMethod": "$context.httpMethod", "path": "$context.path", "status": "$context.status",  "error.message": "$context.error.message" }'
+        Format: >-
+          {
+            "apiId": "$context.apiId",
+            "requestId": "$context.requestId",
+            "requestTime": "$context.requestTime",
+            "requestTimeEpoch": "$context.requestTimeEpoch",
+            "httpMethod": "$context.httpMethod",
+            "path": "$context.path",
+            "queryString": "$context.requestQueryString"
+            "status": "$context.status",
+            "error.message": "$context.error.message" ,
+            "userAgent": "$context.identity.userAgent",
+            "ip": "$context.identity.sourceIp"
+          }
       StageName: Prod
       EndpointConfiguration: REGIONAL
       DefinitionBody:
@@ -796,7 +809,20 @@ Resources:
     Properties:
       AccessLogSetting:
         DestinationArn: !GetAtt PublicationOaiPmhApiAccessLogGroup.Arn
-        Format: '{ "apiId": "$context.apiId", "requestId": "$context.requestId", "requestTime": "$context.requestTime", "requestTimeEpoch": "$context.requestTimeEpoch", "httpMethod": "$context.httpMethod", "path": "$context.path", "status": "$context.status",  "error.message": "$context.error.message" }'
+        Format: >-
+          {
+            "apiId": "$context.apiId",
+            "requestId": "$context.requestId",
+            "requestTime": "$context.requestTime",
+            "requestTimeEpoch": "$context.requestTimeEpoch",
+            "httpMethod": "$context.httpMethod",
+            "path": "$context.path",
+            "queryString": "$context.requestQueryString"
+            "status": "$context.status",
+            "error.message": "$context.error.message" ,
+            "userAgent": "$context.identity.userAgent",
+            "ip": "$context.identity.sourceIp"
+          }
       StageName: Prod
       EndpointConfiguration:
         Type: REGIONAL
