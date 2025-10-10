@@ -333,7 +333,7 @@ public class SimplifiedMutator implements JsonNodeMutator {
               if (!affiliationNode.isMissingNode()) {
                 affiliationNode
                     .iterator()
-                    .forEachRemaining(node -> affiliations.add(new Affiliation(node)));
+                    .forEachRemaining(node -> affiliations.add(Affiliation.from(node)));
               }
 
               contributors.add(
