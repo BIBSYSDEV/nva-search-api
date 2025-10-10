@@ -235,7 +235,7 @@ Resources:
             "requestTimeEpoch": "$context.requestTimeEpoch",
             "httpMethod": "$context.httpMethod",
             "path": "$context.path",
-            "queryString": "$context.requestQueryString"
+            "queryString": "$context.requestQueryString",
             "status": "$context.status",
             "error.message": "$context.error.message" ,
             "userAgent": "$context.identity.userAgent",
@@ -817,7 +817,7 @@ Resources:
             "requestTimeEpoch": "$context.requestTimeEpoch",
             "httpMethod": "$context.httpMethod",
             "path": "$context.path",
-            "queryString": "$context.requestQueryString"
+            "queryString": "$context.requestQueryString",
             "status": "$context.status",
             "error.message": "$context.error.message" ,
             "userAgent": "$context.identity.userAgent",
