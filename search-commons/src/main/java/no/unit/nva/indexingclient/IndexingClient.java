@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.UnmodifiableIterator;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -95,8 +96,11 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
    */
   public void removeDocumentFromIndex(String identifier, String index) throws IOException {
     var request = new DeleteByQueryRequest(index);
-    request.setQuery(QueryBuilders.idsQuery().addIds(identifier));
-    request.setRefresh(true);
+    var query =
+        QueryBuilders.boolQuery()
+            .must(QueryBuilders.idsQuery().addIds(identifier))
+            .must(QueryBuilders.rangeQuery("indexDocumentCreatedAt").lt(Instant.now()));
+    request.setQuery(query);
     var response = openSearchClient.deleteByQuery(request, getRequestOptions());
     logWarningIfNotFound(identifier, response);
   }
