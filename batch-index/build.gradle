@@ -42,4 +42,5 @@ test {
     environment "TOPIC", "someTopic"
     environment "KEY_BATCHES_BUCKET", "batchesBucket"
     environment "MAX_PAYLOAD", "4096" // to trigger splitting batches in several indexing operations
+    environment "DLQ_QUEUE", "someDlq"
 }
