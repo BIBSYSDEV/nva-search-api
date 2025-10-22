@@ -122,7 +122,8 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
 
       var versionConflicts =
           Optional.ofNullable(response).map(BulkByScrollResponse::getVersionConflicts).orElse(0L);
-      var shouldRetryDelete = versionConflicts > 0 && i < MAX_RETRIES;
+      var isLastAttempt = MAX_RETRIES == i;
+      var shouldRetryDelete = versionConflicts > 0 && !isLastAttempt;
 
       if (shouldRetryDelete) {
         logger.warn("Failed to remove document {} on attempt #{}. Retrying...", identifier, i);
@@ -131,6 +132,10 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
       if (versionConflicts == 0) {
         logger.info("Successfully deleted document {} on attempt #{}", identifier, i);
         break;
+      }
+      if (isLastAttempt) {
+        logger.error("Failed to delete document {} from index {}", identifier, index);
+        throw new IOException("Failed to delete document");
       }
     }
   }
