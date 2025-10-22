@@ -34,7 +34,6 @@ import org.opensearch.client.indices.CreateIndexRequest;
 import org.opensearch.client.indices.GetMappingsRequest;
 import org.opensearch.cluster.metadata.MappingMetadata;
 import org.opensearch.common.compress.CompressedXContent;
-import org.opensearch.common.unit.TimeValue;
 import org.opensearch.core.common.bytes.BytesReference;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.reindex.BulkByScrollResponse;
@@ -51,6 +50,7 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
   private static final String DOCUMENT_WITH_ID_WAS_NOT_FOUND_IN_SEARCH_INFRASTRUCTURE =
       "Document with id={} was not found in search infrastructure";
   private static final boolean SEQUENTIAL = false;
+  private static final int MAX_RETRIES = 5;
 
   /**
    * Creates a new OpenSearchRestClient.
@@ -115,11 +115,26 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
             .should(QueryBuilders.rangeQuery("indexDocumentCreatedAt").lt(documentTimestamp))
             .minimumShouldMatch(1);
     request.setQuery(query);
-    request.setMaxRetries(5);
-    request.setRetryBackoffInitialTime(TimeValue.timeValueMillis(500));
-
-    var response = openSearchClient.deleteByQuery(request, getRequestOptions());
-    logWarningIfNotFound(identifier, response);
+    request.setAbortOnVersionConflict(false);
+    for (var i = 1; i <= MAX_RETRIES; i++) {
+      try {
+        var response = openSearchClient.deleteByQuery(request, getRequestOptions());
+        logWarningIfNotFound(identifier, response);
+        if (response.getVersionConflicts() == 0) {
+          break;
+        }
+      } catch (IOException exception) {
+        if (i == MAX_RETRIES) {
+          throw exception;
+        }
+        logger.warn(
+            "Failed to remove document {} from index {} on attempt {}. Retrying...",
+            identifier,
+            index,
+            i,
+            exception);
+      }
+    }
   }
 
   public void removeDocumentFromIndex(String identifier, String index) throws IOException {
