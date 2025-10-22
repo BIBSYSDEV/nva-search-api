@@ -99,8 +99,20 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
     var query =
         QueryBuilders.boolQuery()
             .filter(QueryBuilders.idsQuery().addIds(identifier))
-            .filter(QueryBuilders.rangeQuery("indexDocumentCreatedAt").lt(Instant.now()));
+            .should(
+                QueryBuilders.boolQuery()
+                    .mustNot(QueryBuilders.existsQuery("indexDocumentCreatedAt")))
+            .should(QueryBuilders.rangeQuery("indexDocumentCreatedAt").lt(Instant.now()))
+            .minimumShouldMatch(1);
     request.setQuery(query);
+
+    // Ignore version conflicts that occur when document is modified between query and delete.
+    // This is safe because:
+    // 1. If document was updated, the new version will have a newer timestamp
+    // 2. Our timestamp filter ensures we only delete older versions anyway
+    // 3. The insert that follows will create/update with the latest data
+    request.setConflicts("proceed");
+
     var response = openSearchClient.deleteByQuery(request, getRequestOptions());
     logWarningIfNotFound(identifier, response);
   }
