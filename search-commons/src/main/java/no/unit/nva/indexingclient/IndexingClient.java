@@ -117,22 +117,20 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
     request.setQuery(query);
     request.setAbortOnVersionConflict(false);
     for (var i = 1; i <= MAX_RETRIES; i++) {
-      try {
-        var response = openSearchClient.deleteByQuery(request, getRequestOptions());
-        logWarningIfNotFound(identifier, response);
-        if (response.getVersionConflicts() == 0) {
-          break;
-        }
-      } catch (IOException exception) {
-        if (i == MAX_RETRIES) {
-          throw exception;
-        }
-        logger.warn(
-            "Failed to remove document {} from index {} on attempt {}. Retrying...",
-            identifier,
-            index,
-            i,
-            exception);
+      var response = openSearchClient.deleteByQuery(request, getRequestOptions());
+      logWarningIfNotFound(identifier, response);
+
+      var versionConflicts =
+          Optional.ofNullable(response).map(BulkByScrollResponse::getVersionConflicts).orElse(0L);
+      var shouldRetryDelete = versionConflicts > 0 && i < MAX_RETRIES;
+
+      if (shouldRetryDelete) {
+        logger.warn("Failed to remove document {} on attempt #{}. Retrying...", identifier, i);
+        continue;
+      }
+      if (versionConflicts == 0) {
+        logger.info("Successfully deleted document {} on attempt #{}", identifier, i);
+        break;
       }
     }
   }
