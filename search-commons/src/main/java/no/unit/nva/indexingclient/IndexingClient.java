@@ -98,8 +98,8 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
     var request = new DeleteByQueryRequest(index);
     var query =
         QueryBuilders.boolQuery()
-            .must(QueryBuilders.idsQuery().addIds(identifier))
-            .must(QueryBuilders.rangeQuery("indexDocumentCreatedAt").lt(Instant.now()));
+            .filter(QueryBuilders.idsQuery().addIds(identifier))
+            .filter(QueryBuilders.rangeQuery("indexDocumentCreatedAt").lt(Instant.now()));
     request.setQuery(query);
     var response = openSearchClient.deleteByQuery(request, getRequestOptions());
     logWarningIfNotFound(identifier, response);
