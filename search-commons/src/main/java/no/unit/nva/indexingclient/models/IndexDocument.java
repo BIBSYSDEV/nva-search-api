@@ -80,6 +80,15 @@ public record IndexDocument(
         .orElseThrow(() -> new RuntimeException(MISSING_IDENTIFIER_IN_RESOURCE));
   }
 
+  @JsonIgnore
+  public Instant getIndexDocumentCreatedAt() {
+    return Optional.ofNullable(resource.get(INDEX_DOCUMENT_CREATED_AT))
+        .map(JsonNode::asText)
+        .map(Instant::parse)
+        .orElseThrow(
+            () -> new IllegalStateException("indexDocumentCreatedAt not found in document"));
+  }
+
   public IndexRequest toIndexRequest() {
     var routingKey = ShardRoutingService.calculateRoutingKey(resource);
     return new IndexRequest(getIndexName())

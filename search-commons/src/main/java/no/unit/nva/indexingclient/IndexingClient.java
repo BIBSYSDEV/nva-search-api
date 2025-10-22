@@ -83,19 +83,28 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
   public Void addDocumentToIndex(IndexDocument indexDocument) throws IOException {
     var documentIdentifier = indexDocument.getDocumentIdentifier();
     var indexName = indexDocument.getIndexName();
+    var documentTimestamp = indexDocument.getIndexDocumentCreatedAt();
     logger.debug(INITIAL_LOG_MESSAGE, documentIdentifier, indexName);
-    removeDocumentFromIndex(documentIdentifier, indexName);
+    removeDocumentFromIndex(documentIdentifier, indexName, documentTimestamp);
     openSearchClient.index(indexDocument.toIndexRequest(), getRequestOptions());
     return null;
   }
 
   /**
-   * Removes a document from Opensearch index.
+   * Removes older versions of a document from OpenSearch index.
    *
-   * @param identifier the identifier of the document
-   * @param index
+   * <p>Deletes all documents with the same ID that have an older timestamp than the document being
+   * inserted. This is necessary because custom routing can place documents with the same ID in
+   * different shards.
+   *
+   * @param identifier the document identifier
+   * @param index the index name
+   * @param documentTimestamp the timestamp of the document being inserted; only documents with
+   *     older timestamps will be deleted
+   * @throws IOException if the delete operation fails
    */
-  public void removeDocumentFromIndex(String identifier, String index) throws IOException {
+  public void removeDocumentFromIndex(String identifier, String index, Instant documentTimestamp)
+      throws IOException {
     var request = new DeleteByQueryRequest(index);
     var query =
         QueryBuilders.boolQuery()
@@ -103,24 +112,18 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
             .should(
                 QueryBuilders.boolQuery()
                     .mustNot(QueryBuilders.existsQuery("indexDocumentCreatedAt")))
-            .should(QueryBuilders.rangeQuery("indexDocumentCreatedAt").lt(Instant.now()))
+            .should(QueryBuilders.rangeQuery("indexDocumentCreatedAt").lt(documentTimestamp))
             .minimumShouldMatch(1);
     request.setQuery(query);
-
-    // Ignore version conflicts that occur when document is modified between query and delete.
-    // This is safe because:
-    // 1. If document was updated, the new version will have a newer timestamp
-    // 2. Our timestamp filter ensures we only delete older versions anyway
-    // 3. The insert that follows will create/update with the latest data
-//    request.setConflicts("proceed");
-
-    // Retry failed deletes automatically with exponential backoff
-    // This handles transient failures and ensures duplicates are cleaned up
     request.setMaxRetries(5);
     request.setRetryBackoffInitialTime(TimeValue.timeValueMillis(500));
 
     var response = openSearchClient.deleteByQuery(request, getRequestOptions());
     logWarningIfNotFound(identifier, response);
+  }
+
+  public void removeDocumentFromIndex(String identifier, String index) throws IOException {
+    removeDocumentFromIndex(identifier, index, Instant.now());
   }
 
   public Void createIndex(String indexName) throws IOException {
