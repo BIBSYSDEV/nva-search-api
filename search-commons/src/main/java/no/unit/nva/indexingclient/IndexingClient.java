@@ -34,6 +34,7 @@ import org.opensearch.client.indices.CreateIndexRequest;
 import org.opensearch.client.indices.GetMappingsRequest;
 import org.opensearch.cluster.metadata.MappingMetadata;
 import org.opensearch.common.compress.CompressedXContent;
+import org.opensearch.common.unit.TimeValue;
 import org.opensearch.core.common.bytes.BytesReference;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.reindex.BulkByScrollResponse;
@@ -111,7 +112,12 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
     // 1. If document was updated, the new version will have a newer timestamp
     // 2. Our timestamp filter ensures we only delete older versions anyway
     // 3. The insert that follows will create/update with the latest data
-    request.setConflicts("proceed");
+//    request.setConflicts("proceed");
+
+    // Retry failed deletes automatically with exponential backoff
+    // This handles transient failures and ensures duplicates are cleaned up
+    request.setMaxRetries(5);
+    request.setRetryBackoffInitialTime(TimeValue.timeValueMillis(500));
 
     var response = openSearchClient.deleteByQuery(request, getRequestOptions());
     logWarningIfNotFound(identifier, response);
