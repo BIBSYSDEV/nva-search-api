@@ -50,6 +50,7 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
   private static final String DOCUMENT_WITH_ID_WAS_NOT_FOUND_IN_SEARCH_INFRASTRUCTURE =
       "Document with id={} was not found in search infrastructure";
   private static final boolean SEQUENTIAL = false;
+  private static final int MAX_RETRIES = 5;
 
   /**
    * Creates a new OpenSearchRestClient.
@@ -82,27 +83,65 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
   public Void addDocumentToIndex(IndexDocument indexDocument) throws IOException {
     var documentIdentifier = indexDocument.getDocumentIdentifier();
     var indexName = indexDocument.getIndexName();
+    var documentTimestamp = indexDocument.getIndexDocumentCreatedAt();
     logger.debug(INITIAL_LOG_MESSAGE, documentIdentifier, indexName);
-    removeDocumentFromIndex(documentIdentifier, indexName);
+    removeDocumentFromIndex(documentIdentifier, indexName, documentTimestamp);
     openSearchClient.index(indexDocument.toIndexRequest(), getRequestOptions());
     return null;
   }
 
   /**
-   * Removes a document from Opensearch index.
+   * Removes older versions of a document from OpenSearch index.
    *
-   * @param identifier the identifier of the document
-   * @param index
+   * <p>Deletes all documents with the same ID that have an older timestamp than the document being
+   * inserted. This is necessary because custom routing can place documents with the same ID in
+   * different shards.
+   *
+   * @param identifier the document identifier
+   * @param index the index name
+   * @param documentTimestamp the timestamp of the document being inserted; only documents with
+   *     older timestamps will be deleted
+   * @throws IOException if the delete operation fails
    */
-  public void removeDocumentFromIndex(String identifier, String index) throws IOException {
+  public void removeDocumentFromIndex(String identifier, String index, Instant documentTimestamp)
+      throws IOException {
     var request = new DeleteByQueryRequest(index);
     var query =
         QueryBuilders.boolQuery()
-            .must(QueryBuilders.idsQuery().addIds(identifier))
-            .must(QueryBuilders.rangeQuery("indexDocumentCreatedAt").lt(Instant.now()));
+            .filter(QueryBuilders.idsQuery().addIds(identifier))
+            .should(
+                QueryBuilders.boolQuery()
+                    .mustNot(QueryBuilders.existsQuery("indexDocumentCreatedAt")))
+            .should(QueryBuilders.rangeQuery("indexDocumentCreatedAt").lt(documentTimestamp))
+            .minimumShouldMatch(1);
     request.setQuery(query);
-    var response = openSearchClient.deleteByQuery(request, getRequestOptions());
-    logWarningIfNotFound(identifier, response);
+    request.setAbortOnVersionConflict(false);
+    for (var i = 1; i <= MAX_RETRIES; i++) {
+      var response = openSearchClient.deleteByQuery(request, getRequestOptions());
+      logWarningIfNotFound(identifier, response);
+
+      var versionConflicts =
+          Optional.ofNullable(response).map(BulkByScrollResponse::getVersionConflicts).orElse(0L);
+      var isLastAttempt = MAX_RETRIES == i;
+      var shouldRetryDelete = versionConflicts > 0 && !isLastAttempt;
+
+      if (shouldRetryDelete) {
+        logger.warn("Failed to remove document {} on attempt #{}. Retrying...", identifier, i);
+        continue;
+      }
+      if (versionConflicts == 0) {
+        logger.info("Successfully deleted document {} on attempt #{}", identifier, i);
+        break;
+      }
+      if (isLastAttempt) {
+        logger.error("Failed to delete document {} from index {}", identifier, index);
+        throw new IOException("Failed to delete document");
+      }
+    }
+  }
+
+  public void removeDocumentFromIndex(String identifier, String index) throws IOException {
+    removeDocumentFromIndex(identifier, index, Instant.now());
   }
 
   public Void createIndex(String indexName) throws IOException {
