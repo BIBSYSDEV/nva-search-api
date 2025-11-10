@@ -9,6 +9,9 @@ import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
+import static org.apache.hc.core5.http.HttpHeaders.ACCEPT;
+import static org.apache.hc.core5.http.HttpHeaders.CONTENT_TYPE;
+import static org.apache.hc.core5.http.HttpHeaders.VARY;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
@@ -27,7 +30,6 @@ import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
-import org.apache.hc.core5.http.HttpHeaders;
 
 /**
  * Handler for searching resources.
@@ -62,8 +64,15 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
   protected String processInput(Void input, RequestInfo requestInfo, Context context)
       throws BadRequestException {
     var version = ContentTypeUtils.extractVersionFromRequestInfo(requestInfo);
+    var acceptHeader = ContentTypeUtils.extractAcceptFromRequestInfo(requestInfo);
 
-    addAdditionalHeaders(() -> Map.of(HttpHeaders.VARY, HttpHeaders.ACCEPT));
+    addAdditionalHeaders(
+        () ->
+            Map.of(
+                VARY,
+                ACCEPT,
+                CONTENT_TYPE,
+                ContentTypeUtils.buildContentType(acceptHeader, version)));
 
     return ResourceSearchQuery.builder()
         .fromRequestInfo(requestInfo)
