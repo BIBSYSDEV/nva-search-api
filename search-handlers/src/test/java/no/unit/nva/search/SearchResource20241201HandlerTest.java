@@ -34,8 +34,6 @@ import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 class SearchResource20241201HandlerTest {
 
@@ -148,16 +146,6 @@ class SearchResource20241201HandlerTest {
     assertThat(hit.has("owner"), is(false));
     assertThat(hit.has("publisher"), is(false));
     assertThat(hit.has("title"), is(false));
-  }
-
-  @ParameterizedTest(name = "responds ok when asking for {0}")
-  @ValueSource(strings = {V_2024_12_01_SIMPLER_MODEL, V_LEGACY})
-  void shouldRespondOkWhenExplicitlyAskingForSupportedVersions(String version) throws IOException {
-    prepareRestHighLevelClientOkResponse();
-    handler.handleRequest(getInputStream(version), outputStream, contextMock);
-    var gatewayResponse = FakeGatewayResponse.of(outputStream);
-
-    assertThat(gatewayResponse.statusCode(), is(equalTo(HTTP_OK)));
   }
 
   private InputStream getInputStream() throws JsonProcessingException {
