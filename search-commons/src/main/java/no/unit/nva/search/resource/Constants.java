@@ -100,6 +100,7 @@ public final class Constants {
   public static final String CRISTIN_IDENTIFIER = "CristinIdentifier";
 
   public static final String V_2024_12_01_SIMPLER_MODEL = "2024-12-01";
+  public static final String V_LEGACY = "legacy";
   public static final String PERSON_PREFERENCES = "/person-preferences/";
   public static final String UNIQUE_PUBLICATIONS = "unique_publications";
   public static final String CRISTIN_ORGANIZATION_PATH = "/cristin/organization/";
@@ -110,7 +111,7 @@ public final class Constants {
   public static final String FILES_STATUS_KEYWORD = jsonPath(FILES_STATUS, KEYWORD);
   public static final String ENTITY_CONTRIBUTORS = jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS);
   public static final String CONTRIBUTOR_COUNT_NO_KEYWORD =
-      jsonPath(ENTITY_DESCRIPTION, "contributorsCount");
+      jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS_COUNT);
   public static final String ENTITY_PUBLICATION_CONTEXT =
       jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT);
 
@@ -211,7 +212,7 @@ public final class Constants {
       jsonPath(ENTITY_DESCRIPTION_MAIN_TITLE, KEYWORD);
   public static final String FUNDINGS_SOURCE_LABELS = jsonPath(FUNDINGS, SOURCE, LABELS);
   public static final String HANDLE_KEYWORD =
-      multipleFields(jsonPath(HANDLE, KEYWORD), jsonPath("additionalIdentifiers", VALUE, KEYWORD));
+      multipleFields(jsonPath(HANDLE, KEYWORD), jsonPath(ADDITIONAL_IDENTIFIERS, VALUE, KEYWORD));
   public static final String RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD =
       jsonPath(RESOURCE_OWNER, OWNER_AFFILIATION, KEYWORD);
   public static final String RESOURCE_OWNER_OWNER_KEYWORD =
@@ -254,7 +255,7 @@ public final class Constants {
           jsonPath(ENTITY_PUBLICATION_INSTANCE, "compliesWith", KEYWORD),
           jsonPath(ENTITY_PUBLICATION_INSTANCE, "referencedBy", KEYWORD),
           jsonPath(ENTITY_PUBLICATION_INSTANCE, "corrigendumFor", KEYWORD),
-          jsonPath(ENTITY_PUBLICATION_INSTANCE, "manifestations", ID, KEYWORD),
+          jsonPath(ENTITY_PUBLICATION_INSTANCE, MANIFESTATIONS, ID, KEYWORD),
           jsonPath(ENTITY_PUBLICATION_INSTANCE, ID, KEYWORD));
   public static final String PAINLESS = "painless";
   public static final List<AggregationBuilder> RESOURCES_AGGREGATIONS =
@@ -280,7 +281,7 @@ public final class Constants {
           FUNDING_SOURCE, "/withAppliedFilter/fundings/id",
           TOP_LEVEL_ORGANIZATION, "/withAppliedFilter/topLevelOrganization/id",
           SCIENTIFIC_INDEX, "/withAppliedFilter/scientificIndex/year");
-  public static final Map<String, String> facetResourcePaths =
+  static final Map<String, String> facetResourcePaths =
       Stream.of(facetResourcePaths1, facetResourcePaths2)
           .flatMap(map -> map.entrySet().stream())
           .sorted(Map.Entry.comparingByValue())
@@ -290,7 +291,9 @@ public final class Constants {
               LinkedHashMap::putAll);
 
   @JacocoGenerated
-  public Constants() {}
+  private Constants() {
+    /* NOOP */
+  }
 
   public static NestedAggregationBuilder topLevelOrganisationsHierarchy() {
     return nestedBranchBuilder(TOP_LEVEL_ORGANIZATION, TOP_LEVEL_ORGANIZATIONS)

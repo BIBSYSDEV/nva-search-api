@@ -2,8 +2,11 @@ package no.unit.nva.search;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
+import static java.util.Objects.nonNull;
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.search.resource.Constants.V_2024_12_01_SIMPLER_MODEL;
+import static no.unit.nva.search.resource.Constants.V_LEGACY;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
@@ -36,6 +39,8 @@ import nva.commons.apigateway.AccessRight;
 import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class SearchResourceAuthHandlerTest {
 
@@ -69,7 +74,7 @@ class SearchResourceAuthHandlerTest {
 
     handler.handleRequest(
         getInputStreamWithAccessRight(
-            customer, curatorOrganization, AccessRight.MANAGE_RESOURCES_ALL),
+            customer, curatorOrganization, AccessRight.MANAGE_RESOURCES_ALL, null),
         outputStream,
         contextMock);
 
@@ -86,7 +91,8 @@ class SearchResourceAuthHandlerTest {
     prepareRestHighLevelClientOkResponse();
 
     var input =
-        getInputStreamWithAccessRight(randomUri(), randomUri(), AccessRight.MANAGE_RESOURCES_ALL);
+        getInputStreamWithAccessRight(
+            randomUri(), randomUri(), AccessRight.MANAGE_RESOURCES_ALL, V_LEGACY);
     handler.handleRequest(input, outputStream, contextMock);
 
     var gatewayResponse = FakeGatewayResponse.of(outputStream);
@@ -96,16 +102,49 @@ class SearchResourceAuthHandlerTest {
   }
 
   @Test
+  void shouldDefaultToLegacyModelWhenNoVersionSpecified() throws IOException {
+    prepareRestHighLevelClientOkResponse();
+
+    var input =
+        getInputStreamWithAccessRight(
+            randomUri(), randomUri(), AccessRight.MANAGE_RESOURCES_ALL, null);
+    handler.handleRequest(input, outputStream, contextMock);
+
+    var gatewayResponse = FakeGatewayResponse.of(outputStream);
+
+    assertNotNull(gatewayResponse.headers());
+    assertEquals(HTTP_OK, gatewayResponse.statusCode());
+    assertNotNull(gatewayResponse.body());
+    assertThat(gatewayResponse.body().hits().size(), is(equalTo(2)));
+  }
+
+  @Test
   void shouldReturnUnauthorizedWhenUserIsMissingAccessRight() throws IOException {
     prepareRestHighLevelClientOkResponse();
 
-    var input = getInputStreamWithAccessRight(randomUri(), randomUri(), AccessRight.SUPPORT);
+    var input = getInputStreamWithAccessRight(randomUri(), randomUri(), AccessRight.SUPPORT, null);
     handler.handleRequest(input, outputStream, contextMock);
 
     var gatewayResponse = FakeGatewayResponse.of(outputStream);
 
     assertNotNull(gatewayResponse.headers());
     assertEquals(HTTP_UNAUTHORIZED, gatewayResponse.statusCode());
+  }
+
+  @ParameterizedTest(name = "responds ok when asking for {0}")
+  @ValueSource(strings = {V_2024_12_01_SIMPLER_MODEL, V_LEGACY})
+  void shouldRespondOkWhenExplicitlyAskingForSupportedVersions(String version) throws IOException {
+    prepareRestHighLevelClientOkResponse();
+
+    var input =
+        getInputStreamWithAccessRight(
+            randomUri(), randomUri(), AccessRight.MANAGE_RESOURCES_ALL, version);
+    handler.handleRequest(input, outputStream, contextMock);
+
+    var gatewayResponse = FakeGatewayResponse.of(outputStream);
+
+    assertNotNull(gatewayResponse.headers());
+    assertEquals(HTTP_OK, gatewayResponse.statusCode());
   }
 
   private void prepareRestHighLevelClientOkResponse() throws IOException {
@@ -117,16 +156,19 @@ class SearchResourceAuthHandlerTest {
   }
 
   private InputStream getInputStreamWithAccessRight(
-      URI currentCustomer, URI topLevelCristinOrgId, AccessRight accessRight)
+      URI currentCustomer, URI topLevelCristinOrgId, AccessRight accessRight, String version)
       throws JsonProcessingException {
+    var acceptHeaderValue =
+        nonNull(version) ? "application/json;version=" + version : "application/json";
+
     return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-        .withHeaders(Map.of(ACCEPT, "application/json"))
+        .withHeaders(Map.of(ACCEPT, acceptHeaderValue))
+        .withHeaders(Map.of("Authorization", "Bearer " + randomString()))
         .withRequestContext(getRequestContext())
         .withUserName(randomString())
         .withCurrentCustomer(currentCustomer)
         .withTopLevelCristinOrgId(topLevelCristinOrgId)
         .withAccessRights(currentCustomer, accessRight)
-        .withHeaders(Map.of("Authorization", "Bearer " + randomString()))
         .build();
   }
 

@@ -4,6 +4,7 @@ import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.search.resource.Constants.V_2024_12_01_SIMPLER_MODEL;
+import static no.unit.nva.search.resource.Constants.V_LEGACY;
 import static no.unit.nva.search.resource.ResourceParameter.SEARCH_ALL;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -64,7 +65,7 @@ class SearchResource20241201HandlerTest {
   }
 
   @Test
-  public void shouldReturnAResponseThatCanBeMappedToModelDto() throws IOException {
+  void shouldReturnAResponseThatCanBeMappedToModelDto() throws IOException {
     prepareRestHighLevelClientOkResponse();
     handler.handleRequest(getInputStream(), outputStream, contextMock);
     var gatewayResponse = FakeGatewayResponse.of(outputStream);
@@ -86,8 +87,24 @@ class SearchResource20241201HandlerTest {
                 URI.create("http://localhost/publication/f367b260-c15e-4d0f-b197-e1dc0e9eb0e8"))));
   }
 
+  @Test
+  void shouldDefaultToLegacyModelWhenNoVersionSpecified() throws IOException {
+    prepareRestHighLevelClientOkResponse();
+    handler.handleRequest(getInputStream(), outputStream, contextMock);
+    var gatewayResponse = FakeGatewayResponse.of(outputStream);
+
+    assertThat(gatewayResponse.statusCode(), is(equalTo(HTTP_OK)));
+
+    var actualBody = gatewayResponse.body();
+    var firstHitJson = actualBody.hits().getFirst();
+    var firstHitDto = objectMapperWithEmpty.treeToValue(firstHitJson, ResourceSearchResponse.class);
+
+    assertNotNull(firstHitDto);
+    assertNotNull(firstHitDto.id());
+  }
+
   @ParameterizedTest(name = "responds ok when asking for {0}")
-  @ValueSource(strings = {V_2024_12_01_SIMPLER_MODEL})
+  @ValueSource(strings = {V_2024_12_01_SIMPLER_MODEL, V_LEGACY})
   void shouldRespondOkWhenExplicitlyAskingForSupportedVersions(String version) throws IOException {
     prepareRestHighLevelClientOkResponse();
     handler.handleRequest(getInputStream(version), outputStream, contextMock);
