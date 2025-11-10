@@ -22,6 +22,7 @@ import static org.mockito.Mockito.when;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -116,6 +117,67 @@ class SearchResourceAuthHandlerTest {
     assertEquals(HTTP_OK, gatewayResponse.statusCode());
     assertNotNull(gatewayResponse.body());
     assertThat(gatewayResponse.body().hits().size(), is(equalTo(2)));
+
+    var firstHitJson = gatewayResponse.body().hits().getFirst();
+    assertLegacyModel(firstHitJson);
+  }
+
+  @Test
+  void shouldReturnSimplifiedModelWhenVersion20241201Specified() throws IOException {
+    prepareRestHighLevelClientOkResponse();
+
+    var input =
+        getInputStreamWithAccessRight(
+            randomUri(), randomUri(), AccessRight.MANAGE_RESOURCES_ALL, V_2024_12_01_SIMPLER_MODEL);
+    handler.handleRequest(input, outputStream, contextMock);
+
+    var gatewayResponse = FakeGatewayResponse.of(outputStream);
+
+    assertNotNull(gatewayResponse.headers());
+    assertEquals(HTTP_OK, gatewayResponse.statusCode());
+
+    var firstHitJson = gatewayResponse.body().hits().getFirst();
+    var firstHitDto =
+        objectMapperWithEmpty.treeToValue(
+            firstHitJson, no.unit.nva.search.resource.response.ResourceSearchResponse.class);
+
+    assertNotNull(firstHitDto);
+    assertNotNull(firstHitDto.id());
+
+    assertSimplifiedModel(firstHitJson);
+  }
+
+  @Test
+  void shouldReturnLegacyModelWhenLegacyVersionSpecified() throws IOException {
+    prepareRestHighLevelClientOkResponse();
+
+    var input =
+        getInputStreamWithAccessRight(
+            randomUri(), randomUri(), AccessRight.MANAGE_RESOURCES_ALL, V_LEGACY);
+    handler.handleRequest(input, outputStream, contextMock);
+
+    var gatewayResponse = FakeGatewayResponse.of(outputStream);
+
+    assertNotNull(gatewayResponse.headers());
+    assertEquals(HTTP_OK, gatewayResponse.statusCode());
+
+    var firstHitJson = gatewayResponse.body().hits().getFirst();
+    assertLegacyModel(firstHitJson);
+  }
+
+  private static void assertLegacyModel(JsonNode hit) {
+    assertThat(hit.has("publicationType"), is(true));
+    assertThat(hit.has("owner"), is(true));
+    assertThat(hit.has("publisher"), is(true));
+    assertThat(hit.has("title"), is(true));
+    assertThat(hit.path("entityDescription").has("contributors"), is(true));
+  }
+
+  private static void assertSimplifiedModel(JsonNode hit) {
+    assertThat(hit.has("publicationType"), is(false));
+    assertThat(hit.has("owner"), is(false));
+    assertThat(hit.has("publisher"), is(false));
+    assertThat(hit.has("title"), is(false));
   }
 
   @Test
@@ -162,8 +224,7 @@ class SearchResourceAuthHandlerTest {
         nonNull(version) ? "application/json;version=" + version : "application/json";
 
     return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-        .withHeaders(Map.of(ACCEPT, acceptHeaderValue))
-        .withHeaders(Map.of("Authorization", "Bearer " + randomString()))
+        .withHeaders(Map.of("Authorization", "Bearer " + randomString(), ACCEPT, acceptHeaderValue))
         .withRequestContext(getRequestContext())
         .withUserName(randomString())
         .withCurrentCustomer(currentCustomer)

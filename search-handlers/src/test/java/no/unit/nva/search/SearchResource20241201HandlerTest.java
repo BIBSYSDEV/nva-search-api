@@ -18,6 +18,7 @@ import static org.mockito.Mockito.when;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -37,6 +38,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class SearchResource20241201HandlerTest {
+
   public static final String SAMPLE_PATH = "search";
   public static final String SAMPLE_DOMAIN_NAME = "localhost";
   public static final String SAMPLE_SEARCH_TERM = "searchTerm";
@@ -97,10 +99,55 @@ class SearchResource20241201HandlerTest {
 
     var actualBody = gatewayResponse.body();
     var firstHitJson = actualBody.hits().getFirst();
+
+    assertLegacyModel(firstHitJson);
+  }
+
+  @Test
+  void shouldReturnSimplifiedModelWhenVersion20241201Specified() throws IOException {
+    prepareRestHighLevelClientOkResponse();
+    handler.handleRequest(getInputStream(V_2024_12_01_SIMPLER_MODEL), outputStream, contextMock);
+    var gatewayResponse = FakeGatewayResponse.of(outputStream);
+
+    assertThat(gatewayResponse.statusCode(), is(equalTo(HTTP_OK)));
+
+    var actualBody = gatewayResponse.body();
+    var firstHitJson = actualBody.hits().getFirst();
     var firstHitDto = objectMapperWithEmpty.treeToValue(firstHitJson, ResourceSearchResponse.class);
 
     assertNotNull(firstHitDto);
     assertNotNull(firstHitDto.id());
+
+    assertSimplifiedModel(firstHitJson);
+  }
+
+  @Test
+  void shouldReturnLegacyModelWhenLegacyVersionSpecified() throws IOException {
+    prepareRestHighLevelClientOkResponse();
+    handler.handleRequest(getInputStream(V_LEGACY), outputStream, contextMock);
+    var gatewayResponse = FakeGatewayResponse.of(outputStream);
+
+    assertThat(gatewayResponse.statusCode(), is(equalTo(HTTP_OK)));
+
+    var actualBody = gatewayResponse.body();
+    var firstHitJson = actualBody.hits().getFirst();
+
+    assertLegacyModel(firstHitJson);
+  }
+
+  private static void assertLegacyModel(JsonNode hit) {
+    assertThat(hit.has("publicationType"), is(true));
+    assertThat(hit.has("owner"), is(true));
+    assertThat(hit.has("publisher"), is(true));
+    assertThat(hit.has("title"), is(true));
+    assertThat(hit.path("entityDescription").has("contributors"), is(true));
+  }
+
+  private static void assertSimplifiedModel(JsonNode hit) {
+    assertThat(hit.has("publicationType"), is(false));
+    assertThat(hit.has("owner"), is(false));
+    assertThat(hit.has("publisher"), is(false));
+    assertThat(hit.has("title"), is(false));
   }
 
   @ParameterizedTest(name = "responds ok when asking for {0}")
