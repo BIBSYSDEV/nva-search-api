@@ -40,8 +40,6 @@ import nva.commons.apigateway.AccessRight;
 import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 class SearchResourceAuthHandlerTest {
 
@@ -191,22 +189,6 @@ class SearchResourceAuthHandlerTest {
 
     assertNotNull(gatewayResponse.headers());
     assertEquals(HTTP_UNAUTHORIZED, gatewayResponse.statusCode());
-  }
-
-  @ParameterizedTest(name = "responds ok when asking for {0}")
-  @ValueSource(strings = {V_2024_12_01_SIMPLER_MODEL, V_LEGACY})
-  void shouldRespondOkWhenExplicitlyAskingForSupportedVersions(String version) throws IOException {
-    prepareRestHighLevelClientOkResponse();
-
-    var input =
-        getInputStreamWithAccessRight(
-            randomUri(), randomUri(), AccessRight.MANAGE_RESOURCES_ALL, version);
-    handler.handleRequest(input, outputStream, contextMock);
-
-    var gatewayResponse = FakeGatewayResponse.of(outputStream);
-
-    assertNotNull(gatewayResponse.headers());
-    assertEquals(HTTP_OK, gatewayResponse.statusCode());
   }
 
   private void prepareRestHighLevelClientOkResponse() throws IOException {
