@@ -22,7 +22,6 @@ import static org.mockito.Mockito.when;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -32,12 +31,15 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.Map;
 import no.unit.nva.constants.Words;
+import no.unit.nva.search.common.records.PagedSearch;
 import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.testing.common.FakeGatewayResponse;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.AccessRight;
 import nva.commons.core.Environment;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.core.Is;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -110,14 +112,8 @@ class SearchResourceAuthHandlerTest {
     handler.handleRequest(input, outputStream, contextMock);
 
     var gatewayResponse = FakeGatewayResponse.of(outputStream);
-
-    assertNotNull(gatewayResponse.headers());
     assertEquals(HTTP_OK, gatewayResponse.statusCode());
-    assertNotNull(gatewayResponse.body());
-    assertThat(gatewayResponse.body().hits().size(), is(equalTo(2)));
-
-    var firstHitJson = gatewayResponse.body().hits().getFirst();
-    assertLegacyModel(firstHitJson);
+    assertLegacyModel(gatewayResponse);
   }
 
   @Test
@@ -130,19 +126,8 @@ class SearchResourceAuthHandlerTest {
     handler.handleRequest(input, outputStream, contextMock);
 
     var gatewayResponse = FakeGatewayResponse.of(outputStream);
-
-    assertNotNull(gatewayResponse.headers());
     assertEquals(HTTP_OK, gatewayResponse.statusCode());
-
-    var firstHitJson = gatewayResponse.body().hits().getFirst();
-    var firstHitDto =
-        objectMapperWithEmpty.treeToValue(
-            firstHitJson, no.unit.nva.search.resource.response.ResourceSearchResponse.class);
-
-    assertNotNull(firstHitDto);
-    assertNotNull(firstHitDto.id());
-
-    assertSimplifiedModel(firstHitJson);
+    assertSimplifiedModel(gatewayResponse);
   }
 
   @Test
@@ -159,23 +144,34 @@ class SearchResourceAuthHandlerTest {
     assertNotNull(gatewayResponse.headers());
     assertEquals(HTTP_OK, gatewayResponse.statusCode());
 
-    var firstHitJson = gatewayResponse.body().hits().getFirst();
-    assertLegacyModel(firstHitJson);
+    assertLegacyModel(gatewayResponse);
   }
 
-  private static void assertLegacyModel(JsonNode hit) {
-    assertThat(hit.has("publicationType"), is(true));
-    assertThat(hit.has("owner"), is(true));
-    assertThat(hit.has("publisher"), is(true));
-    assertThat(hit.has("title"), is(true));
-    assertThat(hit.path("entityDescription").has("contributors"), is(true));
+  private static void assertLegacyModel(FakeGatewayResponse<PagedSearch> gatewayResponse) {
+    assertThat(
+        gatewayResponse.headers().get("Content-Type"),
+        Is.is(equalTo("application/json; charset=utf-8; version=" + V_LEGACY)));
+
+    var actualBody = gatewayResponse.body();
+    var hit = actualBody.hits().getFirst();
+    assertThat(hit.has("publicationType"), CoreMatchers.is(true));
+    assertThat(hit.has("owner"), CoreMatchers.is(true));
+    assertThat(hit.has("publisher"), CoreMatchers.is(true));
+    assertThat(hit.has("title"), CoreMatchers.is(true));
+    assertThat(hit.path("entityDescription").has("contributors"), CoreMatchers.is(true));
   }
 
-  private static void assertSimplifiedModel(JsonNode hit) {
-    assertThat(hit.has("publicationType"), is(false));
-    assertThat(hit.has("owner"), is(false));
-    assertThat(hit.has("publisher"), is(false));
-    assertThat(hit.has("title"), is(false));
+  private static void assertSimplifiedModel(FakeGatewayResponse<PagedSearch> gatewayResponse) {
+    assertThat(
+        gatewayResponse.headers().get("Content-Type"),
+        Is.is(equalTo("application/json; charset=utf-8; version=" + V_2024_12_01_SIMPLER_MODEL)));
+
+    var actualBody = gatewayResponse.body();
+    var hit = actualBody.hits().getFirst();
+    assertThat(hit.has("publicationType"), CoreMatchers.is(false));
+    assertThat(hit.has("owner"), CoreMatchers.is(false));
+    assertThat(hit.has("publisher"), CoreMatchers.is(false));
+    assertThat(hit.has("title"), CoreMatchers.is(false));
   }
 
   @Test

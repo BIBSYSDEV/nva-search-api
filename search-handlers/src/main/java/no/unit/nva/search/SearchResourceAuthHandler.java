@@ -7,11 +7,15 @@ import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
+import static org.apache.hc.core5.http.HttpHeaders.ACCEPT;
+import static org.apache.hc.core5.http.HttpHeaders.CONTENT_TYPE;
+import static org.apache.hc.core5.http.HttpHeaders.VARY;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
 import java.util.List;
+import java.util.Map;
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.ContentTypeUtils;
 import no.unit.nva.search.common.records.JsonNodeMutator;
@@ -62,6 +66,15 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
   protected String processInput(Void input, RequestInfo requestInfo, Context context)
       throws BadRequestException, UnauthorizedException {
     var version = ContentTypeUtils.extractVersionFromRequestInfo(requestInfo);
+    var acceptHeader = ContentTypeUtils.extractAcceptFromRequestInfo(requestInfo);
+
+    addAdditionalHeaders(
+        () ->
+            Map.of(
+                VARY,
+                ACCEPT,
+                CONTENT_TYPE,
+                ContentTypeUtils.buildContentType(acceptHeader, version)));
 
     return ResourceSearchQuery.builder()
         .fromRequestInfo(requestInfo)
