@@ -100,7 +100,7 @@ public final class Constants {
   public static final String CRISTIN_IDENTIFIER = "CristinIdentifier";
 
   public static final String V_2024_12_01_SIMPLER_MODEL = "2024-12-01";
-  public static final String V_LEGACY = "legacy";
+  public static final String V_LEGACY = "2022-05-20";
   public static final String PERSON_PREFERENCES = "/person-preferences/";
   public static final String UNIQUE_PUBLICATIONS = "unique_publications";
   public static final String CRISTIN_ORGANIZATION_PATH = "/cristin/organization/";
