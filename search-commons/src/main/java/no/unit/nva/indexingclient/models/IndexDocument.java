@@ -19,7 +19,6 @@ import java.util.Objects;
 import java.util.Optional;
 import no.unit.nva.commons.json.JsonSerializable;
 import no.unit.nva.identifiers.SortableIdentifier;
-import no.unit.nva.indexingclient.ShardRoutingService;
 import nva.commons.core.StringUtils;
 import org.opensearch.action.index.IndexRequest;
 import org.opensearch.common.xcontent.XContentType;
@@ -81,10 +80,8 @@ public record IndexDocument(
   }
 
   public IndexRequest toIndexRequest() {
-    var routingKey = ShardRoutingService.calculateRoutingKey(resource);
     return new IndexRequest(getIndexName())
         .source(serializeResource(), XContentType.JSON)
-        .routing(routingKey)
         .id(getDocumentIdentifier());
   }
 
