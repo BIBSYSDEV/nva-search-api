@@ -377,10 +377,7 @@
           "en": "Norwegian Defence University College"
         }
       }
-    ],
-    "joinField": {
-      "name": "hasParts"
-    }
+    ]
   },
   {
     "type": "Publication",
@@ -521,9 +518,6 @@
       "type": "ScientificIndex",
       "status": "Reported",
       "year": "2019"
-    },
-    "joinField": {
-      "name": "hasParts"
     }
   },
   {
@@ -939,10 +933,7 @@
           "en": "Norwegian Defence University College"
         }
       }
-    ],
-    "joinField": {
-      "name": "hasParts"
-    }
+    ]
   },
   {
     "type": "Publication",
@@ -1133,10 +1124,7 @@
       "owner": "ngi@7452.0.0.0",
       "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
-    "status": "PUBLISHED",
-    "joinField": {
-      "name": "hasParts"
-    }
+    "status": "PUBLISHED"
   },
   {
     "type": "Publication",
@@ -1280,10 +1268,7 @@
       "owner": "ngi@7452.0.0.0",
       "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
-    "status": "UNPUBLISHED",
-    "joinField": {
-      "name": "hasParts"
-    }
+    "status": "UNPUBLISHED"
   },
   {
     "type": "Publication",
@@ -1400,10 +1385,7 @@
       "owner": "ngi@7452.0.0.0",
       "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
-    "status": "PUBLISHED",
-    "joinField": {
-      "name": "hasParts"
-    }
+    "status": "PUBLISHED"
   },
   {
     "type": "Publication",
@@ -1755,9 +1737,6 @@
       "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "joinField": {
-      "name": "hasParts"
-    },
     "subjects": [
       "https://nva.unit.no/hrcs/activity/hrcs_ra_4_2",
       "https://nva.unit.no/hrcs/category/hrcs_hc_01blo"
@@ -2044,10 +2023,7 @@
       "owner": "ngi@7452.0.0.0",
       "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
-    "status": "PUBLISHED",
-    "joinField": {
-      "name": "hasParts"
-    }
+    "status": "PUBLISHED"
   },
   {
     "type": "Publication",
@@ -3083,10 +3059,7 @@
         }
       }
     ],
-    "filesStatus": "hasPublicFiles",
-    "joinField": {
-      "name": "hasParts"
-    }
+    "filesStatus": "hasPublicFiles"
   },
   {
     "type": "Publication",
@@ -3229,10 +3202,7 @@
       "owner": "ngi@7452.0.0.0",
       "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
-    "status": "PUBLISHED",
-    "joinField": {
-      "name": "hasParts"
-    }
+    "status": "PUBLISHED"
   },
   {
     "type": "Publication",
@@ -3556,10 +3526,7 @@
       "owner": "ngi@7452.0.0.0",
       "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
-    "status": "PUBLISHED",
-    "joinField": {
-      "name": "hasParts"
-    }
+    "status": "PUBLISHED"
   },
   {
     "type": "Publication",
@@ -3703,10 +3670,7 @@
       "owner": "ngi@7452.0.0.0",
       "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
-    "status": "PUBLISHED",
-    "joinField": {
-      "name": "hasParts"
-    }
+    "status": "PUBLISHED"
   },
   {
     "type": "Publication",
@@ -3897,10 +3861,7 @@
       "owner": "ngi@7452.0.0.0",
       "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
-    "status": "PUBLISHED",
-    "joinField": {
-      "name": "hasParts"
-    }
+    "status": "PUBLISHED"
   },
   {
     "type": "Publication",
@@ -3982,10 +3943,7 @@
       "owner": "uio@185.90.0.0",
       "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
-    "status": "PUBLISHED",
-    "joinField": {
-      "name": "hasParts"
-    }
+    "status": "PUBLISHED"
   },
   {
     "type": "Publication",
@@ -4062,10 +4020,7 @@
       "owner": "uio@185.90.0.0",
       "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
-    "status": "PUBLISHED",
-    "joinField": {
-      "name": "hasParts"
-    }
+    "status": "PUBLISHED"
   },
   {
     "type": "Publication",
@@ -4142,10 +4097,7 @@
       "owner": "uio@185.90.0.0",
       "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
-    "status": "PUBLISHED",
-    "joinField": {
-      "name": "hasParts"
-    }
+    "status": "PUBLISHED"
   },
   {
     "type": "Publication",
@@ -4385,10 +4337,7 @@
       "owner": "ngi@7452.0.0.0",
       "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
-    "status": "PUBLISHED",
-    "joinField": {
-      "name": "hasParts"
-    }
+    "status": "PUBLISHED"
   },
   {
     "type": "Publication",
@@ -4469,10 +4418,7 @@
       "owner": "uio@185.90.0.0",
       "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
-    "status": "PUBLISHED",
-    "joinField": {
-      "name": "hasParts"
-    }
+    "status": "PUBLISHED"
   },
   {
     "type": "Publication",
@@ -4556,10 +4502,7 @@
       "owner": "uio@185.90.0.0",
       "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
-    "status": "PUBLISHED",
-    "joinField": {
-      "name": "hasParts"
-    }
+    "status": "PUBLISHED"
   },
   {
     "type": "Publication",
@@ -4642,10 +4585,7 @@
       "owner": "uio@185.90.0.0",
       "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
-    "status": "PUBLISHED",
-    "joinField": {
-      "name": "hasParts"
-    }
+    "status": "PUBLISHED"
   },
   {
     "type": "Publication",
@@ -4870,11 +4810,7 @@
       "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/191.0.0.0"
     },
     "status": "PUBLISHED",
-    "filesStatus": "noFiles",
-    "joinField": {
-      "name": "partOf",
-      "parent": "01905518408c-dba987f7-0d84-4519-a625-89605672afc8"
-    }
+    "filesStatus": "noFiles"
   },
   {
     "type": "Publication",
@@ -5078,11 +5014,7 @@
       "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/191.0.0.0"
     },
     "status": "PUBLISHED",
-    "filesStatus": "noFiles",
-    "joinField": {
-      "name": "partOf",
-      "parent": "01905518408c-dba987f7-0d84-4519-a625-89605672afc8"
-    }
+    "filesStatus": "noFiles"
   },
   {
     "type": "Publication",
@@ -5171,10 +5103,6 @@
       "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/191.0.0.0"
     },
     "status": "PUBLISHED",
-    "filesStatus": "noFiles",
-    "joinField": {
-      "name": "hasParts",
-      "parent": null
-    }
+    "filesStatus": "noFiles"
   }
 ]

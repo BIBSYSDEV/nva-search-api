@@ -44,7 +44,6 @@ import static no.unit.nva.search.common.enums.ParameterKind.FREE_TEXT;
 import static no.unit.nva.search.common.enums.ParameterKind.FUZZY_KEYWORD;
 import static no.unit.nva.search.common.enums.ParameterKind.KEYWORD;
 import static no.unit.nva.search.common.enums.ParameterKind.NUMBER;
-import static no.unit.nva.search.common.enums.ParameterKind.PART_OF;
 import static no.unit.nva.search.common.enums.ParameterKind.TEXT;
 import static no.unit.nva.search.resource.Constants.ASSOCIATED_ARTIFACTS_LICENSE;
 import static no.unit.nva.search.resource.Constants.CHILD_PUBLICATIONS_KEYWORD;
@@ -151,7 +150,6 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
   FUNDING_SOURCE_NOT(TEXT, NOT_ALL_OF, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
   FUNDING_SOURCE_SHOULD(TEXT, ANY_OF, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
   HANDLE(FUZZY_KEYWORD, ANY_OF, HANDLE_KEYWORD, PHI),
-  HANDLE_OF_PARENT(PART_OF, ALL_OF, HANDLE),
   HANDLE_NOT(FUZZY_KEYWORD, NOT_ANY_OF, HANDLE_KEYWORD, PHI),
   FILES(KEYWORD, ALL_OF, FILES_STATUS_KEYWORD),
   ID(KEYWORD, ANY_OF, IDENTIFIER_KEYWORD),
@@ -159,7 +157,6 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
   ID_SHOULD(TEXT, ANY_OF, IDENTIFIER_KEYWORD),
   INSTANCE_TYPE(KEYWORD, ANY_OF, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_KEYS),
   INSTANCE_TYPE_NOT(KEYWORD, NOT_ANY_OF, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_NOT_KEYS),
-  INSTANCE_TYPE_OF_PARENT(PART_OF, ALL_OF, INSTANCE_TYPE),
   INSTITUTION(TEXT, ALL_OF, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
   INSTITUTION_NOT(TEXT, NOT_ALL_OF, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
   INSTITUTION_SHOULD(TEXT, ANY_OF, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),

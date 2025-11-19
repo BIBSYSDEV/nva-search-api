@@ -2,16 +2,12 @@ package no.unit.nva.search;
 
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.SPACE;
-import static no.unit.nva.search.common.enums.FieldOperator.BETWEEN;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import no.unit.nva.search.common.builder.PartOfQuery;
 import no.unit.nva.search.common.builder.RangeQuery;
 import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.enums.SortKey;
@@ -35,17 +31,6 @@ class HardToHitFunctionsTest {
     assertThrows(
         IllegalArgumentException.class,
         () -> queryRange.buildQuery(ResourceParameter.CONTEXT_TYPE, TEST));
-  }
-
-  @Test
-  void invalidResourceParameterFailsWhenInvokingBuildQuery() {
-    var queryRange = new PartOfQuery<ResourceParameter>();
-    var fakeResourceParameter = mock(ResourceParameter.class);
-    when(fakeResourceParameter.subQuery()).thenReturn(ResourceParameter.CREATED_BEFORE);
-    when(fakeResourceParameter.searchOperator()).thenReturn(BETWEEN);
-    assertThrows(
-        IllegalStateException.class,
-        () -> queryRange.buildQuery(fakeResourceParameter, "2021-01-01"));
   }
 
   @Test
