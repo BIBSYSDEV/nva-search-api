@@ -83,7 +83,6 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
     var documentIdentifier = indexDocument.getDocumentIdentifier();
     var indexName = indexDocument.getIndexName();
     logger.debug(INITIAL_LOG_MESSAGE, documentIdentifier, indexName);
-    removeDocumentFromIndex(documentIdentifier, indexName);
     openSearchClient.index(indexDocument.toIndexRequest(), getRequestOptions());
     return null;
   }
