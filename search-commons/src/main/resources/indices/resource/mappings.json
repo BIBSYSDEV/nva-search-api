@@ -115,12 +115,6 @@
       "type": "nested",
       "include_in_parent": true
     },
-    "joinField": {
-      "type": "join",
-      "relations": {
-        "hasParts": "partOf"
-      }
-    },
     "indexDocumentCreatedAt": {
       "type": "date"
     }

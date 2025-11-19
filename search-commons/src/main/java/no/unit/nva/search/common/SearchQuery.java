@@ -34,7 +34,6 @@ import no.unit.nva.search.common.builder.AcrossFieldsQuery;
 import no.unit.nva.search.common.builder.ExistsQuery;
 import no.unit.nva.search.common.builder.FuzzyKeywordQuery;
 import no.unit.nva.search.common.builder.KeywordQuery;
-import no.unit.nva.search.common.builder.PartOfQuery;
 import no.unit.nva.search.common.builder.RangeQuery;
 import no.unit.nva.search.common.builder.TextQuery;
 import no.unit.nva.search.common.constant.Functions;
@@ -154,7 +153,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
       case ACROSS_FIELDS -> new AcrossFieldsQuery<K>().buildQuery(key, value);
       case EXISTS -> new ExistsQuery<K>().buildQuery(key, value);
       case FREE_TEXT -> Functions.queryToEntry(key, builderSearchAllQuery(key));
-      case PART_OF -> new PartOfQuery<K>().buildQuery(key, value);
       default -> throw new RuntimeException(ErrorMessages.HANDLER_NOT_DEFINED + key.name());
     };
   }

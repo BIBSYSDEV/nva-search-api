@@ -10,7 +10,6 @@ import static no.unit.nva.constants.Words.COUNTRY_CODE;
 import static no.unit.nva.constants.Words.CREATOR;
 import static no.unit.nva.constants.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.constants.Words.FUNDINGS;
-import static no.unit.nva.constants.Words.HAS_PARTS;
 import static no.unit.nva.constants.Words.IDENTIFIER;
 import static no.unit.nva.constants.Words.IDENTITY;
 import static no.unit.nva.constants.Words.KEYWORD;
@@ -57,7 +56,6 @@ import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
-import org.opensearch.join.query.HasParentQueryBuilder;
 
 /**
  * Stream builders for resource queries.
@@ -199,13 +197,8 @@ public class ResourceStreamBuilders {
                     .must(termsQuery(SCIENTIFIC_PUBLISHER, values)))
             .should(termsQuery(SCIENTIFIC_OTHER, values))
             .minimumShouldMatch(1);
-    var parentChildQuery =
-        boolQuery()
-            .should(new HasParentQueryBuilder(HAS_PARTS, scientificValuesBaseQuery, true))
-            .should(scientificValuesBaseQuery)
-            .minimumShouldMatch(1);
 
-    return Functions.queryToEntry(key, parentChildQuery);
+    return Functions.queryToEntry(key, scientificValuesBaseQuery);
   }
 
   public Stream<Map.Entry<ResourceParameter, QueryBuilder>> allScientificValuesQuery(
