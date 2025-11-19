@@ -27,7 +27,6 @@ public enum ParameterKind {
   BOOLEAN,
   EXISTS,
   FREE_TEXT,
-  HAS_PARTS,
   PART_OF,
   SORT_KEY;
 

@@ -5142,6 +5142,7 @@
       }
     },
     "identifier": "01905518408c-dba987f7-0d84-4519-a625-89605672afc8",
+    "childPublications": [ "0190554a46d9-41780102-675d-43ba-81df-17168d78fa22", "0190554a2562-a0d9dff1-8c80-48cd-95ab-add9c3c5f0fb" ],
     "importDetail": [
       {
         "type": "ImportDetail",
