@@ -27,6 +27,8 @@ import static no.unit.nva.search.common.constant.Functions.jsonPath;
 import static no.unit.nva.search.resource.Constants.ENTITY_ABSTRACT;
 import static no.unit.nva.search.resource.Constants.ENTITY_CONTRIBUTORS;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
+import static no.unit.nva.search.resource.Constants.PUBLICATION_CONTEXT_TYPE_KEYWORD;
+import static no.unit.nva.search.resource.Constants.REFERENCE_PUBLICATION_CONTEXT_ID_KEYWORD;
 import static no.unit.nva.search.resource.Constants.SCIENTIFIC_OTHER;
 import static no.unit.nva.search.resource.Constants.SCIENTIFIC_PUBLISHER;
 import static no.unit.nva.search.resource.Constants.SCIENTIFIC_SERIES;
@@ -44,11 +46,13 @@ import static org.opensearch.index.query.QueryBuilders.termQuery;
 import static org.opensearch.index.query.QueryBuilders.termsQuery;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search.common.QueryKeys;
 import no.unit.nva.search.common.builder.FuzzyKeywordQuery;
 import no.unit.nva.search.common.constant.Functions;
+import nva.commons.core.JacocoGenerated;
 import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.Operator;
@@ -130,6 +134,7 @@ public class ResourceStreamBuilders {
     return Functions.queryToEntry(key, query);
   }
 
+  @JacocoGenerated
   public Stream<Map.Entry<ResourceParameter, QueryBuilder>> unIdentifiedNorwegians(
       ResourceParameter key) {
     var query =
@@ -145,6 +150,7 @@ public class ResourceStreamBuilders {
     return Functions.queryToEntry(key, query);
   }
 
+  @JacocoGenerated
   public Stream<Map.Entry<ResourceParameter, QueryBuilder>> unIdentifiedContributorOrInstitution(
       ResourceParameter key) {
     var query =
@@ -247,6 +253,26 @@ public class ResourceStreamBuilders {
             .must(atLeastOneScientificValueExistsQuery);
 
     return Functions.queryToEntry(key, query);
+  }
+
+  public Stream<Entry<ResourceParameter, QueryBuilder>> createHasParentQuery(
+      ResourceParameter resourceParameter) {
+    var query =
+        boolQuery()
+            .must(existsQuery(REFERENCE_PUBLICATION_CONTEXT_ID_KEYWORD))
+            .must(termQuery(PUBLICATION_CONTEXT_TYPE_KEYWORD, "Anthology"));
+
+    return Functions.queryToEntry(resourceParameter, query);
+  }
+
+  public Stream<Entry<ResourceParameter, QueryBuilder>> createHasNoParentQuery(
+      ResourceParameter resourceParameter) {
+    var query =
+        boolQuery()
+            .mustNot(existsQuery(REFERENCE_PUBLICATION_CONTEXT_ID_KEYWORD))
+            .must(termQuery(PUBLICATION_CONTEXT_TYPE_KEYWORD, "Anthology"));
+
+    return Functions.queryToEntry(resourceParameter, query);
   }
 
   private Boolean shouldSearchSpecifiedInstitutionOnly() {
