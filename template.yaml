@@ -642,29 +642,25 @@ Resources:
       FifoQueue: true
       MessageRetentionPeriod: 1209600
 
-  BatchIndexPipe:
-    Type: AWS::Pipes::Pipe
+  BatchIndexEventRule:
+    Type: AWS::Events::Rule
     Properties:
-      RoleArn: !GetAtt BatchIndexPipeRole.Arn
-      Source: !GetAtt EventBusArn
-      Target: !GetAtt BatchIndexQueue.Arn
-      SourceParameters:
-        FilterCriteria:
-          Filters:
-            - Pattern: !Sub |
-                {
-                  "detail": {
-                    "responsePayload": {
-                      "topic": ["PublicationService.ExpandedEntry.Persisted"]
-                    }
-                  }
-                }
-      TargetParameters:
-        SqsQueueParameters:
-          MessageGroupId: "$.detail.responsePayload.uri"
-          MessageDeduplicationId: "$.detail.responsePayload.uri"
+      EventBusName: !Ref EventBusArn
+      EventPattern:
+        detail:
+          responsePayload:
+            topic:
+              - "PublicationService.ExpandedEntry.Persisted"
+      State: ENABLED
+      Targets:
+        - Arn: !GetAtt BatchIndexQueue.Arn
+          Id: BatchIndexQueueTarget
+          RoleArn: !GetAtt EventBridgeToSQSRole.Arn
+          SqsParameters:
+            MessageGroupId: "$.detail.responsePayload.uri"
+            MessageDeduplicationId: "$.detail.responsePayload.uri"
 
-  BatchIndexPipeRole:
+  EventBridgeToSQSRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -672,18 +668,10 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              Service: pipes.amazonaws.com
+              Service: events.amazonaws.com
             Action: sts:AssumeRole
       Policies:
-        - PolicyName: ReadFromEventBridge
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - events:ReceiveEvents
-                Resource: !Ref EventBusArn
-        - PolicyName: WriteToSQS
+        - PolicyName: SendToSQS
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
@@ -691,6 +679,22 @@ Resources:
                 Action:
                   - sqs:SendMessage
                 Resource: !GetAtt BatchIndexQueue.Arn
+
+  BatchIndexQueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      Queues:
+        - !Ref BatchIndexQueue
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+            Action: sqs:SendMessage
+            Resource: !GetAtt BatchIndexQueue.Arn
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !GetAtt BatchIndexEventRule.Arn
 
   BatchIndexFunction:
     Type: AWS::Serverless::Function
