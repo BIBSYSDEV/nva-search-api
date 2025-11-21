@@ -708,6 +708,7 @@ Resources:
           EXPANDED_RESOURCES_BUCKET: !Ref ResourcesBucket
           RECOVERY_QUEUE: !Ref RecoveryQueue
           DLQ_QUEUE: !Ref BatchIndexDLQ
+          PERSISTED_RESOURCES_BUCKET: !Ref ResourcesBucket
       Events:
         SQSEvent:
           Type: SQS
