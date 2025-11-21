@@ -642,7 +642,6 @@ Resources:
   BatchIndexPipe:
     Type: AWS::Pipes::Pipe
     Properties:
-      Name: !Sub batch-index-pipe-${AWS::StackName}
       RoleArn: !GetAtt BatchIndexPipeRole.Arn
       Source: !Ref EventBusArn
       Target: !GetAtt BatchIndexQueue.Arn
