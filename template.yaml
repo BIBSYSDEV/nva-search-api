@@ -623,7 +623,6 @@ Resources:
   BatchIndexQueue:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: !Sub '${AWS::StackName}-batch-index-queue.fifo'
       FifoQueue: true
       ContentBasedDeduplication: true
       DeduplicationScope: queue
@@ -637,14 +636,13 @@ Resources:
   BatchIndexDLQ:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: !Sub '${AWS::StackName}-batch-index-dlq.fifo'
       FifoQueue: true
       MessageRetentionPeriod: 1209600
 
   BatchIndexPipe:
     Type: AWS::Pipes::Pipe
     Properties:
-      Name: !Sub '${AWS::StackName}-batch-index-pipe'
+      Name: !Sub batch-index-pipe-${AWS::StackName}
       RoleArn: !GetAtt BatchIndexPipeRole.Arn
       Source: !Ref EventBusArn
       Target: !GetAtt BatchIndexQueue.Arn
