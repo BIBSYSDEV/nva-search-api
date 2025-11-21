@@ -620,6 +620,72 @@ Resources:
     Properties:
       MessageRetentionPeriod: 1209600 #14 days
 
+  BatchIndexQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub '${AWS::StackName}-batch-index-queue.fifo'
+      FifoQueue: true
+      ContentBasedDeduplication: true
+      DeduplicationScope: queue
+      FifoThroughputLimit: perQueue
+      VisibilityTimeout: 5400
+      MessageRetentionPeriod: 1209600
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt BatchIndexDLQ.Arn
+        maxReceiveCount: 3
+
+  BatchIndexDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub '${AWS::StackName}-batch-index-dlq.fifo'
+      FifoQueue: true
+      MessageRetentionPeriod: 1209600
+
+  BatchIndexPipe:
+    Type: AWS::Pipes::Pipe
+    Properties:
+      Name: !Sub '${AWS::StackName}-batch-index-pipe'
+      RoleArn: !GetAtt BatchIndexPipeRole.Arn
+      Source: !Ref EventBusArn
+      Target: !GetAtt BatchIndexQueue.Arn
+      SourceParameters:
+        FilterCriteria:
+          Filters:
+            - Pattern: !Sub |
+                {
+                  "detail": {
+                    "responsePayload": {
+                      "topic": ["PublicationService.ExpandedEntry.Persisted"]
+                    }
+                  }
+                }
+      TargetParameters:
+        SqsQueueParameters:
+          MessageGroupId: "$.detail.responsePayload.uri"
+          MessageDeduplicationId: "$.detail.responsePayload.uri"
+
+  BatchIndexFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: batch-index
+      Handler: no.unit.nva.indexingclient.BatchIndexResourceHandler::handleRequest
+      MemorySize: 1024
+      Timeout: 900
+      Role: !GetAtt TriggerExecutionRole.Arn
+      Environment:
+        Variables:
+          EXPANDED_RESOURCES_BUCKET: !Ref ResourcesBucket
+          RECOVERY_QUEUE: !Ref RecoveryQueue
+      Events:
+        SQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt BatchIndexQueue.Arn
+            BatchSize: 10
+            MaximumBatchingWindowInSeconds: 5
+            FunctionResponseTypes:
+              - ReportBatchItemFailures
+
   EventBasedBatchIndex:
     Type: AWS::Serverless::Function
     Properties:
