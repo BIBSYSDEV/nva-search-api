@@ -664,6 +664,34 @@ Resources:
           MessageGroupId: "$.detail.responsePayload.uri"
           MessageDeduplicationId: "$.detail.responsePayload.uri"
 
+  BatchIndexPipeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: pipes.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: ReadFromEventBridge
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - events:ReceiveEvents
+                Resource: !Ref EventBusArn
+        - PolicyName: WriteToSQS
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:SendMessage
+                Resource: !GetAtt BatchIndexQueue.Arn
+
   BatchIndexFunction:
     Type: AWS::Serverless::Function
     Properties:
