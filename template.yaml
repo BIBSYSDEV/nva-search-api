@@ -676,6 +676,7 @@ Resources:
         Variables:
           EXPANDED_RESOURCES_BUCKET: !Ref ResourcesBucket
           RECOVERY_QUEUE: !Ref RecoveryQueue
+          DLQ_QUEUE: !Ref BatchIndexDLQ
       Events:
         SQSEvent:
           Type: SQS

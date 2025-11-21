@@ -190,6 +190,8 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
       case SEARCH_ALL ->
           streamBuilders.searchAllWithBoostsQuery(
               mapOfPathAndBoost(parameters().get(NODES_SEARCHED)));
+      case HAS_PARENT -> streamBuilders.createHasParentQuery(key);
+      case HAS_NO_PARENT -> streamBuilders.createHasNoParentQuery(key);
       default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
     };
   }

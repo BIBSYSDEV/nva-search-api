@@ -10,7 +10,6 @@ import static no.unit.nva.constants.Words.COUNTRY_CODE;
 import static no.unit.nva.constants.Words.CREATOR;
 import static no.unit.nva.constants.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.constants.Words.FUNDINGS;
-import static no.unit.nva.constants.Words.HAS_PARTS;
 import static no.unit.nva.constants.Words.IDENTIFIER;
 import static no.unit.nva.constants.Words.IDENTITY;
 import static no.unit.nva.constants.Words.KEYWORD;
@@ -27,6 +26,10 @@ import static no.unit.nva.search.common.constant.Functions.jsonPath;
 import static no.unit.nva.search.resource.Constants.ENTITY_ABSTRACT;
 import static no.unit.nva.search.resource.Constants.ENTITY_CONTRIBUTORS;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
+import static no.unit.nva.search.resource.Constants.PARENT_SCIENTIFIC_PUBLISHER;
+import static no.unit.nva.search.resource.Constants.PARENT_SCIENTIFIC_SERIES;
+import static no.unit.nva.search.resource.Constants.PUBLICATION_CONTEXT_TYPE_KEYWORD;
+import static no.unit.nva.search.resource.Constants.REFERENCE_PUBLICATION_CONTEXT_ID_KEYWORD;
 import static no.unit.nva.search.resource.Constants.SCIENTIFIC_OTHER;
 import static no.unit.nva.search.resource.Constants.SCIENTIFIC_PUBLISHER;
 import static no.unit.nva.search.resource.Constants.SCIENTIFIC_SERIES;
@@ -44,16 +47,17 @@ import static org.opensearch.index.query.QueryBuilders.termQuery;
 import static org.opensearch.index.query.QueryBuilders.termsQuery;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search.common.QueryKeys;
 import no.unit.nva.search.common.builder.FuzzyKeywordQuery;
 import no.unit.nva.search.common.constant.Functions;
+import nva.commons.core.JacocoGenerated;
 import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
-import org.opensearch.join.query.HasParentQueryBuilder;
 
 /**
  * Stream builders for resource queries.
@@ -130,6 +134,7 @@ public class ResourceStreamBuilders {
     return Functions.queryToEntry(key, query);
   }
 
+  @JacocoGenerated
   public Stream<Map.Entry<ResourceParameter, QueryBuilder>> unIdentifiedNorwegians(
       ResourceParameter key) {
     var query =
@@ -145,6 +150,7 @@ public class ResourceStreamBuilders {
     return Functions.queryToEntry(key, query);
   }
 
+  @JacocoGenerated
   public Stream<Map.Entry<ResourceParameter, QueryBuilder>> unIdentifiedContributorOrInstitution(
       ResourceParameter key) {
     var query =
@@ -191,15 +197,27 @@ public class ResourceStreamBuilders {
                 boolQuery()
                     .mustNot(existsQuery(SCIENTIFIC_SERIES))
                     .must(termsQuery(SCIENTIFIC_PUBLISHER, values)))
-            .should(termsQuery(SCIENTIFIC_OTHER, values))
-            .minimumShouldMatch(1);
-    var parentChildQuery =
+            .should(termsQuery(SCIENTIFIC_OTHER, values));
+
+    var scientificValuesParentQuery =
         boolQuery()
-            .should(new HasParentQueryBuilder(HAS_PARTS, scientificValuesBaseQuery, true))
-            .should(scientificValuesBaseQuery)
+            .should(
+                boolQuery()
+                    .mustNot(existsQuery(PARENT_SCIENTIFIC_SERIES))
+                    .must(termsQuery(PARENT_SCIENTIFIC_PUBLISHER, values)))
+            .should(
+                boolQuery()
+                    .must(existsQuery(PARENT_SCIENTIFIC_SERIES))
+                    .must(termsQuery(PARENT_SCIENTIFIC_SERIES, values)))
             .minimumShouldMatch(1);
 
-    return Functions.queryToEntry(key, parentChildQuery);
+    var combinedQuery =
+        boolQuery()
+            .should(scientificValuesBaseQuery)
+            .should(scientificValuesParentQuery)
+            .minimumShouldMatch(1);
+
+    return Functions.queryToEntry(key, combinedQuery);
   }
 
   public Stream<Map.Entry<ResourceParameter, QueryBuilder>> allScientificValuesQuery(
@@ -247,6 +265,26 @@ public class ResourceStreamBuilders {
             .must(atLeastOneScientificValueExistsQuery);
 
     return Functions.queryToEntry(key, query);
+  }
+
+  public Stream<Entry<ResourceParameter, QueryBuilder>> createHasParentQuery(
+      ResourceParameter resourceParameter) {
+    var query =
+        boolQuery()
+            .must(existsQuery(REFERENCE_PUBLICATION_CONTEXT_ID_KEYWORD))
+            .must(termQuery(PUBLICATION_CONTEXT_TYPE_KEYWORD, "Anthology"));
+
+    return Functions.queryToEntry(resourceParameter, query);
+  }
+
+  public Stream<Entry<ResourceParameter, QueryBuilder>> createHasNoParentQuery(
+      ResourceParameter resourceParameter) {
+    var query =
+        boolQuery()
+            .mustNot(existsQuery(REFERENCE_PUBLICATION_CONTEXT_ID_KEYWORD))
+            .must(termQuery(PUBLICATION_CONTEXT_TYPE_KEYWORD, "Anthology"));
+
+    return Functions.queryToEntry(resourceParameter, query);
   }
 
   private Boolean shouldSearchSpecifiedInstitutionOnly() {
