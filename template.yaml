@@ -480,11 +480,14 @@ Resources:
                   - sqs:SendMessage
                   - sqs:ReceiveMessage
                   - sqs:DeleteMessage
+                  - sqs:GetQueueAttributes
                 Resource:
                   - !Ref EventBusArn
                   - !GetAtt BatchIndexEventBus.Arn
                   - !GetAtt ResourcesIndexerDLQ.Arn
                   - !GetAtt RecoveryQueue.Arn
+                  - !GetAtt BatchIndexQueue.Arn
+                  - !GetAtt BatchIndexDLQ.Arn
         - PolicyName: readFromS3
           PolicyDocument:
             Version: 2012-10-17
