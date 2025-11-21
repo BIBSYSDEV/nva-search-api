@@ -5,6 +5,7 @@ import static no.unit.nva.constants.Words.AFFILIATIONS;
 import static no.unit.nva.constants.Words.ASSOCIATED_ARTIFACTS;
 import static no.unit.nva.constants.Words.ASTERISK;
 import static no.unit.nva.constants.Words.BOKMAAL_CODE;
+import static no.unit.nva.constants.Words.CHILD_PUBLICATIONS;
 import static no.unit.nva.constants.Words.CODE;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.CONTRIBUTOR;
@@ -149,10 +150,19 @@ public final class Constants {
           jsonPath(ENTITY_CONTRIBUTORS, IDENTITY, NAME, KEYWORD), CONTRIBUTORS_IDENTITY_ID);
   public static final String CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD =
       jsonPath(ENTITY_CONTRIBUTORS, IDENTITY, ORC_ID, KEYWORD);
+  public static final String PARENT_SCIENTIFIC_SERIES =
+      jsonPath(
+          ENTITY_PUBLICATION_CONTEXT,
+          ENTITY_PUBLICATION_CONTEXT,
+          SERIES,
+          SCIENTIFIC_VALUE,
+          KEYWORD);
   public static final String SCIENTIFIC_SERIES =
       jsonPath(ENTITY_PUBLICATION_CONTEXT, SERIES, SCIENTIFIC_VALUE, KEYWORD);
   public static final String SCIENTIFIC_PUBLISHER =
       jsonPath(ENTITY_PUBLICATION_CONTEXT, PUBLISHER, SCIENTIFIC_VALUE, KEYWORD);
+  public static final String PARENT_SCIENTIFIC_PUBLISHER =
+      jsonPath(ENTITY_PUBLICATION_CONTEXT, ENTITY_PUBLICATION_CONTEXT, PUBLISHER, SCIENTIFIC_VALUE);
   public static final String SCIENTIFIC_OTHER =
       jsonPath(ENTITY_PUBLICATION_CONTEXT, SCIENTIFIC_VALUE, KEYWORD);
   public static final String SCIENTIFIC_LEVEL_SEARCH_FIELD =
@@ -214,6 +224,7 @@ public final class Constants {
       multipleFields(jsonPath(HANDLE, KEYWORD), jsonPath("additionalIdentifiers", VALUE, KEYWORD));
   public static final String RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD =
       jsonPath(RESOURCE_OWNER, OWNER_AFFILIATION, KEYWORD);
+  public static final String CHILD_PUBLICATIONS_KEYWORD = jsonPath(CHILD_PUBLICATIONS, KEYWORD);
   public static final String RESOURCE_OWNER_OWNER_KEYWORD =
       jsonPath(RESOURCE_OWNER, OWNER, KEYWORD);
   public static final String ENTITY_TAGS = jsonPath(ENTITY_DESCRIPTION, TAGS, KEYWORD);
