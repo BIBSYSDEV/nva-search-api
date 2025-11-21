@@ -26,6 +26,8 @@ import static no.unit.nva.search.common.constant.Functions.jsonPath;
 import static no.unit.nva.search.resource.Constants.ENTITY_ABSTRACT;
 import static no.unit.nva.search.resource.Constants.ENTITY_CONTRIBUTORS;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
+import static no.unit.nva.search.resource.Constants.PARENT_SCIENTIFIC_PUBLISHER;
+import static no.unit.nva.search.resource.Constants.PARENT_SCIENTIFIC_SERIES;
 import static no.unit.nva.search.resource.Constants.PUBLICATION_CONTEXT_TYPE_KEYWORD;
 import static no.unit.nva.search.resource.Constants.REFERENCE_PUBLICATION_CONTEXT_ID_KEYWORD;
 import static no.unit.nva.search.resource.Constants.SCIENTIFIC_OTHER;
@@ -195,10 +197,25 @@ public class ResourceStreamBuilders {
                 boolQuery()
                     .mustNot(existsQuery(SCIENTIFIC_SERIES))
                     .must(termsQuery(SCIENTIFIC_PUBLISHER, values)))
-            .should(termsQuery(SCIENTIFIC_OTHER, values))
+            .should(termsQuery(SCIENTIFIC_OTHER, values));
+
+    var scientificValuesParentQuery = boolQuery()
+                                          .should(
+                                              boolQuery()
+                    .mustNot(existsQuery(PARENT_SCIENTIFIC_SERIES))
+                    .must(termsQuery(PARENT_SCIENTIFIC_PUBLISHER, values)))
+            .should(
+                boolQuery()
+                    .must(existsQuery(PARENT_SCIENTIFIC_SERIES))
+                    .must(termsQuery(PARENT_SCIENTIFIC_SERIES, values)))
             .minimumShouldMatch(1);
 
-    return Functions.queryToEntry(key, scientificValuesBaseQuery);
+      var combinedQuery = boolQuery()
+                              .should(scientificValuesBaseQuery)
+                              .should(scientificValuesParentQuery)
+                              .minimumShouldMatch(1);
+
+    return Functions.queryToEntry(key, combinedQuery);
   }
 
   public Stream<Map.Entry<ResourceParameter, QueryBuilder>> allScientificValuesQuery(
