@@ -135,7 +135,7 @@ public class BatchIndexService {
   private List<IndexDocument> fetchDocuments(Collection<String> messages) {
     var documentsToIndex = new ArrayList<IndexDocument>();
     for (String message : messages) {
-        LOGGER.info("Fetching document from SQS queue for message: {}", message);
+      LOGGER.info("Fetching document from SQS queue for message: {}", message);
       var eventReference = getEventReference(message);
       if (eventReference.isFailure()) {
         LOGGER.error(FAILED_TO_PARSE_SQS_MESSAGE, message, eventReference.getException());
@@ -159,7 +159,7 @@ public class BatchIndexService {
   }
 
   private void sendToDlq(String messageBody, Exception exception) {
-      LOGGER.info("Sending message to dlq: {}", messageBody);
+    LOGGER.info("Sending message to dlq: {}", messageBody);
     queueClient.sendMessage(createDlqMessage(messageBody, exception));
   }
 

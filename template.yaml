@@ -663,6 +663,12 @@ Resources:
               topic: "$.detail.responsePayload.topic"
               uri: "$.detail.responsePayload.uri"
               timestamp: "$.detail.responsePayload.timestamp"
+            InputTemplate: |
+              {
+                "topic": "<topic>",
+                "uri": "<uri>",
+                "timestamp": "<timestamp>"
+              }
 
   EventBridgeToSQSRole:
     Type: AWS::IAM::Role
@@ -710,7 +716,6 @@ Resources:
       Role: !GetAtt TriggerExecutionRole.Arn
       Environment:
         Variables:
-          EXPANDED_RESOURCES_BUCKET: !Ref ResourcesBucket
           RECOVERY_QUEUE: !Ref RecoveryQueue
           DLQ_QUEUE: !Ref BatchIndexDLQ
           PERSISTED_RESOURCES_BUCKET: !Ref ResourcesBucket
