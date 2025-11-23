@@ -658,6 +658,11 @@ Resources:
           RoleArn: !GetAtt EventBridgeToSQSRole.Arn
           SqsParameters:
             MessageGroupId: "$.detail.responsePayload.uri"
+          InputTransformer:
+            InputPathsMap:
+              topic: "$.detail.responsePayload.topic"
+              uri: "$.detail.responsePayload.uri"
+              timestamp: "$.detail.responsePayload.timestamp"
 
   EventBridgeToSQSRole:
     Type: AWS::IAM::Role
