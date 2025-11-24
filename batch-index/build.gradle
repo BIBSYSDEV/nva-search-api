@@ -20,7 +20,7 @@ dependencies {
     implementation libs.aws.ion
     implementation libs.guava
     implementation libs.typesafe
-
+    implementation 'software.amazon.awssdk:netty-nio-client:2.39.2'
     implementation libs.bundles.opensearch
 
     testImplementation project(":search-testing")
@@ -42,4 +42,5 @@ test {
     environment "TOPIC", "someTopic"
     environment "KEY_BATCHES_BUCKET", "batchesBucket"
     environment "MAX_PAYLOAD", "4096" // to trigger splitting batches in several indexing operations
+    environment "DLQ_QUEUE", "someDlq"
 }

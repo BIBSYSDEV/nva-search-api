@@ -480,11 +480,14 @@ Resources:
                   - sqs:SendMessage
                   - sqs:ReceiveMessage
                   - sqs:DeleteMessage
+                  - sqs:GetQueueAttributes
                 Resource:
                   - !Ref EventBusArn
                   - !GetAtt BatchIndexEventBus.Arn
                   - !GetAtt ResourcesIndexerDLQ.Arn
                   - !GetAtt RecoveryQueue.Arn
+                  - !GetAtt BatchIndexQueue.Arn
+                  - !GetAtt BatchIndexDLQ.Arn
         - PolicyName: readFromS3
           PolicyDocument:
             Version: 2012-10-17
@@ -619,6 +622,107 @@ Resources:
     Type: AWS::SQS::Queue
     Properties:
       MessageRetentionPeriod: 1209600 #14 days
+
+  BatchIndexQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      VisibilityTimeout: 900
+      MessageRetentionPeriod: 1209600
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt BatchIndexDLQ.Arn
+        maxReceiveCount: 3
+
+  BatchIndexDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 1209600
+
+  BatchIndexEventRule:
+    Type: AWS::Events::Rule
+    Properties:
+      EventBusName: !Ref EventBusArn
+      EventPattern:
+        detail:
+          responsePayload:
+            topic:
+              - "PublicationService.ExpandedEntry.Persisted"
+      State: ENABLED
+      Targets:
+        - Arn: !GetAtt BatchIndexQueue.Arn
+          Id: BatchIndexQueueTarget
+          RoleArn: !GetAtt EventBridgeToSQSRole.Arn
+          InputTransformer:
+            InputPathsMap:
+              topic: "$.detail.responsePayload.topic"
+              uri: "$.detail.responsePayload.uri"
+              timestamp: "$.detail.responsePayload.timestamp"
+            InputTemplate: |
+              {
+                "topic": "<topic>",
+                "uri": "<uri>",
+                "timestamp": "<timestamp>"
+              }
+
+  EventBridgeToSQSRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: SendToSQS
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:SendMessage
+                Resource: !GetAtt BatchIndexQueue.Arn
+
+  BatchIndexQueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      Queues:
+        - !Ref BatchIndexQueue
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+            Action: sqs:SendMessage
+            Resource: !GetAtt BatchIndexQueue.Arn
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !GetAtt BatchIndexEventRule.Arn
+
+  BatchIndexFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: batch-index
+      Handler: no.unit.nva.indexingclient.BatchIndexResourceHandler::handleRequest
+      MemorySize: 3008
+      Timeout: 900
+      Role: !GetAtt TriggerExecutionRole.Arn
+      Environment:
+        Variables:
+          RECOVERY_QUEUE: !Ref RecoveryQueue
+          DLQ_QUEUE: !Ref BatchIndexDLQ
+          PERSISTED_RESOURCES_BUCKET: !Ref ResourcesBucket
+      Events:
+        SQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt BatchIndexQueue.Arn
+            MaximumBatchingWindowInSeconds: 100
+            BatchSize: 10000
+            ScalingConfig:
+              MaximumConcurrency: 10
+            FunctionResponseTypes:
+              - ReportBatchItemFailures
 
   EventBasedBatchIndex:
     Type: AWS::Serverless::Function
@@ -779,6 +883,40 @@ Resources:
       ComparisonOperator: GreaterThanOrEqualToThreshold
       AlarmActions:
         - !Ref SlackSnsArn
+
+  BatchIndexQueueAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: Batch index dlq threshold exceeded
+      AlarmDescription: If this alarm is triggered, then check sqs messages on BatchIndexDLQ.
+      MetricName: ApproximateNumberOfMessagesVisible
+      Namespace: AWS/SQS
+      Statistic: Sum
+      Dimensions:
+        - Name: QueueName
+          Value: !GetAtt BatchIndexDLQ.QueueName
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      AlarmActions:
+        - !Ref SlackSnsArn
+
+  BatchIndexFunctionAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: Batch index lambda function error threshold exceeded
+      AlarmDescription: Alert on BatchIndexFunction errors
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref BatchIndexFunction
 
   RecoveryQueueAlarm:
     Type: AWS::CloudWatch::Alarm
