@@ -199,9 +199,10 @@ public class ResourceStreamBuilders {
                     .must(termsQuery(SCIENTIFIC_PUBLISHER, values)))
             .should(termsQuery(SCIENTIFIC_OTHER, values));
 
-    var scientificValuesParentQuery = boolQuery()
-                                          .should(
-                                              boolQuery()
+    var scientificValuesParentQuery =
+        boolQuery()
+            .should(
+                boolQuery()
                     .mustNot(existsQuery(PARENT_SCIENTIFIC_SERIES))
                     .must(termsQuery(PARENT_SCIENTIFIC_PUBLISHER, values)))
             .should(
@@ -210,10 +211,11 @@ public class ResourceStreamBuilders {
                     .must(termsQuery(PARENT_SCIENTIFIC_SERIES, values)))
             .minimumShouldMatch(1);
 
-      var combinedQuery = boolQuery()
-                              .should(scientificValuesBaseQuery)
-                              .should(scientificValuesParentQuery)
-                              .minimumShouldMatch(1);
+    var combinedQuery =
+        boolQuery()
+            .should(scientificValuesBaseQuery)
+            .should(scientificValuesParentQuery)
+            .minimumShouldMatch(1);
 
     return Functions.queryToEntry(key, combinedQuery);
   }
