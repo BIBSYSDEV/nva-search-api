@@ -7,6 +7,7 @@ import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.CONTRIBUTOR;
 import static no.unit.nva.constants.Words.RESOURCES;
+import static no.unit.nva.search.resource.Constants.V_LEGACY;
 import static no.unit.nva.search.resource.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
@@ -206,9 +207,11 @@ class SearchResourceLegacyHandlerTest {
     handler.handleRequest(requestInput, outputStream, mock(Context.class));
 
     var gatewayResponse = FakeGatewayResponse.of(outputStream);
-    assertThat(
-        gatewayResponse.headers().get("Content-Type"),
-        is(equalTo("application/json; charset=utf-8")));
+    assertThat(gatewayResponse.headers().get("Content-Type"), is(equalTo(buildContentType())));
+  }
+
+  private static String buildContentType() {
+    return "application/json; charset=utf-8; version=" + V_LEGACY;
   }
 
   private InputStream getInputStream() throws JsonProcessingException {
