@@ -10,6 +10,7 @@ import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
 import static nva.commons.core.attempt.Try.attempt;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 
@@ -26,6 +27,7 @@ import no.unit.nva.indexingclient.IndexingClient;
 import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
 import no.unit.nva.indexingclient.models.IndexDocument;
 import no.unit.nva.indexingclient.models.RestHighLevelClientWrapper;
+import no.unit.nva.search.common.records.PagedSearch;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.ResourceSearchQuery;
 import no.unit.nva.search.resource.UserSettingsClient;
@@ -39,6 +41,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -106,24 +109,38 @@ class ResourceSearchContainerTests {
     populateAndRefreshIndex();
 
     var requestInfo = getRequestInfo(sortOrder);
-    var result =
-        ResourceSearchQuery.builder()
-            .fromRequestInfo(requestInfo)
-            .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-            .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
-            .validate()
-            .build()
-            .withFilter()
-            .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
-            .apply()
-            .doSearch(resourceClient, Words.RESOURCES);
+    var response = getResponseForDefaultQuery(requestInfo);
 
     var actualOrderOfTitles =
-        result.toPagedResponse().hits().stream()
+        response.hits().stream()
             .map(node -> node.at("/entityDescription/mainTitle").textValue())
             .toList();
 
     assertThat(actualOrderOfTitles, IsIterableContainingInOrder.contains(expectedOrderOfTitles));
+  }
+
+  @Test
+  void searchOnEmptyIndexReturnsEmptyNonErrorResponse() throws BadRequestException, ApiIoException {
+    var requestInfo = getRequestInfo("asc");
+    var response = getResponseForDefaultQuery(requestInfo);
+
+    assertThat(response.hits()).isEmpty();
+    assertThat(response.totalHits()).isZero();
+  }
+
+  private static PagedSearch getResponseForDefaultQuery(RequestInfo requestInfo)
+      throws BadRequestException {
+    return ResourceSearchQuery.builder()
+        .fromRequestInfo(requestInfo)
+        .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+        .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
+        .validate()
+        .build()
+        .withFilter()
+        .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+        .apply()
+        .doSearch(resourceClient, Words.RESOURCES)
+        .toPagedResponse();
   }
 
   private void populateAndRefreshIndex() throws IOException {
