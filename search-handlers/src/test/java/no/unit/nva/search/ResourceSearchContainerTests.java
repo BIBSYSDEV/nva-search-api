@@ -41,9 +41,9 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.opensearch.client.RestClient;
 import org.opensearch.testcontainers.OpenSearchContainer;
@@ -104,11 +104,11 @@ class ResourceSearchContainerTests {
   @ParameterizedTest
   @MethodSource("sortOrderDataProvider")
   void sortingByTitleIsCaseInsensitive(String sortOrder, String[] expectedOrderOfTitles)
-      throws IOException, BadRequestException, ApiIoException {
+      throws IOException, BadRequestException {
 
     populateAndRefreshIndex();
 
-    var requestInfo = getRequestInfo(sortOrder);
+    var requestInfo = getRequestInfo("title", sortOrder);
     var response = getResponseForDefaultQuery(requestInfo);
 
     var actualOrderOfTitles =
@@ -119,9 +119,11 @@ class ResourceSearchContainerTests {
     assertThat(actualOrderOfTitles, IsIterableContainingInOrder.contains(expectedOrderOfTitles));
   }
 
-  @Test
-  void searchOnEmptyIndexReturnsEmptyNonErrorResponse() throws BadRequestException, ApiIoException {
-    var requestInfo = getRequestInfo("asc");
+  @ParameterizedTest
+  @CsvSource({"title,asc", "relevance,desc", "modifiedDate,desc"})
+  void shouldNotFailWhenSortingWithEmptyIndex(String sortBy, String sortOrder)
+      throws BadRequestException {
+    var requestInfo = getRequestInfo(sortBy, sortOrder);
     var response = getResponseForDefaultQuery(requestInfo);
 
     assertThat(response.hits()).isEmpty();
@@ -163,9 +165,16 @@ class ResourceSearchContainerTests {
             new String[] {TITLE_LOWERCASE_B, TITLE_LOWERCASE_A, TITLE_UPPERCASE_A}));
   }
 
-  private static RequestInfo getRequestInfo(String sortOrder) throws ApiIoException {
-    var actualJson = REQUEST_INFO_JSON_TEMPLATE.replaceAll("@@SORT_ORDER@@", sortOrder);
-    return RequestInfo.fromString(actualJson);
+  private static RequestInfo getRequestInfo(String sortBy, String sortOrder) {
+    var actualJson =
+        REQUEST_INFO_JSON_TEMPLATE
+            .replaceAll("@@SORT_BY@@", sortBy)
+            .replaceAll("@@SORT_ORDER@@", sortOrder);
+    try {
+      return RequestInfo.fromString(actualJson);
+    } catch (ApiIoException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private IndexDocument indexDocument(SortableIdentifier identifier, String title) {
