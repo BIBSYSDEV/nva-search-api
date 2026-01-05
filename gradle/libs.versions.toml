@@ -18,10 +18,11 @@ log4j = { strictly = '2.25.0' }
 mockito = { strictly = '5.18.0' }
 nvaCommons = { strictly = '2.2.9' }
 open-csv = { strictly = '5.11.2' }
-opensearch = { strictly = '3.1.0' }
-opensearch-testcontainer = { strictly = '3.0.1' }
+opensearch-java = { strictly = '3.4.0' }
+opensearch-rest = { strictly = '3.3.2' }
+opensearch-testcontainer = { strictly = '4.0.0' }
 slf4j = { strictly = '2.0.17' }
-testContainers = { strictly = '1.21.3' }
+testContainers = { strictly = '2.0.3' }
 typesafe = { strictly = '1.4.3' }
 xmlUnit = { strictly = '2.10.3' }
 xraySdk = { strictly = '2.18.2' }
@@ -72,12 +73,12 @@ log4j-core = { group = 'org.apache.logging.log4j', name = 'log4j-core', version.
 log4j-api = { group = 'org.apache.logging.log4j', name = 'log4j-api', version.ref = 'log4j' }
 log4j-test = { group = 'org.apache.logging.log4j', name = 'log4j-core-test', version.ref = 'log4j' }
 
-opensearch = { group = 'org.opensearch', name = 'opensearch', version.ref = 'opensearch' }
-opensearch-x-content = { group = 'org.opensearch', name = 'opensearch-x-content', version.ref = 'opensearch' }
-opensearch-core = { group = 'org.opensearch', name = 'opensearch-core', version.ref = 'opensearch' }
-opensearch-java = { group = 'org.opensearch.client', name = 'opensearch-java', version.ref = 'opensearch' }
-opensearch-rest-client = { group = 'org.opensearch.client', name = 'opensearch-rest-client', version.ref = 'opensearch' }
-opensearch-rest-highlevel-client = { group = 'org.opensearch.client', name = 'opensearch-rest-high-level-client', version.ref = 'opensearch' }
+opensearch = { group = 'org.opensearch', name = 'opensearch', version.ref = 'opensearch-java' }
+opensearch-x-content = { group = 'org.opensearch', name = 'opensearch-x-content', version.ref = 'opensearch-java' }
+opensearch-core = { group = 'org.opensearch', name = 'opensearch-core', version.ref = 'opensearch-java' }
+opensearch-java = { group = 'org.opensearch.client', name = 'opensearch-java', version.ref = 'opensearch-java' }
+opensearch-rest-client = { group = 'org.opensearch.client', name = 'opensearch-rest-client', version.ref = 'opensearch-rest' }
+opensearch-rest-highlevel-client = { group = 'org.opensearch.client', name = 'opensearch-rest-high-level-client', version.ref = 'opensearch-rest' }
 
 guava = { group = 'com.google.guava', name = 'guava', version.ref = 'guava' }
 aws-ion = { group = 'com.amazon.ion', name = 'ion-java', version.ref = 'awsIon' }
@@ -90,7 +91,7 @@ testcontainer-opensearch = { group = 'org.opensearch', name = 'opensearch-testco
 
 testcontainers-core = { group = 'org.testcontainers', name = 'testcontainers', version.ref = 'testContainers' }
 
-testcontainers-junit = { group = 'org.testcontainers', name = 'junit-jupiter', version.ref = 'testContainers' }
+testcontainers-junit = { group = 'org.testcontainers', name = 'testcontainers-junit-jupiter', version.ref = 'testContainers' }
 hamcrest = { group = 'org.hamcrest', name = 'hamcrest', version.ref = 'hamcrest' }
 mockitocore = { group = 'org.mockito', name = 'mockito-core', version.ref = 'mockito' }
 junit-jupiter-engine = { group = 'org.junit.jupiter', name = 'junit-jupiter-engine', version.ref = 'jupiter' }
