@@ -115,7 +115,37 @@
       "type": "nested",
       "include_in_parent": true
     },
+    "handle": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      }
+    },
+    "id": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      }
+    },
+    "identifier": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      }
+    },
     "indexDocumentCreatedAt": {
+      "type": "date"
+    },
+    "modifiedDate": {
       "type": "date"
     }
   }
