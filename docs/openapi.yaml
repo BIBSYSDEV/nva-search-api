@@ -867,11 +867,9 @@ components:
       explode: true
       examples:
         all aggregations:
-          value: all
-        separate keys aggregations:
-          value: [ associatedArtifact, entityDescription, status, scientificIndex ]
-        one key aggregations:
-          value: "fundingSource, status, topLevelOrganisations, scientificIndex"
+          value: "all"
+        no aggregations:
+          value: "none"
       schema:
         $ref: '#/components/schemas/AggregationNames'
     collaborationTypeParam:
@@ -980,7 +978,7 @@ components:
       name: contributor_should
       in: query
       description: "Returns document with Author's ids(URI)."
-      example: '1306838'
+      example: "https://api.nva.unit.no/cristin/person/1306838"
       required: false
       style: form
       explode: true
@@ -1103,7 +1101,7 @@ components:
       name: fields
       in: query
       description: "'fields=all' will search all fields in documents, or you can specify a comma separated list of fields to search in."
-      example: category,contributor,funding
+      example: "all"
       required: false
       style: form
       explode: true
@@ -1214,7 +1212,7 @@ components:
       name: has_file
       in: query
       description: "Returns documents with visibleForNonOwner=true/false."
-      example: "true"
+      example: true
       required: false
       style: form
       explode: true
@@ -1513,7 +1511,7 @@ components:
       name: project
       in: query
       description: "Returns document with this project id (URI)."
-      example: "NFR"
+      example: "https://api.nva.unit.no/cristin/project/123456"
       required: false
       style: form
       explode: true
@@ -1524,7 +1522,7 @@ components:
       name: project_not
       in: query
       description: "Returns document without these project ids (URI)."
-      example: "NFR"
+      example: "https://api.nva.unit.no/cristin/project/123456"
       required: false
       style: form
       explode: true
@@ -1535,7 +1533,7 @@ components:
       name: project_should
       in: query
       description: "Returns document with these project ids (URI)."
-      example: "NFR"
+      example: "https://api.nva.unit.no/cristin/project/123456"
       required: false
       style: form
       explode: true
@@ -1568,7 +1566,7 @@ components:
       name: publication_language_should
       in: query
       description: "Returns document with these publication languages codes ()."
-      example: "nob, eng, nor, etc"
+      example: "http://lexvo.org/id/iso639-3/nob"
       required: false
       style: form
       explode: true
@@ -1579,7 +1577,7 @@ components:
       name: publication_year
       in: query
       description: "Returns document with this publication year."
-      example: "2022"
+      example: 2022
       required: false
       style: form
       explode: true
@@ -1609,7 +1607,7 @@ components:
       name: publication_year_should
       in: query
       description: "Returns document with any of these publication years."
-      example: "2022 2023"
+      example: 2022
       required: false
       style: form
       explode: true
@@ -1630,7 +1628,7 @@ components:
       name: published_between
       in: query
       description: "Returns document with date between values."
-      example: "2005-03-17, 2010-01-01"
+      example: "2005-03-17"
       required: false
       style: form
       explode: true
@@ -1929,7 +1927,7 @@ components:
       name: exclude_subunits
       in: query
       description: "Exclude sub-units of the provided viewingScope"
-      example: 'true'
+      example: true
       required: false
       style: form
       explode: true
@@ -2262,7 +2260,7 @@ components:
       name: page
       in: query
       description: "Page number, zero based, see from and size."
-      example: "0"
+      example: 0
       required: false
       style: form
       explode: true
@@ -2272,7 +2270,7 @@ components:
       name: from
       in: query
       description: "Start result from item no. zero based [offset] is also accepted. Default is 0."
-      example: "0"
+      example: 0
       required: false
       style: form
       explode: true
@@ -2282,7 +2280,7 @@ components:
       name: size
       in: query
       description: "Number of items returned. [per_page|perPage|results|limit] are also accepted.  Default is 15."
-      example: "15"
+      example: 15
       required: false
       style: form
       explode: true
@@ -2309,8 +2307,8 @@ components:
           value: "category:asc"
         descending:
           value: "category:desc"
-        composite:
-          value: "category:asc,created_date:desc"
+        created_date:
+          value: "created_date"
       schema:
         type: string
         enum:
