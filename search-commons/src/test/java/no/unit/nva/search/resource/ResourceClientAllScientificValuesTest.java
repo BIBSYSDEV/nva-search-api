@@ -12,6 +12,7 @@ import static no.unit.nva.search.resource.ResourceClientTest.USER_SETTINGS_JSON;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -33,6 +34,8 @@ import nva.commons.core.paths.UriWrapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
@@ -328,6 +331,137 @@ public class ResourceClientAllScientificValuesTest {
                 .getUri());
 
     assertFalse(response.toPagedResponse().hits().isEmpty());
+  }
+
+  @Test
+  void shouldReturnDocumentsWithIsbnWhenHasIsbnIsSetToTrue()
+      throws BadRequestException, IOException {
+    var json =
+        """
+            {
+                  "type": "Publication",
+                  "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
+                  "entityDescription": {
+                    "type": "EntityDescription",
+                    "reference": {
+                      "type": "Reference",
+                      "publicationContext": {
+                        "type": "Report",
+                        "isbnList": [ "123" ]
+                      }
+                    }
+                  }
+                }
+        """;
+    createIndexAndIndexDocument(json);
+    var response =
+        doSearchWithUri(
+            UriWrapper.fromUri("https://x.org/")
+                .addQueryParameter("hasIsbn", Boolean.TRUE.toString())
+                .getUri());
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
+  @Test
+  void shouldReturnDocumentsWithoutIsbnWhenHasIsbnIsSetToFalse()
+      throws BadRequestException, IOException {
+    var json =
+        """
+            {
+                  "type": "Publication",
+                  "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
+                  "entityDescription": {
+                    "type": "EntityDescription",
+                    "reference": {
+                      "type": "Reference",
+                      "publicationContext": {
+                        "type": "Report",
+                        "isbnList": [ ]
+                      }
+                    }
+                  }
+                }
+        """;
+    createIndexAndIndexDocument(json);
+    var response =
+        doSearchWithUri(
+            UriWrapper.fromUri("https://x.org/")
+                .addQueryParameter("hasIsbn", Boolean.FALSE.toString())
+                .getUri());
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
+  @ParameterizedTest
+  @ValueSource(
+      strings = {
+        """
+        { "onlineIssn": "123" }
+        """,
+        """
+        { "printIssn": "123" }
+        """,
+      })
+  void shouldReturnDocumentsWithIssnWhenHasIssnIsSetToTrue(String series)
+      throws BadRequestException, IOException {
+    var json =
+        """
+            {
+                  "type": "Publication",
+                  "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
+                  "entityDescription": {
+                    "type": "EntityDescription",
+                    "reference": {
+                      "type": "Reference",
+                      "publicationContext": {
+                        "type": "Report",
+                        "series" : %s
+                      }
+                    }
+                  }
+                }
+        """
+            .formatted(series);
+    createIndexAndIndexDocument(json);
+    var response =
+        doSearchWithUri(
+            UriWrapper.fromUri("https://x.org/")
+                .addQueryParameter("hasIssn", Boolean.TRUE.toString())
+                .getUri());
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
+  @Test
+  void shouldReturnDocumentsWithoutIssnWhenHasIssnIsSetToFalse()
+      throws BadRequestException, IOException {
+    var json =
+        """
+            {
+                  "type": "Publication",
+                  "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
+                  "entityDescription": {
+                    "type": "EntityDescription",
+                    "reference": {
+                      "type": "Reference",
+                      "publicationContext": {
+                        "type": "Report",
+                        "series" : {
+                        }
+                      }
+                    }
+                  }
+                }
+        """;
+    createIndexAndIndexDocument(json);
+    var response =
+        doSearchWithUri(
+            UriWrapper.fromUri("https://x.org/")
+                .addQueryParameter("hasIssn", Boolean.FALSE.toString())
+                .getUri());
+
+    assertEquals(1, response.toPagedResponse().hits().size());
   }
 
   private static HttpResponseFormatter<ResourceParameter> doSearchWithUri(URI searchUri)
