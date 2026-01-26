@@ -12,6 +12,7 @@ import static no.unit.nva.search.resource.ResourceClientTest.USER_SETTINGS_JSON;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
+import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -257,9 +258,7 @@ public class ResourceClientAllScientificValuesTest {
 
     var response =
         doSearchWithUri(
-            UriWrapper.fromUri("https://x.org/")
-                .addQueryParameter("journal", journalTitle)
-                .getUri());
+            UriWrapper.fromUri(randomUri()).addQueryParameter("journal", journalTitle).getUri());
     assertFalse(response.toPagedResponse().hits().isEmpty());
   }
 
@@ -292,7 +291,7 @@ public class ResourceClientAllScientificValuesTest {
 
     var response =
         doSearchWithUri(
-            UriWrapper.fromUri("https://x.org/").addQueryParameter("series", seriesTitle).getUri());
+            UriWrapper.fromUri(randomUri()).addQueryParameter("series", seriesTitle).getUri());
 
     assertFalse(response.toPagedResponse().hits().isEmpty());
   }
@@ -326,9 +325,7 @@ public class ResourceClientAllScientificValuesTest {
 
     var response =
         doSearchWithUri(
-            UriWrapper.fromUri("https://x.org/")
-                .addQueryParameter("publisher", publisherName)
-                .getUri());
+            UriWrapper.fromUri(randomUri()).addQueryParameter("publisher", publisherName).getUri());
 
     assertFalse(response.toPagedResponse().hits().isEmpty());
   }
@@ -356,7 +353,7 @@ public class ResourceClientAllScientificValuesTest {
     createIndexAndIndexDocument(json);
     var response =
         doSearchWithUri(
-            UriWrapper.fromUri("https://x.org/")
+            UriWrapper.fromUri(randomUri())
                 .addQueryParameter("hasIsbn", Boolean.TRUE.toString())
                 .getUri());
 
@@ -386,7 +383,7 @@ public class ResourceClientAllScientificValuesTest {
     createIndexAndIndexDocument(json);
     var response =
         doSearchWithUri(
-            UriWrapper.fromUri("https://x.org/")
+            UriWrapper.fromUri(randomUri())
                 .addQueryParameter("hasIsbn", Boolean.FALSE.toString())
                 .getUri());
 
@@ -426,7 +423,7 @@ public class ResourceClientAllScientificValuesTest {
     createIndexAndIndexDocument(json);
     var response =
         doSearchWithUri(
-            UriWrapper.fromUri("https://x.org/")
+            UriWrapper.fromUri(randomUri())
                 .addQueryParameter("hasIssn", Boolean.TRUE.toString())
                 .getUri());
 
@@ -457,7 +454,7 @@ public class ResourceClientAllScientificValuesTest {
     createIndexAndIndexDocument(json);
     var response =
         doSearchWithUri(
-            UriWrapper.fromUri("https://x.org/")
+            UriWrapper.fromUri(randomUri())
                 .addQueryParameter("hasIssn", Boolean.FALSE.toString())
                 .getUri());
 
