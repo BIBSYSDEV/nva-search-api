@@ -12,6 +12,9 @@ import static no.unit.nva.search.resource.ResourceClientTest.USER_SETTINGS_JSON;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
+import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
+import static nva.commons.core.attempt.Try.attempt;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -22,6 +25,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
@@ -254,9 +259,7 @@ public class ResourceClientAllScientificValuesTest {
 
     var response =
         doSearchWithUri(
-            UriWrapper.fromUri("https://x.org/")
-                .addQueryParameter("journal", journalTitle)
-                .getUri());
+            UriWrapper.fromUri(randomUri()).addQueryParameter("journal", journalTitle).getUri());
     assertFalse(response.toPagedResponse().hits().isEmpty());
   }
 
@@ -289,7 +292,7 @@ public class ResourceClientAllScientificValuesTest {
 
     var response =
         doSearchWithUri(
-            UriWrapper.fromUri("https://x.org/").addQueryParameter("series", seriesTitle).getUri());
+            UriWrapper.fromUri(randomUri()).addQueryParameter("series", seriesTitle).getUri());
 
     assertFalse(response.toPagedResponse().hits().isEmpty());
   }
@@ -323,11 +326,296 @@ public class ResourceClientAllScientificValuesTest {
 
     var response =
         doSearchWithUri(
-            UriWrapper.fromUri("https://x.org/")
-                .addQueryParameter("publisher", publisherName)
-                .getUri());
+            UriWrapper.fromUri(randomUri()).addQueryParameter("publisher", publisherName).getUri());
 
     assertFalse(response.toPagedResponse().hits().isEmpty());
+  }
+
+  @Test
+  void shouldReturnDocumentWithScientificValueForSeries() throws IOException, BadRequestException {
+    var scientificValue = randomString();
+    var json =
+        """
+            {
+                  "type": "Publication",
+                  "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
+                  "entityDescription": {
+                    "type": "EntityDescription",
+                    "reference": {
+                      "type": "Reference",
+                      "publicationContext": {
+                        "type": "Report",
+                        "series": {
+                          "type": "Series",
+                          "scientificValue": "%s"
+                        }
+                      }
+                    }
+                  }
+                }
+        """
+            .formatted(scientificValue);
+    createIndexAndIndexDocument(json);
+
+    var response =
+        doSearchWithUri(
+            UriWrapper.fromUri(randomUri())
+                .addQueryParameter("scientificValueSeries", scientificValue)
+                .getUri());
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
+  @Test
+  void
+      shouldNotReturnDocumentWithScientificValueForSeriesWhenSeriesIsMissingValueButPublisherHasTheSameScientificValue()
+          throws IOException, BadRequestException {
+    var scientificValue = randomString();
+    var json =
+        """
+            {
+                  "type": "Publication",
+                  "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
+                  "entityDescription": {
+                    "type": "EntityDescription",
+                    "reference": {
+                      "type": "Reference",
+                      "publicationContext": {
+                        "type": "Report",
+                        "series": {
+                          "type": "Series"
+                        },
+                        "publisher": {
+                          "type": "Publisher",
+                          "scientificValue": "%s"
+                        }
+                      }
+                    }
+                  }
+                }
+        """
+            .formatted(scientificValue);
+    createIndexAndIndexDocument(json);
+
+    var response =
+        doSearchWithUri(
+            UriWrapper.fromUri(randomUri())
+                .addQueryParameter("scientificValueSeries", scientificValue)
+                .getUri());
+
+    assertTrue(response.toPagedResponse().hits().isEmpty());
+  }
+
+  @Test
+  void shouldReturnDocumentWithScientificValueForPublisher()
+      throws IOException, BadRequestException {
+    var scientificValue = randomString();
+    var json = jsonWithScientificValueForPublisher().formatted(scientificValue);
+    createIndexAndIndexDocument(json);
+
+    var response =
+        doSearchWithUri(
+            UriWrapper.fromUri(randomUri())
+                .addQueryParameter("scientificValuePublisher", scientificValue)
+                .getUri());
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
+  @Test
+  void
+      shouldNotReturnDocumentWithScientificValueForPublisherWhenPublisherIsMissingValueButSeriesHasTheSameScientificValue()
+          throws IOException, BadRequestException {
+    var scientificValue = randomString();
+    var json =
+        """
+            {
+                  "type": "Publication",
+                  "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
+                  "entityDescription": {
+                    "type": "EntityDescription",
+                    "reference": {
+                      "type": "Reference",
+                      "publicationContext": {
+                        "type": "Report",
+                        "publisher": {
+                          "type": "Publisher"
+                        },
+                        "series": {
+                          "type": "Series",
+                          "scientificValue": "%s"
+                        }
+                      }
+                    }
+                  }
+                }
+        """
+            .formatted(scientificValue);
+    createIndexAndIndexDocument(json);
+
+    var response =
+        doSearchWithUri(
+            UriWrapper.fromUri(randomUri())
+                .addQueryParameter("scientificValuePublisher", scientificValue)
+                .getUri());
+
+    assertTrue(response.toPagedResponse().hits().isEmpty());
+  }
+
+  @Test
+  void shouldNotReturnDocumentWhenExcludedScientificValuePublisherIsProvided()
+      throws IOException, BadRequestException {
+    var excludedScientificValue = randomString();
+    var json =
+        """
+            {
+                  "type": "Publication",
+                  "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
+                  "entityDescription": {
+                    "type": "EntityDescription",
+                    "reference": {
+                      "type": "Reference",
+                      "publicationContext": {
+                        "type": "Report",
+                        "publisher": {
+                          "type": "Publisher",
+                          "scientificValue": "%s"
+                        }
+                      }
+                    }
+                  }
+                }
+        """
+            .formatted(excludedScientificValue);
+    createIndexAndIndexDocument(json);
+
+    var response =
+        doSearchWithUri(
+            UriWrapper.fromUri(randomUri())
+                .addQueryParameter("excludedScientificValuePublisher", excludedScientificValue)
+                .getUri());
+
+    assertTrue(response.toPagedResponse().hits().isEmpty());
+  }
+
+  @Test
+  void shouldNotReturnDocumentWhenExcludedScientificValueSeriesIsProvided()
+      throws IOException, BadRequestException {
+    var excludedScientificValue = randomString();
+    var json =
+        """
+            {
+                  "type": "Publication",
+                  "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
+                  "entityDescription": {
+                    "type": "EntityDescription",
+                    "reference": {
+                      "type": "Reference",
+                      "publicationContext": {
+                        "type": "Report",
+                        "series": {
+                          "type": "Series",
+                          "scientificValue": "%s"
+                        }
+                      }
+                    }
+                  }
+                }
+        """
+            .formatted(excludedScientificValue);
+    createIndexAndIndexDocument(json);
+
+    var response =
+        doSearchWithUri(
+            UriWrapper.fromUri(randomUri())
+                .addQueryParameter("excludedScientificValueSeries", excludedScientificValue)
+                .getUri());
+
+    assertTrue(response.toPagedResponse().hits().isEmpty());
+  }
+
+  @Test
+  void shouldNotReturnDocumentsWhenMultipleExcludedScientificValueSeriesAreProvided()
+      throws IOException, BadRequestException {
+    var excludedScientificValues = List.of(randomString(), randomString());
+    var publicationsWithSeriesWithScientificValues =
+        excludedScientificValues.stream()
+            .map(value -> jsonWithScientificValueForSeries().formatted(value))
+            .toArray(String[]::new);
+    createIndexAndIndexDocument(publicationsWithSeriesWithScientificValues);
+
+    var response =
+        doSearchWithUri(
+            UriWrapper.fromUri(randomUri())
+                .addQueryParameter(
+                    "excludedScientificValueSeries", String.join(",", excludedScientificValues))
+                .getUri());
+
+    assertTrue(response.toPagedResponse().hits().isEmpty());
+  }
+
+  @Test
+  void shouldNotReturnDocumentsWhenMultipleExcludedScientificValuePublisherAreProvided()
+      throws IOException, BadRequestException {
+    var excludedScientificValues = List.of(randomString(), randomString());
+    var publicationsWithPublisherWithScientificValues =
+        excludedScientificValues.stream()
+            .map(value -> jsonWithScientificValueForPublisher().formatted(value))
+            .toArray(String[]::new);
+    createIndexAndIndexDocument(publicationsWithPublisherWithScientificValues);
+
+    var response =
+        doSearchWithUri(
+            UriWrapper.fromUri(randomUri())
+                .addQueryParameter(
+                    "excludedScientificValuePublisher", String.join(",", excludedScientificValues))
+                .getUri());
+
+    assertTrue(response.toPagedResponse().hits().isEmpty());
+  }
+
+  private static String jsonWithScientificValueForSeries() {
+    return """
+               {
+                     "type": "Publication",
+                     "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
+                     "entityDescription": {
+                       "type": "EntityDescription",
+                       "reference": {
+                         "type": "Reference",
+                         "publicationContext": {
+                           "type": "Report",
+                           "series": {
+                             "type": "Series",
+                             "scientificValue": "%s"
+                           }
+                         }
+                       }
+                     }
+                   }
+           """;
+  }
+
+  private static String jsonWithScientificValueForPublisher() {
+    return """
+               {
+                     "type": "Publication",
+                     "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
+                     "entityDescription": {
+                       "type": "EntityDescription",
+                       "reference": {
+                         "type": "Reference",
+                         "publicationContext": {
+                           "type": "Report",
+                           "publisher": {
+                             "type": "Publisher",
+                             "scientificValue": "%s"
+                           }
+                         }
+                       }
+                     }
+                   }
+           """;
   }
 
   private static HttpResponseFormatter<ResourceParameter> doSearchWithUri(URI searchUri)
@@ -342,14 +630,17 @@ public class ResourceClientAllScientificValuesTest {
         .doSearch(resourceClient, indexName);
   }
 
-  private static void createIndexAndIndexDocument(String json) throws IOException {
+  private static void createIndexAndIndexDocument(String... json) throws IOException {
     indexingClient.createIndex(indexName, RESOURCE_MAPPINGS.asMap(), RESOURCE_SETTINGS.asMap());
     indexingClient.refreshIndex(indexName);
-    var document =
-        new IndexDocument(
-            new EventConsumptionAttributes(indexName, SortableIdentifier.next()),
-            JsonUtils.dtoObjectMapper.readTree(json));
-    indexingClient.addDocumentToIndex(document);
+    var documents = Arrays.stream(json).map(ResourceClientAllScientificValuesTest::toIndexDocument);
+    documents.forEach(document -> attempt(() -> indexingClient.addDocumentToIndex(document)));
     indexingClient.refreshIndex(indexName);
+  }
+
+  private static IndexDocument toIndexDocument(String body) {
+    return new IndexDocument(
+        new EventConsumptionAttributes(indexName, SortableIdentifier.next()),
+        attempt(() -> JsonUtils.dtoObjectMapper.readTree(body)).orElseThrow());
   }
 }
