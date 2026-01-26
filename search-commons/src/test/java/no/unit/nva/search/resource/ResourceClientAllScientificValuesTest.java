@@ -344,7 +344,7 @@ public class ResourceClientAllScientificValuesTest {
                       "type": "Reference",
                       "publicationContext": {
                         "type": "Report",
-                        "isbnList": [ "123" ]
+                        "isbnList": [ "9781897852323" ]
                       }
                     }
                   }
@@ -394,10 +394,10 @@ public class ResourceClientAllScientificValuesTest {
   @ValueSource(
       strings = {
         """
-        { "onlineIssn": "123" }
+        { "onlineIssn": "1903-6523" }
         """,
         """
-        { "printIssn": "123" }
+        { "printIssn": "1903-6523" }
         """,
       })
   void shouldReturnDocumentsWithIssnWhenHasIssnIsSetToTrue(String series)
