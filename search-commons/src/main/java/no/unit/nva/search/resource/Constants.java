@@ -194,6 +194,8 @@ public final class Constants {
       jsonPath(ENTITY_PUBLICATION_CONTEXT, TYPE, KEYWORD);
   public static final String PUBLICATION_INSTANCE_TYPE =
       jsonPath(ENTITY_PUBLICATION_INSTANCE, TYPE, KEYWORD);
+  public static final String PARENT_PUBLICATION_TYPE =
+      jsonPath(ENTITY_PUBLICATION_CONTEXT, ENTITY_PUBLICATION_INSTANCE, TYPE);
   public static final String PUBLICATION_CONTEXT_PUBLISHER =
       multipleFields(
           jsonPath(ENTITY_PUBLICATION_CONTEXT, PUBLISHER, NAME, KEYWORD),

@@ -72,6 +72,7 @@ import static no.unit.nva.search.resource.Constants.FUNDING_IDENTIFIER_KEYWORD;
 import static no.unit.nva.search.resource.Constants.HANDLE_KEYWORD;
 import static no.unit.nva.search.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search.resource.Constants.PARENT_PUBLICATION_ID;
+import static no.unit.nva.search.resource.Constants.PARENT_PUBLICATION_TYPE;
 import static no.unit.nva.search.resource.Constants.PUBLICATION_CONTEXT_ISBN_LIST;
 import static no.unit.nva.search.resource.Constants.PUBLICATION_CONTEXT_PUBLISHER;
 import static no.unit.nva.search.resource.Constants.PUBLICATION_CONTEXT_TYPE_KEYWORD;
@@ -182,6 +183,8 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
   ORCID_SHOULD(TEXT, ANY_OF, CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD),
   PARENT_PUBLICATION(KEYWORD, ANY_OF, PARENT_PUBLICATION_ID),
   PARENT_PUBLICATION_EXIST(EXISTS, ANY_OF, PARENT_PUBLICATION_ID),
+  PARENT_TYPE(KEYWORD, ANY_OF, PARENT_PUBLICATION_TYPE),
+  EXCLUDE_PARENT_TYPE(KEYWORD, NOT_ALL_OF, PARENT_PUBLICATION_TYPE),
   PROJECT(KEYWORD, ANY_OF, PROJECTS_ID),
   PROJECT_NOT(KEYWORD, NOT_ANY_OF, PROJECTS_ID),
   PROJECT_SHOULD(FUZZY_KEYWORD, ANY_OF, PROJECTS_ID, PHI),
