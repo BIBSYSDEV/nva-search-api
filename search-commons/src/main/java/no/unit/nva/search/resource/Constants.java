@@ -166,7 +166,11 @@ public final class Constants {
   public static final String SCIENTIFIC_OTHER =
       jsonPath(ENTITY_PUBLICATION_CONTEXT, SCIENTIFIC_VALUE, KEYWORD);
   public static final String SCIENTIFIC_LEVEL_SEARCH_FIELD =
-      multipleFields(SCIENTIFIC_SERIES, SCIENTIFIC_PUBLISHER, SCIENTIFIC_OTHER);
+      multipleFields(
+          SCIENTIFIC_SERIES,
+          SCIENTIFIC_PUBLISHER,
+          PARENT_SCIENTIFIC_PUBLISHER,
+          PARENT_SCIENTIFIC_SERIES);
   public static final String COURSE_CODE_KEYWORD =
       jsonPath(ENTITY_PUBLICATION_CONTEXT, COURSE, CODE, KEYWORD);
   public static final String ENTITY_DESCRIPTION_PUBLICATION_PAGES =
@@ -194,6 +198,8 @@ public final class Constants {
       jsonPath(ENTITY_PUBLICATION_CONTEXT, TYPE, KEYWORD);
   public static final String PUBLICATION_INSTANCE_TYPE =
       jsonPath(ENTITY_PUBLICATION_INSTANCE, TYPE, KEYWORD);
+  public static final String PARENT_PUBLICATION_TYPE =
+      jsonPath(ENTITY_PUBLICATION_CONTEXT, ENTITY_PUBLICATION_INSTANCE, TYPE);
   public static final String PUBLICATION_CONTEXT_PUBLISHER =
       multipleFields(
           jsonPath(ENTITY_PUBLICATION_CONTEXT, PUBLISHER, NAME, KEYWORD),

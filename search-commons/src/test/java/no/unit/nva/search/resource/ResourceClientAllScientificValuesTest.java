@@ -482,6 +482,55 @@ public class ResourceClientAllScientificValuesTest {
     assertEquals(1, response.toPagedResponse().hits().size());
   }
 
+  @Test
+  void shouldReturnDocumentsWithParentPublicationType() throws IOException, BadRequestException {
+    var parentPublicationType = randomString();
+    var json = jsonWithParentPublicationType(parentPublicationType);
+    createIndexAndIndexDocument(json);
+    var response = doSearchWithUri(uriWithQueryParameter("parentType", parentPublicationType));
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
+  @Test
+  void shouldExcludeDocumentsWithParentPublicationType() throws IOException, BadRequestException {
+    var parentPublicationType = randomString();
+    var json = jsonWithParentPublicationType(parentPublicationType);
+    createIndexAndIndexDocument(json);
+    var response =
+        doSearchWithUri(uriWithQueryParameter("excludeParentType", parentPublicationType));
+
+    assertTrue(response.toPagedResponse().hits().isEmpty());
+  }
+
+  private static String jsonWithParentPublicationType(String parentPublicationType) {
+    return """
+               {
+                     "type": "Publication",
+                     "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
+                     "entityDescription": {
+                       "type": "EntityDescription",
+                       "reference": {
+                         "type": "Reference",
+                         "publicationContext": {
+                             "entityDescription": {
+                                 "type": "EntityDescription",
+                                 "reference": {
+                                     "type": "Reference",
+                                     "publicationInstance": {
+                                         "type": "%s"
+                                     }
+                                 }
+                             },
+                             "type": "Anthology"
+                         }
+                       }
+                     }
+                   }
+           """
+        .formatted(parentPublicationType);
+  }
+
   private static URI uriWithQueryParameter(String name, String value) {
     return UriWrapper.fromUri(randomUri()).addQueryParameter(name, value).getUri();
   }
