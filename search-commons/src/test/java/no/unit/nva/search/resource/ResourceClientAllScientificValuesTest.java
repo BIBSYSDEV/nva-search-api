@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
@@ -499,6 +500,20 @@ public class ResourceClientAllScientificValuesTest {
     createIndexAndIndexDocument(json);
     var response =
         doSearchWithUri(uriWithQueryParameter("excludeParentType", parentPublicationType));
+
+    assertTrue(response.toPagedResponse().hits().isEmpty());
+  }
+
+  @Test
+  void shouldExcludeDocumentsWithParentPublicationTypeB2() throws IOException, BadRequestException {
+    var publicationTypes = IntStream.range(0, 100).mapToObj(i -> randomString()).toList();
+    var jsonList =
+        publicationTypes.stream()
+            .map(ResourceClientAllScientificValuesTest::jsonWithParentPublicationType)
+            .toArray(String[]::new);
+    createIndexAndIndexDocument(jsonList);
+    var searchParam = String.join(",", publicationTypes);
+    var response = doSearchWithUri(uriWithQueryParameter("excludeParentType", searchParam));
 
     assertTrue(response.toPagedResponse().hits().isEmpty());
   }

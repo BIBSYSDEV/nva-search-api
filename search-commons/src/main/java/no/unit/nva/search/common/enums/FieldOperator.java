@@ -12,9 +12,15 @@ public enum FieldOperator {
   ALL_OF,
   /** None can match in document (Inverted of MUST). */
   NOT_ALL_OF,
-  /** One or more must match (Only sensible for unique fields). */
+  /**
+   * One or more must match (Only sensible for unique fields).
+   * Excludes documents that have ALL of the specified values
+   * */
   ANY_OF,
-  /** Any cannot match (These should be excluded). */
+  /**
+   *  Any cannot match (These should be excluded).
+   * Excludes documents that have ANY of the specified values
+   * */
   NOT_ANY_OF,
   /** Greater than or equal to. */
   GREATER_THAN_OR_EQUAL_TO,
