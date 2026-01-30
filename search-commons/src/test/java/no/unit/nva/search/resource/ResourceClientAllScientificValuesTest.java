@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -32,7 +31,6 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -576,14 +574,6 @@ public class ResourceClientAllScientificValuesTest {
 
   private static URI uriWithQueryParameter(String name, String value) {
     return UriWrapper.fromUri(randomUri()).addQueryParameter(name, value).getUri();
-  }
-
-  private static URI uriWithQueryParameters(Map<String, String> parameters) {
-    var wrapper = UriWrapper.fromUri(randomUri());
-    for (var entry : parameters.entrySet()) {
-      wrapper.addQueryParameter(entry.getKey(), entry.getValue());
-    }
-    return wrapper.getUri();
   }
 
   private static String jsonWithScientificValueForJournal(String scientificValue) {
