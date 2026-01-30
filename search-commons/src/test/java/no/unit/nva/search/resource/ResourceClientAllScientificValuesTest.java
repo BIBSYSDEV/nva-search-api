@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -31,6 +32,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -502,6 +504,48 @@ public class ResourceClientAllScientificValuesTest {
     assertTrue(response.toPagedResponse().hits().isEmpty());
   }
 
+  @Test
+  void shouldExcludeDocumentsWhereParentPublicationTypeIsMissing()
+      throws IOException, BadRequestException {
+    var parentPublicationType = randomString();
+    var json = jsonWithParentPublicationType(parentPublicationType);
+    createIndexAndIndexDocument(json);
+    var response =
+        doSearchWithUri(uriWithQueryParameter("excludeParentType", parentPublicationType));
+
+    assertTrue(response.toPagedResponse().hits().isEmpty());
+  }
+
+  @Test
+  void shouldExcludeDocumentWhereParentPublicationTypeIsMissingWhenFilteringByExcludeParentTypeParameter()
+      throws IOException, BadRequestException {
+    var json =
+        """
+                    {
+                   "type": "Publication",
+                   "entityDescription": {
+                     "type": "EntityDescription",
+                     "reference": {
+                       "type": "Reference",
+                       "publicationContext": {
+                           "entityDescription": {
+                               "type": "EntityDescription",
+                               "reference": {
+                                   "type": "Reference"
+                               }
+                           },
+                           "type": "Anthology"
+                       }
+                     }
+                   }
+                 }
+        """;
+    createIndexAndIndexDocument(json);
+    var response = doSearchWithUri(uriWithQueryParameter("excludeParentType", randomString()));
+
+    assertTrue(response.toPagedResponse().hits().isEmpty());
+  }
+
   private static String jsonWithParentPublicationType(String parentPublicationType) {
     return """
                {
@@ -532,6 +576,14 @@ public class ResourceClientAllScientificValuesTest {
 
   private static URI uriWithQueryParameter(String name, String value) {
     return UriWrapper.fromUri(randomUri()).addQueryParameter(name, value).getUri();
+  }
+
+  private static URI uriWithQueryParameters(Map<String, String> parameters) {
+    var wrapper = UriWrapper.fromUri(randomUri());
+    for (var entry : parameters.entrySet()) {
+      wrapper.addQueryParameter(entry.getKey(), entry.getValue());
+    }
+    return wrapper.getUri();
   }
 
   private static String jsonWithScientificValueForJournal(String scientificValue) {

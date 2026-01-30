@@ -67,7 +67,30 @@
                   "include_in_parent": true
                 },
                 "entityDescription": {
-                  "type": "flat_object"
+                  "type": "nested",
+                  "include_in_parent": true,
+                  "properties": {
+                    "reference": {
+                      "type": "nested",
+                      "include_in_parent": true,
+                      "properties": {
+                        "publicationInstance": {
+                          "type": "nested",
+                          "include_in_parent": true,
+                          "properties": {
+                            "type": {
+                              "type": "text",
+                              "fields": {
+                                "keyword": {
+                                  "type": "keyword"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
