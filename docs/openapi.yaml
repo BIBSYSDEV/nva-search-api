@@ -521,6 +521,9 @@ paths:
         - $ref: '#/components/parameters/doiNotParam'
         - $ref: '#/components/parameters/doiParam'
         - $ref: '#/components/parameters/doiShouldParam'
+        - $ref: '#/components/parameters/excludeParentTypeParam'
+        - $ref: '#/components/parameters/excludeScientificValuePublisherParam'
+        - $ref: '#/components/parameters/excludeScientificValueSeriesParam'
         - $ref: '#/components/parameters/fundingIdentifierNotParam'
         - $ref: '#/components/parameters/fundingIdentifierParam'
         - $ref: '#/components/parameters/fundingIdentifierShouldParam'
@@ -532,6 +535,8 @@ paths:
         - $ref: '#/components/parameters/grantIdentifierParam'
         - $ref: '#/components/parameters/grantIdentifierShouldParam'
         - $ref: '#/components/parameters/hasFileParam'
+        - $ref: '#/components/parameters/hasIsbnParam'
+        - $ref: '#/components/parameters/hasIssnParam'
         - $ref: '#/components/parameters/idNotParam'
         - $ref: '#/components/parameters/idParam'
         - $ref: '#/components/parameters/idShouldParam'
@@ -557,6 +562,7 @@ paths:
         - $ref: '#/components/parameters/orcidShouldParam'
         - $ref: '#/components/parameters/parentPublicationParam'
         - $ref: '#/components/parameters/parentPublicationShouldParam'
+        - $ref: '#/components/parameters/parentTypeParam'
         - $ref: '#/components/parameters/projectNotParam'
         - $ref: '#/components/parameters/projectParam'
         - $ref: '#/components/parameters/projectShouldParam'
@@ -611,6 +617,8 @@ paths:
         - $ref: '#/components/parameters/pageParam'
         - $ref: '#/components/parameters/excludeSubunits'
         - $ref: '#/components/parameters/scientificValueParam'
+        - $ref: '#/components/parameters/scientificValuePublisherParam'
+        - $ref: '#/components/parameters/scientificValueSeriesParam'
       x-amazon-apigateway-integration:
         uri:
           Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchResourcesFunction.Arn}:live/invocations
@@ -1089,10 +1097,60 @@ components:
       explode: true
       schema:
         type: string
+    excludeParentTypeParam:
+      name: exclude_parent_type
+      in: query
+      description: "Filters out documents whose parent publication matches the specified type."
+      example: "Anthology"
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    excludeScientificValuePublisherParam:
+      name: exclude_parent_type
+      in: query
+      description: "Filters out documents whose publisher scientific values matches the specified value."
+      example: "LevelOne"
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    excludeScientificValueSeriesParam:
+      name: exclude_parent_type
+      in: query
+      description: "Filters out documents whose series scientific values matches the specified value."
+      example: "Anthology"
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
     scientificValueParam:
       name: scientific_value
       in: query
       description: "Returns document with provided scientific values separated by comma."
+      example: "LevelOne,LevelTwo"
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    scientificValuePublisherParam:
+      name: scientific_value
+      in: query
+      description: "Returns document with provided publisher scientific values separated by comma."
+      example: "LevelOne,LevelTwo"
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    scientificValueSeriesParam:
+      name: scientific_value
+      in: query
+      description: "Returns document with provided series scientific values separated by comma."
       example: "LevelOne,LevelTwo"
       required: false
       style: form
@@ -1214,6 +1272,28 @@ components:
       name: has_file
       in: query
       description: "Returns documents with visibleForNonOwner=true/false."
+      example: "true"
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: boolean
+        enum: [ true, false ]
+    hasIsbnParam:
+      name: has_file
+      in: query
+      description: "Returns documents with isbn."
+      example: "true"
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: boolean
+        enum: [ true, false ]
+    hasIssnParam:
+      name: has_file
+      in: query
+      description: "Returns documents with issn."
       example: "true"
       required: false
       style: form
@@ -1504,6 +1584,16 @@ components:
       name: parent_publication_should
       in: query
       description: "Returns document with these parentPublications."
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    parentTypeParam:
+      name: parent_type
+      in: query
+      description: "Returns document with provided parent publication type."
+      example: "Anthology"
       required: false
       style: form
       explode: true
