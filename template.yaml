@@ -713,15 +713,6 @@ Resources:
       MemorySize: 1024
       Role: !GetAtt SearchHandlerRole.Arn
 
-  ImportCandidatesInitHandler:
-    Type: AWS::Serverless::Function
-    Properties:
-      Description: Lambda that creates importCandidates index. Needs to be run manually from Test
-      CodeUri: indexing-handlers
-      Handler: no.unit.nva.indexing.handlers.ImportCandidateInitHandler::handleRequest
-      MemorySize: 1024
-      Role: !GetAtt SearchHandlerRole.Arn
-
   DeleteIndicesHandler:
     Type: AWS::Serverless::Function
     Properties:
