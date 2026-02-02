@@ -5,6 +5,7 @@ import static no.unit.nva.constants.IndexMappingsAndSettings.RESOURCE_MAPPINGS;
 import static no.unit.nva.constants.IndexMappingsAndSettings.RESOURCE_SETTINGS;
 import static no.unit.nva.constants.IndexMappingsAndSettings.TICKET_MAPPINGS;
 import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
+import static no.unit.nva.indexing.handlers.IndexName.IMPORT_CANDIDATES;
 import static no.unit.nva.indexing.handlers.IndexName.RESOURCES;
 import static no.unit.nva.indexing.handlers.IndexName.TICKETS;
 import static no.unit.nva.indexing.handlers.InitHandler.SUCCESS;
@@ -23,6 +24,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import no.unit.nva.constants.Words;
@@ -88,12 +90,15 @@ class InitHandlerTest {
   }
 
   @Test
-  void shouldLogWarningAndReturnFailedWhenNoIndicesProvidedInRequest() {
-    var throwable =
-        assertThrows(
-            IllegalArgumentException.class,
-            () -> initHandler.handleRequest(createRequest(List.of()), output, context));
-    assertEquals("No indices provided in request!", throwable.getMessage());
+  void shouldCreateAllIndicesWhenEmptyListProvidedInRequest() throws IOException {
+    var indicesToCreate = Arrays.asList(IndexName.values());
+    mockIndicesCreation(indicesToCreate);
+
+    initHandler.handleRequest(createRequest(List.of()), output, context);
+
+    verifyIndexCreation(RESOURCES);
+    verifyIndexCreation(TICKETS);
+    verifyIndexCreation(IMPORT_CANDIDATES);
   }
 
   @Test

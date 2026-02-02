@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum IndexName {
   RESOURCES("resources"),
   TICKETS("tickets"),
-  IMPORT_CANDIDATES("import-candidate");
+  IMPORT_CANDIDATES("import-candidates");
 
   private final String value;
 

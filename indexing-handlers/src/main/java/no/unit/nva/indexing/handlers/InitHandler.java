@@ -14,6 +14,7 @@ import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.List;
 import no.unit.nva.indexingclient.IndexingClient;
 import nva.commons.core.JacocoGenerated;
@@ -59,10 +60,9 @@ public class InitHandler implements RequestStreamHandler {
 
   private static List<IndexRequest> getIndicesToCreate(InputStream inputStream) {
     var indices = CreateIndexRequest.fromInputStream(inputStream).indices();
-    if (indices.isEmpty()) {
-      throw new IllegalArgumentException("No indices provided in request!");
-    }
-    return indices.stream().map(InitHandler::toIndexRequest).toList();
+    return indices.isEmpty()
+        ? Arrays.stream(IndexName.values()).map(InitHandler::toIndexRequest).toList()
+        : indices.stream().map(InitHandler::toIndexRequest).toList();
   }
 
   public static IndexRequest toIndexRequest(IndexName indexName) {
