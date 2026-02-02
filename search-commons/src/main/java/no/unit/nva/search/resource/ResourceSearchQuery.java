@@ -192,6 +192,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
               mapOfPathAndBoost(parameters().get(NODES_SEARCHED)));
       case HAS_PARENT -> streamBuilders.createHasParentQuery(key);
       case HAS_NO_PARENT -> streamBuilders.createHasNoParentQuery(key);
+      case EXCLUDE_PARENT_TYPE -> streamBuilders.createExcludeParentTypeQuery(key);
       default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
     };
   }

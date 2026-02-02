@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -499,6 +498,48 @@ public class ResourceClientAllScientificValuesTest {
     createIndexAndIndexDocument(json);
     var response =
         doSearchWithUri(uriWithQueryParameter("excludeParentType", parentPublicationType));
+
+    assertTrue(response.toPagedResponse().hits().isEmpty());
+  }
+
+  @Test
+  void shouldExcludeDocumentsWhereParentPublicationTypeIsMissing()
+      throws IOException, BadRequestException {
+    var parentPublicationType = randomString();
+    var json = jsonWithParentPublicationType(parentPublicationType);
+    createIndexAndIndexDocument(json);
+    var response =
+        doSearchWithUri(uriWithQueryParameter("excludeParentType", parentPublicationType));
+
+    assertTrue(response.toPagedResponse().hits().isEmpty());
+  }
+
+  @Test
+  void shouldExcludeDocumentWhereParentPublicationTypeIsMissingWhenFilteringByExcludeParentTypeParameter()
+      throws IOException, BadRequestException {
+    var json =
+        """
+                    {
+                   "type": "Publication",
+                   "entityDescription": {
+                     "type": "EntityDescription",
+                     "reference": {
+                       "type": "Reference",
+                       "publicationContext": {
+                           "entityDescription": {
+                               "type": "EntityDescription",
+                               "reference": {
+                                   "type": "Reference"
+                               }
+                           },
+                           "type": "Anthology"
+                       }
+                     }
+                   }
+                 }
+        """;
+    createIndexAndIndexDocument(json);
+    var response = doSearchWithUri(uriWithQueryParameter("excludeParentType", randomString()));
 
     assertTrue(response.toPagedResponse().hits().isEmpty());
   }

@@ -26,6 +26,7 @@ import static no.unit.nva.search.common.constant.Functions.jsonPath;
 import static no.unit.nva.search.resource.Constants.ENTITY_ABSTRACT;
 import static no.unit.nva.search.resource.Constants.ENTITY_CONTRIBUTORS;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
+import static no.unit.nva.search.resource.Constants.PARENT_PUBLICATION_TYPE;
 import static no.unit.nva.search.resource.Constants.PARENT_SCIENTIFIC_PUBLISHER;
 import static no.unit.nva.search.resource.Constants.PARENT_SCIENTIFIC_SERIES;
 import static no.unit.nva.search.resource.Constants.PUBLICATION_CONTEXT_TYPE_KEYWORD;
@@ -283,6 +284,18 @@ public class ResourceStreamBuilders {
         boolQuery()
             .mustNot(existsQuery(REFERENCE_PUBLICATION_CONTEXT_ID_KEYWORD))
             .must(termQuery(PUBLICATION_CONTEXT_TYPE_KEYWORD, "Anthology"));
+
+    return Functions.queryToEntry(resourceParameter, query);
+  }
+
+  public Stream<Entry<ResourceParameter, QueryBuilder>> createExcludeParentTypeQuery(
+      ResourceParameter resourceParameter) {
+
+    var values = parameters.get(resourceParameter).split(COMMA);
+    var query =
+        boolQuery()
+            .must(existsQuery(PARENT_PUBLICATION_TYPE))
+            .mustNot(termsQuery(PARENT_PUBLICATION_TYPE, values));
 
     return Functions.queryToEntry(resourceParameter, query);
   }
