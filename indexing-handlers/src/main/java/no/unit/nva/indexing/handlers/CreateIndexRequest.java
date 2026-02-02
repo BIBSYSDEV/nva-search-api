@@ -4,7 +4,6 @@ import static java.util.Objects.nonNull;
 import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 import static nva.commons.core.attempt.Try.attempt;
 
-import com.fasterxml.jackson.annotation.JsonValue;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
@@ -24,22 +23,5 @@ public record CreateIndexRequest(Collection<IndexName> indices) implements JsonS
         .orElseThrow(
             failure ->
                 new IllegalArgumentException("Could not parse request!", failure.getException()));
-  }
-
-  public enum IndexName {
-    RESOURCES("resources"),
-    TICKETS("tickets"),
-    IMPORT_CANDIDATES("import-candidate");
-
-    private final String value;
-
-    IndexName(String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
   }
 }

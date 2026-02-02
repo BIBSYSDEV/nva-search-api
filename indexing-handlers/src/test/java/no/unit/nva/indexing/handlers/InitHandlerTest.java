@@ -5,8 +5,8 @@ import static no.unit.nva.constants.IndexMappingsAndSettings.RESOURCE_MAPPINGS;
 import static no.unit.nva.constants.IndexMappingsAndSettings.RESOURCE_SETTINGS;
 import static no.unit.nva.constants.IndexMappingsAndSettings.TICKET_MAPPINGS;
 import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
-import static no.unit.nva.indexing.handlers.CreateIndexRequest.IndexName.RESOURCES;
-import static no.unit.nva.indexing.handlers.CreateIndexRequest.IndexName.TICKETS;
+import static no.unit.nva.indexing.handlers.IndexName.RESOURCES;
+import static no.unit.nva.indexing.handlers.IndexName.TICKETS;
 import static no.unit.nva.indexing.handlers.InitHandler.SUCCESS;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.attempt.Try.attempt;
@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import no.unit.nva.constants.Words;
-import no.unit.nva.indexing.handlers.CreateIndexRequest.IndexName;
 import no.unit.nva.indexingclient.IndexingClient;
 import nva.commons.core.ioutils.IoUtils;
 import nva.commons.logutils.LogUtils;
@@ -78,7 +77,7 @@ class InitHandlerTest {
   }
 
   @Test
-  void shouldLogWarningAndReturnFailedWhenIndexingClientFailedToCreateIndex() throws IOException {
+  void shouldLogWarningWhenIndexingClientFailedToCreateIndex() throws IOException {
     var appender = LogUtils.getTestingAppender(InitHandler.class);
     var expectedMessage = randomString();
     when(indexingClient.createIndex(Mockito.anyString(), Mockito.anyMap(), Mockito.anyMap()))
