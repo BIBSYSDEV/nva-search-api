@@ -2,6 +2,7 @@ package no.unit.nva.indexing.handlers;
 
 import static no.unit.nva.indexing.handlers.IndexName.RESOURCES;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -39,11 +40,9 @@ class DeleteIndicesHandlerTest {
 
   @Test
   void shouldDeleteIndicesWhenFunctionIsInvoked() throws IOException {
-    var appender = LogUtils.getTestingAppender(DeleteIndicesHandler.class);
     doNothing().when(indexingClient).deleteIndex(any(String.class));
-    handler.handleRequest(createRequest(List.of(RESOURCES)), output, context);
-
-    assertTrue(appender.getMessages().contains("succeeded"));
+    assertDoesNotThrow(
+        () -> handler.handleRequest(createRequest(List.of(RESOURCES)), output, context));
   }
 
   @Test

@@ -17,8 +17,6 @@ public class DeleteIndicesHandler implements RequestStreamHandler {
   private static final String MISSING_INDEX_TO_DELETE_MESSAGE =
       "Provide at least one index to delete!";
   private static final Logger logger = LoggerFactory.getLogger(DeleteIndicesHandler.class);
-  private static final String FAILED = "failed";
-  private static final String SUCCEEDED = "succeeded";
   private final IndexingClient indexingClient;
 
   @JacocoGenerated
@@ -36,7 +34,6 @@ public class DeleteIndicesHandler implements RequestStreamHandler {
     var indicesToDelete = getIndicesToDelete(input);
     logger.info("Starting index deletion for indices: {}", indicesToDelete);
 
-    boolean hasFailed = false;
     for (var indexName : indicesToDelete) {
       logger.info("Attempting to delete index '{}'", indexName);
       try {
@@ -44,11 +41,9 @@ public class DeleteIndicesHandler implements RequestStreamHandler {
         logger.info("Deleted index '{}'", indexName);
       } catch (Exception exception) {
         logger.error("Failed to delete index '{}'", indexName, exception);
-        hasFailed = true;
       }
     }
     logger.info("Index deletion completed");
-    logger.info("Index deletion has {}", hasFailed ? FAILED : SUCCEEDED);
   }
 
   private static Set<String> getIndicesToDelete(InputStream inputStream) {
