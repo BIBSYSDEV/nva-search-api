@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -515,8 +516,9 @@ public class ResourceClientAllScientificValuesTest {
   }
 
   @Test
-  void shouldExcludeDocumentWhereParentPublicationTypeIsMissingWhenFilteringByExcludeParentTypeParameter()
-      throws IOException, BadRequestException {
+  void
+      shouldExcludeDocumentWhereParentPublicationTypeIsMissingWhenFilteringByExcludeParentTypeParameter()
+          throws IOException, BadRequestException {
     var json =
         """
                     {
