@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 
 public class InitHandler implements RequestStreamHandler {
 
-  public static final String SUCCESS = "SUCCESS";
   private static final Logger logger = LoggerFactory.getLogger(InitHandler.class);
   private final IndexingClient indexingClient;
 
