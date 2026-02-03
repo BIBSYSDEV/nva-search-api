@@ -1,61 +1,97 @@
 package no.unit.nva.indexing.handlers;
 
-import static no.unit.nva.constants.Words.RESOURCES;
-import static no.unit.nva.constants.Words.TICKETS;
-import static no.unit.nva.search.testing.LogAppender.getAppender;
-import static no.unit.nva.search.testing.LogAppender.logToString;
+import static no.unit.nva.indexing.handlers.IndexName.RESOURCES;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
-import static org.hamcrest.core.StringContains.containsString;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
+import com.amazonaws.services.lambda.runtime.Context;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
 import no.unit.nva.indexingclient.IndexingClient;
-import no.unit.nva.stubs.FakeContext;
-import org.apache.logging.log4j.core.test.appender.ListAppender;
-import org.junit.jupiter.api.BeforeAll;
+import nva.commons.core.ioutils.IoUtils;
+import nva.commons.logutils.LogUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class DeleteIndicesHandlerTest {
 
-  private static final List<String> ALL_INDICES = List.of(RESOURCES, TICKETS);
+  private ByteArrayOutputStream output;
+  private DeleteIndicesHandler handler;
+  private IndexingClient indexingClient;
+  private Context context;
 
-  private static ListAppender appender;
-
-  @BeforeAll
-  public static void initClass() {
-    appender = getAppender(DeleteIndicesHandler.class);
+  @BeforeEach
+  void init() {
+    indexingClient = mock(IndexingClient.class);
+    handler = new DeleteIndicesHandler(indexingClient);
+    context = mock(Context.class);
+    output = new ByteArrayOutputStream();
   }
 
   @Test
-  void shouldDeleteIndicesWhenFunctionIsInvoked() {
-    final var buffer = new ArrayList<String>();
-    var indexingClient =
-        new IndexingClient(null, null) {
-          @Override
-          public Void deleteIndex(String indexName) {
-            buffer.add(indexName);
-            return null;
-          }
-        };
-    var handler = new DeleteIndicesHandler(indexingClient);
-    handler.handleRequest(null, new FakeContext());
-    assertThat(buffer, containsInAnyOrder(ALL_INDICES.toArray(String[]::new)));
+  void shouldDeleteIndicesWhenFunctionIsInvoked() throws IOException {
+    doNothing().when(indexingClient).deleteIndex(any(String.class));
+    assertDoesNotThrow(
+        () -> handler.handleRequest(createRequest(List.of(RESOURCES)), output, context));
   }
 
   @Test
-  void shouldLogWarningWhenIndexDeletionFails() {
+  void shouldLogWarningWhenIndexDeletionFails() throws IOException {
+    var appender = LogUtils.getTestingAppender(DeleteIndicesHandler.class);
+    var expectedMessage = clientThrowingExceptionWithMessage();
+    handler.handleRequest(createRequest(List.of(RESOURCES)), output, context);
+
+    assertTrue(appender.getMessages().contains(expectedMessage));
+  }
+
+  @Test
+  void shouldThrowExceptionWhenInputIsEmpty() {
+    var throwable =
+        assertThrows(
+            IllegalStateException.class,
+            () -> handler.handleRequest(createRequest(Collections.emptyList()), output, context));
+
+    assertTrue(throwable.getMessage().contains("Provide at least one index to delete!"));
+  }
+
+  @Test
+  void shouldThrowExceptionWhenUnknownIndexProvidedInInput() {
+    var throwable =
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> handler.handleRequest(requestWithIndex(randomString()), output, context));
+
+    assertTrue(throwable.getMessage().contains("Could not parse request!"));
+  }
+
+  private static InputStream requestWithIndex(String index) {
+    return IoUtils.stringToStream(
+        """
+        {
+        "indices": [ "%s" ]
+        }
+        """
+            .formatted(index));
+  }
+
+  private String clientThrowingExceptionWithMessage() throws IOException {
     var expectedMessage = randomString();
-    var indexingClient =
-        new IndexingClient(null, null) {
-          @Override
-          public Void deleteIndex(String indexName) {
-            throw new RuntimeException(expectedMessage);
-          }
-        };
-    var handler = new DeleteIndicesHandler(indexingClient);
-    handler.handleRequest(null, new FakeContext());
-    assertThat(logToString(appender), containsString(expectedMessage));
+    when(indexingClient.deleteIndex(Mockito.anyString()))
+        .thenThrow(new IOException(expectedMessage));
+    return expectedMessage;
+  }
+
+  private static InputStream createRequest(List<IndexName> indices) {
+    return IoUtils.stringToStream(new DeleteIndicesRequest(indices).toJsonString());
   }
 }

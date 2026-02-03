@@ -722,15 +722,6 @@ Resources:
       MemorySize: 1024
       Role: !GetAtt SearchHandlerRole.Arn
 
-  DeleteImportCandidateIndexHandler:
-    Type: AWS::Serverless::Function
-    Properties:
-      Description: Lambda that deletes import candidates index. Needs to be run manually from Test
-      CodeUri: indexing-handlers
-      Handler: no.unit.nva.indexing.handlers.DeleteImportCandidateIndexHandler::handleRequest
-      MemorySize: 1024
-      Role: !GetAtt SearchHandlerRole.Arn
-
   KeyBatchesBucket:
     Type: AWS::S3::Bucket
     Properties:
