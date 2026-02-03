@@ -23,8 +23,6 @@ import org.slf4j.LoggerFactory;
 
 public class InitHandler implements RequestStreamHandler {
 
-  public static final String SUCCESS = "SUCCESS";
-  public static final String FAILED = "FAILED. See logs";
   private static final Logger logger = LoggerFactory.getLogger(InitHandler.class);
   private final IndexingClient indexingClient;
 
@@ -42,7 +40,6 @@ public class InitHandler implements RequestStreamHandler {
       throws IOException {
     var indicesToCreate = getIndicesToCreate(inputStream);
     logger.info("Starting index creation for indices: {}", indicesToCreate);
-    boolean hasFailed = false;
     for (var indexRequest : indicesToCreate) {
       var indexName = indexRequest.name();
       logger.info("Attempting to create index '{}'", indexName);
@@ -51,11 +48,9 @@ public class InitHandler implements RequestStreamHandler {
         logger.info("Created index '{}'", indexName);
       } catch (Exception exception) {
         logger.error("Failed to create index '{}'", indexName, exception);
-        hasFailed = true;
       }
     }
     logger.info("Index creation completed");
-    logger.info("Index creation has {}", hasFailed ? FAILED : SUCCESS);
   }
 
   private static List<IndexRequest> getIndicesToCreate(InputStream inputStream) {
