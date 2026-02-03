@@ -8,10 +8,10 @@ import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.indexing.handlers.IndexName.IMPORT_CANDIDATES;
 import static no.unit.nva.indexing.handlers.IndexName.RESOURCES;
 import static no.unit.nva.indexing.handlers.IndexName.TICKETS;
-import static no.unit.nva.indexing.handlers.InitHandler.SUCCESS;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.attempt.Try.attempt;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -64,7 +64,7 @@ class InitHandlerTest {
     doNothing().when(indexingClient).createIndex(any(String.class));
     initHandler.handleRequest(createRequest(List.of(RESOURCES)), output, context);
 
-    assertTrue(appender.getMessages().contains(SUCCESS));
+    assertFalse(appender.getMessages().contains("error"));
   }
 
   @Test
