@@ -528,7 +528,7 @@ Resources:
                 - Lambda Function Invocation Result - Success
               detail:
                 responsePayload:
-                  topic: [ "PublicationService.ExpandedEntry.Persisted" ]
+                  topic: [ "PublicationService.ExpandedEntry.Persisted", "ImportCandidates.ExpandedDataEntry.Persisted" ]
       EventInvokeConfig:
         DestinationConfig:
           OnFailure:
@@ -542,31 +542,6 @@ Resources:
         - WithSuffix
         - !Join [ "-",[ "BatchIndexEventBus", !Ref Suffix ] ]
         - "BatchIndexEventBus"
-
-  IndexImportCandidates:
-    DependsOn:
-      - ResourcesIndexerDLQ
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: indexing-handlers
-      Handler: no.unit.nva.indexing.handlers.IndexImportCandidateHandler::handleRequest
-      Role: !GetAtt TriggerExecutionRole.Arn
-      MemorySize: 1408
-      Environment:
-        Variables:
-          EXPANDED_RESOURCES_BUCKET: !Ref ResourcesBucket
-      Events:
-        EventBridgeEvent:
-          Type: EventBridgeRule
-          Properties:
-            EventBusName:
-              Ref: EventBusName
-            Pattern:
-              detail-type:
-                - Lambda Function Invocation Result - Success
-              detail:
-                responsePayload:
-                  topic: [ "ImportCandidates.ExpandedDataEntry.Persisted" ]
 
   DeleteResources:
     DependsOn:
