@@ -1968,31 +1968,49 @@ components:
     userParam:
       name: user
       in: query
-      description: "Returns documents with this resource owner. Format: {person-cristin-identifier}@{institution}. Multiple values are comma separated."
-      example: "123@20754.0.0.0"
+      description: "Returns documents where user is resource owner. Format: {person-cristin-identifier}@{institution}."
+      examples:
+        single:
+          summary: Single
+          value: "123@20754.0.0.0"
+        multiple:
+          summary: Multiple
+          value: "123@20754.0.0.0,456@20754.0.0.0"
       required: false
       style: form
-      explode: true
+      explode: false
       schema:
         type: string
     userNotParam:
       name: user_not
       in: query
-      description: "Returns documents without this resource owner. Format: {person-cristin-identifier}@{institution}. Multiple values are comma separated."
-      example: "123@20754.0.0.0"
+      description: "Returns documents where user is not resource owner. Format: {person-cristin-identifier}@{institution}."
+      examples:
+        single:
+          summary: Single
+          value: "123@20754.0.0.0"
+        multiple:
+          summary: Multiple
+          value: "123@20754.0.0.0,456@20754.0.0.0"
       required: false
       style: form
-      explode: true
+      explode: false
       schema:
         type: string
     userShouldParam:
       name: user_should
       in: query
-      description: "Returns documents with this resource owner. Format: {person-cristin-identifier}@{institution}. Multiple values are comma separated."
-      example: "123@20754.0.0.0"
+      description: "Returns documents where user is resource owner. Format: {person-cristin-identifier}@{institution}."
+      examples:
+        single:
+          summary: Single
+          value: "123@20754.0.0.0"
+        multiple:
+          summary: Multiple
+          value: "123@20754.0.0.0,456@20754.0.0.0"
       required: false
       style: form
-      explode: true
+      explode: false
       schema:
         type: string
     scientificReportingPeriodSinceParam:
