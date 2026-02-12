@@ -1975,7 +1975,7 @@ components:
           value: "123@20754.0.0.0"
         multiple:
           summary: Multiple
-          value: "123@20754.0.0.0,456@20754.0.0.0"
+          value: "123@20754.0.0.0,987@20754.0.0.0"
       required: false
       style: form
       explode: false
@@ -1991,7 +1991,7 @@ components:
           value: "123@20754.0.0.0"
         multiple:
           summary: Multiple
-          value: "123@20754.0.0.0,456@20754.0.0.0"
+          value: "123@20754.0.0.0,987@20754.0.0.0"
       required: false
       style: form
       explode: false
@@ -2007,7 +2007,7 @@ components:
           value: "123@20754.0.0.0"
         multiple:
           summary: Multiple
-          value: "123@20754.0.0.0,456@20754.0.0.0"
+          value: "123@20754.0.0.0,987@20754.0.0.0"
       required: false
       style: form
       explode: false
