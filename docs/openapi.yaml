@@ -1968,8 +1968,8 @@ components:
     userParam:
       name: user
       in: query
-      description: "Returns document with this resource owner (user id (URI))."
-      example: "askeladd:185"
+      description: "Returns documents with this resource owner. Format: {person-cristin-identifier}@{institution}."
+      example: "123@20754.0.0.0"
       required: false
       style: form
       explode: true
@@ -1978,8 +1978,8 @@ components:
     userNotParam:
       name: user_not
       in: query
-      description: "Returns document without these resource owners (user id (URI))."
-      example: "askeladd:185"
+      description: "Returns documents with this resource owner. Format: {person-cristin-identifier}@{institution}."
+      example: "123@20754.0.0.0"
       required: false
       style: form
       explode: true
@@ -1988,8 +1988,8 @@ components:
     userShouldParam:
       name: user_should
       in: query
-      description: "Returns document with any of these resource owners (user id (URI))."
-      example: "askeladd:185"
+      description: "Returns documents with this resource owner. Format: {person-cristin-identifier}@{institution}."
+      example: "123@20754.0.0.0"
       required: false
       style: form
       explode: true
