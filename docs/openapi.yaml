@@ -1968,7 +1968,7 @@ components:
     userParam:
       name: user
       in: query
-      description: "Returns documents with this resource owner. Format: {person-cristin-identifier}@{institution}."
+      description: "Returns documents with this resource owner. Format: {person-cristin-identifier}@{institution}. Multiple values are comma separated."
       example: "123@20754.0.0.0"
       required: false
       style: form
@@ -1978,7 +1978,7 @@ components:
     userNotParam:
       name: user_not
       in: query
-      description: "Returns documents with this resource owner. Format: {person-cristin-identifier}@{institution}."
+      description: "Returns documents without this resource owner. Format: {person-cristin-identifier}@{institution}. Multiple values are comma separated."
       example: "123@20754.0.0.0"
       required: false
       style: form
@@ -1988,7 +1988,7 @@ components:
     userShouldParam:
       name: user_should
       in: query
-      description: "Returns documents with this resource owner. Format: {person-cristin-identifier}@{institution}."
+      description: "Returns documents with this resource owner. Format: {person-cristin-identifier}@{institution}. Multiple values are comma separated."
       example: "123@20754.0.0.0"
       required: false
       style: form
