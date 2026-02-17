@@ -528,7 +528,7 @@ Resources:
                 - Lambda Function Invocation Result - Success
               detail:
                 responsePayload:
-                  topic: [ "PublicationService.ExpandedEntry.Persisted" ]
+                  topic: [ "PublicationService.ExpandedEntry.Persisted", "ImportCandidates.ExpandedDataEntry.Persisted" ]
       EventInvokeConfig:
         DestinationConfig:
           OnFailure:
@@ -542,31 +542,6 @@ Resources:
         - WithSuffix
         - !Join [ "-",[ "BatchIndexEventBus", !Ref Suffix ] ]
         - "BatchIndexEventBus"
-
-  IndexImportCandidates:
-    DependsOn:
-      - ResourcesIndexerDLQ
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: indexing-handlers
-      Handler: no.unit.nva.indexing.handlers.IndexImportCandidateHandler::handleRequest
-      Role: !GetAtt TriggerExecutionRole.Arn
-      MemorySize: 1408
-      Environment:
-        Variables:
-          EXPANDED_RESOURCES_BUCKET: !Ref ResourcesBucket
-      Events:
-        EventBridgeEvent:
-          Type: EventBridgeRule
-          Properties:
-            EventBusName:
-              Ref: EventBusName
-            Pattern:
-              detail-type:
-                - Lambda Function Invocation Result - Success
-              detail:
-                responsePayload:
-                  topic: [ "ImportCandidates.ExpandedDataEntry.Persisted" ]
 
   DeleteResources:
     DependsOn:
@@ -713,30 +688,12 @@ Resources:
       MemorySize: 1024
       Role: !GetAtt SearchHandlerRole.Arn
 
-  ImportCandidatesInitHandler:
-    Type: AWS::Serverless::Function
-    Properties:
-      Description: Lambda that creates importCandidates index. Needs to be run manually from Test
-      CodeUri: indexing-handlers
-      Handler: no.unit.nva.indexing.handlers.ImportCandidateInitHandler::handleRequest
-      MemorySize: 1024
-      Role: !GetAtt SearchHandlerRole.Arn
-
   DeleteIndicesHandler:
     Type: AWS::Serverless::Function
     Properties:
       Description: Lambda that deletes all indices. Needs to be run manually from Test
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.DeleteIndicesHandler::handleRequest
-      MemorySize: 1024
-      Role: !GetAtt SearchHandlerRole.Arn
-
-  DeleteImportCandidateIndexHandler:
-    Type: AWS::Serverless::Function
-    Properties:
-      Description: Lambda that deletes import candidates index. Needs to be run manually from Test
-      CodeUri: indexing-handlers
-      Handler: no.unit.nva.indexing.handlers.DeleteImportCandidateIndexHandler::handleRequest
       MemorySize: 1024
       Role: !GetAtt SearchHandlerRole.Arn
 

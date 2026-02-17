@@ -1,30 +1,28 @@
 package no.unit.nva.indexing.handlers;
 
+import static no.unit.nva.constants.IndexMappingsAndSettings.IMPORT_CANDIDATE_MAPPINGS;
 import static no.unit.nva.constants.IndexMappingsAndSettings.RESOURCE_MAPPINGS;
 import static no.unit.nva.constants.IndexMappingsAndSettings.RESOURCE_SETTINGS;
 import static no.unit.nva.constants.IndexMappingsAndSettings.TICKET_MAPPINGS;
+import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.constants.Words.TICKETS;
 import static no.unit.nva.indexingclient.IndexingClient.defaultIndexingClient;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.List;
-import no.unit.nva.indexing.model.IndexRequest;
 import no.unit.nva.indexingclient.IndexingClient;
 import nva.commons.core.JacocoGenerated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class InitHandler implements RequestHandler<Object, String> {
+public class InitHandler implements RequestStreamHandler {
 
-  public static final String SUCCESS = "SUCCESS";
-  public static final String FAILED = "FAILED. See logs";
-
-  private static final List<IndexRequest> INDICES_TO_CREATE =
-      List.of(
-          new IndexRequest(RESOURCES, RESOURCE_MAPPINGS.asJson(), RESOURCE_SETTINGS.asJson()),
-          new IndexRequest(TICKETS, TICKET_MAPPINGS.asJson()));
   private static final Logger logger = LoggerFactory.getLogger(InitHandler.class);
   private final IndexingClient indexingClient;
 
@@ -38,23 +36,37 @@ public class InitHandler implements RequestHandler<Object, String> {
   }
 
   @Override
-  public String handleRequest(Object input, Context context) {
-    var indexNames = INDICES_TO_CREATE.stream().map(IndexRequest::getName).toList();
-    logger.info("Starting index creation for indices: {}", indexNames);
-
-    boolean hasFailed = false;
-    for (var request : INDICES_TO_CREATE) {
-      var indexName = request.getName();
+  public void handleRequest(InputStream inputStream, OutputStream outputStream, Context context)
+      throws IOException {
+    var indicesToCreate = getIndicesToCreate(inputStream);
+    logger.info("Starting index creation for indices: {}", indicesToCreate);
+    for (var indexRequest : indicesToCreate) {
+      var indexName = indexRequest.name();
       logger.info("Attempting to create index '{}'", indexName);
       try {
-        indexingClient.createIndex(indexName, request.getMappings(), request.getSettings());
+        indexingClient.createIndex(indexName, indexRequest.mappings(), indexRequest.settings());
         logger.info("Created index '{}'", indexName);
       } catch (Exception exception) {
         logger.error("Failed to create index '{}'", indexName, exception);
-        hasFailed = true;
       }
     }
     logger.info("Index creation completed");
-    return hasFailed ? FAILED : SUCCESS;
+  }
+
+  private static List<IndexRequest> getIndicesToCreate(InputStream inputStream) {
+    var indices = CreateIndexRequest.fromInputStream(inputStream).indices();
+    return indices.isEmpty()
+        ? Arrays.stream(IndexName.values()).map(InitHandler::toIndexRequest).toList()
+        : indices.stream().map(InitHandler::toIndexRequest).toList();
+  }
+
+  public static IndexRequest toIndexRequest(IndexName indexName) {
+    return switch (indexName) {
+      case RESOURCES ->
+          new IndexRequest(RESOURCES, RESOURCE_MAPPINGS.asJson(), RESOURCE_SETTINGS.asJson());
+      case TICKETS -> new IndexRequest(TICKETS, TICKET_MAPPINGS.asJson());
+      case IMPORT_CANDIDATES ->
+          new IndexRequest(IMPORT_CANDIDATES_INDEX, IMPORT_CANDIDATE_MAPPINGS.asJson());
+    };
   }
 }
