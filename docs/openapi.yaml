@@ -1281,7 +1281,7 @@ components:
       name: has_file
       in: query
       description: "Returns documents with isbn."
-      example: "true"
+      example: true
       required: false
       style: form
       explode: true
@@ -1292,7 +1292,7 @@ components:
       name: has_file
       in: query
       description: "Returns documents with issn."
-      example: "true"
+      example: true
       required: false
       style: form
       explode: true
