@@ -75,6 +75,7 @@ public final class Words {
   public static final String JOURNAL_AS_TYPE = "Journal";
   public static final String KEY = "key";
   public static final String KEYWORD = "keyword";
+  public static final String INSTITUTION = "institution";
   public static final String LABELS = "labels";
   public static final String LANGUAGE = "language";
   public static final String LAST_NAME = "lastName";
