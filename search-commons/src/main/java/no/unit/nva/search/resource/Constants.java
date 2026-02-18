@@ -23,6 +23,7 @@ import static no.unit.nva.constants.Words.HANDLE;
 import static no.unit.nva.constants.Words.ID;
 import static no.unit.nva.constants.Words.IDENTIFIER;
 import static no.unit.nva.constants.Words.IDENTITY;
+import static no.unit.nva.constants.Words.INSTITUTION;
 import static no.unit.nva.constants.Words.ISBN_LIST;
 import static no.unit.nva.constants.Words.ISBN_PREFIX;
 import static no.unit.nva.constants.Words.ISSN_FIELD;
@@ -125,6 +126,9 @@ public final class Constants {
 
   public static final String CONTRIBUTORS_AFFILIATION_ID_KEYWORD =
       jsonPath(ENTITY_CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD);
+
+  public static final String CONTRIBUTORS_INSTITUTION_ID_KEYWORD =
+      jsonPath(ENTITY_CONTRIBUTORS, AFFILIATIONS, INSTITUTION, KEYWORD);
 
   public static final String CONTRIBUTORS_AFFILIATION_LABELS =
       jsonPath(ENTITY_CONTRIBUTORS, AFFILIATIONS, LABELS);

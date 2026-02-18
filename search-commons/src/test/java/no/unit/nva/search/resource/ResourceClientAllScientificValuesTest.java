@@ -546,6 +546,88 @@ public class ResourceClientAllScientificValuesTest {
     assertTrue(response.toPagedResponse().hits().isEmpty());
   }
 
+  @Test
+  void
+      shouldReturnDocumentsWithNotVerifiedContributorAtUserInstitutionWhenProvidedInstitutionsIsUserAffiliation()
+          throws IOException, BadRequestException {
+    var institution = randomString();
+    var contributor =
+        """
+        {
+          "role": {
+            "type": "Creator"
+          },
+          "identity": {
+            "verificationStatus": "NotVerified",
+            "type": "Identity"
+          },
+          "affiliations": [
+            {
+              "id": "%s",
+              "type": "Organization"
+            }
+          ],
+          "type": "Contributor"
+        }
+        """
+            .formatted(institution);
+    var json = jsonWithContributor(contributor);
+    createIndexAndIndexDocument(json);
+    var response =
+        doSearchWithUri(uriWithQueryParameter("unidentifiedContributorInstitution", institution));
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
+  @Test
+  void
+      shouldReturnDocumentsWithNotVerifiedContributorAtUserInstitutionWhenProvidedInstitutionsIsUserInstitution()
+          throws IOException, BadRequestException {
+    var partOfInstitution = randomString();
+    var contributor =
+        """
+        {
+          "role": {
+            "type": "Creator"
+          },
+          "identity": {
+            "verificationStatus": "NotVerified",
+            "type": "Identity"
+          },
+          "affiliations": [
+            {
+              "institution": "%s",
+              "id": "https://api.nva.unit.no/cristin/organization/1.1.1.0",
+              "type": "Organization"
+            }
+          ],
+          "type": "Contributor"
+        }
+        """
+            .formatted(partOfInstitution);
+    var json = jsonWithContributor(contributor);
+    createIndexAndIndexDocument(json);
+    var response =
+        doSearchWithUri(
+            uriWithQueryParameter("unidentifiedContributorInstitution", partOfInstitution));
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
+  private String jsonWithContributor(String contributor) {
+    return """
+           {
+             "type": "Publication",
+             "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
+             "entityDescription": {
+               "type": "EntityDescription",
+                     "contributors": [ %s ]
+             }
+           }
+           """
+        .formatted(contributor);
+  }
+
   private static String jsonWithParentPublicationType(String parentPublicationType) {
     return """
                {
