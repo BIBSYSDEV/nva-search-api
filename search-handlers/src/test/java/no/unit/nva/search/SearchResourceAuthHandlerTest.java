@@ -2,8 +2,11 @@ package no.unit.nva.search;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
+import static java.util.Objects.nonNull;
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.search.resource.Constants.V_2024_12_01_SIMPLER_MODEL;
+import static no.unit.nva.search.resource.Constants.V_LEGACY;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
@@ -28,12 +31,15 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.Map;
 import no.unit.nva.constants.Words;
+import no.unit.nva.search.common.records.PagedSearch;
 import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.testing.common.FakeGatewayResponse;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.AccessRight;
 import nva.commons.core.Environment;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.core.Is;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -69,7 +75,7 @@ class SearchResourceAuthHandlerTest {
 
     handler.handleRequest(
         getInputStreamWithAccessRight(
-            customer, curatorOrganization, AccessRight.MANAGE_RESOURCES_ALL),
+            customer, curatorOrganization, AccessRight.MANAGE_RESOURCES_ALL, null),
         outputStream,
         contextMock);
 
@@ -86,7 +92,8 @@ class SearchResourceAuthHandlerTest {
     prepareRestHighLevelClientOkResponse();
 
     var input =
-        getInputStreamWithAccessRight(randomUri(), randomUri(), AccessRight.MANAGE_RESOURCES_ALL);
+        getInputStreamWithAccessRight(
+            randomUri(), randomUri(), AccessRight.MANAGE_RESOURCES_ALL, V_LEGACY);
     handler.handleRequest(input, outputStream, contextMock);
 
     var gatewayResponse = FakeGatewayResponse.of(outputStream);
@@ -96,10 +103,82 @@ class SearchResourceAuthHandlerTest {
   }
 
   @Test
+  void shouldDefaultToLegacyModelWhenNoVersionSpecified() throws IOException {
+    prepareRestHighLevelClientOkResponse();
+
+    var input =
+        getInputStreamWithAccessRight(
+            randomUri(), randomUri(), AccessRight.MANAGE_RESOURCES_ALL, null);
+    handler.handleRequest(input, outputStream, contextMock);
+
+    var gatewayResponse = FakeGatewayResponse.of(outputStream);
+    assertEquals(HTTP_OK, gatewayResponse.statusCode());
+    assertLegacyModel(gatewayResponse);
+  }
+
+  @Test
+  void shouldReturnSimplifiedModelWhenVersion20241201Specified() throws IOException {
+    prepareRestHighLevelClientOkResponse();
+
+    var input =
+        getInputStreamWithAccessRight(
+            randomUri(), randomUri(), AccessRight.MANAGE_RESOURCES_ALL, V_2024_12_01_SIMPLER_MODEL);
+    handler.handleRequest(input, outputStream, contextMock);
+
+    var gatewayResponse = FakeGatewayResponse.of(outputStream);
+    assertEquals(HTTP_OK, gatewayResponse.statusCode());
+    assertSimplifiedModel(gatewayResponse);
+  }
+
+  @Test
+  void shouldReturnLegacyModelWhenLegacyVersionSpecified() throws IOException {
+    prepareRestHighLevelClientOkResponse();
+
+    var input =
+        getInputStreamWithAccessRight(
+            randomUri(), randomUri(), AccessRight.MANAGE_RESOURCES_ALL, V_LEGACY);
+    handler.handleRequest(input, outputStream, contextMock);
+
+    var gatewayResponse = FakeGatewayResponse.of(outputStream);
+
+    assertNotNull(gatewayResponse.headers());
+    assertEquals(HTTP_OK, gatewayResponse.statusCode());
+
+    assertLegacyModel(gatewayResponse);
+  }
+
+  private static void assertLegacyModel(FakeGatewayResponse<PagedSearch> gatewayResponse) {
+    assertThat(
+        gatewayResponse.headers().get("Content-Type"),
+        Is.is(equalTo("application/json; charset=utf-8; version=" + V_LEGACY)));
+
+    var actualBody = gatewayResponse.body();
+    var hit = actualBody.hits().getFirst();
+    assertThat(hit.has("publicationType"), CoreMatchers.is(true));
+    assertThat(hit.has("owner"), CoreMatchers.is(true));
+    assertThat(hit.has("publisher"), CoreMatchers.is(true));
+    assertThat(hit.has("title"), CoreMatchers.is(true));
+    assertThat(hit.path("entityDescription").has("contributors"), CoreMatchers.is(true));
+  }
+
+  private static void assertSimplifiedModel(FakeGatewayResponse<PagedSearch> gatewayResponse) {
+    assertThat(
+        gatewayResponse.headers().get("Content-Type"),
+        Is.is(equalTo("application/json; charset=utf-8; version=" + V_2024_12_01_SIMPLER_MODEL)));
+
+    var actualBody = gatewayResponse.body();
+    var hit = actualBody.hits().getFirst();
+    assertThat(hit.has("publicationType"), CoreMatchers.is(false));
+    assertThat(hit.has("owner"), CoreMatchers.is(false));
+    assertThat(hit.has("publisher"), CoreMatchers.is(false));
+    assertThat(hit.has("title"), CoreMatchers.is(false));
+  }
+
+  @Test
   void shouldReturnUnauthorizedWhenUserIsMissingAccessRight() throws IOException {
     prepareRestHighLevelClientOkResponse();
 
-    var input = getInputStreamWithAccessRight(randomUri(), randomUri(), AccessRight.SUPPORT);
+    var input = getInputStreamWithAccessRight(randomUri(), randomUri(), AccessRight.SUPPORT, null);
     handler.handleRequest(input, outputStream, contextMock);
 
     var gatewayResponse = FakeGatewayResponse.of(outputStream);
@@ -117,16 +196,18 @@ class SearchResourceAuthHandlerTest {
   }
 
   private InputStream getInputStreamWithAccessRight(
-      URI currentCustomer, URI topLevelCristinOrgId, AccessRight accessRight)
+      URI currentCustomer, URI topLevelCristinOrgId, AccessRight accessRight, String version)
       throws JsonProcessingException {
+    var acceptHeaderValue =
+        nonNull(version) ? "application/json;version=" + version : "application/json";
+
     return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-        .withHeaders(Map.of(ACCEPT, "application/json"))
+        .withHeaders(Map.of("Authorization", "Bearer " + randomString(), ACCEPT, acceptHeaderValue))
         .withRequestContext(getRequestContext())
         .withUserName(randomString())
         .withCurrentCustomer(currentCustomer)
         .withTopLevelCristinOrgId(topLevelCristinOrgId)
         .withAccessRights(currentCustomer, accessRight)
-        .withHeaders(Map.of("Authorization", "Bearer " + randomString()))
         .build();
   }
 
