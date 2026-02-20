@@ -522,6 +522,7 @@ paths:
         - $ref: '#/components/parameters/doiParam'
         - $ref: '#/components/parameters/doiShouldParam'
         - $ref: '#/components/parameters/excludeParentTypeParam'
+        - $ref: '#/components/parameters/excludeParentPublicationYearParam'
         - $ref: '#/components/parameters/excludeScientificValuePublisherParam'
         - $ref: '#/components/parameters/excludeScientificValueSeriesParam'
         - $ref: '#/components/parameters/fundingIdentifierNotParam'
@@ -561,6 +562,7 @@ paths:
         - $ref: '#/components/parameters/orcidParam'
         - $ref: '#/components/parameters/orcidShouldParam'
         - $ref: '#/components/parameters/parentPublicationParam'
+        - $ref: '#/components/parameters/parentPublicationYearParam'
         - $ref: '#/components/parameters/parentPublicationShouldParam'
         - $ref: '#/components/parameters/parentTypeParam'
         - $ref: '#/components/parameters/projectNotParam'
@@ -1107,6 +1109,15 @@ components:
       explode: true
       schema:
         type: string
+    excludeParentPublicationYearParam:
+      name: exclude_parent_publication_year
+      in: query
+      example: "2025"
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
     excludeScientificValuePublisherParam:
       name: exclude_parent_type
       in: query
@@ -1575,6 +1586,14 @@ components:
       name: parent_publication
       in: query
       description: "Returns document with this parentPublication."
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    parentPublicationYearParam:
+      name: parent_publication_year
+      in: query
       required: false
       style: form
       explode: true

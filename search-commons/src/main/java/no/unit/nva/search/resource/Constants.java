@@ -179,6 +179,8 @@ public final class Constants {
   public static final String SUBJECTS = "subjects";
   public static final String ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR =
       jsonPath(ENTITY_DESCRIPTION, PUBLICATION_DATE, YEAR);
+  public static final String PARENT_PUBLICATION_DATE_YEAR =
+      jsonPath(ENTITY_PUBLICATION_CONTEXT, ENTITY_DESCRIPTION, PUBLICATION_DATE, YEAR, KEYWORD);
   public static final String REFERENCE_DOI_KEYWORD =
       multipleFields(jsonPath(ENTITY_DESCRIPTION, REFERENCE, DOI, KEYWORD), jsonPath(DOI, KEYWORD));
   public static final String ASSOCIATED_ARTIFACTS_LABELS =
