@@ -14,6 +14,7 @@ import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCached
 import static no.unit.nva.search.resource.ResourceClientTest.USER_SETTINGS_JSON;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
+import static no.unit.nva.testutils.RandomDataGenerator.randomInteger;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
@@ -542,6 +543,73 @@ public class ResourceClientAllScientificValuesTest {
         """;
     createIndexAndIndexDocument(json);
     var response = doSearchWithUri(uriWithQueryParameter("excludeParentType", randomString()));
+
+    assertTrue(response.toPagedResponse().hits().isEmpty());
+  }
+
+  @Test
+  void shouldReturnDocumentWhereParentPublicationYearIsMatchingProvidedYear()
+      throws IOException, BadRequestException {
+    var year = randomInteger();
+    var json =
+        """
+                    {
+                   "type": "Publication",
+                   "entityDescription": {
+                     "type": "EntityDescription",
+                     "reference": {
+                       "type": "Reference",
+                       "publicationContext": {
+                           "entityDescription": {
+                               "type": "EntityDescription",
+                               "publicationDate": {
+                                  "year": "%d"
+                               }
+                           },
+                           "type": "Anthology"
+                       }
+                     }
+                   }
+                 }
+        """
+            .formatted(year);
+    createIndexAndIndexDocument(json);
+    var response =
+        doSearchWithUri(uriWithQueryParameter("parentPublicationYear", String.valueOf(year)));
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
+  @Test
+  void shouldExcludeDocumentWhereParentPublicationYearIsNotMatchingProvidedYear()
+      throws IOException, BadRequestException {
+    var year = randomInteger();
+    var json =
+        """
+                    {
+                   "type": "Publication",
+                   "entityDescription": {
+                     "type": "EntityDescription",
+                     "reference": {
+                       "type": "Reference",
+                       "publicationContext": {
+                           "entityDescription": {
+                               "type": "EntityDescription",
+                               "publicationDate": {
+                                  "year": "%d"
+                               }
+                           },
+                           "type": "Anthology"
+                       }
+                     }
+                   }
+                 }
+        """
+            .formatted(year);
+    createIndexAndIndexDocument(json);
+    var response =
+        doSearchWithUri(
+            uriWithQueryParameter("excludeParentPublicationYear", String.valueOf(year)));
 
     assertTrue(response.toPagedResponse().hits().isEmpty());
   }
