@@ -596,7 +596,7 @@ public class ResourceClientAllScientificValuesTest {
           },
           "affiliations": [
             {
-              "institution": "%s",
+              "institutionId": "%s",
               "id": "https://api.nva.unit.no/cristin/organization/1.1.1.0",
               "type": "Organization"
             }
