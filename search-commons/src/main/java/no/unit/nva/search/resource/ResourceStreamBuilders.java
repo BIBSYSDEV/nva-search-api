@@ -23,6 +23,8 @@ import static no.unit.nva.constants.Words.VALUE;
 import static no.unit.nva.constants.Words.VERIFICATION_STATUS;
 import static no.unit.nva.constants.Words.VERIFIED;
 import static no.unit.nva.search.common.constant.Functions.jsonPath;
+import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_AFFILIATION_ID_KEYWORD;
+import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_INSTITUTION_ID_KEYWORD;
 import static no.unit.nva.search.resource.Constants.ENTITY_ABSTRACT;
 import static no.unit.nva.search.resource.Constants.ENTITY_CONTRIBUTORS;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
@@ -81,8 +83,6 @@ public class ResourceStreamBuilders {
       jsonPath(ADDITIONAL_IDENTIFIERS, TYPE, KEYWORD);
   public static final String FUNDING_SOURCE_IDENTIFIER =
       jsonPath(FUNDINGS, SOURCE, IDENTIFIER, KEYWORD);
-  public static final String CONTRIBUTOR_AFFILIATIONS =
-      jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS);
   public static final String FUNDINGS_IDENTIFIER = jsonPath(FUNDINGS, IDENTIFIER, KEYWORD);
   private final QueryKeys<ResourceParameter> parameters;
 
@@ -151,15 +151,21 @@ public class ResourceStreamBuilders {
     return Functions.queryToEntry(key, query);
   }
 
-  @JacocoGenerated
   public Stream<Map.Entry<ResourceParameter, QueryBuilder>> unIdentifiedContributorOrInstitution(
       ResourceParameter key) {
+    var value = parameters.get(key).toString();
     var query =
-        boolQuery()
-            .must(termQuery(CONTRIBUTOR_ROLE_PATH, CREATOR))
-            .should(boolQuery().mustNot(termQuery(VERIFICATION_STATUS_KEYWORD, VERIFIED)))
-            .should(boolQuery().mustNot(existsQuery(CONTRIBUTOR_AFFILIATIONS)))
-            .minimumShouldMatch(1);
+        nestedQuery(
+            jsonPath(ENTITY_CONTRIBUTORS),
+            boolQuery()
+                .must(termQuery(CONTRIBUTOR_ROLE_PATH, CREATOR))
+                .mustNot(termQuery(VERIFICATION_STATUS_KEYWORD, VERIFIED))
+                .must(
+                    boolQuery()
+                        .should(termQuery(CONTRIBUTORS_AFFILIATION_ID_KEYWORD, value))
+                        .should(termQuery(CONTRIBUTORS_INSTITUTION_ID_KEYWORD, value))
+                        .minimumShouldMatch(1)),
+            ScoreMode.None);
     return Functions.queryToEntry(key, query);
   }
 
