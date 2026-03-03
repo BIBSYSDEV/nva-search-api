@@ -639,7 +639,7 @@ public class ResourceClientAllScientificValuesTest {
         }
         """
             .formatted(institution);
-    var json = jsonWithContributor(contributor);
+    var json = jsonWithContributors(contributor);
     createIndexAndIndexDocument(json);
     var response =
         doSearchWithUri(uriWithQueryParameter("unidentifiedContributorInstitution", institution));
@@ -673,7 +673,7 @@ public class ResourceClientAllScientificValuesTest {
         }
         """
             .formatted(partOfInstitution);
-    var json = jsonWithContributor(contributor);
+    var json = jsonWithContributors(contributor);
     createIndexAndIndexDocument(json);
     var response =
         doSearchWithUri(
@@ -682,7 +682,116 @@ public class ResourceClientAllScientificValuesTest {
     assertEquals(1, response.toPagedResponse().hits().size());
   }
 
-  private String jsonWithContributor(String contributor) {
+  @Test
+  void shouldReturnDocumentsWhenCountryCodeIsMatching() throws IOException, BadRequestException {
+    var countryCode = randomString();
+    var contributor = contributorWithCountryCode(countryCode);
+    var json = jsonWithContributors(contributor, contributorWithCountryCode(randomString()));
+    createIndexAndIndexDocument(json);
+    var response = doSearchWithUri(uriWithQueryParameter("countryCode", countryCode));
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
+  @Test
+  void shouldNotReturnDocumentsWhenCountryCodeIsNotMatching()
+      throws IOException, BadRequestException {
+    var contributor = contributorWithCountryCode(randomString());
+    var json = jsonWithContributors(contributor);
+    createIndexAndIndexDocument(json);
+    var response = doSearchWithUri(uriWithQueryParameter("countryCode", randomString()));
+
+    assertTrue(response.toPagedResponse().hits().isEmpty());
+  }
+
+  @Test
+  void shouldNotReturnDocumentsWhenCountryCodeIsExcluded() throws IOException, BadRequestException {
+    var excludedCountryCode = randomString();
+    var contributor = contributorWithCountryCode(excludedCountryCode);
+    var json = jsonWithContributors(contributor, contributorWithCountryCode(randomString()));
+    createIndexAndIndexDocument(json);
+    var response =
+        doSearchWithUri(uriWithQueryParameter("excludeCountryCode", excludedCountryCode));
+
+    assertTrue(response.toPagedResponse().hits().isEmpty());
+  }
+
+  @Test
+  void shouldReturnDocumentsWhenCountryCodeDifferFromExcludedCountryCode()
+      throws IOException, BadRequestException {
+    var contributor = contributorWithCountryCode(randomString());
+    var json = jsonWithContributors(contributor);
+    createIndexAndIndexDocument(json);
+    var response = doSearchWithUri(uriWithQueryParameter("excludeCountryCode", randomString()));
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
+  @Test
+  void shouldReturnDocumentWhereAllContributorsAreMissingAffiliation()
+      throws IOException, BadRequestException {
+    var contributor =
+        """
+           {
+             "type": "Contributor"
+           }
+        """;
+    var json = jsonWithContributors(contributor);
+    createIndexAndIndexDocument(json);
+    var response = doSearchWithUri(uriWithQueryParameter("missingAffiliations", TRUE.toString()));
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
+  @Test
+  void shouldNotReturnDocumentWhereOneOfContributorsIsMissingAffiliationsAndOtherHaveAffiliations()
+      throws IOException, BadRequestException {
+    var contributor =
+        """
+           {
+             "type": "Contributor"
+           }
+        """;
+    var json = jsonWithContributors(contributor, contributorWithCountryCode(randomString()));
+    createIndexAndIndexDocument(json);
+    var response = doSearchWithUri(uriWithQueryParameter("missingAffiliations", TRUE.toString()));
+
+    assertTrue(response.toPagedResponse().hits().isEmpty());
+  }
+
+  @Test
+  void shouldNotReturnDocumentWhereContributorHasAffiliation()
+      throws IOException, BadRequestException {
+    var json = jsonWithContributors(contributorWithCountryCode(randomString()));
+    createIndexAndIndexDocument(json);
+    var response = doSearchWithUri(uriWithQueryParameter("missingAffiliations", FALSE.toString()));
+
+    assertFalse(response.toPagedResponse().hits().isEmpty());
+  }
+
+  private static String contributorWithCountryCode(String countryCode) {
+    return """
+           {
+             "role": {
+               "type": "Creator"
+             },
+             "identity": {
+               "verificationStatus": "NotVerified",
+               "type": "Identity"
+             },
+             "affiliations": [
+               {
+                 "countryCode": "%s",
+                 "type": "Organization"
+               }
+             ],
+             "type": "Contributor"
+           }
+           """
+        .formatted(countryCode);
+  }
+
+  private String jsonWithContributors(String... contributors) {
     return """
            {
              "type": "Publication",
@@ -693,7 +802,7 @@ public class ResourceClientAllScientificValuesTest {
              }
            }
            """
-        .formatted(contributor);
+        .formatted(String.join(", ", contributors));
   }
 
   private static String jsonWithParentPublicationType(String parentPublicationType) {
