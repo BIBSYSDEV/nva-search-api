@@ -11,6 +11,7 @@ import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.CONTRIBUTOR;
 import static no.unit.nva.constants.Words.CONTRIBUTORS;
 import static no.unit.nva.constants.Words.CONTRIBUTOR_ORGANIZATIONS;
+import static no.unit.nva.constants.Words.COUNTRY_CODE;
 import static no.unit.nva.constants.Words.COURSE;
 import static no.unit.nva.constants.Words.DOI;
 import static no.unit.nva.constants.Words.ENGLISH_CODE;
@@ -111,6 +112,8 @@ public final class Constants {
   public static final String IDENTIFIER_KEYWORD = jsonPath(IDENTIFIER, KEYWORD);
   public static final String FILES_STATUS_KEYWORD = jsonPath(FILES_STATUS, KEYWORD);
   public static final String ENTITY_CONTRIBUTORS = jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS);
+  public static final String COUNTRY_CODE_PATH =
+      jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, COUNTRY_CODE, KEYWORD);
   public static final String CONTRIBUTOR_COUNT_NO_KEYWORD =
       jsonPath(ENTITY_DESCRIPTION, "contributorsCount");
   public static final String ENTITY_PUBLICATION_CONTEXT =
@@ -126,6 +129,8 @@ public final class Constants {
 
   public static final String CONTRIBUTORS_AFFILIATION_ID_KEYWORD =
       jsonPath(ENTITY_CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD);
+
+  public static final String CONTRIBUTORS_AFFILIATION = jsonPath(ENTITY_CONTRIBUTORS, AFFILIATIONS);
 
   public static final String CONTRIBUTORS_INSTITUTION_ID_KEYWORD =
       jsonPath(ENTITY_CONTRIBUTORS, AFFILIATIONS, INSTITUTION_ID, KEYWORD);

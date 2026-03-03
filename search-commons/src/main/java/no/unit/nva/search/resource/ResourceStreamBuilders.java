@@ -1,12 +1,10 @@
 package no.unit.nva.search.resource;
 
 import static no.unit.nva.constants.Words.ADDITIONAL_IDENTIFIERS;
-import static no.unit.nva.constants.Words.AFFILIATIONS;
 import static no.unit.nva.constants.Words.ASTERISK;
 import static no.unit.nva.constants.Words.COLON;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.CONTRIBUTORS;
-import static no.unit.nva.constants.Words.COUNTRY_CODE;
 import static no.unit.nva.constants.Words.CREATOR;
 import static no.unit.nva.constants.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.constants.Words.FUNDINGS;
@@ -26,6 +24,7 @@ import static no.unit.nva.constants.Words.VERIFIED;
 import static no.unit.nva.search.common.constant.Functions.jsonPath;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_AFFILIATION_ID_KEYWORD;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_INSTITUTION_ID_KEYWORD;
+import static no.unit.nva.search.resource.Constants.COUNTRY_CODE_PATH;
 import static no.unit.nva.search.resource.Constants.ENTITY_ABSTRACT;
 import static no.unit.nva.search.resource.Constants.ENTITY_CONTRIBUTORS;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
@@ -70,8 +69,6 @@ import org.opensearch.index.query.QueryBuilder;
  */
 public class ResourceStreamBuilders {
 
-  public static final String COUNTRY_CODE_PATH =
-      jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, COUNTRY_CODE, KEYWORD);
   public static final String CONTRIBUTOR_ROLE_PATH =
       jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, ROLE, TYPE, KEYWORD);
   public static final String VERIFICATION_STATUS_PATH =
