@@ -744,7 +744,7 @@ public class ResourceClientAllScientificValuesTest {
   }
 
   @Test
-  void shouldNotReturnDocumentWhereOnlyOneOfContributorsIsMissingAffiliation()
+  void shouldNotReturnDocumentWhereOneOfContributorsIsMissingAffiliationsAndOtherHaveAffiliations()
       throws IOException, BadRequestException {
     var contributor =
         """
