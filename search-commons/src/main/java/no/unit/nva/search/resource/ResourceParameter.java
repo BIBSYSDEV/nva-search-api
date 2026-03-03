@@ -47,12 +47,14 @@ import static no.unit.nva.search.common.enums.ParameterKind.NUMBER;
 import static no.unit.nva.search.common.enums.ParameterKind.TEXT;
 import static no.unit.nva.search.resource.Constants.ASSOCIATED_ARTIFACTS_LICENSE;
 import static no.unit.nva.search.resource.Constants.CHILD_PUBLICATIONS_KEYWORD;
+import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_AFFILIATION;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_AFFILIATION_ID_KEYWORD;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_FIELDS;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_IDENTITY_ID;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_IDENTITY_NAME_KEYWORD;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTOR_COUNT_NO_KEYWORD;
+import static no.unit.nva.search.resource.Constants.COUNTRY_CODE_PATH;
 import static no.unit.nva.search.resource.Constants.COURSE_CODE_KEYWORD;
 import static no.unit.nva.search.resource.Constants.ENTITY_ABSTRACT;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION;
@@ -122,6 +124,7 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
   ABSTRACT(TEXT, ALL_OF, ENTITY_ABSTRACT),
   ABSTRACT_NOT(TEXT, NOT_ALL_OF, ENTITY_ABSTRACT),
   ABSTRACT_SHOULD(TEXT, ANY_OF, ENTITY_ABSTRACT),
+  COUNTRY_CODE(KEYWORD, ANY_OF, COUNTRY_CODE_PATH),
   CONTEXT_TYPE(KEYWORD, ALL_OF, PUBLICATION_CONTEXT_TYPE_KEYWORD),
   CONTEXT_TYPE_NOT(KEYWORD, NOT_ALL_OF, PUBLICATION_CONTEXT_TYPE_KEYWORD),
   CONTEXT_TYPE_SHOULD(KEYWORD, ANY_OF, PUBLICATION_CONTEXT_TYPE_KEYWORD),
@@ -142,6 +145,7 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
   DOI(FUZZY_KEYWORD, REFERENCE_DOI_KEYWORD),
   DOI_NOT(FUZZY_KEYWORD, NOT_ALL_OF, REFERENCE_DOI_KEYWORD),
   DOI_SHOULD(TEXT, ANY_OF, REFERENCE_DOI_KEYWORD),
+  EXCLUDE_COUNTRY_CODE(KEYWORD, NOT_ANY_OF, COUNTRY_CODE_PATH),
   /** excludeSubUnits holds path to hierarchical search, used by several keys. */
   EXCLUDE_SUBUNITS(FLAG, Constants.CONTRIBUTOR_ORG_KEYWORD),
   FUNDING(CUSTOM, ALL_OF, FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER, null, PATTERN_IS_FUNDING),
@@ -177,6 +181,7 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
   JOURNAL_SHOULD(FUZZY_KEYWORD, ANY_OF, ENTITY_DESCRIPTION_REFERENCE_JOURNAL),
   LICENSE(FUZZY_KEYWORD, ALL_OF, ASSOCIATED_ARTIFACTS_LICENSE),
   LICENSE_NOT(FUZZY_KEYWORD, NOT_ALL_OF, ASSOCIATED_ARTIFACTS_LICENSE),
+  MISSING_AFFILIATIONS(EXISTS, NOT_ALL_OF, CONTRIBUTORS_AFFILIATION),
   MODIFIED_BEFORE(DATE, LESS_THAN, MODIFIED_DATE),
   MODIFIED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, MODIFIED_DATE),
   ORCID(KEYWORD, ALL_OF, CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD),
