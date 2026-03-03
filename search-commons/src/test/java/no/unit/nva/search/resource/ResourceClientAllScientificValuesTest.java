@@ -769,6 +769,66 @@ public class ResourceClientAllScientificValuesTest {
     assertFalse(response.toPagedResponse().hits().isEmpty());
   }
 
+  @Test
+  void shouldReturnDocumentsWithScopusIdentifier() throws IOException, BadRequestException {
+    var json =
+        """
+        {
+             "type": "Publication",
+             "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
+             "additionalIdentifiers": [
+               {
+                  "type": "ScopusIdentifier"
+               }
+             ]
+           }
+        """;
+    createIndexAndIndexDocument(json);
+    var response = doSearchWithUri(uriWithQueryParameter("hasScopusIdentifier", TRUE.toString()));
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
+  @Test
+  void shouldNotReturnDocumentsWithoutScopusIdentifier() throws IOException, BadRequestException {
+    var json =
+        """
+        {
+             "type": "Publication",
+             "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
+             "additionalIdentifiers": [
+               {
+                  "type": "OtherIdentifier"
+               }
+             ]
+           }
+        """;
+    createIndexAndIndexDocument(json);
+    var response = doSearchWithUri(uriWithQueryParameter("hasScopusIdentifier", TRUE.toString()));
+
+    assertTrue(response.toPagedResponse().hits().isEmpty());
+  }
+
+  @Test
+  void shouldReturnDocumentsWithoutScopusIdentifier() throws IOException, BadRequestException {
+    var json =
+        """
+        {
+             "type": "Publication",
+             "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
+             "additionalIdentifiers": [
+               {
+                  "type": "OtherIdentifier"
+               }
+             ]
+           }
+        """;
+    createIndexAndIndexDocument(json);
+    var response = doSearchWithUri(uriWithQueryParameter("hasScopusIdentifier", FALSE.toString()));
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
   private static String contributorWithCountryCode(String countryCode) {
     return """
            {

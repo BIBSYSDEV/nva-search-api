@@ -14,6 +14,7 @@ import static no.unit.nva.constants.Words.KEYWORD;
 import static no.unit.nva.constants.Words.NO;
 import static no.unit.nva.constants.Words.NOT_VERIFIED;
 import static no.unit.nva.constants.Words.ROLE;
+import static no.unit.nva.constants.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.constants.Words.SOURCE;
 import static no.unit.nva.constants.Words.SPACE;
 import static no.unit.nva.constants.Words.TYPE;
@@ -301,6 +302,20 @@ public class ResourceStreamBuilders {
             .mustNot(termsQuery(PARENT_PUBLICATION_TYPE, values));
 
     return Functions.queryToEntry(resourceParameter, query);
+  }
+
+  public Stream<Entry<ResourceParameter, QueryBuilder>> scopusIdentifierQuery(
+      ResourceParameter key) {
+    var value = parameters.get(key).toString();
+    var query =
+        nestedQuery(
+            ADDITIONAL_IDENTIFIERS,
+            Boolean.TRUE.toString().equals(value)
+                ? boolQuery().must(termQuery(ADDITIONAL_IDENTIFIERS_TYPE_PATH, SCOPUS_AS_TYPE))
+                : boolQuery().mustNot(termQuery(ADDITIONAL_IDENTIFIERS_TYPE_PATH, SCOPUS_AS_TYPE)),
+            ScoreMode.None);
+
+    return Functions.queryToEntry(key, query);
   }
 
   private Boolean shouldSearchSpecifiedInstitutionOnly() {
