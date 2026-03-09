@@ -40,6 +40,7 @@ import software.amazon.awssdk.core.async.AsyncResponseTransformer;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.transfer.s3.S3TransferManager;
 
 class BatchIndexServiceTest {
 
@@ -58,7 +59,10 @@ class BatchIndexServiceTest {
 
     batchIndexService =
         new BatchIndexService(
-            new AsyncS3Driver(s3AsyncClient), indexingClient, queueClient, environment);
+            new AsyncS3Driver(S3TransferManager.builder().s3Client(s3AsyncClient).build()),
+            indexingClient,
+            queueClient,
+            environment);
   }
 
   @Test
@@ -217,7 +221,10 @@ class BatchIndexServiceTest {
         .thenReturn(Stream.of(bulkResponseWithFailedDocument(document)));
 
     return new BatchIndexService(
-        new AsyncS3Driver(s3AsyncClient), indexingClient, queueClient, environment);
+        new AsyncS3Driver(S3TransferManager.builder().s3Client(s3AsyncClient).build()),
+        indexingClient,
+        queueClient,
+        environment);
   }
 
   private BulkResponse bulkResponseWithFailedDocument(IndexDocument document) {
@@ -235,6 +242,9 @@ class BatchIndexServiceTest {
     when(indexingClient.batchInsert(any())).thenThrow(RuntimeException.class);
 
     return new BatchIndexService(
-        new AsyncS3Driver(s3AsyncClient), indexingClient, queueClient, environment);
+        new AsyncS3Driver(S3TransferManager.builder().s3Client(s3AsyncClient).build()),
+        indexingClient,
+        queueClient,
+        environment);
   }
 }

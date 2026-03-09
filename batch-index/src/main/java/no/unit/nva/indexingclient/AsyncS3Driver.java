@@ -16,36 +16,47 @@ import software.amazon.awssdk.core.async.AsyncResponseTransformer;
 import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.transfer.s3.S3TransferManager;
+import software.amazon.awssdk.transfer.s3.model.CompletedDownload;
+import software.amazon.awssdk.transfer.s3.model.DownloadRequest;
 
 public class AsyncS3Driver {
 
   private static final int MAX_CONCURRENT_S3_READS = 200;
   public static final String DECOMPRESSION_FAILURE_MESSAGE = "Failed to decompress gzipped content";
-  private final S3AsyncClient s3AsyncClient;
+  private final S3TransferManager transferManager;
 
-  public AsyncS3Driver(S3AsyncClient s3AsyncClient) {
-    this.s3AsyncClient = s3AsyncClient;
+  public AsyncS3Driver(S3TransferManager transferManager) {
+    this.transferManager = transferManager;
   }
 
   @JacocoGenerated
   public static AsyncS3Driver defaultDriver() {
-    var s3AsyncClient =
-        S3AsyncClient.builder()
-            .httpClientBuilder(
-                NettyNioAsyncHttpClient.builder()
-                    .maxConcurrency(MAX_CONCURRENT_S3_READS)
-                    .connectionTimeout(Duration.ofSeconds(5))
-                    .readTimeout(Duration.ofSeconds(60)))
+    var transferManager =
+        S3TransferManager.builder()
+            .s3Client(
+                S3AsyncClient.builder()
+                    .httpClientBuilder(
+                        NettyNioAsyncHttpClient.builder()
+                            .maxConcurrency(MAX_CONCURRENT_S3_READS)
+                            .connectionTimeout(Duration.ofSeconds(5))
+                            .readTimeout(Duration.ofSeconds(60)))
+                    .build())
             .build();
-
-    return new AsyncS3Driver(s3AsyncClient);
+    return new AsyncS3Driver(transferManager);
   }
 
   public CompletableFuture<IndexDocument> fetchAsync(String bucket, String key) {
-    return s3AsyncClient
-        .getObject(
-            GetObjectRequest.builder().bucket(bucket).key(key).build(),
-            AsyncResponseTransformer.toBytes())
+    var download =
+        transferManager.download(
+            DownloadRequest.builder()
+                .getObjectRequest(GetObjectRequest.builder().bucket(bucket).key(key).build())
+                .responseTransformer(AsyncResponseTransformer.toBytes())
+                .build());
+
+    return download
+        .completionFuture()
+        .thenApply(CompletedDownload::result)
         .thenApply(response -> decompressGzipContent(response.asByteArray()))
         .thenApply(IndexDocument::fromJsonString);
   }
