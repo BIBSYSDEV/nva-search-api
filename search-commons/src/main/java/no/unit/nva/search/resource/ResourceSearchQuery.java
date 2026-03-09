@@ -181,6 +181,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
       case FUNDING -> streamBuilders.fundingQuery(key);
       case CRISTIN_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
       case SCOPUS_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
+      case HAS_SCOPUS_IDENTIFIER -> streamBuilders.scopusIdentifierQuery(key);
       case SCIENTIFIC_VALUE -> streamBuilders.scientificValueQuery(key);
       case ALL_SCIENTIFIC_VALUES -> streamBuilders.allScientificValuesQuery(key);
       case TOP_LEVEL_ORGANIZATION, UNIT, UNIT_NOT -> streamBuilders.subUnitIncludedQuery(key);
@@ -192,6 +193,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
               mapOfPathAndBoost(parameters().get(NODES_SEARCHED)));
       case HAS_PARENT -> streamBuilders.createHasParentQuery(key);
       case HAS_NO_PARENT -> streamBuilders.createHasNoParentQuery(key);
+      case EXCLUDE_PARENT_TYPE -> streamBuilders.createExcludeParentTypeQuery(key);
       default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
     };
   }

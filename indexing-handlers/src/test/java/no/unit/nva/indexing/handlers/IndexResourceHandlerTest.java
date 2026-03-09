@@ -3,6 +3,7 @@ package no.unit.nva.indexing.handlers;
 import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.constants.ErrorMessages.MISSING_IDENTIFIER_IN_RESOURCE;
 import static no.unit.nva.constants.ErrorMessages.MISSING_INDEX_NAME_IN_RESOURCE;
+import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.constants.Words.TICKETS;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
@@ -93,6 +94,17 @@ public class IndexResourceHandlerTest {
     Set<JsonNode> allIndexedDocuments =
         indexingClient.listAllDocuments(SAMPLE_RESOURCE.getIndexName());
     assertThat(allIndexedDocuments, contains(SAMPLE_RESOURCE.resource()));
+  }
+
+  @Test
+  void shouldAddDocumentForImportCandidateToIndexWhenResourceExistsInResourcesStorage()
+      throws Exception {
+    var indexDocument = createSampleResource(SortableIdentifier.next(), IMPORT_CANDIDATES_INDEX);
+    var resourceLocation = prepareEventStorageResourceFile(indexDocument);
+    var input = createEventBridgeEvent(resourceLocation);
+    indexResourceHandler.handleRequest(input, output, context);
+    var allIndexedDocuments = indexingClient.listAllDocuments(IMPORT_CANDIDATES_INDEX);
+    assertThat(allIndexedDocuments, contains(indexDocument.resource()));
   }
 
   @Test

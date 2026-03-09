@@ -3,7 +3,7 @@
     "aggregation": ["none"],
     "from": ["0"],
     "results": ["10"],
-    "order": ["title"],
+    "order": ["@@SORT_BY@@"],
     "sort": ["@@SORT_ORDER@@"]
   },
   "headers": {

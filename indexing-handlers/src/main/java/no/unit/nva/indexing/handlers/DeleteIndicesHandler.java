@@ -1,20 +1,22 @@
 package no.unit.nva.indexing.handlers;
 
-import static no.unit.nva.constants.Words.RESOURCES;
-import static no.unit.nva.constants.Words.TICKETS;
-import static nva.commons.core.attempt.Try.attempt;
-
 import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Set;
+import java.util.stream.Collectors;
 import no.unit.nva.indexingclient.IndexingClient;
 import nva.commons.core.JacocoGenerated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DeleteIndicesHandler implements RequestHandler<Object, String> {
+public class DeleteIndicesHandler implements RequestStreamHandler {
 
+  private static final String MISSING_INDEX_TO_DELETE_MESSAGE =
+      "Provide at least one index to delete!";
   private static final Logger logger = LoggerFactory.getLogger(DeleteIndicesHandler.class);
-  private static final String FINISHED = "FINISHED";
   private final IndexingClient indexingClient;
 
   @JacocoGenerated
@@ -27,18 +29,28 @@ public class DeleteIndicesHandler implements RequestHandler<Object, String> {
   }
 
   @Override
-  public String handleRequest(Object input, Context context) {
+  public void handleRequest(InputStream input, OutputStream output, Context context)
+      throws IOException {
+    var indicesToDelete = getIndicesToDelete(input);
+    logger.info("Starting index deletion for indices: {}", indicesToDelete);
 
-    attempt(() -> indexingClient.deleteIndex(RESOURCES))
-        .orElse(fail -> logError(fail.getException()));
-    attempt(() -> indexingClient.deleteIndex(TICKETS))
-        .orElse(fail -> logError(fail.getException()));
-
-    return FINISHED;
+    for (var indexName : indicesToDelete) {
+      logger.info("Attempting to delete index '{}'", indexName);
+      try {
+        indexingClient.deleteIndex(indexName);
+        logger.info("Deleted index '{}'", indexName);
+      } catch (Exception exception) {
+        logger.error("Failed to delete index '{}'", indexName, exception);
+      }
+    }
+    logger.info("Index deletion completed");
   }
 
-  private Void logError(Exception exception) {
-    logger.warn("Index deletion failed", exception);
-    return null;
+  private static Set<String> getIndicesToDelete(InputStream inputStream) {
+    var indices = DeleteIndicesRequest.fromInputStream(inputStream).indices();
+    if (indices.isEmpty()) {
+      throw new IllegalStateException(MISSING_INDEX_TO_DELETE_MESSAGE);
+    }
+    return indices.stream().map(IndexName::getValue).collect(Collectors.toSet());
   }
 }

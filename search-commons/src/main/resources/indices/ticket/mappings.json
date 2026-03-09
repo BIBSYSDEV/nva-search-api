@@ -48,6 +48,9 @@
     },
     "indexDocumentCreatedAt": {
       "type": "date"
+    },
+    "modifiedDate": {
+      "type": "date"
     }
   }
 }
