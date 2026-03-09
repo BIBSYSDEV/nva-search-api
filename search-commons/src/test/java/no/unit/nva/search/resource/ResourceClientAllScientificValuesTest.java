@@ -15,6 +15,7 @@ import static no.unit.nva.search.resource.ResourceClientTest.USER_SETTINGS_JSON;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.testutils.RandomDataGenerator.randomInteger;
+import static no.unit.nva.testutils.RandomDataGenerator.randomIsbn10;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
@@ -825,6 +826,40 @@ public class ResourceClientAllScientificValuesTest {
         """;
     createIndexAndIndexDocument(json);
     var response = doSearchWithUri(uriWithQueryParameter("hasScopusIdentifier", FALSE.toString()));
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
+  @Test
+  void shouldReturnDocumentsWithIsbnInNestedEntityDescription()
+      throws IOException, BadRequestException {
+    var isbn = randomIsbn10();
+    var json =
+        """
+                 {
+                       "type": "Publication",
+                       "entityDescription": {
+                         "type": "EntityDescription",
+                         "reference": {
+                           "type": "Reference",
+                           "publicationContext": {
+                             "entityDescription": {
+                               "type": "EntityDescription",
+                               "reference": {
+                                 "type": "Reference",
+                                 "publicationContext": {
+                                   "isbnList": [ %s ]
+                                 }
+                               }
+                             }
+                           }
+                         }
+                       }
+                     }
+        """
+            .formatted(isbn);
+    createIndexAndIndexDocument(json);
+    var response = doSearchWithUri(uriWithQueryParameter("ISBN", isbn));
 
     assertEquals(1, response.toPagedResponse().hits().size());
   }
