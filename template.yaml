@@ -717,7 +717,7 @@ Resources:
           Type: SQS
           Properties:
             Queue: !GetAtt BatchIndexQueue.Arn
-            MaximumBatchingWindowInSeconds: 100
+            MaximumBatchingWindowInSeconds: 1
             BatchSize: 10000
             ScalingConfig:
               MaximumConcurrency: 10
