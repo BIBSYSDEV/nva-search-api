@@ -125,6 +125,11 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
   }
 
   @Override
+  protected AsType<TicketParameter> page() {
+    return parameters().get(PAGE);
+  }
+
+  @Override
   public AsType<TicketParameter> sort() {
     return parameters().get(SORT);
   }

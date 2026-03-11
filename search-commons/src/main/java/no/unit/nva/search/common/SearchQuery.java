@@ -188,6 +188,8 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
 
   protected abstract AsType<K> size();
 
+  protected abstract AsType<K> page();
+
   /**
    * Path to each and every facet defined in builderAggregations().
    *

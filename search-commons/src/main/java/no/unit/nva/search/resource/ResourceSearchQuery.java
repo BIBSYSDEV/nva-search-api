@@ -215,6 +215,11 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
   }
 
   @Override
+  protected AsType<ResourceParameter> page() {
+    return parameters().get(PAGE);
+  }
+
+  @Override
   protected Map<String, String> facetPaths() {
     return facetResourcePaths;
   }

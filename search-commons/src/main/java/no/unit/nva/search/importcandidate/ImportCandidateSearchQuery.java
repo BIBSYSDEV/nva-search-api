@@ -105,6 +105,11 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
   }
 
   @Override
+  protected AsType<ImportCandidateParameter> page() {
+    return parameters().get(PAGE);
+  }
+
+  @Override
   public AsType<ImportCandidateParameter> sort() {
     return parameters().get(SORT);
   }
