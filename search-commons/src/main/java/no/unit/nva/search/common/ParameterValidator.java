@@ -96,12 +96,8 @@ public abstract class ParameterValidator<
     }
     validatedSort();
 
-    if (hasSearchAfterAndSortByRelevance()) {
-      throw new BadRequestException(RELEVANCE_SEARCH_AFTER_ARE_MUTUAL_EXCLUSIVE);
-    }
     applyRulesAfterValidation();
-
-    validatePaginationSize();
+    validatePostProcessedPaginationParameters();
     notValidated = false;
     return this;
   }
@@ -305,11 +301,6 @@ public abstract class ParameterValidator<
             .noneMatch(singleValue -> singleValue.matches(key.valuePattern()));
   }
 
-  private boolean hasSearchAfterAndSortByRelevance() {
-    return query.parameters().isPresent(query.keySearchAfter())
-        && query.sort().toString().contains(RELEVANCE_KEY_NAME);
-  }
-
   private void validatePaginationParameters() throws BadRequestException {
     var hasPage = query.page().isPresent();
     var hasFrom = query.from().isPresent();
@@ -322,7 +313,20 @@ public abstract class ParameterValidator<
     }
   }
 
-  private void validatePaginationSize() throws BadRequestException {
+  private void validatePostProcessedPaginationParameters() throws BadRequestException {
+    validateSearchAfterNotCombinedWithRelevanceSort();
+    validateResultWindowSize();
+  }
+
+  private void validateSearchAfterNotCombinedWithRelevanceSort() throws BadRequestException {
+    var hasSearchAfter = query.parameters().isPresent(query.keySearchAfter());
+    var hasSortByRelevance = query.sort().toString().contains(RELEVANCE_KEY_NAME);
+    if (hasSearchAfter && hasSortByRelevance) {
+      throw new BadRequestException(RELEVANCE_SEARCH_AFTER_ARE_MUTUAL_EXCLUSIVE);
+    }
+  }
+
+  private void validateResultWindowSize() throws BadRequestException {
     var from = query.from().isEmpty() ? 0 : query.from().asNumber().intValue();
     var size = query.size().isEmpty() ? 0 : query.size().asNumber().intValue();
     var resultWindow = from + size;
