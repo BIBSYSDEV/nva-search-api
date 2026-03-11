@@ -1,6 +1,5 @@
 plugins {
     id 'nva.search.service.java-conventions'
-    id 'nva.search.service2.dynamodblocal'
 }
 
 dependencies {
@@ -14,7 +13,6 @@ dependencies {
     implementation libs.nva.core
     implementation libs.nva.json
     implementation libs.nva.s3
-//    implementation libs.bundles.aws.xray
     implementation libs.bundles.jackson
     implementation libs.bundles.jacksonjr
     implementation(libs.bundles.testcontainers) {
