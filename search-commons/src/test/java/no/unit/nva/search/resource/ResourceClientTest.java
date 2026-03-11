@@ -227,9 +227,11 @@ class ResourceClientTest {
         argumentSet("search_after and page", "page=1&searchAfter=12&size=10&sort=modifiedDate:asc"),
         argumentSet(
             "search_after and offset", "offset=10&searchAfter=12&size=10&sort=modifiedDate:asc"),
-        argumentSet("'size' is too large", "size=10010&sort=modifiedDate:asc"),
-        argumentSet("'from' is too large", "from=10000&sort=modifiedDate:asc"),
-        argumentSet("total window too large", "from=9500&size=1000&sort=modifiedDate:asc"));
+        argumentSet("size too large", "size=10010&sort=modifiedDate:asc"),
+        argumentSet("from is too large", "from=10001&sort=modifiedDate:asc"),
+        argumentSet("from + default size is too large", "from=9995&sort=modifiedDate:asc"),
+        argumentSet("page + size too large", "page=999size=1000&sort=modifiedDate:asc"),
+        argumentSet("from + size too large", "from=9500&size=1000&sort=modifiedDate:asc"));
   }
 
   private static Arguments createArgument(String searchUri, int expectedCount) {
