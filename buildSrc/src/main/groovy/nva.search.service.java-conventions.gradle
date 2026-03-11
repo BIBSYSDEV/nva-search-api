@@ -6,11 +6,6 @@ plugins {
     id 'com.diffplug.spotless'
 }
 
-repositories {
-    mavenCentral()
-    maven { url = 'https://jitpack.io' }
-}
-
 dependencies {
     testImplementation libs.bundles.testing
 }
