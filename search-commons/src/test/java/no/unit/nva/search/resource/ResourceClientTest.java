@@ -196,6 +196,44 @@ class ResourceClientTest {
         createArgument("offset=15&aggregation=all&perPage=2", 2));
   }
 
+  static Stream<Arguments> validPaginationProvider() {
+    return Stream.of(
+        argumentSet(
+            "page=1 with size=10 should produce from=10",
+            "page=1&size=10&aggregation=all&sort=modifiedDate:asc",
+            "from=10"),
+        argumentSet(
+            "page=2 with size=5 should produce from=10",
+            "page=2&size=5&aggregation=all&sort=modifiedDate:asc",
+            "from=10"),
+        argumentSet(
+            "page=0 should produce from=0",
+            "page=0&aggregation=all&sort=modifiedDate:asc",
+            "from=0"),
+        argumentSet(
+            "offset=5 without page should keep from=5",
+            "offset=5&aggregation=all&sort=modifiedDate:asc",
+            "from=5"),
+        argumentSet(
+            "offset=5 with size=5 should keep from=5",
+            "offset=5&size=5&aggregation=all&sort=modifiedDate:asc",
+            "from=5"));
+  }
+
+  static Stream<Arguments> invalidPaginationProvider() {
+    return Stream.of(
+        argumentSet(
+            "page and offset", "page=2&offset=5&size=10&aggregation=all&sort=modifiedDate:asc"),
+        argumentSet("search_after and page", "page=1&searchAfter=12&size=10&sort=modifiedDate:asc"),
+        argumentSet(
+            "search_after and offset", "offset=10&searchAfter=12&size=10&sort=modifiedDate:asc"),
+        argumentSet("size too large", "size=10010&sort=modifiedDate:asc"),
+        argumentSet("from is too large", "from=10001&sort=modifiedDate:asc"),
+        argumentSet("from + default size is too large", "from=9995&sort=modifiedDate:asc"),
+        argumentSet("page + size too large", "page=999size=1000&sort=modifiedDate:asc"),
+        argumentSet("from + size too large", "from=9500&size=1000&sort=modifiedDate:asc"));
+  }
+
   private static Arguments createArgument(String searchUri, int expectedCount) {
     return Arguments.of(URI.create(BASE_URL + searchUri), expectedCount);
   }
@@ -674,6 +712,43 @@ class ResourceClientTest {
     assertThat(
         pagedSearchResourceDto.aggregations().size(), is(equalTo(EXPECTED_NUMBER_OF_AGGREGATIONS)));
     logger.debug(pagedSearchResourceDto.id().toString());
+  }
+
+  @ParameterizedTest
+  @MethodSource("validPaginationProvider")
+  void searchWithPageParameterProducesCorrectOffset(String queryParams, String expectedFromParam)
+      throws ApiGatewayException {
+    var uri = URI.create(BASE_URL + queryParams);
+    var response =
+        ResourceSearchQuery.builder()
+            .fromTestQueryParameters(queryToMapEntries(uri))
+            .withRequiredParameters(FROM, SIZE)
+            .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+            .validate()
+            .build()
+            .withFilter()
+            .requiredStatus(PUBLISHED, UNPUBLISHED)
+            .apply()
+            .doSearch(searchClient, RESOURCES);
+
+    var pagedSearchResourceDto = response.toPagedResponse();
+
+    assertThat(pagedSearchResourceDto.id().getQuery(), containsString(expectedFromParam));
+  }
+
+  @ParameterizedTest
+  @MethodSource("invalidPaginationProvider")
+  void searchWithMutuallyExclusivePaginationParametersShouldFail(String queryParams) {
+    var uri = URI.create(BASE_URL + queryParams);
+    assertThrows(
+        BadRequestException.class,
+        () ->
+            ResourceSearchQuery.builder()
+                .fromTestQueryParameters(queryToMapEntries(uri))
+                .withRequiredParameters(FROM, SIZE)
+                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                .validate()
+                .build());
   }
 
   // TODO: Remove duplicate test?

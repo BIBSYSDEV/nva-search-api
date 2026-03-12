@@ -80,6 +80,10 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
     return isNull(value) || value.isEmpty();
   }
 
+  public boolean isPresent() {
+    return !isEmpty();
+  }
+
   public boolean contains(Object o) {
     return nonNull(value) && value.contains(o.toString());
   }
