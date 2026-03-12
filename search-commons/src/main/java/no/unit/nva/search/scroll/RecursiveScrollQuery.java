@@ -1,6 +1,6 @@
 package no.unit.nva.search.scroll;
 
-import static com.google.common.net.MediaType.CSV_UTF_8;
+import static nva.commons.apigateway.MediaType.CSV_UTF_8;
 import static java.util.Objects.nonNull;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;

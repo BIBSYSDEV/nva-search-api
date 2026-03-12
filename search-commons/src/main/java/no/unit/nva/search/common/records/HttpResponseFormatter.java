@@ -1,13 +1,13 @@
 package no.unit.nva.search.common.records;
 
-import static com.google.common.net.MediaType.CSV_UTF_8;
+import static nva.commons.apigateway.MediaType.CSV_UTF_8;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.search.common.constant.Functions.hasContent;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.net.MediaType;
+import nva.commons.apigateway.MediaType;
 import java.net.URI;
 import java.util.List;
 import java.util.Locale;
@@ -126,6 +126,6 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
 
   @Override
   public String toString() {
-    return CSV_UTF_8.is(this.mediaType) ? toCsvText() : toPagedResponse().toJsonString();
+    return CSV_UTF_8.matches(this.mediaType) ? toCsvText() : toPagedResponse().toJsonString();
   }
 }

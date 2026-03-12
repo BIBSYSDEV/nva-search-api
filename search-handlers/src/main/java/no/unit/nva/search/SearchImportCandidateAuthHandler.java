@@ -7,7 +7,7 @@ import static no.unit.nva.search.importcandidate.ImportCandidateParameter.FROM;
 import static no.unit.nva.search.importcandidate.ImportCandidateParameter.SIZE;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.google.common.net.MediaType;
+import nva.commons.apigateway.MediaType;
 import java.net.HttpURLConnection;
 import java.util.List;
 import no.unit.nva.constants.Words;

@@ -9,7 +9,7 @@ import static no.unit.nva.search.common.constant.Functions.readApiHost;
 import static no.unit.nva.search.resource.Constants.PERSON_PREFERENCES;
 import static nva.commons.core.attempt.Try.attempt;
 
-import com.google.common.net.MediaType;
+import nva.commons.apigateway.MediaType;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
