@@ -1,7 +1,9 @@
 package no.unit.nva.search.common;
 
 import static java.util.Objects.isNull;
+import static no.unit.nva.constants.ErrorMessages.PAGINATION_PARAMETERS_ARE_MUTUAL_EXCLUSIVE;
 import static no.unit.nva.constants.ErrorMessages.RELEVANCE_SEARCH_AFTER_ARE_MUTUAL_EXCLUSIVE;
+import static no.unit.nva.constants.ErrorMessages.RESULT_WINDOW_TOO_LARGE;
 import static no.unit.nva.constants.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.constants.ErrorMessages.validQueryParameterNamesMessage;
 import static no.unit.nva.constants.Words.ALL;
@@ -42,6 +44,7 @@ public abstract class ParameterValidator<
 
   protected static final Logger logger = LoggerFactory.getLogger(ParameterValidator.class);
 
+  private static final int MAX_RESULT_WINDOW_SIZE = 10_000;
   protected final transient Set<String> invalidKeys = new HashSet<>(0);
   protected final transient SearchQuery<K> query;
   protected transient boolean notValidated = true;
@@ -77,6 +80,7 @@ public abstract class ParameterValidator<
    * @throws BadRequestException if parameters are invalid or missing
    */
   public ParameterValidator<K, Q> validate() throws BadRequestException {
+    validatePaginationParameters();
     assignDefaultValues();
     for (var entry : query.parameters().getSearchEntries()) {
       validatesEntrySet(entry);
@@ -92,10 +96,8 @@ public abstract class ParameterValidator<
     }
     validatedSort();
 
-    if (hasSearchAfterAndSortByRelevance()) {
-      throw new BadRequestException(RELEVANCE_SEARCH_AFTER_ARE_MUTUAL_EXCLUSIVE);
-    }
     applyRulesAfterValidation();
+    validatePostProcessedPaginationParameters();
     notValidated = false;
     return this;
   }
@@ -299,8 +301,38 @@ public abstract class ParameterValidator<
             .noneMatch(singleValue -> singleValue.matches(key.valuePattern()));
   }
 
-  private boolean hasSearchAfterAndSortByRelevance() {
-    return query.parameters().isPresent(query.keySearchAfter())
-        && query.sort().toString().contains(RELEVANCE_KEY_NAME);
+  private void validatePaginationParameters() throws BadRequestException {
+    var hasPage = query.page().isPresent();
+    var hasFrom = query.from().isPresent();
+    var hasSearchAfter = query.parameters().isPresent(query.keySearchAfter());
+    if (hasSearchAfter && (hasPage || hasFrom)) {
+      throw new BadRequestException(PAGINATION_PARAMETERS_ARE_MUTUAL_EXCLUSIVE);
+    }
+    if (hasPage && hasFrom) {
+      throw new BadRequestException(PAGINATION_PARAMETERS_ARE_MUTUAL_EXCLUSIVE);
+    }
+  }
+
+  private void validatePostProcessedPaginationParameters() throws BadRequestException {
+    validateSearchAfterNotCombinedWithRelevanceSort();
+    validateResultWindowSize();
+  }
+
+  private void validateSearchAfterNotCombinedWithRelevanceSort() throws BadRequestException {
+    var hasSearchAfter = query.parameters().isPresent(query.keySearchAfter());
+    var hasSortByRelevance = query.sort().toString().contains(RELEVANCE_KEY_NAME);
+    if (hasSearchAfter && hasSortByRelevance) {
+      throw new BadRequestException(RELEVANCE_SEARCH_AFTER_ARE_MUTUAL_EXCLUSIVE);
+    }
+  }
+
+  private void validateResultWindowSize() throws BadRequestException {
+    var from = query.from().isEmpty() ? 0 : query.from().asNumber().intValue();
+    var size = query.size().isEmpty() ? 0 : query.size().asNumber().intValue();
+    var resultWindow = from + size;
+    if (resultWindow > MAX_RESULT_WINDOW_SIZE) {
+      throw new BadRequestException(
+          RESULT_WINDOW_TOO_LARGE.formatted(MAX_RESULT_WINDOW_SIZE, resultWindow));
+    }
   }
 }
