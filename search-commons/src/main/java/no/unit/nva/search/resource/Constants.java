@@ -205,7 +205,9 @@ public final class Constants {
   public static final String PUBLISHER_ID_KEYWORD = jsonPath(PUBLISHER, ID, KEYWORD);
   public static final String STATUS_KEYWORD = jsonPath(STATUS, KEYWORD);
   public static final String PUBLICATION_CONTEXT_ISBN_LIST =
-      jsonPath(ENTITY_PUBLICATION_CONTEXT, ISBN_LIST);
+      multipleFields(
+          jsonPath(ENTITY_PUBLICATION_CONTEXT, ISBN_LIST),
+          jsonPath(ENTITY_PUBLICATION_CONTEXT, ENTITY_PUBLICATION_CONTEXT, ISBN_LIST));
   public static final String PUBLICATION_CONTEXT_TYPE_KEYWORD =
       jsonPath(ENTITY_PUBLICATION_CONTEXT, TYPE, KEYWORD);
   public static final String PUBLICATION_INSTANCE_TYPE =
