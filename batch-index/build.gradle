@@ -13,6 +13,7 @@ dependencies {
     implementation libs.aws.sdk2.urlconnection
     implementation libs.aws.sdk2.eventbridge
     implementation libs.aws.sdk2.s3
+    implementation libs.aws.sdk2.s3.transfer.manager
     implementation libs.aws.sdk2.sqs
     implementation libs.aws.lambda.events
 
@@ -20,7 +21,7 @@ dependencies {
     implementation libs.aws.ion
     implementation libs.guava
     implementation libs.typesafe
-
+    implementation 'software.amazon.awssdk:netty-nio-client:2.39.2'
     implementation libs.bundles.opensearch
 
     testImplementation project(":search-testing")
@@ -42,4 +43,5 @@ test {
     environment "TOPIC", "someTopic"
     environment "KEY_BATCHES_BUCKET", "batchesBucket"
     environment "MAX_PAYLOAD", "4096" // to trigger splitting batches in several indexing operations
+    environment "DLQ_QUEUE", "someDlq"
 }
