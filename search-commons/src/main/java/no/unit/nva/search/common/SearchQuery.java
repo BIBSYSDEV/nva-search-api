@@ -1,7 +1,5 @@
 package no.unit.nva.search.common;
 
-import static com.google.common.net.MediaType.CSV_UTF_8;
-import static com.google.common.net.MediaType.JSON_UTF_8;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.constants.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.constants.Defaults.ZERO_RESULTS_AGGREGATION_ONLY;
@@ -15,9 +13,10 @@ import static no.unit.nva.constants.Words.SORT_LAST;
 import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search.common.enums.FieldOperator.NOT_ALL_OF;
 import static no.unit.nva.search.common.enums.FieldOperator.NOT_ANY_OF;
+import static nva.commons.apigateway.MediaType.CSV_UTF_8;
+import static nva.commons.apigateway.MediaType.JSON_UTF_8;
 import static nva.commons.core.attempt.Try.attempt;
 
-import com.google.common.net.MediaType;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -43,6 +42,7 @@ import no.unit.nva.search.common.records.HttpResponseFormatter;
 import no.unit.nva.search.common.records.QueryContentWrapper;
 import no.unit.nva.search.common.records.SwsResponse;
 import nva.commons.apigateway.AccessRight;
+import nva.commons.apigateway.MediaType;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
@@ -361,7 +361,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
   }
 
   private boolean hasAggregation() {
-    return getMediaType().is(JSON_UTF_8)
+    return getMediaType().matches(JSON_UTF_8)
         && ALL.equalsIgnoreCase(parameters().get(keyAggregation()).as());
   }
 }

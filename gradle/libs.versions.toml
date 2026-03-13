@@ -1,33 +1,34 @@
 [versions]
-apacheHttp = { strictly = '5.5'}
-awsIon = { strictly = '1.11.10' }
-awsLambdaEvents = { strictly = '3.16.0' }
-awsLambdaJavaCore = { strictly = '1.3.0' }
-awsSdk2 = { strictly = '2.31.77' }
-com-auth0-jwt = { strictly = '4.5.0' }
+apacheHttp = { strictly = '5.6'}
+awsIon = { strictly = '1.11.11' }
+awsLambdaEvents = { strictly = '3.16.1' }
+awsLambdaJavaCore = { strictly = '1.4.0' }
+awsSdk2 = { strictly = '2.42.5' }
+com-auth0-jwt = { strictly = '4.5.1' }
 glassfishJaxbRuntime = { strictly = '4.0.5' }
-guava = { strictly = '33.4.8-jre' }
+guava = { strictly = '33.5.0-jre' }
 hamcrest = { strictly = '3.0' }
-jackson = { strictly = '2.19.1' }
+jackson = { strictly = '2.21.1' }
+jackson-annotations = { strictly = '2.21' }
 jakartaXmlBindApi = { strictly = '4.0.2' }
 javers = { strictly = '7.8.0' }
-jena = { strictly = '5.4.0' }
-junit = { strictly = '1.13.3' }
-jupiter = { strictly = '5.13.3' }
-log4j = { strictly = '2.25.0' }
-mockito = { strictly = '5.18.0' }
-nvaCommons = { strictly = '2.2.9' }
-open-csv = { strictly = '5.11.2' }
-opensearch-java = { strictly = '3.4.0' }
-opensearch-rest = { strictly = '3.3.2' }
-opensearch-testcontainer = { strictly = '4.0.0' }
+jena = { strictly = '5.6.0' }
+junit = { strictly = '1.14.2' }
+jupiter = { strictly = '5.14.2' }
+log4j = { strictly = '2.25.3' }
+mockito = { strictly = '5.22.0' }
+nvaCommons = { strictly = '2.5.9' }
+open-csv = { strictly = '5.12.0' }
+opensearch-java = { strictly = '3.5.0' }
+opensearch-rest = { strictly = '3.4.0' }
+opensearch-testcontainer = { strictly = '4.1.0' }
 slf4j = { strictly = '2.0.17' }
 testContainers = { strictly = '2.0.3' }
 typesafe = { strictly = '1.4.3' }
 xmlUnit = { strictly = '2.10.3' }
 xraySdk = { strictly = '2.18.2' }
 zalandoProblem = { strictly = '0.27.1' }
-wiremock = { strictly = '3.13.1' }
+wiremock = { strictly = '4.0.0-beta.29' }
 
 [libraries]
 nva-core = { group = 'com.github.bibsysdev', name = 'core', version.ref = 'nvaCommons' }
@@ -58,7 +59,7 @@ aws-xray-recorder-sdk-aws-sdk-instrumentor = { group = 'com.amazonaws', name = '
 
 jackson-core = { group = 'com.fasterxml.jackson.core', name = 'jackson-core', version.ref = 'jackson' }
 jackson-databind = { group = 'com.fasterxml.jackson.core', name = 'jackson-databind', version.ref = 'jackson' }
-jackson-annotations = { group = 'com.fasterxml.jackson.core', name = 'jackson-annotations', version.ref = 'jackson' }
+jackson-annotations = { group = 'com.fasterxml.jackson.core', name = 'jackson-annotations', version.ref = 'jackson-annotations' }
 jackson-datatype-jsr310 = { group = 'com.fasterxml.jackson.datatype', name = 'jackson-datatype-jsr310', version.ref = 'jackson' }
 jackson-datatype-jdk8 = { group = 'com.fasterxml.jackson.datatype', name = 'jackson-datatype-jdk8', version.ref = 'jackson' }
 

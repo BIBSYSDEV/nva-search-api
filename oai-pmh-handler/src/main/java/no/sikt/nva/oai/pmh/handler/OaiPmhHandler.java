@@ -1,7 +1,6 @@
 package no.sikt.nva.oai.pmh.handler;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.google.common.net.MediaType;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
@@ -15,6 +14,7 @@ import no.sikt.nva.oai.pmh.handler.oaipmh.request.OaiPmhRequestFactoryRegistry;
 import no.sikt.nva.oai.pmh.handler.repository.ResourceClientResourceRepository;
 import no.unit.nva.search.resource.ResourceClient;
 import nva.commons.apigateway.ApiGatewayHandler;
+import nva.commons.apigateway.MediaType;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;

@@ -9,7 +9,6 @@ import static no.unit.nva.search.common.constant.Functions.readApiHost;
 import static no.unit.nva.search.resource.Constants.PERSON_PREFERENCES;
 import static nva.commons.core.attempt.Try.attempt;
 
-import com.google.common.net.MediaType;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
@@ -19,6 +18,7 @@ import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.Charset;
 import java.util.List;
 import no.unit.nva.search.common.records.UserSettings;
+import nva.commons.apigateway.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
