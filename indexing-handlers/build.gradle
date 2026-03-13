@@ -3,26 +3,21 @@ plugins {
 }
 
 dependencies {
+    implementation nvaCatalog.aws.apache.client
+    implementation nvaCatalog.aws.sdk2.eventbridge
+    implementation nvaCatalog.aws.sdk2.sqs
+    implementation nvaCatalog.aws.sdk2.urlconnection
+    implementation nvaCatalog.bundles.jackson
+    implementation nvaCatalog.bundles.logging
+    implementation nvaLibs.apigateway
+    implementation nvaLibs.core
+    implementation nvaLibs.eventhandlers
+    implementation nvaLibs.identifiers
+    implementation nvaLibs.json
+    implementation nvaLibs.s3
     implementation project(':search-commons')
-
-    implementation libs.nva.core
-    implementation libs.nva.json
-    implementation libs.nva.identifiers
-    implementation libs.nva.apigateway
-    implementation libs.nva.s3
-    implementation libs.nva.eventhandlers
-    implementation libs.aws.sdk2.urlconnection
-    implementation libs.aws.sdk2.eventbridge
-    implementation libs.aws.sdk2.sqs
-    implementation libs.aws.apache.client
-    implementation libs.bundles.logging
-
-    implementation libs.bundles.jackson
-
+    testImplementation nvaCatalog.aws.sdk2.s3
     testImplementation project(":search-testing")
-    testImplementation libs.bundles.testing
-    testImplementation libs.aws.sdk2.s3
-
 }
 
 test {

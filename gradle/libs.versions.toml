@@ -1,122 +1,24 @@
 [versions]
-apacheHttp = { strictly = '5.6'}
-awsIon = { strictly = '1.11.11' }
-awsLambdaEvents = { strictly = '3.16.1' }
-awsLambdaJavaCore = { strictly = '1.4.0' }
-awsSdk2 = { strictly = '2.42.5' }
-com-auth0-jwt = { strictly = '4.5.1' }
 glassfishJaxbRuntime = { strictly = '4.0.5' }
-guava = { strictly = '33.5.0-jre' }
-hamcrest = { strictly = '3.0' }
-jackson = { strictly = '2.21.1' }
-jackson-annotations = { strictly = '2.21' }
 jakartaXmlBindApi = { strictly = '4.0.2' }
-javers = { strictly = '7.8.0' }
-jena = { strictly = '5.6.0' }
-junit = { strictly = '1.14.2' }
-jupiter = { strictly = '5.14.2' }
 log4j = { strictly = '2.25.3' }
-mockito = { strictly = '5.22.0' }
-nvaCommons = { strictly = '2.5.9' }
-open-csv = { strictly = '5.12.0' }
-opensearch-java = { strictly = '3.5.0' }
 opensearch-rest = { strictly = '3.4.0' }
-opensearch-testcontainer = { strictly = '4.1.0' }
-slf4j = { strictly = '2.0.17' }
-testContainers = { strictly = '2.0.3' }
+opensearch-server = { strictly = '3.5.0' }
 typesafe = { strictly = '1.4.3' }
 xmlUnit = { strictly = '2.10.3' }
-xraySdk = { strictly = '2.18.2' }
-zalandoProblem = { strictly = '0.27.1' }
-wiremock = { strictly = '4.0.0-beta.29' }
 
 [libraries]
-nva-core = { group = 'com.github.bibsysdev', name = 'core', version.ref = 'nvaCommons' }
-nva-json = { group = 'com.github.bibsysdev', name = 'json', version.ref = 'nvaCommons' }
-nva-auth = { group = 'com.github.bibsysdev', name = 'auth', version.ref = 'nvaCommons' }
-nva-secrets = { group = 'com.github.bibsysdev', name = 'secrets', version.ref = 'nvaCommons' }
-nva-identifiers = { group = 'com.github.bibsysdev', name = 'identifiers', version.ref = 'nvaCommons' }
-nva-apigateway = { group = 'com.github.bibsysdev', name = 'apigateway', version.ref = 'nvaCommons' }
-nva-s3 = { group = 'com.github.bibsysdev', name = 's3', version.ref = 'nvaCommons' }
-nva-eventhandlers = { group = 'com.github.bibsysdev', name = 'eventhandlers', version.ref = 'nvaCommons' }
-nva-testutils = { group = 'com.github.bibsysdev', name = 'nvatestutils', version.ref = 'nvaCommons' }
-nva-logutils = { group = 'com.github.bibsysdev', name = 'logutils', version.ref = 'nvaCommons' }
-
-apache-http = { group = 'org.apache.httpcomponents.client5', name = 'httpclient5', version.ref = 'apacheHttp' }
-
-aws-sdk2-s3 = { group = 'software.amazon.awssdk', name = 's3', version.ref = 'awsSdk2' }
-aws-sdk2-sqs = { group = 'software.amazon.awssdk', name = 'sqs', version.ref = 'awsSdk2' }
-aws-sdk2-urlconnection = { group = 'software.amazon.awssdk', name = 'url-connection-client', version.ref = 'awsSdk2' }
-aws-sdk2-eventbridge = { group = 'software.amazon.awssdk', name = 'eventbridge', version.ref = 'awsSdk2' }
-aws-apache-client = { group = 'software.amazon.awssdk', name = 'apache-client', version.ref = 'awsSdk2' }
-aws-lambda-java-core = { group = 'com.amazonaws', name = 'aws-lambda-java-core', version.ref = 'awsLambdaJavaCore' }
-aws-lambda-events = { group = 'com.amazonaws', name = 'aws-lambda-java-events', version.ref = 'awsLambdaEvents' }
-
-aws-xray-recorder-sdk-core = { group = 'com.amazonaws', name = 'aws-xray-recorder-sdk-core', version.ref = 'xraySdk' }
-aws-xray-recorder-sdk-aws-sdk = { group = 'com.amazonaws', name = 'aws-xray-recorder-sdk-aws-sdk', version.ref = 'xraySdk' }
-aws-xray-recorder-sdk-aws-sdk-instrumentor = { group = 'com.amazonaws', name = 'aws-xray-recorder-sdk-aws-sdk-instrumentor', version.ref = 'xraySdk' }
-
-
-jackson-core = { group = 'com.fasterxml.jackson.core', name = 'jackson-core', version.ref = 'jackson' }
-jackson-databind = { group = 'com.fasterxml.jackson.core', name = 'jackson-databind', version.ref = 'jackson' }
-jackson-annotations = { group = 'com.fasterxml.jackson.core', name = 'jackson-annotations', version.ref = 'jackson-annotations' }
-jackson-datatype-jsr310 = { group = 'com.fasterxml.jackson.datatype', name = 'jackson-datatype-jsr310', version.ref = 'jackson' }
-jackson-datatype-jdk8 = { group = 'com.fasterxml.jackson.datatype', name = 'jackson-datatype-jdk8', version.ref = 'jackson' }
-
-jackson-jr-objects = { group = 'com.fasterxml.jackson.jr', name = 'jackson-jr-objects', version.ref = 'jackson' }
-jackson-jr-annotations = { group = 'com.fasterxml.jackson.jr', name = 'jackson-jr-annotation-support', version.ref = 'jackson' }
-
-jakarta-xml-bind-api = { group = 'jakarta.xml.bind', name = 'jakarta.xml.bind-api', version.ref = 'jakartaXmlBindApi' }
 glassfish-jaxb-runtime = { group = 'org.glassfish.jaxb', name = 'jaxb-runtime', version.ref = 'glassfishJaxbRuntime' }
-
-slf4j = { group = 'org.slf4j', name = 'slf4j-api', version.ref = 'slf4j' }
-log4j-core = { group = 'org.apache.logging.log4j', name = 'log4j-core', version.ref = 'log4j' }
-log4j-api = { group = 'org.apache.logging.log4j', name = 'log4j-api', version.ref = 'log4j' }
+jakarta-xml-bind-api = { group = 'jakarta.xml.bind', name = 'jakarta.xml.bind-api', version.ref = 'jakartaXmlBindApi' }
 log4j-test = { group = 'org.apache.logging.log4j', name = 'log4j-core-test', version.ref = 'log4j' }
-
-opensearch = { group = 'org.opensearch', name = 'opensearch', version.ref = 'opensearch-java' }
-opensearch-x-content = { group = 'org.opensearch', name = 'opensearch-x-content', version.ref = 'opensearch-java' }
-opensearch-core = { group = 'org.opensearch', name = 'opensearch-core', version.ref = 'opensearch-java' }
-opensearch-java = { group = 'org.opensearch.client', name = 'opensearch-java', version.ref = 'opensearch-java' }
+opensearch = { group = 'org.opensearch', name = 'opensearch', version.ref = 'opensearch-server' }
+opensearch-core = { group = 'org.opensearch', name = 'opensearch-core', version.ref = 'opensearch-server' }
 opensearch-rest-client = { group = 'org.opensearch.client', name = 'opensearch-rest-client', version.ref = 'opensearch-rest' }
 opensearch-rest-highlevel-client = { group = 'org.opensearch.client', name = 'opensearch-rest-high-level-client', version.ref = 'opensearch-rest' }
-
-guava = { group = 'com.google.guava', name = 'guava', version.ref = 'guava' }
-aws-ion = { group = 'com.amazon.ion', name = 'ion-java', version.ref = 'awsIon' }
+opensearch-x-content = { group = 'org.opensearch', name = 'opensearch-x-content', version.ref = 'opensearch-server' }
 typesafe = { group = 'com.typesafe', name = 'config', version.ref = 'typesafe' }
-problem = { group = 'org.zalando', name = 'problem', version.ref = 'zalandoProblem' }
-
-com-auth0-jwt = { group = 'com.auth0', name = 'java-jwt', version.ref = 'com-auth0-jwt' }
-
-testcontainer-opensearch = { group = 'org.opensearch', name = 'opensearch-testcontainers', version.ref = 'opensearch-testcontainer' }
-
-testcontainers-core = { group = 'org.testcontainers', name = 'testcontainers', version.ref = 'testContainers' }
-
-testcontainers-junit = { group = 'org.testcontainers', name = 'testcontainers-junit-jupiter', version.ref = 'testContainers' }
-hamcrest = { group = 'org.hamcrest', name = 'hamcrest', version.ref = 'hamcrest' }
-mockitocore = { group = 'org.mockito', name = 'mockito-core', version.ref = 'mockito' }
-junit-jupiter-engine = { group = 'org.junit.jupiter', name = 'junit-jupiter-engine', version.ref = 'jupiter' }
-junit-jupiter-api = { group = 'org.junit.jupiter', name = 'junit-jupiter-api', version.ref = 'jupiter' }
-junit-jupiter-params = { group = 'org.junit.jupiter', name = 'junit-jupiter-params', version.ref = 'jupiter' }
-junit-platform-launcher = { group = 'org.junit.platform', name = 'junit-platform-launcher', version.ref = 'junit' }
-javers = { group = 'org.javers', name = 'javers-core', version.ref = 'javers' }
-
-csv = { group = 'com.opencsv', name = 'opencsv', version.ref = 'open-csv' }
-
-jena-core = { group = 'org.apache.jena', name = 'jena-core', version.ref = 'jena' }
-jena-arq = { group = 'org.apache.jena', name = 'jena-arq', version.ref = 'jena' }
-
 xml-unit-core = { group = 'org.xmlunit', name = 'xmlunit-core', version.ref = 'xmlUnit' }
 xml-unit-matchers = { group = 'org.xmlunit', name = 'xmlunit-matchers', version.ref = 'xmlUnit' }
-wiremock = { group = 'org.wiremock', name = 'wiremock-jetty12', version.ref = 'wiremock' }
 
 [bundles]
-jackson = ['jackson-core', 'jackson-databind', 'jackson-annotations', 'jackson-datatype-jsr310', 'jackson-datatype-jdk8']
-jacksonjr = ['jackson-jr-objects', 'jackson-jr-annotations']
-testcontainers = ['testcontainers-core', 'testcontainers-junit', 'testcontainer-opensearch']
-logging = ['slf4j', 'log4j-core', 'log4j-api']
-testing = ['junit-jupiter-engine', 'junit-platform-launcher', 'junit-jupiter-api', 'junit-jupiter-params', 'hamcrest', 'mockitocore', 'javers',
-    'log4j-test', 'nva-testutils', 'nva-logutils']
 opensearch = ['opensearch', 'opensearch-core', 'opensearch-rest-client', 'opensearch-x-content']
-aws-xray = ['aws-xray-recorder-sdk-core', 'aws-xray-recorder-sdk-aws-sdk', 'aws-xray-recorder-sdk-aws-sdk-instrumentor']
-jena = ['jena-core', 'jena-arq']

@@ -6,7 +6,14 @@ plugins {
 }
 
 dependencies {
-    testImplementation libs.bundles.testing
+    testImplementation nvaCatalog.bundles.testing.junit
+    testImplementation nvaCatalog.bundles.testing.mockito
+    testImplementation nvaCatalog.bundles.testing.hamcrest
+    testImplementation nvaCatalog.javers
+    testImplementation nvaCatalog.assertj.core
+    testImplementation libs.log4j.test
+    testImplementation nvaLibs.testutils
+    testImplementation nvaLibs.logutils
 }
 
 sourceSets {
