@@ -7,13 +7,13 @@ import static no.unit.nva.search.ticket.TicketParameter.FROM;
 import static no.unit.nva.search.ticket.TicketParameter.SIZE;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import nva.commons.apigateway.MediaType;
 import java.net.HttpURLConnection;
 import java.util.List;
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.ticket.TicketClient;
 import no.unit.nva.search.ticket.TicketSearchQuery;
 import nva.commons.apigateway.ApiGatewayHandler;
+import nva.commons.apigateway.MediaType;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;

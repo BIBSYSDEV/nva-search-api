@@ -9,7 +9,6 @@ import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import nva.commons.apigateway.MediaType;
 import java.net.HttpURLConnection;
 import java.util.List;
 import no.unit.nva.constants.Words;
@@ -21,6 +20,7 @@ import no.unit.nva.search.resource.ResourceSearchQuery;
 import no.unit.nva.search.resource.SimplifiedMutator;
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.ApiGatewayHandler;
+import nva.commons.apigateway.MediaType;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;

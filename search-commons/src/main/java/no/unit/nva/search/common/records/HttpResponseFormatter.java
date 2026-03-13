@@ -1,13 +1,12 @@
 package no.unit.nva.search.common.records;
 
-import static nva.commons.apigateway.MediaType.CSV_UTF_8;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.search.common.constant.Functions.hasContent;
+import static nva.commons.apigateway.MediaType.CSV_UTF_8;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import nva.commons.apigateway.MediaType;
 import java.net.URI;
 import java.util.List;
 import java.util.Locale;
@@ -19,6 +18,7 @@ import no.unit.nva.search.common.AggregationFormat;
 import no.unit.nva.search.common.QueryKeys;
 import no.unit.nva.search.common.csv.ResourceCsvTransformer;
 import no.unit.nva.search.common.enums.ParameterKey;
+import nva.commons.apigateway.MediaType;
 
 /**
  * HttpResponseFormatter is a class that formats a search response.
