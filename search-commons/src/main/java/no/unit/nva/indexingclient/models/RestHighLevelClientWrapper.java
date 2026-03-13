@@ -47,7 +47,8 @@ public record RestHighLevelClientWrapper(RestHighLevelClient client) {
 
   public static RestHighLevelClientWrapper prepareRestHighLevelClientWrapperForUri(String address) {
     try {
-      return new RestHighLevelClientWrapper(RestClient.builder(HttpHost.create(address)));
+      return new RestHighLevelClientWrapper(
+          RestClient.builder(HttpHost.create(address)).setCompressionEnabled(false));
     } catch (URISyntaxException e) {
       throw new IllegalArgumentException(e);
     }

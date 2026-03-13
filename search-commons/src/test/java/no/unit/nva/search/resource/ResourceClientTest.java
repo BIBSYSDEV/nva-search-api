@@ -171,7 +171,9 @@ class ResourceClientTest {
 
   private static IndexingClient initiateIndexingClient(CachedJwtProvider cachedJwtProvider) {
     try {
-      var restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
+      var restClientBuilder =
+          RestClient.builder(HttpHost.create(container.getHttpHostAddress()))
+              .setCompressionEnabled(false);
       var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
       return new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
     } catch (URISyntaxException e) {
