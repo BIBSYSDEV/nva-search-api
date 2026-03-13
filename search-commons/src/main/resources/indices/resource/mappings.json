@@ -62,6 +62,9 @@
               "type": "nested",
               "include_in_parent": true,
               "properties": {
+                "isbnList": {
+                  "type": "keyword"
+                },
                 "publisher": {
                   "type": "nested",
                   "include_in_parent": true
@@ -74,6 +77,15 @@
                       "type": "nested",
                       "include_in_parent": true,
                       "properties": {
+                        "publicationContext": {
+                          "type": "nested",
+                          "include_in_parent": true,
+                          "properties": {
+                            "isbnList": {
+                              "type": "keyword"
+                            }
+                          }
+                        },
                         "publicationInstance": {
                           "type": "nested",
                           "include_in_parent": true,

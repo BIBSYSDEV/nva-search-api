@@ -15,7 +15,6 @@ import static no.unit.nva.search.resource.ResourceClientTest.USER_SETTINGS_JSON;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.testutils.RandomDataGenerator.randomInteger;
-import static no.unit.nva.testutils.RandomDataGenerator.randomIsbn10;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
@@ -830,10 +829,10 @@ public class ResourceClientAllScientificValuesTest {
     assertEquals(1, response.toPagedResponse().hits().size());
   }
 
-  @Test
-  void shouldReturnDocumentsWithIsbnInNestedEntityDescription()
+  @ParameterizedTest
+  @ValueSource(strings = {"0-306-40615-2", "0306406152", "0-19-853453-X"})
+  void shouldReturnDocumentsWithIsbnInNestedEntityDescription(String isbn)
       throws IOException, BadRequestException {
-    var isbn = randomIsbn10();
     var json =
         """
                  {
@@ -848,7 +847,7 @@ public class ResourceClientAllScientificValuesTest {
                                "reference": {
                                  "type": "Reference",
                                  "publicationContext": {
-                                   "isbnList": [ %s ]
+                                   "isbnList": [ "%s" ]
                                  }
                                }
                              }
