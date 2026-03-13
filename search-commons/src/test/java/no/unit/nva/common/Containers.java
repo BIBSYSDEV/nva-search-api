@@ -53,10 +53,7 @@ public class Containers {
   public static IndexingClient indexingClient;
 
   public static void setup() {
-    container
-        .withEnv("indices.query.bool.max_clause_count", "2048")
-        .withEnv("http.compression", "true")
-        .start();
+    container.withEnv("indices.query.bool.max_clause_count", "2048").start();
 
     container.waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(60)));
 

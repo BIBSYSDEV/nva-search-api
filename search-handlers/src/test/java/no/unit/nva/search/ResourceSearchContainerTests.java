@@ -69,10 +69,7 @@ class ResourceSearchContainerTests {
 
   @BeforeAll
   static void beforeAll() {
-    container
-        .withEnv("indices.query.bool.max_clause_count", "2048")
-        .withEnv("http.compression", "true")
-        .start();
+    container.withEnv("indices.query.bool.max_clause_count", "2048").start();
 
     try {
       var restClientBuilder =
