@@ -1,6 +1,6 @@
 [versions]
 apacheHttp = { strictly = '5.6'}
-awsIon = { strictly = '1.11.10' }
+awsIon = { strictly = '1.11.11' }
 awsLambdaEvents = { strictly = '3.16.1' }
 awsLambdaJavaCore = { strictly = '1.4.0' }
 awsSdk2 = { strictly = '2.42.5' }

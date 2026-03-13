@@ -76,7 +76,8 @@ class TicketClientByOwnerTest {
     try {
       var restClientBuilder =
           RestClient.builder(HttpHost.create(container.getHttpHostAddress()))
-              .setCompressionEnabled(false);
+              .setHttpClientConfigCallback(
+                  httpClientBuilder -> httpClientBuilder.disableContentCompression());
 
       var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
       var indexingClient = new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);

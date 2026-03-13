@@ -61,7 +61,10 @@ public class Containers {
     container.waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(60)));
 
     try {
-      var restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
+      var restClientBuilder =
+          RestClient.builder(HttpHost.create(container.getHttpHostAddress()))
+              .setHttpClientConfigCallback(
+                  httpClientBuilder -> httpClientBuilder.disableContentCompression());
       var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
       var cachedJwtProvider = setupMockedCachedJwtProvider();
       indexingClient = new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
