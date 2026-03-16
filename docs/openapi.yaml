@@ -1289,7 +1289,7 @@ components:
         type: boolean
         enum: [ true, false ]
     hasIsbnParam:
-      name: has_file
+      name: has_isbn
       in: query
       description: "Returns documents with isbn."
       example: true
@@ -1300,7 +1300,7 @@ components:
         type: boolean
         enum: [ true, false ]
     hasIssnParam:
-      name: has_file
+      name: has_issn
       in: query
       description: "Returns documents with issn."
       example: true
