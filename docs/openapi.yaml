@@ -1636,23 +1636,24 @@ components:
       name: project_not
       in: query
       description: "Returns document without these project IDs."
-      example: "123456"
+      example: "https://api.dev.nva.aws.unit.no/cristin/project/123456"
       required: false
       style: form
       explode: true
       schema:
         type: string
-
+        format: uri
     projectShouldParam:
       name: project_should
       in: query
       description: "Returns document with these project IDs."
-      example: "123456"
+      example: "2123456"
       required: false
       style: form
       explode: true
       schema:
         type: string
+        format: uri
     publicationLanguageParam:
       name: publication_language
       in: query
@@ -1711,7 +1712,7 @@ components:
       explode: true
       schema:
         type: string
-        format: date
+        format: number
     publicationYearSinceParam:
       name: publication_year_since
       in: query
@@ -1721,7 +1722,7 @@ components:
       explode: true
       schema:
         type: string
-        format: date
+        format: number
     publishedBeforeParam:
       name: published_before
       in: query
