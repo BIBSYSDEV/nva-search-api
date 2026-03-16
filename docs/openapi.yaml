@@ -2432,6 +2432,8 @@ components:
           value: "category:desc"
         created_date:
           value: "created_date"
+        composite:
+          value: "category:asc,created_date:desc"
       schema:
         type: string
         enum:
