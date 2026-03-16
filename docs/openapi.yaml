@@ -1170,7 +1170,13 @@ components:
       name: fields
       in: query
       description: "'fields=all' will search all fields in documents, or you can specify a comma separated list of fields to search in."
-      example: "all"
+      examples:
+        all:
+          summary: All fields
+          value: "all"
+        multiple:
+          summary: Multiple fields
+          value: "category,contributor,funding"
       required: false
       style: form
       explode: true
