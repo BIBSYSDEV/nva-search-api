@@ -1169,16 +1169,18 @@ components:
       examples:
         all:
           summary: All fields
-          value: "all"
+          value: ["all"]
         multiple:
           summary: Multiple fields
-          value: "category,contributor,funding"
+          value: ["category","contributor","funding"]
       required: false
       style: form
       explode: true
       schema:
-        type: string
-        enum: [ all, category,contributor,created_before,created_since,doi,funding,funding_source,id,institution ,isbn,issn,orcid,modified_before,modified_since,project_code,published_before,published_since,title,unit,user,year_reported ]
+        type: array
+        items:
+          type: string
+          enum: [ all, category,contributor,created_before,created_since,doi,funding,funding_source,id,institution,isbn,issn,orcid,modified_before,modified_since,project_code,published_before,published_since,title,unit,user,year_reported ]
     fundingParam:
       name: funding
       in: query
@@ -1622,12 +1624,13 @@ components:
       name: project
       in: query
       description: "Returns document with this project IDs."
-      example: "123456"
+      example: "https://api.dev.nva.aws.unit.no/cristin/project/123456"
       required: false
       style: form
       explode: true
       schema:
         type: string
+        format: uri
     projectNotParam:
       name: project_not
       in: query
@@ -1649,7 +1652,6 @@ components:
       explode: true
       schema:
         type: string
-        format: uri
     publicationLanguageParam:
       name: publication_language
       in: query
@@ -1740,7 +1742,10 @@ components:
       explode: true
       schema:
         type: string
-        format: date
+        format: array
+        items:
+          type: string
+          format: date
     publishedSinceParam:
       name: published_since
       in: query
@@ -2422,7 +2427,12 @@ components:
     sortParam:
       name: sort
       in: query
-      description: "Sorts on the given field. Default sort order is on 'published_date' in ascending order."
+      description: >-
+        Sorts on the given field(s). Default sort is 'published_date' ascending.
+        Optionally append ':asc' or ':desc' (default: desc).
+        Comma-separate for composite sorting. Valid fields: identifier, relevance,
+        category, instance_type, created_date, modified_date, published_date,
+        publication_date, title, unit_id, user.
       required: false
       style: form
       explode: true
@@ -2431,20 +2441,13 @@ components:
           value: "category:asc"
         descending:
           value: "category:desc"
-        created_date:
+        default_order:
           value: "created_date"
         composite:
           value: "category:asc,created_date:desc"
       schema:
         type: string
-        enum:
-          - category:asc
-          - category:desc
-          - created_date
-          - modified_date
-          - published_date
-          - title
-          - unit_id
+        pattern: '^(\w+(:(asc|desc))?,)*\w+(:(asc|desc))?$'
     #--- not in use
     langParam:
       deprecated: true
