@@ -72,7 +72,10 @@ class ResourceSearchContainerTests {
     container.withEnv("indices.query.bool.max_clause_count", "2048").start();
 
     try {
-      var restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
+      var restClientBuilder =
+          RestClient.builder(HttpHost.create(container.getHttpHostAddress()))
+              .setHttpClientConfigCallback(
+                  httpClientBuilder -> httpClientBuilder.disableContentCompression());
 
       var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
       var cachedJwtProvider = setupMockedCachedJwtProvider();

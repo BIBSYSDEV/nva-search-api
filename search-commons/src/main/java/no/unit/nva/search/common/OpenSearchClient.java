@@ -9,7 +9,6 @@ import static no.unit.nva.constants.Words.CONTENT_TYPE;
 import static nva.commons.core.attempt.Try.attempt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.common.net.MediaType;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -24,6 +23,7 @@ import no.unit.nva.search.common.jwt.CachedJwtProvider;
 import no.unit.nva.search.common.records.QueryContentWrapper;
 import no.unit.nva.search.common.records.ResponseLogInfo;
 import no.unit.nva.search.common.records.SwsResponse;
+import nva.commons.apigateway.MediaType;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.FunctionWithException;
 import org.slf4j.Logger;

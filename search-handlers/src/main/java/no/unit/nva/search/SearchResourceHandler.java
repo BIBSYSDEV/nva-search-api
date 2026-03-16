@@ -11,7 +11,6 @@ import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.Map;
@@ -23,11 +22,14 @@ import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.ResourceSearchQuery;
 import no.unit.nva.search.resource.SimplifiedMutator;
 import nva.commons.apigateway.ApiGatewayHandler;
+import nva.commons.apigateway.MediaType;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 import org.apache.hc.core5.http.HttpHeaders;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handler for searching resources.
@@ -36,6 +38,7 @@ import org.apache.hc.core5.http.HttpHeaders;
  */
 public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(SearchResourceHandler.class);
   private final ResourceClient opensearchClient;
 
   @JacocoGenerated
@@ -61,6 +64,8 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
   @Override
   protected String processInput(Void input, RequestInfo requestInfo, Context context)
       throws BadRequestException {
+    LOGGER.info("Resource search query headers: {}", requestInfo.getHeaders());
+    LOGGER.info("Resource search query parameters: {}", requestInfo.getQueryParameters());
     var version = ContentTypeUtils.extractVersionFromRequestInfo(requestInfo);
 
     addAdditionalHeaders(() -> Map.of(HttpHeaders.VARY, HttpHeaders.ACCEPT));

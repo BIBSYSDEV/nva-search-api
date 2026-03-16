@@ -14,6 +14,7 @@ import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCached
 import static no.unit.nva.search.resource.ResourceClientTest.USER_SETTINGS_JSON;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
+import static no.unit.nva.testutils.RandomDataGenerator.randomInteger;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
@@ -544,6 +545,358 @@ public class ResourceClientAllScientificValuesTest {
     var response = doSearchWithUri(uriWithQueryParameter("excludeParentType", randomString()));
 
     assertTrue(response.toPagedResponse().hits().isEmpty());
+  }
+
+  @Test
+  void shouldReturnDocumentWhereParentPublicationYearIsMatchingProvidedYear()
+      throws IOException, BadRequestException {
+    var year = randomInteger();
+    var json =
+        """
+                    {
+                   "type": "Publication",
+                   "entityDescription": {
+                     "type": "EntityDescription",
+                     "reference": {
+                       "type": "Reference",
+                       "publicationContext": {
+                           "entityDescription": {
+                               "type": "EntityDescription",
+                               "publicationDate": {
+                                  "year": "%d"
+                               }
+                           },
+                           "type": "Anthology"
+                       }
+                     }
+                   }
+                 }
+        """
+            .formatted(year);
+    createIndexAndIndexDocument(json);
+    var response =
+        doSearchWithUri(uriWithQueryParameter("parentPublicationYear", String.valueOf(year)));
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
+  @Test
+  void shouldExcludeDocumentWhereParentPublicationYearIsNotMatchingProvidedYear()
+      throws IOException, BadRequestException {
+    var year = randomInteger();
+    var json =
+        """
+                    {
+                   "type": "Publication",
+                   "entityDescription": {
+                     "type": "EntityDescription",
+                     "reference": {
+                       "type": "Reference",
+                       "publicationContext": {
+                           "entityDescription": {
+                               "type": "EntityDescription",
+                               "publicationDate": {
+                                  "year": "%d"
+                               }
+                           },
+                           "type": "Anthology"
+                       }
+                     }
+                   }
+                 }
+        """
+            .formatted(year);
+    createIndexAndIndexDocument(json);
+    var response =
+        doSearchWithUri(
+            uriWithQueryParameter("excludeParentPublicationYear", String.valueOf(year)));
+
+    assertTrue(response.toPagedResponse().hits().isEmpty());
+  }
+
+  @Test
+  void
+      shouldReturnDocumentsWithNotVerifiedContributorAtUserInstitutionWhenProvidedInstitutionsIsUserAffiliation()
+          throws IOException, BadRequestException {
+    var institution = randomString();
+    var contributor =
+        """
+        {
+          "role": {
+            "type": "Creator"
+          },
+          "identity": {
+            "verificationStatus": "NotVerified",
+            "type": "Identity"
+          },
+          "affiliations": [
+            {
+              "id": "%s",
+              "type": "Organization"
+            }
+          ],
+          "type": "Contributor"
+        }
+        """
+            .formatted(institution);
+    var json = jsonWithContributors(contributor);
+    createIndexAndIndexDocument(json);
+    var response =
+        doSearchWithUri(uriWithQueryParameter("unidentifiedContributorInstitution", institution));
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
+  @Test
+  void
+      shouldReturnDocumentsWithNotVerifiedContributorAtUserInstitutionWhenProvidedInstitutionsIsUserInstitution()
+          throws IOException, BadRequestException {
+    var partOfInstitution = randomString();
+    var contributor =
+        """
+        {
+          "role": {
+            "type": "Creator"
+          },
+          "identity": {
+            "verificationStatus": "NotVerified",
+            "type": "Identity"
+          },
+          "affiliations": [
+            {
+              "institutionId": "%s",
+              "id": "https://api.nva.unit.no/cristin/organization/1.1.1.0",
+              "type": "Organization"
+            }
+          ],
+          "type": "Contributor"
+        }
+        """
+            .formatted(partOfInstitution);
+    var json = jsonWithContributors(contributor);
+    createIndexAndIndexDocument(json);
+    var response =
+        doSearchWithUri(
+            uriWithQueryParameter("unidentifiedContributorInstitution", partOfInstitution));
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
+  @Test
+  void shouldReturnDocumentsWhenCountryCodeIsMatching() throws IOException, BadRequestException {
+    var countryCode = randomString();
+    var contributor = contributorWithCountryCode(countryCode);
+    var json = jsonWithContributors(contributor, contributorWithCountryCode(randomString()));
+    createIndexAndIndexDocument(json);
+    var response = doSearchWithUri(uriWithQueryParameter("countryCode", countryCode));
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
+  @Test
+  void shouldNotReturnDocumentsWhenCountryCodeIsNotMatching()
+      throws IOException, BadRequestException {
+    var contributor = contributorWithCountryCode(randomString());
+    var json = jsonWithContributors(contributor);
+    createIndexAndIndexDocument(json);
+    var response = doSearchWithUri(uriWithQueryParameter("countryCode", randomString()));
+
+    assertTrue(response.toPagedResponse().hits().isEmpty());
+  }
+
+  @Test
+  void shouldNotReturnDocumentsWhenCountryCodeIsExcluded() throws IOException, BadRequestException {
+    var excludedCountryCode = randomString();
+    var contributor = contributorWithCountryCode(excludedCountryCode);
+    var json = jsonWithContributors(contributor, contributorWithCountryCode(randomString()));
+    createIndexAndIndexDocument(json);
+    var response =
+        doSearchWithUri(uriWithQueryParameter("excludeCountryCode", excludedCountryCode));
+
+    assertTrue(response.toPagedResponse().hits().isEmpty());
+  }
+
+  @Test
+  void shouldReturnDocumentsWhenCountryCodeDifferFromExcludedCountryCode()
+      throws IOException, BadRequestException {
+    var contributor = contributorWithCountryCode(randomString());
+    var json = jsonWithContributors(contributor);
+    createIndexAndIndexDocument(json);
+    var response = doSearchWithUri(uriWithQueryParameter("excludeCountryCode", randomString()));
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
+  @Test
+  void shouldReturnDocumentWhereAllContributorsAreMissingAffiliation()
+      throws IOException, BadRequestException {
+    var contributor =
+        """
+           {
+             "type": "Contributor"
+           }
+        """;
+    var json = jsonWithContributors(contributor);
+    createIndexAndIndexDocument(json);
+    var response = doSearchWithUri(uriWithQueryParameter("missingAffiliations", TRUE.toString()));
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
+  @Test
+  void shouldNotReturnDocumentWhereOneOfContributorsIsMissingAffiliationsAndOtherHaveAffiliations()
+      throws IOException, BadRequestException {
+    var contributor =
+        """
+           {
+             "type": "Contributor"
+           }
+        """;
+    var json = jsonWithContributors(contributor, contributorWithCountryCode(randomString()));
+    createIndexAndIndexDocument(json);
+    var response = doSearchWithUri(uriWithQueryParameter("missingAffiliations", TRUE.toString()));
+
+    assertTrue(response.toPagedResponse().hits().isEmpty());
+  }
+
+  @Test
+  void shouldNotReturnDocumentWhereContributorHasAffiliation()
+      throws IOException, BadRequestException {
+    var json = jsonWithContributors(contributorWithCountryCode(randomString()));
+    createIndexAndIndexDocument(json);
+    var response = doSearchWithUri(uriWithQueryParameter("missingAffiliations", FALSE.toString()));
+
+    assertFalse(response.toPagedResponse().hits().isEmpty());
+  }
+
+  @Test
+  void shouldReturnDocumentsWithScopusIdentifier() throws IOException, BadRequestException {
+    var json =
+        """
+        {
+             "type": "Publication",
+             "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
+             "additionalIdentifiers": [
+               {
+                  "type": "ScopusIdentifier"
+               }
+             ]
+           }
+        """;
+    createIndexAndIndexDocument(json);
+    var response = doSearchWithUri(uriWithQueryParameter("hasScopusIdentifier", TRUE.toString()));
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
+  @Test
+  void shouldNotReturnDocumentsWithoutScopusIdentifier() throws IOException, BadRequestException {
+    var json =
+        """
+        {
+             "type": "Publication",
+             "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
+             "additionalIdentifiers": [
+               {
+                  "type": "OtherIdentifier"
+               }
+             ]
+           }
+        """;
+    createIndexAndIndexDocument(json);
+    var response = doSearchWithUri(uriWithQueryParameter("hasScopusIdentifier", TRUE.toString()));
+
+    assertTrue(response.toPagedResponse().hits().isEmpty());
+  }
+
+  @Test
+  void shouldReturnDocumentsWithoutScopusIdentifier() throws IOException, BadRequestException {
+    var json =
+        """
+        {
+             "type": "Publication",
+             "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
+             "additionalIdentifiers": [
+               {
+                  "type": "OtherIdentifier"
+               }
+             ]
+           }
+        """;
+    createIndexAndIndexDocument(json);
+    var response = doSearchWithUri(uriWithQueryParameter("hasScopusIdentifier", FALSE.toString()));
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"0-306-40615-2", "0306406152", "0-19-853453-X"})
+  void shouldReturnDocumentsWithIsbnInNestedEntityDescription(String isbn)
+      throws IOException, BadRequestException {
+    var json =
+        """
+                 {
+                       "type": "Publication",
+                       "entityDescription": {
+                         "type": "EntityDescription",
+                         "reference": {
+                           "type": "Reference",
+                           "publicationContext": {
+                             "entityDescription": {
+                               "type": "EntityDescription",
+                               "reference": {
+                                 "type": "Reference",
+                                 "publicationContext": {
+                                   "isbnList": [ "%s" ]
+                                 }
+                               }
+                             }
+                           }
+                         }
+                       }
+                     }
+        """
+            .formatted(isbn);
+    createIndexAndIndexDocument(json);
+    var response = doSearchWithUri(uriWithQueryParameter("ISBN", isbn));
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
+  private static String contributorWithCountryCode(String countryCode) {
+    return """
+           {
+             "role": {
+               "type": "Creator"
+             },
+             "identity": {
+               "verificationStatus": "NotVerified",
+               "type": "Identity"
+             },
+             "affiliations": [
+               {
+                 "countryCode": "%s",
+                 "type": "Organization"
+               }
+             ],
+             "type": "Contributor"
+           }
+           """
+        .formatted(countryCode);
+  }
+
+  private String jsonWithContributors(String... contributors) {
+    return """
+           {
+             "type": "Publication",
+             "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
+             "entityDescription": {
+               "type": "EntityDescription",
+                     "contributors": [ %s ]
+             }
+           }
+           """
+        .formatted(String.join(", ", contributors));
   }
 
   private static String jsonWithParentPublicationType(String parentPublicationType) {

@@ -1,12 +1,10 @@
 package no.unit.nva.search.resource;
 
 import static no.unit.nva.constants.Words.ADDITIONAL_IDENTIFIERS;
-import static no.unit.nva.constants.Words.AFFILIATIONS;
 import static no.unit.nva.constants.Words.ASTERISK;
 import static no.unit.nva.constants.Words.COLON;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.CONTRIBUTORS;
-import static no.unit.nva.constants.Words.COUNTRY_CODE;
 import static no.unit.nva.constants.Words.CREATOR;
 import static no.unit.nva.constants.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.constants.Words.FUNDINGS;
@@ -16,6 +14,7 @@ import static no.unit.nva.constants.Words.KEYWORD;
 import static no.unit.nva.constants.Words.NO;
 import static no.unit.nva.constants.Words.NOT_VERIFIED;
 import static no.unit.nva.constants.Words.ROLE;
+import static no.unit.nva.constants.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.constants.Words.SOURCE;
 import static no.unit.nva.constants.Words.SPACE;
 import static no.unit.nva.constants.Words.TYPE;
@@ -23,6 +22,9 @@ import static no.unit.nva.constants.Words.VALUE;
 import static no.unit.nva.constants.Words.VERIFICATION_STATUS;
 import static no.unit.nva.constants.Words.VERIFIED;
 import static no.unit.nva.search.common.constant.Functions.jsonPath;
+import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_AFFILIATION_ID_KEYWORD;
+import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_INSTITUTION_ID_KEYWORD;
+import static no.unit.nva.search.resource.Constants.COUNTRY_CODE_PATH;
 import static no.unit.nva.search.resource.Constants.ENTITY_ABSTRACT;
 import static no.unit.nva.search.resource.Constants.ENTITY_CONTRIBUTORS;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
@@ -67,8 +69,6 @@ import org.opensearch.index.query.QueryBuilder;
  */
 public class ResourceStreamBuilders {
 
-  public static final String COUNTRY_CODE_PATH =
-      jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, COUNTRY_CODE, KEYWORD);
   public static final String CONTRIBUTOR_ROLE_PATH =
       jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, ROLE, TYPE, KEYWORD);
   public static final String VERIFICATION_STATUS_PATH =
@@ -81,8 +81,6 @@ public class ResourceStreamBuilders {
       jsonPath(ADDITIONAL_IDENTIFIERS, TYPE, KEYWORD);
   public static final String FUNDING_SOURCE_IDENTIFIER =
       jsonPath(FUNDINGS, SOURCE, IDENTIFIER, KEYWORD);
-  public static final String CONTRIBUTOR_AFFILIATIONS =
-      jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS);
   public static final String FUNDINGS_IDENTIFIER = jsonPath(FUNDINGS, IDENTIFIER, KEYWORD);
   private final QueryKeys<ResourceParameter> parameters;
 
@@ -151,15 +149,21 @@ public class ResourceStreamBuilders {
     return Functions.queryToEntry(key, query);
   }
 
-  @JacocoGenerated
   public Stream<Map.Entry<ResourceParameter, QueryBuilder>> unIdentifiedContributorOrInstitution(
       ResourceParameter key) {
+    var value = parameters.get(key).toString();
     var query =
-        boolQuery()
-            .must(termQuery(CONTRIBUTOR_ROLE_PATH, CREATOR))
-            .should(boolQuery().mustNot(termQuery(VERIFICATION_STATUS_KEYWORD, VERIFIED)))
-            .should(boolQuery().mustNot(existsQuery(CONTRIBUTOR_AFFILIATIONS)))
-            .minimumShouldMatch(1);
+        nestedQuery(
+            jsonPath(ENTITY_CONTRIBUTORS),
+            boolQuery()
+                .must(termQuery(CONTRIBUTOR_ROLE_PATH, CREATOR))
+                .mustNot(termQuery(VERIFICATION_STATUS_KEYWORD, VERIFIED))
+                .must(
+                    boolQuery()
+                        .should(termQuery(CONTRIBUTORS_AFFILIATION_ID_KEYWORD, value))
+                        .should(termQuery(CONTRIBUTORS_INSTITUTION_ID_KEYWORD, value))
+                        .minimumShouldMatch(1)),
+            ScoreMode.None);
     return Functions.queryToEntry(key, query);
   }
 
@@ -298,6 +302,20 @@ public class ResourceStreamBuilders {
             .mustNot(termsQuery(PARENT_PUBLICATION_TYPE, values));
 
     return Functions.queryToEntry(resourceParameter, query);
+  }
+
+  public Stream<Entry<ResourceParameter, QueryBuilder>> scopusIdentifierQuery(
+      ResourceParameter key) {
+    var value = parameters.get(key).toString();
+    var query =
+        nestedQuery(
+            ADDITIONAL_IDENTIFIERS,
+            Boolean.TRUE.toString().equals(value)
+                ? boolQuery().must(termQuery(ADDITIONAL_IDENTIFIERS_TYPE_PATH, SCOPUS_AS_TYPE))
+                : boolQuery().mustNot(termQuery(ADDITIONAL_IDENTIFIERS_TYPE_PATH, SCOPUS_AS_TYPE)),
+            ScoreMode.None);
+
+    return Functions.queryToEntry(key, query);
   }
 
   private Boolean shouldSearchSpecifiedInstitutionOnly() {

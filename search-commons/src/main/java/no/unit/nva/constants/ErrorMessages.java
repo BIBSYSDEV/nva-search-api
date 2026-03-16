@@ -31,6 +31,10 @@ public final class ErrorMessages {
   public static final String OPERATOR_NOT_SUPPORTED = "Operator not supported";
   public static final String RELEVANCE_SEARCH_AFTER_ARE_MUTUAL_EXCLUSIVE =
       "Sorted by relevance & searchAfter are mutual exclusive.";
+  public static final String PAGINATION_PARAMETERS_ARE_MUTUAL_EXCLUSIVE =
+      "Parameters 'page', 'offset'/'from', and 'search_after' are mutually exclusive.";
+  public static final String RESULT_WINDOW_TOO_LARGE =
+      "Result window is too large, from + size must be less than or equal to: [%d] but was [%d]";
   public static final String TOO_MANY_ARGUMENTS = "too many arguments: ";
 
   public static final String TEMPLATE_INVALID_QUERY_PARAMETERS =

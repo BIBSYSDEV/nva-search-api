@@ -47,12 +47,14 @@ import static no.unit.nva.search.common.enums.ParameterKind.NUMBER;
 import static no.unit.nva.search.common.enums.ParameterKind.TEXT;
 import static no.unit.nva.search.resource.Constants.ASSOCIATED_ARTIFACTS_LICENSE;
 import static no.unit.nva.search.resource.Constants.CHILD_PUBLICATIONS_KEYWORD;
+import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_AFFILIATION;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_AFFILIATION_ID_KEYWORD;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_FIELDS;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_IDENTITY_ID;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_IDENTITY_NAME_KEYWORD;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTOR_COUNT_NO_KEYWORD;
+import static no.unit.nva.search.resource.Constants.COUNTRY_CODE_PATH;
 import static no.unit.nva.search.resource.Constants.COURSE_CODE_KEYWORD;
 import static no.unit.nva.search.resource.Constants.ENTITY_ABSTRACT;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION;
@@ -71,6 +73,7 @@ import static no.unit.nva.search.resource.Constants.FUNDINGS_SOURCE_IDENTIFIER_F
 import static no.unit.nva.search.resource.Constants.FUNDING_IDENTIFIER_KEYWORD;
 import static no.unit.nva.search.resource.Constants.HANDLE_KEYWORD;
 import static no.unit.nva.search.resource.Constants.IDENTIFIER_KEYWORD;
+import static no.unit.nva.search.resource.Constants.PARENT_PUBLICATION_DATE_YEAR;
 import static no.unit.nva.search.resource.Constants.PARENT_PUBLICATION_ID;
 import static no.unit.nva.search.resource.Constants.PARENT_PUBLICATION_TYPE;
 import static no.unit.nva.search.resource.Constants.PUBLICATION_CONTEXT_ISBN_LIST;
@@ -121,6 +124,7 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
   ABSTRACT(TEXT, ALL_OF, ENTITY_ABSTRACT),
   ABSTRACT_NOT(TEXT, NOT_ALL_OF, ENTITY_ABSTRACT),
   ABSTRACT_SHOULD(TEXT, ANY_OF, ENTITY_ABSTRACT),
+  COUNTRY_CODE(KEYWORD, ANY_OF, COUNTRY_CODE_PATH),
   CONTEXT_TYPE(KEYWORD, ALL_OF, PUBLICATION_CONTEXT_TYPE_KEYWORD),
   CONTEXT_TYPE_NOT(KEYWORD, NOT_ALL_OF, PUBLICATION_CONTEXT_TYPE_KEYWORD),
   CONTEXT_TYPE_SHOULD(KEYWORD, ANY_OF, PUBLICATION_CONTEXT_TYPE_KEYWORD),
@@ -141,6 +145,7 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
   DOI(FUZZY_KEYWORD, REFERENCE_DOI_KEYWORD),
   DOI_NOT(FUZZY_KEYWORD, NOT_ALL_OF, REFERENCE_DOI_KEYWORD),
   DOI_SHOULD(TEXT, ANY_OF, REFERENCE_DOI_KEYWORD),
+  EXCLUDE_COUNTRY_CODE(KEYWORD, NOT_ANY_OF, COUNTRY_CODE_PATH),
   /** excludeSubUnits holds path to hierarchical search, used by several keys. */
   EXCLUDE_SUBUNITS(FLAG, Constants.CONTRIBUTOR_ORG_KEYWORD),
   FUNDING(CUSTOM, ALL_OF, FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER, null, PATTERN_IS_FUNDING),
@@ -154,6 +159,7 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
   FUNDING_SOURCE_SHOULD(TEXT, ANY_OF, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
   HANDLE(FUZZY_KEYWORD, ANY_OF, HANDLE_KEYWORD, PHI),
   HANDLE_NOT(FUZZY_KEYWORD, NOT_ANY_OF, HANDLE_KEYWORD, PHI),
+  HAS_SCOPUS_IDENTIFIER(CUSTOM),
   FILES(KEYWORD, ALL_OF, FILES_STATUS_KEYWORD),
   ID(KEYWORD, ANY_OF, IDENTIFIER_KEYWORD),
   ID_NOT(KEYWORD, NOT_ANY_OF, IDENTIFIER_KEYWORD),
@@ -176,6 +182,7 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
   JOURNAL_SHOULD(FUZZY_KEYWORD, ANY_OF, ENTITY_DESCRIPTION_REFERENCE_JOURNAL),
   LICENSE(FUZZY_KEYWORD, ALL_OF, ASSOCIATED_ARTIFACTS_LICENSE),
   LICENSE_NOT(FUZZY_KEYWORD, NOT_ALL_OF, ASSOCIATED_ARTIFACTS_LICENSE),
+  MISSING_AFFILIATIONS(EXISTS, NOT_ALL_OF, CONTRIBUTORS_AFFILIATION),
   MODIFIED_BEFORE(DATE, LESS_THAN, MODIFIED_DATE),
   MODIFIED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, MODIFIED_DATE),
   ORCID(KEYWORD, ALL_OF, CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD),
@@ -183,6 +190,8 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
   ORCID_SHOULD(TEXT, ANY_OF, CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD),
   PARENT_PUBLICATION(KEYWORD, ANY_OF, PARENT_PUBLICATION_ID),
   PARENT_PUBLICATION_EXIST(EXISTS, ANY_OF, PARENT_PUBLICATION_ID),
+  PARENT_PUBLICATION_YEAR(KEYWORD, ANY_OF, PARENT_PUBLICATION_DATE_YEAR),
+  EXCLUDE_PARENT_PUBLICATION_YEAR(KEYWORD, NOT_ANY_OF, PARENT_PUBLICATION_DATE_YEAR),
   PARENT_TYPE(KEYWORD, ANY_OF, PARENT_PUBLICATION_TYPE),
   EXCLUDE_PARENT_TYPE(CUSTOM, ANY_OF, PARENT_PUBLICATION_TYPE),
   PROJECT(KEYWORD, ANY_OF, PROJECTS_ID),

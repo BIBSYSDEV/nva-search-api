@@ -11,6 +11,7 @@ import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.CONTRIBUTOR;
 import static no.unit.nva.constants.Words.CONTRIBUTORS;
 import static no.unit.nva.constants.Words.CONTRIBUTOR_ORGANIZATIONS;
+import static no.unit.nva.constants.Words.COUNTRY_CODE;
 import static no.unit.nva.constants.Words.COURSE;
 import static no.unit.nva.constants.Words.DOI;
 import static no.unit.nva.constants.Words.ENGLISH_CODE;
@@ -23,6 +24,7 @@ import static no.unit.nva.constants.Words.HANDLE;
 import static no.unit.nva.constants.Words.ID;
 import static no.unit.nva.constants.Words.IDENTIFIER;
 import static no.unit.nva.constants.Words.IDENTITY;
+import static no.unit.nva.constants.Words.INSTITUTION_ID;
 import static no.unit.nva.constants.Words.ISBN_LIST;
 import static no.unit.nva.constants.Words.ISBN_PREFIX;
 import static no.unit.nva.constants.Words.ISSN_FIELD;
@@ -110,6 +112,8 @@ public final class Constants {
   public static final String IDENTIFIER_KEYWORD = jsonPath(IDENTIFIER, KEYWORD);
   public static final String FILES_STATUS_KEYWORD = jsonPath(FILES_STATUS, KEYWORD);
   public static final String ENTITY_CONTRIBUTORS = jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS);
+  public static final String COUNTRY_CODE_PATH =
+      jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, COUNTRY_CODE, KEYWORD);
   public static final String CONTRIBUTOR_COUNT_NO_KEYWORD =
       jsonPath(ENTITY_DESCRIPTION, "contributorsCount");
   public static final String ENTITY_PUBLICATION_CONTEXT =
@@ -125,6 +129,11 @@ public final class Constants {
 
   public static final String CONTRIBUTORS_AFFILIATION_ID_KEYWORD =
       jsonPath(ENTITY_CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD);
+
+  public static final String CONTRIBUTORS_AFFILIATION = jsonPath(ENTITY_CONTRIBUTORS, AFFILIATIONS);
+
+  public static final String CONTRIBUTORS_INSTITUTION_ID_KEYWORD =
+      jsonPath(ENTITY_CONTRIBUTORS, AFFILIATIONS, INSTITUTION_ID, KEYWORD);
 
   public static final String CONTRIBUTORS_AFFILIATION_LABELS =
       jsonPath(ENTITY_CONTRIBUTORS, AFFILIATIONS, LABELS);
@@ -179,6 +188,8 @@ public final class Constants {
   public static final String SUBJECTS = "subjects";
   public static final String ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR =
       jsonPath(ENTITY_DESCRIPTION, PUBLICATION_DATE, YEAR);
+  public static final String PARENT_PUBLICATION_DATE_YEAR =
+      jsonPath(ENTITY_PUBLICATION_CONTEXT, ENTITY_DESCRIPTION, PUBLICATION_DATE, YEAR, KEYWORD);
   public static final String REFERENCE_DOI_KEYWORD =
       multipleFields(jsonPath(ENTITY_DESCRIPTION, REFERENCE, DOI, KEYWORD), jsonPath(DOI, KEYWORD));
   public static final String ASSOCIATED_ARTIFACTS_LABELS =
@@ -194,7 +205,9 @@ public final class Constants {
   public static final String PUBLISHER_ID_KEYWORD = jsonPath(PUBLISHER, ID, KEYWORD);
   public static final String STATUS_KEYWORD = jsonPath(STATUS, KEYWORD);
   public static final String PUBLICATION_CONTEXT_ISBN_LIST =
-      jsonPath(ENTITY_PUBLICATION_CONTEXT, ISBN_LIST);
+      multipleFields(
+          jsonPath(ENTITY_PUBLICATION_CONTEXT, ISBN_LIST),
+          jsonPath(ENTITY_PUBLICATION_CONTEXT, ENTITY_PUBLICATION_CONTEXT, ISBN_LIST));
   public static final String PUBLICATION_CONTEXT_TYPE_KEYWORD =
       jsonPath(ENTITY_PUBLICATION_CONTEXT, TYPE, KEYWORD);
   public static final String PUBLICATION_INSTANCE_TYPE =
