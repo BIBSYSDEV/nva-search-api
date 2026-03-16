@@ -1685,13 +1685,19 @@ components:
     publicationYearParam:
       name: publication_year
       in: query
-      description: "Returns document with this publication year."
-      example: 2022
+      description: "Returns documents with any of these publication years."
+      examples:
+        single:
+          summary: Single year
+          value: "2022"
+        multiple:
+          summary: One of multiple possible years
+          value: "2022,2023"
       required: false
       style: form
       explode: true
       schema:
-        type: number
+        type: string
     publicationYearBeforeParam:
       name: publication_year_before
       in: query
@@ -1712,16 +1718,6 @@ components:
       schema:
         type: string
         format: date
-    publicationYearShouldParam:
-      name: publication_year_should
-      in: query
-      description: "Returns document with any of these publication years."
-      example: 2022
-      required: false
-      style: form
-      explode: true
-      schema:
-        type: number
     publishedBeforeParam:
       name: published_before
       in: query
