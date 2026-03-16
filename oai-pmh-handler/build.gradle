@@ -3,24 +3,22 @@ plugins {
 }
 
 dependencies {
+    implementation libs.glassfish.jaxb.runtime
+    implementation libs.jakarta.xml.bind.api
+    implementation nvaCatalog.aws.lambda.core
+    implementation nvaCatalog.bundles.jackson
+    implementation nvaCatalog.bundles.jena
+    implementation nvaCatalog.bundles.logging
+    implementation nvaCatalog.guava
+    implementation nvaLibs.apigateway
+    implementation nvaLibs.core
+    implementation nvaLibs.json
     implementation project(':oai-pmh')
     implementation project(':search-commons')
-
-    implementation libs.aws.lambda.java.core
-    implementation libs.bundles.logging
-    implementation libs.nva.core
-    implementation libs.nva.json
-    implementation libs.nva.apigateway
-    implementation libs.guava
-    implementation libs.jakarta.xml.bind.api
-    implementation libs.glassfish.jaxb.runtime
-    implementation libs.bundles.jackson
-    implementation libs.bundles.jena
-
-    testImplementation libs.nva.identifiers
     testImplementation libs.xml.unit.core
     testImplementation libs.xml.unit.matchers
-    testImplementation libs.bundles.testcontainers
+    testImplementation nvaCatalog.bundles.testing.testcontainers
+    testImplementation nvaLibs.identifiers
     testImplementation project(':search-testing')
 }
 

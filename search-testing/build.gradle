@@ -1,17 +1,19 @@
 dependencies {
-    implementation project(":search-commons")
-
-    implementation libs.nva.core
-    implementation libs.nva.json
-    implementation libs.bundles.jackson
     implementation libs.bundles.opensearch
-
-    implementation libs.aws.sdk2.sqs
-
-    implementation libs.bundles.testing
-    implementation(libs.bundles.testcontainers) {
-        exclude group: 'org.apache.commons', module: 'commons-compress'
-    }
-    implementation libs.com.auth0.jwt
-    implementation libs.csv
+    implementation libs.log4j.test
+    implementation nvaCatalog.assertj.core
+    implementation nvaCatalog.aws.sdk2.sqs
+    implementation nvaCatalog.bundles.jackson
+    implementation nvaCatalog.bundles.testing.hamcrest
+    implementation nvaCatalog.bundles.testing.junit
+    implementation nvaCatalog.bundles.testing.mockito
+    implementation nvaCatalog.com.auth0.jwt
+    implementation nvaCatalog.javers
+    implementation nvaCatalog.opencsv
+    implementation nvaLibs.core
+    implementation nvaLibs.json
+    implementation nvaLibs.logutils
+    implementation nvaLibs.testutils
+    implementation project(":search-commons")
+    implementation(nvaCatalog.bundles.testing.testcontainers)
 }
