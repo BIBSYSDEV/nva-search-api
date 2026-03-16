@@ -2,24 +2,19 @@ plugins {
     id 'nva.search.service.java-conventions'
 }
 dependencies {
-
+    implementation nvaCatalog.aws.lambda.events
+    implementation nvaCatalog.aws.sdk2.s3
+    implementation nvaCatalog.aws.sdk2.sqs
+    implementation nvaCatalog.bundles.jackson
+    implementation nvaCatalog.bundles.logging
+    implementation nvaLibs.core
+    implementation nvaLibs.eventhandlers
+    implementation nvaLibs.json
+    implementation nvaLibs.s3
     implementation project(':search-commons')
-
-    implementation libs.nva.core
-    implementation libs.nva.json
-    implementation libs.nva.eventhandlers
-    implementation libs.nva.s3
-    implementation libs.bundles.logging
-    implementation libs.bundles.jackson
-
-    implementation libs.aws.lambda.events
-    implementation libs.aws.sdk2.s3
-    implementation libs.aws.sdk2.sqs
-
-    testImplementation libs.nva.identifiers
-    testImplementation libs.nva.testutils
+    testImplementation nvaLibs.identifiers
+    testImplementation nvaLibs.testutils
     testImplementation project(':search-testing')
-    testImplementation libs.bundles.testing
 }
 
 test {

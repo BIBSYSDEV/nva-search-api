@@ -2,33 +2,28 @@ plugins {
     id 'nva.search.service.java-conventions'
 }
 dependencies {
-
-    implementation project(':search-commons')
-
-    implementation libs.bundles.jackson
     implementation libs.bundles.opensearch
-    implementation libs.nva.core
-    implementation libs.nva.json
-    implementation libs.nva.s3 //TODO: Temporary until refactor to commons
-    implementation libs.nva.auth
-    implementation libs.nva.apigateway
-    implementation libs.bundles.logging
-    implementation libs.guava
-    implementation libs.opensearch.java
-    implementation libs.aws.sdk2.s3 //TODO: Temporary until refactor to commons
-    implementation libs.aws.sdk2.urlconnection //TODO: Temporary until refactor to commons
-    testImplementation libs.apache.http
+    implementation nvaCatalog.aws.sdk2.s3 //TODO: Temporary until refactor to commons
+    implementation nvaCatalog.aws.sdk2.urlconnection //TODO: Temporary until refactor to commons
+    implementation nvaCatalog.bundles.jackson
+    implementation nvaCatalog.bundles.logging
+    implementation nvaCatalog.com.auth0.jwt
+    implementation nvaCatalog.guava
+    implementation nvaCatalog.opensearch.java
+    implementation nvaCatalog.zalando
+    implementation nvaLibs.apigateway
+    implementation nvaLibs.auth
+    implementation nvaLibs.core
+    implementation nvaLibs.json
+    implementation nvaLibs.s3 //TODO: Temporary until refactor to commons
+    implementation project(':search-commons')
     testImplementation libs.opensearch.rest.highlevel.client
-    implementation libs.com.auth0.jwt
-
-    implementation libs.problem
-
-    testImplementation libs.nva.identifiers
-    testImplementation libs.bundles.logging
-    testImplementation libs.bundles.testing
-    testImplementation libs.bundles.testcontainers
-    testImplementation project(':search-testing')
+    testImplementation nvaCatalog.bundles.logging
+    testImplementation nvaCatalog.bundles.testing.testcontainers
+    testImplementation nvaCatalog.httpclient5
+    testImplementation nvaLibs.identifiers
     testImplementation project(':search-commons')
+    testImplementation project(':search-testing')
 }
 
 test {

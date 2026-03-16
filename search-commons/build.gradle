@@ -3,37 +3,32 @@ plugins {
 }
 
 dependencies {
-    implementation libs.apache.http
-    implementation libs.aws.lambda.events
-    implementation libs.aws.lambda.java.core
-    implementation libs.aws.sdk2.sqs
-    implementation libs.bundles.logging
-    implementation libs.jackson.core
-    implementation libs.jackson.databind
-    implementation libs.nva.core
-    implementation libs.nva.json
-    implementation libs.nva.s3
-    implementation libs.bundles.jackson
-    implementation libs.bundles.jacksonjr
-    implementation(libs.bundles.testcontainers) {
-        exclude group: 'org.apache.commons', module: 'commons-compress'
-    }
-    implementation libs.com.auth0.jwt
-    implementation libs.csv
-    implementation libs.guava
-    implementation libs.nva.apigateway
-    implementation libs.nva.auth
-    implementation libs.nva.identifiers
-    implementation libs.nva.secrets
-    implementation libs.opensearch.java
     implementation libs.opensearch.rest.highlevel.client
-    implementation libs.slf4j
-    implementation libs.aws.apache.client
-
-    testImplementation libs.bundles.logging
-    testImplementation libs.bundles.testing
+    implementation nvaCatalog.aws.apache.client
+    implementation nvaCatalog.aws.lambda.core
+    implementation nvaCatalog.aws.lambda.events
+    implementation nvaCatalog.aws.sdk2.sqs
+    implementation nvaCatalog.bundles.jackson
+    implementation nvaCatalog.bundles.jacksonjr
+    implementation nvaCatalog.bundles.logging
+    implementation nvaCatalog.com.auth0.jwt
+    implementation nvaCatalog.guava
+    implementation nvaCatalog.httpclient5
+    implementation nvaCatalog.jackson.core
+    implementation nvaCatalog.jackson.databind
+    implementation nvaCatalog.opencsv
+    implementation nvaCatalog.opensearch.java
+    implementation nvaCatalog.slf4j.api
+    implementation nvaLibs.apigateway
+    implementation nvaLibs.auth
+    implementation nvaLibs.core
+    implementation nvaLibs.identifiers
+    implementation nvaLibs.json
+    implementation nvaLibs.s3
+    implementation nvaLibs.secrets
+    implementation(nvaCatalog.bundles.testing.testcontainers)
+    testImplementation nvaCatalog.bundles.logging
     testImplementation project(':search-testing')
-
 }
 
 test {
