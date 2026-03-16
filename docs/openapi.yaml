@@ -1619,36 +1619,34 @@ components:
     projectParam:
       name: project
       in: query
-      description: "Returns document with this project id (URI)."
-      example: "https://api.nva.unit.no/cristin/project/123456"
+      description: "Returns document with this project IDs."
+      example: "123456"
       required: false
       style: form
       explode: true
       schema:
         type: string
-        format: uri
     projectNotParam:
       name: project_not
       in: query
-      description: "Returns document without these project ids (URI)."
-      example: "https://api.nva.unit.no/cristin/project/123456"
+      description: "Returns document without these project IDs."
+      example: "123456"
       required: false
       style: form
       explode: true
       schema:
         type: string
-        format: uri
+
     projectShouldParam:
       name: project_should
       in: query
-      description: "Returns document with these project ids (URI)."
-      example: "https://api.nva.unit.no/cristin/project/123456"
+      description: "Returns document with these project IDs."
+      example: "123456"
       required: false
       style: form
       explode: true
       schema:
         type: string
-        format: uri
     publicationLanguageParam:
       name: publication_language
       in: query
