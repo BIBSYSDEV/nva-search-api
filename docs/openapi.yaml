@@ -1733,7 +1733,7 @@ components:
       name: published_between
       in: query
       description: "Returns document with date between values."
-      example: "2005-03-17"
+      example: "2005-03-17,2010-01-01"
       required: false
       style: form
       explode: true
