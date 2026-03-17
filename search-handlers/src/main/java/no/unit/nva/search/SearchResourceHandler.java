@@ -64,8 +64,11 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
   @Override
   protected String processInput(Void input, RequestInfo requestInfo, Context context)
       throws BadRequestException {
-    LOGGER.info("Resource search query headers: {}", requestInfo.getHeaders());
-    LOGGER.info("Resource search query parameters: {}", requestInfo.getQueryParameters());
+    LOGGER.info(
+        "Resource query headers and parameters: Accept={} version={}, parameters={}",
+        requestInfo.getHeaders().get("version"),
+        requestInfo.getHeaders().get("Accept"),
+        requestInfo.getQueryParameters());
     var version = ContentTypeUtils.extractVersionFromRequestInfo(requestInfo);
 
     addAdditionalHeaders(() -> Map.of(HttpHeaders.VARY, HttpHeaders.ACCEPT));
