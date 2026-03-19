@@ -248,7 +248,6 @@ paths:
         - $ref: '#/components/parameters/publicationLanguageShouldParam'
         - $ref: '#/components/parameters/publicationYearBeforeParam'
         - $ref: '#/components/parameters/publicationYearParam'
-        - $ref: '#/components/parameters/publicationYearShouldParam'
         - $ref: '#/components/parameters/publicationYearSinceParam'
         - $ref: '#/components/parameters/publishedBeforeParam'
         - $ref: '#/components/parameters/publishedBetweenParam'
@@ -403,7 +402,6 @@ paths:
         - $ref: '#/components/parameters/publicationLanguageShouldParam'
         - $ref: '#/components/parameters/publicationYearBeforeParam'
         - $ref: '#/components/parameters/publicationYearParam'
-        - $ref: '#/components/parameters/publicationYearShouldParam'
         - $ref: '#/components/parameters/publicationYearSinceParam'
         - $ref: '#/components/parameters/publishedBeforeParam'
         - $ref: '#/components/parameters/publishedBetweenParam'
@@ -573,7 +571,6 @@ paths:
         - $ref: '#/components/parameters/publicationLanguageShouldParam'
         - $ref: '#/components/parameters/publicationYearBeforeParam'
         - $ref: '#/components/parameters/publicationYearParam'
-        - $ref: '#/components/parameters/publicationYearShouldParam'
         - $ref: '#/components/parameters/publicationYearSinceParam'
         - $ref: '#/components/parameters/publishedBeforeParam'
         - $ref: '#/components/parameters/publishedBetweenParam'
@@ -732,7 +729,6 @@ paths:
         - $ref: '#/components/parameters/publicationLanguageShouldParam'
         - $ref: '#/components/parameters/publicationYearBeforeParam'
         - $ref: '#/components/parameters/publicationYearParam'
-        - $ref: '#/components/parameters/publicationYearShouldParam'
         - $ref: '#/components/parameters/publicationYearSinceParam'
         - $ref: '#/components/parameters/publishedBeforeParam'
         - $ref: '#/components/parameters/publishedBetweenParam'
@@ -877,11 +873,9 @@ components:
       explode: true
       examples:
         all aggregations:
-          value: all
-        separate keys aggregations:
-          value: [ associatedArtifact, entityDescription, status, scientificIndex ]
-        one key aggregations:
-          value: "fundingSource, status, topLevelOrganisations, scientificIndex"
+          value: "all"
+        no aggregations:
+          value: "none"
       schema:
         $ref: '#/components/schemas/AggregationNames'
     collaborationTypeParam:
@@ -990,7 +984,7 @@ components:
       name: contributor_should
       in: query
       description: "Returns document with Author's ids(URI)."
-      example: '1306838'
+      example: "https://api.nva.unit.no/cristin/person/1306838"
       required: false
       style: form
       explode: true
@@ -1172,13 +1166,21 @@ components:
       name: fields
       in: query
       description: "'fields=all' will search all fields in documents, or you can specify a comma separated list of fields to search in."
-      example: category,contributor,funding
+      examples:
+        all:
+          summary: All fields
+          value: ["all"]
+        multiple:
+          summary: Multiple fields
+          value: ["category","contributor","funding"]
       required: false
       style: form
       explode: true
       schema:
-        type: string
-        enum: [ all, category,contributor,created_before,created_since,doi,funding,funding_source,id,institution ,isbn,issn,orcid,modified_before,modified_since,project_code,published_before,published_since,title,unit,user,year_reported ]
+        type: array
+        items:
+          type: string
+          enum: [ all, category,contributor,created_before,created_since,doi,funding,funding_source,id,institution,isbn,issn,orcid,modified_before,modified_since,project_code,published_before,published_since,title,unit,user,year_reported ]
     fundingParam:
       name: funding
       in: query
@@ -1283,7 +1285,7 @@ components:
       name: has_file
       in: query
       description: "Returns documents with visibleForNonOwner=true/false."
-      example: "true"
+      example: true
       required: false
       style: form
       explode: true
@@ -1291,10 +1293,10 @@ components:
         type: boolean
         enum: [ true, false ]
     hasIsbnParam:
-      name: has_file
+      name: has_isbn
       in: query
       description: "Returns documents with isbn."
-      example: "true"
+      example: true
       required: false
       style: form
       explode: true
@@ -1302,10 +1304,10 @@ components:
         type: boolean
         enum: [ true, false ]
     hasIssnParam:
-      name: has_file
+      name: has_issn
       in: query
       description: "Returns documents with issn."
-      example: "true"
+      example: true
       required: false
       style: form
       explode: true
@@ -1621,8 +1623,8 @@ components:
     projectParam:
       name: project
       in: query
-      description: "Returns document with this project id (URI)."
-      example: "NFR"
+      description: "Returns document with this project IDs."
+      example: "https://api.dev.nva.aws.unit.no/cristin/project/123456"
       required: false
       style: form
       explode: true
@@ -1632,8 +1634,8 @@ components:
     projectNotParam:
       name: project_not
       in: query
-      description: "Returns document without these project ids (URI)."
-      example: "NFR"
+      description: "Returns document without these project IDs."
+      example: "https://api.dev.nva.aws.unit.no/cristin/project/123456"
       required: false
       style: form
       explode: true
@@ -1643,14 +1645,13 @@ components:
     projectShouldParam:
       name: project_should
       in: query
-      description: "Returns document with these project ids (URI)."
-      example: "NFR"
+      description: "Returns document with these project IDs."
+      example: "2123456"
       required: false
       style: form
       explode: true
       schema:
         type: string
-        format: uri
     publicationLanguageParam:
       name: publication_language
       in: query
@@ -1677,7 +1678,7 @@ components:
       name: publication_language_should
       in: query
       description: "Returns document with these publication languages codes ()."
-      example: "nob, eng, nor, etc"
+      example: "http://lexvo.org/id/iso639-3/nob"
       required: false
       style: form
       explode: true
@@ -1687,13 +1688,19 @@ components:
     publicationYearParam:
       name: publication_year
       in: query
-      description: "Returns document with this publication year."
-      example: "2022"
+      description: "Returns documents with any of these publication years."
+      examples:
+        single:
+          summary: Single year
+          value: "2022"
+        multiple:
+          summary: One of multiple possible years
+          value: "2022,2023"
       required: false
       style: form
       explode: true
       schema:
-        type: number
+        type: string
     publicationYearBeforeParam:
       name: publication_year_before
       in: query
@@ -1703,7 +1710,7 @@ components:
       explode: true
       schema:
         type: string
-        format: date
+        format: number
     publicationYearSinceParam:
       name: publication_year_since
       in: query
@@ -1713,17 +1720,7 @@ components:
       explode: true
       schema:
         type: string
-        format: date
-    publicationYearShouldParam:
-      name: publication_year_should
-      in: query
-      description: "Returns document with any of these publication years."
-      example: "2022 2023"
-      required: false
-      style: form
-      explode: true
-      schema:
-        type: number
+        format: number
     publishedBeforeParam:
       name: published_before
       in: query
@@ -1739,13 +1736,15 @@ components:
       name: published_between
       in: query
       description: "Returns document with date between values."
-      example: "2005-03-17, 2010-01-01"
+      example: ["2005-03-17","2010-01-01"]
       required: false
       style: form
       explode: true
       schema:
-        type: string
-        format: date
+        type: array
+        items:
+          type: string
+          format: date
     publishedSinceParam:
       name: published_since
       in: query
@@ -2056,7 +2055,7 @@ components:
       name: exclude_subunits
       in: query
       description: "Exclude sub-units of the provided viewingScope"
-      example: 'true'
+      example: true
       required: false
       style: form
       explode: true
@@ -2389,7 +2388,7 @@ components:
       name: page
       in: query
       description: "Page number, zero based, see from and size."
-      example: "0"
+      example: 0
       required: false
       style: form
       explode: true
@@ -2399,7 +2398,7 @@ components:
       name: from
       in: query
       description: "Start result from item no. zero based [offset] is also accepted. Default is 0."
-      example: "0"
+      example: 0
       required: false
       style: form
       explode: true
@@ -2409,7 +2408,7 @@ components:
       name: size
       in: query
       description: "Number of items returned. [per_page|perPage|results|limit] are also accepted.  Default is 15."
-      example: "15"
+      example: 15
       required: false
       style: form
       explode: true
@@ -2427,7 +2426,12 @@ components:
     sortParam:
       name: sort
       in: query
-      description: "Sorts on the given field. Default sort order is on 'published_date' in ascending order."
+      description: >-
+        Sorts on the given field(s). Default sort is 'published_date' ascending.
+        Optionally append ':asc' or ':desc' (default: desc).
+        Comma-separate for composite sorting. Valid fields: identifier, relevance,
+        category, instance_type, created_date, modified_date, published_date,
+        publication_date, title, unit_id, user.
       required: false
       style: form
       explode: true
@@ -2436,18 +2440,13 @@ components:
           value: "category:asc"
         descending:
           value: "category:desc"
+        default_order:
+          value: "created_date"
         composite:
           value: "category:asc,created_date:desc"
       schema:
         type: string
-        enum:
-          - category:asc
-          - category:desc
-          - created_date
-          - modified_date
-          - published_date
-          - title
-          - unit_id
+        pattern: '^(\w+(:(asc|desc))?,)*\w+(:(asc|desc))?$'
     #--- not in use
     langParam:
       deprecated: true
