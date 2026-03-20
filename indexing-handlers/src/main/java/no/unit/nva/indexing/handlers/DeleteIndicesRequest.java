@@ -16,9 +16,9 @@ public record DeleteIndicesRequest(Collection<IndexName> indices) implements Jso
     indices = Objects.requireNonNullElse(indices, Collections.emptyList());
   }
 
-  public static CreateIndexRequest fromInputStream(InputStream inputStream) {
+  public static DeleteIndicesRequest fromInputStream(InputStream inputStream) {
     return attempt(() -> IoUtils.streamToString(inputStream))
-        .map(value -> dtoObjectMapper.readValue(value, CreateIndexRequest.class))
+        .map(value -> dtoObjectMapper.readValue(value, DeleteIndicesRequest.class))
         .orElseThrow(
             failure ->
                 new IllegalArgumentException(
