@@ -22,7 +22,7 @@ public class LegacyMutatorTest {
   void shouldUseContributorsPreviewInPlaceOfContributorsIfNotPresent()
       throws JsonProcessingException {
     var json =
-        """
+"""
 {
   "entityDescription": {
     "contributorsPreview": [{"type": "Contributor", "id": "2"}]

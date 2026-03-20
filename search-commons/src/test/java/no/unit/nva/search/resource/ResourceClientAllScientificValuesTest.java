@@ -865,65 +865,65 @@ public class ResourceClientAllScientificValuesTest {
 
   private static String contributorWithCountryCode(String countryCode) {
     return """
-           {
-             "role": {
-               "type": "Creator"
-             },
-             "identity": {
-               "verificationStatus": "NotVerified",
-               "type": "Identity"
-             },
-             "affiliations": [
-               {
-                 "countryCode": "%s",
-                 "type": "Organization"
-               }
-             ],
-             "type": "Contributor"
-           }
-           """
+    {
+      "role": {
+        "type": "Creator"
+      },
+      "identity": {
+        "verificationStatus": "NotVerified",
+        "type": "Identity"
+      },
+      "affiliations": [
+        {
+          "countryCode": "%s",
+          "type": "Organization"
+        }
+      ],
+      "type": "Contributor"
+    }
+    """
         .formatted(countryCode);
   }
 
   private String jsonWithContributors(String... contributors) {
     return """
-           {
-             "type": "Publication",
-             "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
-             "entityDescription": {
-               "type": "EntityDescription",
-                     "contributors": [ %s ]
-             }
-           }
-           """
+    {
+      "type": "Publication",
+      "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
+      "entityDescription": {
+        "type": "EntityDescription",
+              "contributors": [ %s ]
+      }
+    }
+    """
         .formatted(String.join(", ", contributors));
   }
 
   private static String jsonWithParentPublicationType(String parentPublicationType) {
     return """
-               {
-                     "type": "Publication",
-                     "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
-                     "entityDescription": {
-                       "type": "EntityDescription",
-                       "reference": {
-                         "type": "Reference",
-                         "publicationContext": {
-                             "entityDescription": {
-                                 "type": "EntityDescription",
-                                 "reference": {
-                                     "type": "Reference",
-                                     "publicationInstance": {
-                                         "type": "%s"
-                                     }
-                                 }
-                             },
-                             "type": "Anthology"
-                         }
-                       }
-                     }
-                   }
-           """
+        {
+              "type": "Publication",
+              "identifier": "0198cc96b890-5221138f-0a8b-47b3-9e18-3826921287ad",
+              "entityDescription": {
+                "type": "EntityDescription",
+                "reference": {
+                  "type": "Reference",
+                  "publicationContext": {
+                      "entityDescription": {
+                          "type": "EntityDescription",
+                          "reference": {
+                              "type": "Reference",
+                              "publicationInstance": {
+                                  "type": "%s"
+                              }
+                          }
+                      },
+                      "type": "Anthology"
+                  }
+                }
+              }
+            }
+    """
         .formatted(parentPublicationType);
   }
 
@@ -933,19 +933,19 @@ public class ResourceClientAllScientificValuesTest {
 
   private static String jsonWithScientificValueForJournal(String scientificValue) {
     return """
-                 {
-             "type": "Publication",
-             "identifier": "018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619e3bbaf39",
-             "entityDescription": {
-               "reference": {
-                 "publicationContext": {
-                     "type": "Journal",
-                     "scientificValue": "%s"
-                 }
-               }
-             }
-           }
-           """
+          {
+      "type": "Publication",
+      "identifier": "018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619e3bbaf39",
+      "entityDescription": {
+        "reference": {
+          "publicationContext": {
+              "type": "Journal",
+              "scientificValue": "%s"
+          }
+        }
+      }
+    }
+    """
         .formatted(scientificValue);
   }
 
@@ -955,18 +955,18 @@ public class ResourceClientAllScientificValuesTest {
     var seriesNode = seriesNodeWithScientificValue(seriesScientificValue);
     var publicationContext = publicationContextWithPublisherAndSeries(publisherNode, seriesNode);
     return """
-           {
-             "type": "Publication",
-             "identifier": "018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619e3bbaf39",
-             "entityDescription": {
-               "reference": {
-                 "publicationContext": {
-                   %s
-                 }
-               }
-             }
-           }
-           """
+    {
+      "type": "Publication",
+      "identifier": "018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619e3bbaf39",
+      "entityDescription": {
+        "reference": {
+          "publicationContext": {
+            %s
+          }
+        }
+      }
+    }
+    """
         .formatted(publicationContext);
   }
 
@@ -991,21 +991,21 @@ public class ResourceClientAllScientificValuesTest {
 
   private static String seriesWithScientificValue(String seriesScientificValue) {
     return """
-           "series": {
-             "type": "Series",
-             "scientificValue": "%s"
-           }
-           """
+    "series": {
+      "type": "Series",
+      "scientificValue": "%s"
+    }
+    """
         .formatted(seriesScientificValue);
   }
 
   private static String publisherWithScientificValue(String publisherScientificValue) {
     return """
-           "publisher": {
-             "type": "Publisher",
-             "scientificValue": "%s"
-           }
-           """
+    "publisher": {
+      "type": "Publisher",
+      "scientificValue": "%s"
+    }
+    """
         .formatted(publisherScientificValue);
   }
 

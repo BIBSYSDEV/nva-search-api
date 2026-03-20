@@ -52,7 +52,7 @@ class TicketClientByOwnerTest {
   private static final String USERNAME = "me@" + MY_ORG_IDENTIFIER;
 
   private static final String TICKET_TEMPLATE =
-      """
+"""
 {
   "type": "@@TICKET_TYPE@@",
   "identifier": "@@TICKET_IDENTIFIER@@",
