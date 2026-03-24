@@ -1,18 +1,22 @@
 package no.unit.nva.search.common;
 
 import static java.util.Objects.isNull;
+import static no.unit.nva.constants.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.constants.ErrorMessages.PAGINATION_PARAMETERS_ARE_MUTUAL_EXCLUSIVE;
 import static no.unit.nva.constants.ErrorMessages.RELEVANCE_SEARCH_AFTER_ARE_MUTUAL_EXCLUSIVE;
 import static no.unit.nva.constants.ErrorMessages.RESULT_WINDOW_TOO_LARGE;
+import static no.unit.nva.constants.ErrorMessages.TOO_MANY_ARGUMENTS;
 import static no.unit.nva.constants.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.constants.ErrorMessages.validQueryParameterNamesMessage;
 import static no.unit.nva.constants.Words.ALL;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.HTTPS;
+import static no.unit.nva.constants.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.search.common.ContentTypeUtils.extractContentTypeFromRequestInfo;
 import static no.unit.nva.search.common.constant.Functions.decodeUTF;
 import static no.unit.nva.search.common.constant.Functions.mergeWithColonOrComma;
+import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 
 import java.net.URI;
@@ -28,6 +32,7 @@ import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.enums.ValueEncoding;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
+import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,9 +123,21 @@ public abstract class ParameterValidator<
 
   protected abstract Collection<String> validKeys();
 
+  protected abstract Collection<String> validSortKeys();
+
   protected abstract boolean isKeyValid(String keyName);
 
-  protected abstract void validateSortKeyName(String name);
+  protected void validateSortKeyName(String name) {
+    var nameSort = name.split(COLON_OR_SPACE);
+    if (nameSort.length == NAME_AND_SORT_LENGTH) {
+      SortOrder.fromString(nameSort[1]);
+    } else if (nameSort.length > NAME_AND_SORT_LENGTH) {
+      throw new IllegalArgumentException(TOO_MANY_ARGUMENTS + name);
+    }
+    if (query.toSortKey(nameSort[0]).isInvalid()) {
+      throw new IllegalArgumentException(INVALID_VALUE_WITH_SORT.formatted(name, validSortKeys()));
+    }
+  }
 
   /**
    * Sample code for setValue.

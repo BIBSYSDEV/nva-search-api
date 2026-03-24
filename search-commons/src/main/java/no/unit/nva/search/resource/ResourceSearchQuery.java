@@ -3,22 +3,18 @@ package no.unit.nva.search.resource;
 import static java.lang.String.format;
 import static no.unit.nva.constants.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.constants.Defaults.DEFAULT_VALUE_PER_PAGE;
-import static no.unit.nva.constants.ErrorMessages.INVALID_VALUE_WITH_SORT;
-import static no.unit.nva.constants.ErrorMessages.TOO_MANY_ARGUMENTS;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.constants.Words.HTTPS;
 import static no.unit.nva.constants.Words.IDENTIFIER;
-import static no.unit.nva.constants.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.constants.Words.NONE;
 import static no.unit.nva.constants.Words.PI;
+import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.constants.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.constants.Words.STATUS;
 import static no.unit.nva.search.common.constant.Functions.trimSpace;
-import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search.resource.Constants.CRISTIN_ORGANIZATION_PATH;
 import static no.unit.nva.search.resource.Constants.CRISTIN_PERSON_PATH;
-import static no.unit.nva.search.resource.Constants.DEFAULT_RESOURCE_SORT_FIELDS;
 import static no.unit.nva.search.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
 import static no.unit.nva.search.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search.resource.Constants.RESOURCES_AGGREGATIONS;
@@ -34,7 +30,6 @@ import static no.unit.nva.search.resource.ResourceParameter.RESOURCE_PARAMETER_S
 import static no.unit.nva.search.resource.ResourceParameter.SEARCH_AFTER;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
-import static no.unit.nva.search.resource.ResourceSort.INVALID;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import static org.opensearch.index.query.QueryBuilders.matchQuery;
 
@@ -62,7 +57,6 @@ import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
-import org.opensearch.search.sort.SortOrder;
 
 /**
  * ResourceSearchQuery is a query for searching resources.
@@ -294,7 +288,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                 switch (key) {
                   case FROM -> setValue(key.name(), DEFAULT_OFFSET);
                   case SIZE -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
-                  case SORT -> setValue(key.name(), DEFAULT_RESOURCE_SORT_FIELDS);
+                  case SORT -> setValue(key.name(), RELEVANCE_KEY_NAME);
                   case AGGREGATION -> setValue(key.name(), NONE);
                   default -> {
                     /* ignore and continue */
@@ -328,19 +322,8 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     }
 
     @Override
-    protected void validateSortKeyName(String name) {
-      var nameSort = name.split(COLON_OR_SPACE);
-      if (nameSort.length == NAME_AND_SORT_LENGTH) {
-        SortOrder.fromString(nameSort[1]);
-      }
-      if (nameSort.length > NAME_AND_SORT_LENGTH) {
-        throw new IllegalArgumentException(TOO_MANY_ARGUMENTS + name);
-      }
-
-      if (ResourceSort.fromSortKey(nameSort[0]) == INVALID) {
-        throw new IllegalArgumentException(
-            INVALID_VALUE_WITH_SORT.formatted(name, ResourceSort.validSortKeys()));
-      }
+    protected Collection<String> validSortKeys() {
+      return ResourceSort.validSortKeys();
     }
 
     @Override
