@@ -2,13 +2,10 @@ package no.unit.nva.search.importcandidate;
 
 import static no.unit.nva.constants.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.constants.Defaults.DEFAULT_VALUE_PER_PAGE;
-import static no.unit.nva.constants.ErrorMessages.INVALID_VALUE_WITH_SORT;
-import static no.unit.nva.constants.ErrorMessages.TOO_MANY_ARGUMENTS;
 import static no.unit.nva.constants.Words.ADDITIONAL_IDENTIFIERS;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.constants.Words.KEYWORD;
-import static no.unit.nva.constants.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.constants.Words.NONE;
 import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.constants.Words.SCOPUS_AS_TYPE;
@@ -17,7 +14,6 @@ import static no.unit.nva.constants.Words.TYPE;
 import static no.unit.nva.constants.Words.VALUE;
 import static no.unit.nva.search.common.constant.Functions.jsonPath;
 import static no.unit.nva.search.common.constant.Functions.trimSpace;
-import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search.importcandidate.Constants.FACET_IMPORT_CANDIDATE_PATHS;
 import static no.unit.nva.search.importcandidate.Constants.IMPORT_CANDIDATES_AGGREGATIONS;
 import static no.unit.nva.search.importcandidate.Constants.IMPORT_CANDIDATES_INDEX_NAME;
@@ -52,7 +48,6 @@ import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.aggregations.AggregationBuilder;
-import org.opensearch.search.sort.SortOrder;
 
 /**
  * ImportCandidateSearchQuery is a class that represents a search query for import candidates.
@@ -217,17 +212,8 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
     }
 
     @Override
-    protected void validateSortKeyName(String name) {
-      var nameSort = name.split(COLON_OR_SPACE);
-      if (nameSort.length == NAME_AND_SORT_LENGTH) {
-        SortOrder.fromString(nameSort[1]);
-      } else if (nameSort.length > NAME_AND_SORT_LENGTH) {
-        throw new IllegalArgumentException(TOO_MANY_ARGUMENTS + name);
-      }
-      if (ImportCandidateSort.fromSortKey(nameSort[0]) == ImportCandidateSort.INVALID) {
-        throw new IllegalArgumentException(
-            INVALID_VALUE_WITH_SORT.formatted(name, ImportCandidateSort.validSortKeys()));
-      }
+    protected Collection<String> validSortKeys() {
+      return ImportCandidateSort.validSortKeys();
     }
 
     @Override
