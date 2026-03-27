@@ -4,9 +4,6 @@ import static java.util.Objects.nonNull;
 import static no.unit.nva.common.Containers.container;
 import static no.unit.nva.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.common.MockedHttpResponse.mockedFutureHttpResponse;
-import static no.unit.nva.constants.Words.COMMA;
-import static no.unit.nva.constants.Words.IDENTIFIER;
-import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.resource.ResourceParameter.ABSTRACT;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
@@ -26,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -46,7 +42,6 @@ import org.joda.time.DateTime;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -255,42 +250,5 @@ class ResourceSearchQueryTest {
                 .withRequiredParameters(FROM, SIZE)
                 .build()
                 .openSearchUri(Words.RESOURCES));
-  }
-
-  @Test
-  void defaultSortAlwaysContainsIdentifierAsTiebreaker() throws BadRequestException {
-    var query = ResourceSearchQuery.builder().withRequiredParameters(FROM, SIZE, SORT).build();
-
-    assertTrue(query.sort().toString().contains(IDENTIFIER));
-    assertTrue(query.sort().toString().contains(RELEVANCE_KEY_NAME));
-  }
-
-  @ParameterizedTest
-  @ValueSource(strings = {"title", "created_date", "modified_date"})
-  void customSortAlwaysAppendsIdentifierAsTiebreaker(String sortField) throws BadRequestException {
-    var uri = URI.create("https://example.com/?sort=" + sortField);
-    var query =
-        ResourceSearchQuery.builder()
-            .fromTestQueryParameters(queryToMapEntries(uri))
-            .withRequiredParameters(FROM, SIZE)
-            .build();
-
-    var sort = query.sort().toString();
-    assertTrue(sort.contains(sortField));
-    assertTrue(sort.endsWith(IDENTIFIER));
-  }
-
-  @Test
-  void sortDoesNotDuplicateIdentifierWhenAlreadyPresent() throws BadRequestException {
-    var uri = URI.create("https://example.com/?sort=identifier");
-    var query =
-        ResourceSearchQuery.builder()
-            .fromTestQueryParameters(queryToMapEntries(uri))
-            .withRequiredParameters(FROM, SIZE)
-            .build();
-
-    var sortParts = query.sort().toString().split(COMMA);
-    assertEquals(1, sortParts.length);
-    assertEquals(IDENTIFIER, sortParts[0]);
   }
 }

@@ -2,14 +2,18 @@ package no.unit.nva.search.ticket;
 
 import static no.unit.nva.constants.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.constants.Defaults.DEFAULT_VALUE_PER_PAGE;
+import static no.unit.nva.constants.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.constants.ErrorMessages.TOO_MANY_ARGUMENTS;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.EXCLUDE_KEYWORD;
+import static no.unit.nva.constants.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.constants.Words.NONE;
 import static no.unit.nva.constants.Words.POST_FILTER;
 import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.constants.Words.SEARCH;
 import static no.unit.nva.search.common.constant.Functions.toEnumStrings;
 import static no.unit.nva.search.common.constant.Functions.trimSpace;
+import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search.ticket.Constants.ORGANIZATION_ID_KEYWORD;
 import static no.unit.nva.search.ticket.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search.ticket.Constants.UNHANDLED_KEY;
@@ -59,6 +63,7 @@ import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.sort.SortOrder;
 
 /**
  * TicketSearchQuery is a class that searches for tickets.
@@ -315,8 +320,17 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
     }
 
     @Override
-    protected Collection<String> validSortKeys() {
-      return TicketSort.validSortKeys();
+    protected void validateSortKeyName(String name) {
+      var nameSort = name.split(COLON_OR_SPACE);
+      if (nameSort.length == NAME_AND_SORT_LENGTH) {
+        SortOrder.fromString(nameSort[1]);
+      } else if (nameSort.length > NAME_AND_SORT_LENGTH) {
+        throw new IllegalArgumentException(TOO_MANY_ARGUMENTS + name);
+      }
+      if (TicketSort.fromSortKey(nameSort[0]) == TicketSort.INVALID) {
+        throw new IllegalArgumentException(
+            INVALID_VALUE_WITH_SORT.formatted(name, TicketSort.validSortKeys()));
+      }
     }
 
     @Override
