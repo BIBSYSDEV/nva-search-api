@@ -1,6 +1,6 @@
 [versions]
 glassfishJaxbRuntime = { strictly = '4.0.5' }
-jakartaXmlBindApi = { strictly = '4.0.2' }
+jakartaXmlBindApi = { strictly = '4.0.5' }
 log4j = { strictly = '2.25.3' }
 opensearch-rest = { strictly = '3.4.0' }
 opensearch-server = { strictly = '3.5.0' }

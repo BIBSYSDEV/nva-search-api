@@ -15,6 +15,8 @@ import java.util.stream.Stream;
  */
 public interface SortKey {
 
+  String INVALID_SORT_KEY_NAME = "INVALID";
+
   static Predicate<SortKey> equalTo(String name) {
     return key -> name.matches(key.keyPattern());
   }
@@ -30,6 +32,10 @@ public interface SortKey {
   }
 
   String name();
+
+  default boolean isInvalid() {
+    return INVALID_SORT_KEY_NAME.equals(name());
+  }
 
   String keyPattern();
 

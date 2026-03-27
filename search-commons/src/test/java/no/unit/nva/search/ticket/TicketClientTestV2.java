@@ -170,13 +170,13 @@ public class TicketClientTestV2 {
 
   private static String ticketOfTypeWithTopLevelOrg(TicketType type, URI topLevelId) {
     return """
-                       {
-             "type": "__TYPE__",
-             "organization": {
-               "id": "__TOP_LEVEL__"
-             }
-           }
-           """
+                {
+      "type": "__TYPE__",
+      "organization": {
+        "id": "__TOP_LEVEL__"
+      }
+    }
+    """
         .replace("__TYPE__", type.toString())
         .replace("__TOP_LEVEL__", topLevelId.toString());
   }
@@ -184,14 +184,14 @@ public class TicketClientTestV2 {
   private static String ticketOfTypeWithTopLevelOrgAndStatus(
       TicketType type, URI topLevelId, TicketStatus status) {
     return """
-                       {
-             "type": "__TYPE__",
-             "organization": {
-               "id": "__TOP_LEVEL__"
-             },
-             "status": "__STATUS__"
-           }
-           """
+                {
+      "type": "__TYPE__",
+      "organization": {
+        "id": "__TOP_LEVEL__"
+      },
+      "status": "__STATUS__"
+    }
+    """
         .replace("__TYPE__", type.toString())
         .replace("__TOP_LEVEL__", topLevelId.toString())
         .replace("__STATUS__", status.toString());
