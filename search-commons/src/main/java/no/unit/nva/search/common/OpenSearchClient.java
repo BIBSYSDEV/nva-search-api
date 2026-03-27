@@ -129,7 +129,7 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
   }
 
   protected HttpRequest createRequest(QueryContentWrapper qbs) {
-    logger.debug(qbs.body());
+    logger.info(qbs.body()); // FIXME: Temp test
     return HttpRequest.newBuilder(qbs.uri())
         .headers(
             ACCEPT, MediaType.JSON_UTF_8.toString(),
