@@ -388,8 +388,7 @@ class ResourceClientTest {
   @Test
   void shouldCheckFacets() throws BadRequestException {
     var hostAddress = URI.create(container.getHttpHostAddress());
-    var uri1 =
-        URI.create(BASE_URL + AGGREGATION.asCamelCase() + EQUAL + ALL + "&query=EntityDescription");
+    var uri1 = URI.create(BASE_URL + AGGREGATION.asCamelCase() + EQUAL + ALL);
 
     var response1 =
         ResourceSearchQuery.builder()
