@@ -65,7 +65,6 @@ import org.opensearch.search.aggregations.AggregationBuilder;
  * @author Kir Truhacev
  * @author Sondre Vestad
  */
-@SuppressWarnings("PMD.GodClass")
 public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
   private final ResourceStreamBuilders streamBuilders;
   private final ResourceAccessFilter filterBuilder;

@@ -2,7 +2,6 @@ package no.unit.nva.indexing.testutils;
 
 import nva.commons.core.JacocoGenerated;
 
-@SuppressWarnings("PMD.ModifierOrder")
 public final class Constants {
   public static final String TEST_SCOPE = "example-scope";
   public static final String TEST_TOKEN =
