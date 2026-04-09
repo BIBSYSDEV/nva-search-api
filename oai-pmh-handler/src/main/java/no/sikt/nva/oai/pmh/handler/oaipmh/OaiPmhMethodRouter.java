@@ -5,6 +5,7 @@ import java.net.URI;
 import no.sikt.nva.oai.pmh.handler.oaipmh.request.OaiPmhRequest;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
 
+@FunctionalInterface
 public interface OaiPmhMethodRouter {
   JAXBElement<OAIPMHtype> handleRequest(OaiPmhRequest request, URI endpointUri);
 }
