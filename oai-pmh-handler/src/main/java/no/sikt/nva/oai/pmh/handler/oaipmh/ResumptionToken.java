@@ -20,7 +20,7 @@ public record ResumptionToken(ListRecordsRequest originalRequest, String cursor,
   private static final String AMPERSAND = "&";
 
   public String getValue() {
-    var unencodedValueBuilder = new StringBuilder();
+    var unencodedValueBuilder = new StringBuilder(128);
     unencodedValueBuilder
         .append(METADATA_PREFIX)
         .append(EQUALS)
