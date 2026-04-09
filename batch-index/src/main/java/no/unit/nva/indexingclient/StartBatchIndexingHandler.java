@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import nva.commons.core.JacocoGenerated;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 
@@ -37,7 +38,7 @@ public class StartBatchIndexingHandler implements RequestStreamHandler {
   }
 
   protected void writeOutput(OutputStream outputStream) throws IOException {
-    try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {
+    try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8))) {
       String outputJson = objectMapperWithEmpty.writeValueAsString("OK");
       writer.write(outputJson);
     }
