@@ -353,7 +353,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
   }
 
   private boolean isMustNot(K key) {
-    return NOT_ALL_OF.equals(key.searchOperator()) || NOT_ANY_OF.equals(key.searchOperator());
+    return key.searchOperator() == NOT_ALL_OF || key.searchOperator() == NOT_ANY_OF;
   }
 
   private boolean isFetchSource() {

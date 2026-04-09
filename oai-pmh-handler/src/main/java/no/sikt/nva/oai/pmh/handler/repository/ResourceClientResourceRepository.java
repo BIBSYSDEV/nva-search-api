@@ -146,11 +146,11 @@ public class ResourceClientResourceRepository implements ResourceRepository {
   }
 
   private static boolean isResourceTypeGeneralSpecWithChild(SetSpec setSpec) {
-    return SetRoot.RESOURCE_TYPE_GENERAL.equals(setSpec.root()) && setSpec.children().length > 0;
+    return setSpec.root() == SetRoot.RESOURCE_TYPE_GENERAL && setSpec.children().length > 0;
   }
 
   private static boolean isInstitutionSpecWithChild(SetSpec setSpec) {
-    return SetRoot.INSTITUTION.equals(setSpec.root()) && setSpec.children().length > 0;
+    return setSpec.root() == SetRoot.INSTITUTION && setSpec.children().length > 0;
   }
 
   private static ResourceSearchQuery buildPageQuery(

@@ -79,17 +79,17 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
     AttemptResponse response;
     do {
       response = attemptsWithPageSize(currentPageSize, requestInfo);
-      if (SIZE_LIMIT_EXCEEDED.equals(response.status)) {
+      if (response.status == SIZE_LIMIT_EXCEEDED) {
         var nextPageSize = currentPageSize / TWO;
         LOGGER.info(
             "Request entity too large encountered with page size {}, trying again with {}",
             currentPageSize,
             nextPageSize);
         currentPageSize = nextPageSize;
-      } else if (OTHER_FAILURE.equals(response.status)) {
+      } else if (response.status == OTHER_FAILURE) {
         throw new RuntimeException(response.causeOfFailure);
       }
-    } while (SIZE_LIMIT_EXCEEDED.equals(response.status));
+    } while (response.status == SIZE_LIMIT_EXCEEDED);
 
     return response.result;
   }
