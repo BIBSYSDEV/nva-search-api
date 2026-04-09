@@ -58,7 +58,7 @@ public final class FakeSearchResponse {
     return contributorTemplate.replace("__AUTHOR__", name);
   }
 
-  private static class ParsedDate {
+  public static class ParsedDate {
     private final String year;
     private final String month;
     private final String day;

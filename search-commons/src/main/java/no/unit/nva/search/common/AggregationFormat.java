@@ -135,7 +135,7 @@ public final class AggregationFormat {
   }
 
   @JacocoGenerated
-  static final class Constants {
+  public static final class Constants {
     public static final String DOC_COUNT = "doc_count";
     public static final String BUCKETS_PTR = SLASH + BUCKETS;
     public static final String KEY_PTR = SLASH + ZERO + SLASH + KEY;

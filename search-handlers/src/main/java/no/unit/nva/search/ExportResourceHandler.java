@@ -146,7 +146,7 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
     return super.getSuccessStatusCode(input, output);
   }
 
-  record AttemptResponse(AttemptStatus status, String result, Throwable causeOfFailure) {
+  public record AttemptResponse(AttemptStatus status, String result, Throwable causeOfFailure) {
     protected enum AttemptStatus {
       SUCCESS,
       SIZE_LIMIT_EXCEEDED,
