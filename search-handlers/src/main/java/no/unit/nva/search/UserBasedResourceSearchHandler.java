@@ -59,12 +59,11 @@ public class UserBasedResourceSearchHandler extends ApiGatewayHandler<Void, Stri
 
   private String authorize(RequestInfo requestInfo)
       throws ForbiddenException, UnauthorizedException {
-    var username = requestInfo.getUserName();
     if (!requestInfo.getAccessRights().contains(AccessRight.MANAGE_OWN_RESOURCES)) {
       throw new ForbiddenException();
     }
 
-    return username;
+    return requestInfo.getUserName();
   }
 
   @Override
