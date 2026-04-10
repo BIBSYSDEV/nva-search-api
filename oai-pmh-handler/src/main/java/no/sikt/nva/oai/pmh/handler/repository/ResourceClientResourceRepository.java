@@ -59,6 +59,7 @@ public class ResourceClientResourceRepository implements ResourceRepository {
   }
 
   @Override
+  @SuppressWarnings("PMD.AvoidCatchingGenericException") // FIXME: Do we need this catch?
   public Sets fetchSetsFromAggregations() {
     var query = buildAggregationsQuery();
     try {
@@ -127,6 +128,7 @@ public class ResourceClientResourceRepository implements ResourceRepository {
     }
   }
 
+  @SuppressWarnings("PMD.AvoidCatchingGenericException") // FIXME: Do we need this catch?
   private PagedResponse doQuery(final ResourceSearchQuery query) {
     try {
       var response =
