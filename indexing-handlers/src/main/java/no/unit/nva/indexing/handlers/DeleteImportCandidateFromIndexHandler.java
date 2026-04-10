@@ -3,6 +3,8 @@ package no.unit.nva.indexing.handlers;
 import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import no.unit.nva.events.handlers.DestinationsEventBridgeEventHandler;
 import no.unit.nva.events.models.AwsEventBridgeDetail;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
@@ -41,15 +43,11 @@ public class DeleteImportCandidateFromIndexHandler
       indexingClient.removeDocumentFromIndex(
           input.identifier().toString(), IMPORT_CANDIDATES_INDEX);
       logger.info(REMOVED_FROM_INDEX_MESSAGE);
-    } catch (Exception e) {
-      logError(e);
-      throw new RuntimeException(e);
+    } catch (IOException exception) {
+      logger.warn(REMOVING_DOCUMENT_FAILED_MESSAGE, exception);
+      throw new UncheckedIOException(exception);
     }
 
     return null;
-  }
-
-  private void logError(Exception exception) {
-    logger.warn(REMOVING_DOCUMENT_FAILED_MESSAGE, exception);
   }
 }

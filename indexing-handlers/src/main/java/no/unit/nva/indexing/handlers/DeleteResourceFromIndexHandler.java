@@ -3,6 +3,8 @@ package no.unit.nva.indexing.handlers;
 import static no.unit.nva.constants.Words.RESOURCES;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import no.unit.nva.events.handlers.DestinationsEventBridgeEventHandler;
 import no.unit.nva.events.models.AwsEventBridgeDetail;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
@@ -36,15 +38,11 @@ public class DeleteResourceFromIndexHandler
       Context context) {
     try {
       indexingClient.removeDocumentFromIndex(input.getIdentifier().toString(), RESOURCES);
-    } catch (Exception e) {
-      logError(e);
-      throw new RuntimeException(e);
+    } catch (IOException exception) {
+      logger.warn("Removing document failed", exception);
+      throw new UncheckedIOException(exception);
     }
 
     return null;
-  }
-
-  private void logError(Exception exception) {
-    logger.warn("Removing document failed", exception);
   }
 }

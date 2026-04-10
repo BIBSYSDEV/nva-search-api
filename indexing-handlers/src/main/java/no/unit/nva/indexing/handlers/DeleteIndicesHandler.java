@@ -39,7 +39,7 @@ public class DeleteIndicesHandler implements RequestStreamHandler {
       try {
         indexingClient.deleteIndex(indexName);
         logger.info("Deleted index '{}'", indexName);
-      } catch (Exception exception) {
+      } catch (IOException exception) {
         logger.error("Failed to delete index '{}'", indexName, exception);
       }
     }
