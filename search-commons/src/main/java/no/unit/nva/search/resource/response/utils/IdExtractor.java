@@ -18,9 +18,15 @@ public final class IdExtractor {
    * @return A string containing a URI or null.
    */
   public static Optional<URI> from(JsonNode node) {
+    return Optional.ofNullable(node)
+        .map(JsonNode::textValue)
+        .flatMap(IdExtractor::parseUriFromString);
+  }
+
+  private static Optional<URI> parseUriFromString(String value) {
     try {
-      return Optional.of(URI.create(node.textValue()));
-    } catch (IllegalArgumentException | NullPointerException e) {
+      return Optional.of(URI.create(value));
+    } catch (IllegalArgumentException e) {
       return Optional.empty();
     }
   }

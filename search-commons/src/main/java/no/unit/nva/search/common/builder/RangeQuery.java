@@ -80,7 +80,6 @@ public class RangeQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBui
     return valueOrNull(values[0]).map(date -> expandDateFirst(date, key)).findFirst().orElse(null);
   }
 
-  @SuppressWarnings("PMD.NullAssignment")
   private Stream<String> valueOrNull(String value) {
     return Stream.ofNullable(value.isBlank() ? null : value);
   }

@@ -73,7 +73,7 @@ public final class RecoveryEntry {
         .withException(this.exception);
   }
 
-  private static final class Builder {
+  public static final class Builder {
 
     private String identifier;
     private String type;

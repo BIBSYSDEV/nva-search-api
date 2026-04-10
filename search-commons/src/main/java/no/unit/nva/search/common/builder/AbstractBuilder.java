@@ -62,11 +62,11 @@ public abstract class AbstractBuilder<K extends Enum<K> & ParameterKey<K>> {
   }
 
   private boolean isSearchAny(K key) {
-    return key.searchOperator().equals(ANY_OF) || key.searchOperator().equals(NOT_ANY_OF);
+    return key.searchOperator() == ANY_OF || key.searchOperator() == NOT_ANY_OF;
   }
 
   private boolean isRangeMissingComma(K key, String value) {
-    return key.searchOperator().equals(BETWEEN) && !value.contains(COMMA);
+    return key.searchOperator() == BETWEEN && !value.contains(COMMA);
   }
 
   private String[] splitAndFixMissingRangeValue(K key, String value) {

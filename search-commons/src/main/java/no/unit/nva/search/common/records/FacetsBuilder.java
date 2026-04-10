@@ -14,7 +14,7 @@ import nva.commons.core.paths.UriWrapper;
 /**
  * @author Stig Norland
  */
-final class FacetsBuilder {
+public final class FacetsBuilder {
 
   @JacocoGenerated
   public FacetsBuilder() {}

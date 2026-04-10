@@ -75,7 +75,7 @@ public interface ParameterKey<K extends Enum<K> & ParameterKey<K>> {
   }
 
   static boolean isNotKeyword(ParameterKind parameterKind, boolean... isKeyWord) {
-    var result = !(parameterKind.equals(KEYWORD) || parameterKind.equals(CUSTOM));
+    var result = !(parameterKind == KEYWORD || parameterKind == CUSTOM);
     return isKeyWord.length == 1 ? !isKeyWord[0] : result;
   }
 

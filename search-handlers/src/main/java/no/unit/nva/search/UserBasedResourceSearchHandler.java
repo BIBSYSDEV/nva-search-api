@@ -16,7 +16,6 @@ import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.ForbiddenException;
-import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
@@ -35,14 +34,16 @@ public class UserBasedResourceSearchHandler extends ApiGatewayHandler<Void, Stri
 
   @Override
   protected void validateRequest(Void input, RequestInfo requestInfo, Context context)
-      throws ApiGatewayException {}
+      throws ApiGatewayException {
+    requestInfo.getUserName();
+    if (!requestInfo.userIsAuthorized(AccessRight.MANAGE_OWN_RESOURCES)) {
+      throw new ForbiddenException();
+    }
+  }
 
   @Override
   protected String processInput(Void input, RequestInfo requestInfo, Context context)
       throws ApiGatewayException {
-
-    var username = authorize(requestInfo);
-
     return ResourceSearchQuery.builder()
         .fromRequestInfo(requestInfo)
         .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
@@ -50,21 +51,11 @@ public class UserBasedResourceSearchHandler extends ApiGatewayHandler<Void, Stri
         .validate()
         .build()
         .withFilter()
-        .ownResourcesOnly(username)
+        .ownResourcesOnly(requestInfo.getUserName())
         .apply()
         .doSearch(resourceClient, Words.RESOURCES)
         .withMutators(new SimplifiedMutator())
         .toString();
-  }
-
-  private String authorize(RequestInfo requestInfo)
-      throws ForbiddenException, UnauthorizedException {
-    var username = requestInfo.getUserName();
-    if (!requestInfo.getAccessRights().contains(AccessRight.MANAGE_OWN_RESOURCES)) {
-      throw new ForbiddenException();
-    }
-
-    return username;
   }
 
   @Override

@@ -43,7 +43,7 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
     if (isNull(value)) {
       return null;
     }
-    if (getKey().fieldType().equals(ParameterKind.CUSTOM)) {
+    if (getKey().fieldType() == ParameterKind.CUSTOM) {
       SearchQuery.logger.debug(
           "CUSTOM lacks TypeInfo, use explicit casting if 'String' doesn't cut it.");
     }

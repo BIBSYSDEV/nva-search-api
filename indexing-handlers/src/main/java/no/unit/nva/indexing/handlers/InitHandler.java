@@ -46,7 +46,7 @@ public class InitHandler implements RequestStreamHandler {
       try {
         indexingClient.createIndex(indexName, indexRequest.mappings(), indexRequest.settings());
         logger.info("Created index '{}'", indexName);
-      } catch (Exception exception) {
+      } catch (IOException exception) {
         logger.error("Failed to create index '{}'", indexName, exception);
       }
     }
