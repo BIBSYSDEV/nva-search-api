@@ -20,39 +20,44 @@
     "year": "2023"
   },
   "filesStatus": "hasPublicFiles",
-  "associatedArtifacts": [{
-    "type": "PublishedFile",
-    "administrativeAgreement": false,
-    "identifier": "98893bfd-82d3-44d8-af10-9d1097c9510e",
-    "license": "https://rightsstatements.org/page/inc/1.0",
-    "mimeType": "application/pdf",
-    "name": "20200017-03-TN_Release_area_variability.pdf",
-    "publishedDate": "2023-10-31T11:25:43.223366513Z",
-    "publisherAuthority": false,
-    "size": 699309,
-    "visibleForNonOwner": true
-  }
+  "associatedArtifacts": [
+    {
+      "type": "PublishedFile",
+      "administrativeAgreement": false,
+      "identifier": "98893bfd-82d3-44d8-af10-9d1097c9510e",
+      "license": "https://rightsstatements.org/page/inc/1.0",
+      "mimeType": "application/pdf",
+      "name": "20200017-03-TN_Release_area_variability.pdf",
+      "publishedDate": "2023-10-31T11:25:43.223366513Z",
+      "publisherAuthority": false,
+      "size": 699309,
+      "visibleForNonOwner": true
+    }
   ],
   "createdDate": "2023-09-29T12:14:46Z",
-  "contributorOrganizations": ["https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0", "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0"],
+  "contributorOrganizations": [
+    "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+    "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0"
+  ],
 
   "entityDescription": {
     "type": "EntityDescription",
     "abstract": "The hazard mapping tool NAKSIN estimates ....",
     "alternativeAbstracts": {},
-    "contributors": [{
-      "type": "Contributor",
-      "correspondingAuthor": false,
-      "identity": {
-        "id": "https://api.dev.nva.aws.unit.no/cristin/person/11111",
-        "type": "Identity",
-        "name": "Dieter Issler"
-      },
-      "role": {
-        "type": "Creator"
-      },
-      "sequence": 1
-    }
+    "contributors": [
+      {
+        "type": "Contributor",
+        "correspondingAuthor": false,
+        "identity": {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/person/11111",
+          "type": "Identity",
+          "name": "Dieter Issler"
+        },
+        "role": {
+          "type": "Creator"
+        },
+        "sequence": 1
+      }
     ],
     "language": "http://lexvo.org/id/iso639-3/eng",
     "mainTitle": "A Simple Model for the Variability of Release Area Size",
@@ -91,20 +96,18 @@
         }
       }
     },
-    "tags": [
-      "Avalanche-RnD",
-      "Slope Stability"
-    ]
+    "tags": ["Avalanche-RnD", "Slope Stability"]
   },
   "handle": "https://hdl.handle.net/11250/3093139",
   "identifier": "018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642",
   "modelVersion": "0.20.54",
   "nviType": "NonNviCandidate",
-  "projects": [{
-    "id": "https://api.dev.nva.aws.unit.no/cristin/project/14334631",
-    "type": "ResearchProject",
-    "name": "Utvikling av eplekaken"
-  }
+  "projects": [
+    {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/project/14334631",
+      "type": "ResearchProject",
+      "name": "Utvikling av eplekaken"
+    }
   ],
   "publishedDate": "2023-09-29T12:14:46Z",
   "publisher": {
@@ -116,27 +119,29 @@
     "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
   },
   "status": "PUBLISHED",
-  "topLevelOrganizations": [{
-    "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-    "type": "Organization",
-    "countryCode": "NO",
-    "hasPart": [{
-      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.1.0.0",
+  "topLevelOrganizations": [
+    {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
       "type": "Organization",
-      "acronym": "UA",
+      "countryCode": "NO",
+      "hasPart": [
+        {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.1.0.0",
+          "type": "Organization",
+          "acronym": "UA",
+          "labels": {
+            "en": "The Education and Administration Division"
+          },
+          "partOf": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+          }
+        }
+      ],
       "labels": {
-        "en": "The Education and Administration Division"
-      },
-      "partOf": {
-        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+        "nb": "Forsvarets høgskole",
+        "en": "Norwegian Defence University College"
       }
     }
-    ],
-    "labels": {
-      "nb": "Forsvarets høgskole",
-      "en": "Norwegian Defence University College"
-    }
-  }
   ]
 }
 ```
@@ -181,8 +186,8 @@ Accept: application/json
 ## Available Sort Keys
 
 | key_name         | keyName         | keyRegEx              | paths                                                        |
-|------------------|-----------------|-----------------------|--------------------------------------------------------------|
-| relevance        | relevance       | (?i)relevance         | _score                                                       |
+| ---------------- | --------------- | --------------------- | ------------------------------------------------------------ |
+| relevance        | relevance       | (?i)relevance         | \_score                                                      |
 | category         | category        | (?i)category          | entityDescription.reference.publicationInstance.type.keyword |
 | instance_type    | instanceType    | (?i)instance.?type    | entityDescription.reference.publicationInstance.type.keyword |
 | created_date     | createdDate     | (?i)created.?date     | createdDate                                                  |
@@ -197,24 +202,24 @@ Accept: application/json
 
 ### QueryKind descriptions
 
-* number
-  * Integer
-* date
-  * DateTimeFormat -> <code> yyyy | yyyy-MM-dd | yyyy-MM-ddTHH:mm:ssZ | yyyy-MM-ddTHH:mm:ss.SSSZ</code>
-* keyword
-  * Only hit on complete field
-* fuzzy_keyword
-  * will hit on partial field, boost hits on complete field
-* text
-  * hits on any partial match in field(s), boosts on exact match and phrases
-* free_text
-  * Search through whole document
-* custom
+- number
+  - Integer
+- date
+  - DateTimeFormat -> <code> yyyy | yyyy-MM-dd | yyyy-MM-ddTHH:mm:ssZ | yyyy-MM-ddTHH:mm:ss.SSSZ</code>
+- keyword
+  - Only hit on complete field
+- fuzzy_keyword
+  - will hit on partial field, boost hits on complete field
+- text
+  - hits on any partial match in field(s), boosts on exact match and phrases
+- free_text
+  - Search through whole document
+- custom
 
 ### Key details
 
 | key_name                           | keyName                         | queryKind    | scope                    | paths                                                                                                                                                                                                                                                                                                                                                     |
-|------------------------------------|---------------------------------|--------------|--------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---------------------------------- | ------------------------------- | ------------ | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | abstract                           | abstract                        | text         | all_of                   | entityDescription.abstract                                                                                                                                                                                                                                                                                                                                |
 | abstract_of_child                  | abstractOfChild                 | hasParts     | all_of                   | ABSTRACT_OF_CHILD                                                                                                                                                                                                                                                                                                                                         |
 | abstract_not                       | abstractNot                     | text         | not_all_of               | entityDescription.abstract                                                                                                                                                                                                                                                                                                                                |
@@ -223,7 +228,7 @@ Accept: application/json
 | context_type_of_no_child           | contextTypeOfNoChild            | hasParts     | not_any_of               | CONTEXT_TYPE_OF_NO_CHILD                                                                                                                                                                                                                                                                                                                                  |
 | context_type_not                   | contextTypeNot                  | keyword      | not_all_of               | entityDescription.reference.publicationContext.type.keyword                                                                                                                                                                                                                                                                                               |
 | context_type_should                | contextTypeShould               | keyword      | any_of                   | entityDescription.reference.publicationContext.type.keyword                                                                                                                                                                                                                                                                                               |
-| contributors                       | contributors                    | acrossFields | all_of                   | entityDescription.contributors.identity.*, entityDescription.contributors.role.*, entityDescription.contributors.affiliations.*                                                                                                                                                                                                                           |
+| contributors                       | contributors                    | acrossFields | all_of                   | entityDescription.contributors.identity._, entityDescription.contributors.role._, entityDescription.contributors.affiliations.\*                                                                                                                                                                                                                          |
 | contributors_of_child              | contributorsOfChild             | hasParts     | all_of                   | CONTRIBUTORS_OF_CHILD                                                                                                                                                                                                                                                                                                                                     |
 | contributor                        | contributor                     | keyword      | all_of                   | entityDescription.contributors.identity.id.keyword                                                                                                                                                                                                                                                                                                        |
 | contributor_not                    | contributorNot                  | keyword      | not_all_of               | entityDescription.contributors.identity.id.keyword                                                                                                                                                                                                                                                                                                        |
@@ -324,7 +329,7 @@ Accept: application/json
 | title_not                          | titleNot                        | text         | not_all_of               | entityDescription.mainTitle                                                                                                                                                                                                                                                                                                                               |
 | title_should                       | titleShould                     | text         | any_of                   | entityDescription.mainTitle                                                                                                                                                                                                                                                                                                                               |
 | top_level_organization             | topLevelOrganization            | custom       | any_of                   | topLevelOrganizations.id.keyword                                                                                                                                                                                                                                                                                                                          |
-| unidentified_norwegian             | unidentifiedNorwegian           | custom       | all_of                   | entityDescription.contributors.identity.*, entityDescription.contributors.role.*, entityDescription.contributors.affiliations.*                                                                                                                                                                                                                           |
+| unidentified_norwegian             | unidentifiedNorwegian           | custom       | all_of                   | entityDescription.contributors.identity._, entityDescription.contributors.role._, entityDescription.contributors.affiliations.\*                                                                                                                                                                                                                          |
 | unit                               | unit                            | custom       | all_of                   | entityDescription.contributors.affiliations.id.keyword                                                                                                                                                                                                                                                                                                    |
 | unit_not                           | unitNot                         | custom       | not_all_of               | entityDescription.contributors.affiliations.id.keyword                                                                                                                                                                                                                                                                                                    |
 | unit_should                        | unitShould                      | text         | any_of                   | entityDescription.contributors.affiliations.id                                                                                                                                                                                                                                                                                                            |
@@ -346,11 +351,12 @@ Accept: application/json
 | nodes_searched                     | nodesSearched                   | flag         | na                       | NODES_SEARCHED                                                                                                                                                                                                                                                                                                                                            |
 | nodes_included                     | nodesIncluded                   | flag         | all_of                   | NODES_INCLUDED                                                                                                                                                                                                                                                                                                                                            |
 | nodes_excluded                     | nodesExcluded                   | flag         | all_of                   | NODES_EXCLUDED                                                                                                                                                                                                                                                                                                                                            |
-                                                                                                                                                                                                                                                                                                                                              |
+|                                    |
 
 ## Notes
 
 > [!NOTE]
+>
 > <p>Valid contextType (aliases; type/contextType/category)</p>
 >
 > ```
@@ -367,6 +373,7 @@ Accept: application/json
 > ```
 
 > [!NOTE]
+>
 > <p>Valid SortKeys </p>
 >
 > ```
