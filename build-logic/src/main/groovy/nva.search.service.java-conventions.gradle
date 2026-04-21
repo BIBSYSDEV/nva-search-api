@@ -1,0 +1,20 @@
+plugins {
+    id 'nva.java-conventions'
+}
+
+nva {
+    pmd {
+        rulesetFile = rootProject.file('config/pmd/ruleset.xml')
+    }
+}
+
+dependencies {
+    testImplementation nvaCatalog.bundles.testing.junit
+    testImplementation nvaCatalog.bundles.testing.mockito
+    testImplementation nvaCatalog.bundles.testing.hamcrest
+    testImplementation nvaCatalog.javers
+    testImplementation nvaCatalog.assertj.core
+    testImplementation libs.log4j.test
+    testImplementation nvaLibs.testutils
+    testImplementation nvaLibs.logutils
+}
