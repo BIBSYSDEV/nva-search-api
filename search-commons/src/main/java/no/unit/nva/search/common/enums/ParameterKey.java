@@ -79,6 +79,16 @@ public interface ParameterKey<K extends Enum<K> & ParameterKey<K>> {
     return isKeyWord.length == 1 ? !isKeyWord[0] : result;
   }
 
+  String name();
+
+  default boolean isInvalid() {
+    return "INVALID".equals(name());
+  }
+
+  default boolean isValid() {
+    return !isInvalid();
+  }
+
   String asCamelCase();
 
   String asLowerCase();

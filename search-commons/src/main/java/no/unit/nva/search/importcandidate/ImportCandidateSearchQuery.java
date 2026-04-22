@@ -1,19 +1,14 @@
 package no.unit.nva.search.importcandidate;
 
-import static no.unit.nva.constants.Defaults.DEFAULT_OFFSET;
-import static no.unit.nva.constants.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.constants.Words.ADDITIONAL_IDENTIFIERS;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.constants.Words.KEYWORD;
-import static no.unit.nva.constants.Words.NONE;
-import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.constants.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.constants.Words.SEARCH;
 import static no.unit.nva.constants.Words.TYPE;
 import static no.unit.nva.constants.Words.VALUE;
 import static no.unit.nva.search.common.constant.Functions.jsonPath;
-import static no.unit.nva.search.common.constant.Functions.trimSpace;
 import static no.unit.nva.search.importcandidate.Constants.FACET_IMPORT_CANDIDATE_PATHS;
 import static no.unit.nva.search.importcandidate.Constants.IMPORT_CANDIDATES_AGGREGATIONS;
 import static no.unit.nva.search.importcandidate.Constants.IMPORT_CANDIDATES_INDEX_NAME;
@@ -174,37 +169,6 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
     }
 
     @Override
-    protected void assignDefaultValues() {
-      requiredMissing()
-          .forEach(
-              key -> {
-                switch (key) {
-                  case FROM -> setValue(key.name(), DEFAULT_OFFSET);
-                  case SIZE -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
-                  case SORT -> setValue(key.name(), RELEVANCE_KEY_NAME);
-                  case AGGREGATION -> setValue(key.name(), NONE);
-                  default -> {
-                    /* do nothing */
-                  }
-                }
-              });
-    }
-
-    @JacocoGenerated
-    @Override
-    protected void applyRulesAfterValidation() {
-      // convert page to offset if offset is not set
-      if (query.parameters().isPresent(PAGE)) {
-        if (query.parameters().isPresent(FROM)) {
-          var page = query.parameters().get(PAGE).<Number>as();
-          var perPage = query.parameters().get(SIZE).<Number>as();
-          query.parameters().set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
-        }
-        query.parameters().remove(PAGE);
-      }
-    }
-
-    @Override
     protected Collection<String> validKeys() {
       return IMPORT_CANDIDATE_PARAMETER_SET.stream()
           .map(ImportCandidateParameter::asLowerCase)
@@ -217,24 +181,6 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
     }
 
     @Override
-    protected void setValue(String key, String value) {
-      var qpKey = ImportCandidateParameter.keyFromString(key);
-      var decodedValue = getDecodedValue(qpKey, value);
-
-      switch (qpKey) {
-        case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION ->
-            query.parameters().set(qpKey, decodedValue);
-        case NODES_SEARCHED -> query.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
-        case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
-        case SORT_ORDER -> mergeToKey(SORT, decodedValue);
-        case INVALID -> invalidKeys.add(key);
-        default -> mergeToKey(qpKey, decodedValue);
-      }
-    }
-
-    @Override
-    protected boolean isKeyValid(String keyName) {
-      return ImportCandidateParameter.keyFromString(keyName) != ImportCandidateParameter.INVALID;
-    }
+    protected void applyAdditionalRulesAfterValidation() {}
   }
 }
