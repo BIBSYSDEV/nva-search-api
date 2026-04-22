@@ -288,7 +288,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     protected void applyAdditionalRulesAfterValidation() {}
 
     @Override
-    protected void setValueSpecific(ResourceParameter qpKey, String decodedValue) {
+    protected void setCustomValue(ResourceParameter qpKey, String decodedValue) {
       switch (qpKey) {
         case UNIT, UNIT_NOT, TOP_LEVEL_ORGANIZATION ->
             mergeToKey(qpKey, identifierToCristinId(decodedValue));

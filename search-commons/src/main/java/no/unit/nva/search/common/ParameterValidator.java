@@ -186,7 +186,7 @@ public abstract class ParameterValidator<
   /**
    * Decodes and stores a parameter value. Unrecognized keys are collected in {@link #invalidKeys}
    * (reported later as a batch). Pagination, sort, sort-order and field-filter keys have shared
-   * handling here; anything else is delegated to {@link #setValueSpecific(Enum, String)}.
+   * handling here; anything else is delegated to {@link #setCustomValue(Enum, String)}.
    */
   protected void setValue(String key, String value) {
     var qpKey = query.toKey(key);
@@ -205,7 +205,7 @@ public abstract class ParameterValidator<
             query.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
         case SORT_KEY_NAME -> mergeToKey(qpKey, trimSpace(decodedValue));
         case SORT_ORDER_KEY_NAME -> mergeToKey(query.toKey(SORT_KEY_NAME), decodedValue);
-        default -> setValueSpecific(qpKey, decodedValue);
+        default -> setCustomValue(qpKey, decodedValue);
       }
     }
   }
@@ -214,7 +214,7 @@ public abstract class ParameterValidator<
    * Hook for type-specific parameter handling (e.g. URI transformation, enum conversion). Override
    * to transform the value before storing it under its key.
    */
-  protected void setValueSpecific(K qpKey, String decodedValue) {
+  protected void setCustomValue(K qpKey, String decodedValue) {
     mergeToKey(qpKey, decodedValue);
   }
 

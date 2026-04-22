@@ -289,7 +289,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
     }
 
     @Override
-    protected void setValueSpecific(TicketParameter qpKey, String decodedValue) {
+    protected void setCustomValue(TicketParameter qpKey, String decodedValue) {
       switch (qpKey) {
         case TYPE -> mergeToKey(qpKey, toEnumStrings(TicketType::fromString, decodedValue));
         case STATUS -> mergeToKey(qpKey, toEnumStrings(TicketStatus::fromString, decodedValue));
