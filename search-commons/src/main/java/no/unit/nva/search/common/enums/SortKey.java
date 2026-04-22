@@ -37,10 +37,6 @@ public interface SortKey {
     return INVALID_SORT_KEY_NAME.equals(name());
   }
 
-  default boolean isValid() {
-    return !isInvalid();
-  }
-
   String keyPattern();
 
   Stream<String> jsonPaths();
