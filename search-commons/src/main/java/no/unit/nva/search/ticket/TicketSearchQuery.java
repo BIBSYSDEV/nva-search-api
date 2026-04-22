@@ -1,15 +1,10 @@
 package no.unit.nva.search.ticket;
 
-import static no.unit.nva.constants.Defaults.DEFAULT_OFFSET;
-import static no.unit.nva.constants.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.EXCLUDE_KEYWORD;
-import static no.unit.nva.constants.Words.NONE;
 import static no.unit.nva.constants.Words.POST_FILTER;
-import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.constants.Words.SEARCH;
 import static no.unit.nva.search.common.constant.Functions.toEnumStrings;
-import static no.unit.nva.search.common.constant.Functions.trimSpace;
 import static no.unit.nva.search.ticket.Constants.ORGANIZATION_ID_KEYWORD;
 import static no.unit.nva.search.ticket.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search.ticket.Constants.UNHANDLED_KEY;
@@ -268,33 +263,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
     }
 
     @Override
-    protected void assignDefaultValues() {
-      requiredMissing()
-          .forEach(
-              key -> {
-                switch (key) {
-                  case FROM -> setValue(key.name(), DEFAULT_OFFSET);
-                  case SIZE -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
-                  case SORT -> setValue(key.name(), RELEVANCE_KEY_NAME);
-                  case AGGREGATION -> setValue(key.name(), NONE);
-                  default -> {
-                    /* ignore and continue */
-                  }
-                }
-              });
-    }
-
-    @Override
-    protected void applyRulesAfterValidation() {
-      // convert page to offset if offset is not set
-      if (query.parameters().isPresent(PAGE)) {
-        if (query.parameters().isPresent(FROM)) {
-          var page = query.parameters().get(PAGE).<Number>as().longValue();
-          var perPage = query.parameters().get(SIZE).<Number>as().longValue();
-          query.parameters().set(FROM, String.valueOf(page * perPage));
-        }
-        query.parameters().remove(PAGE);
-      }
+    protected void applyAdditionalRulesAfterValidation() {
       if (query.parameters().isPresent(BY_USER_PENDING)) {
         query.parameters().set(STATUS, PENDING.toString());
 
@@ -320,25 +289,12 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
     }
 
     @Override
-    protected void setValue(String key, String value) {
-      var qpKey = TicketParameter.keyFromString(key);
-      var decodedValue = getDecodedValue(qpKey, value);
+    protected void setValueSpecific(TicketParameter qpKey, String decodedValue) {
       switch (qpKey) {
-        case INVALID -> invalidKeys.add(key);
-        case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION ->
-            query.parameters().set(qpKey, decodedValue);
-        case NODES_SEARCHED -> query.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
-        case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
-        case SORT_ORDER -> mergeToKey(SORT, decodedValue);
         case TYPE -> mergeToKey(qpKey, toEnumStrings(TicketType::fromString, decodedValue));
         case STATUS -> mergeToKey(qpKey, toEnumStrings(TicketStatus::fromString, decodedValue));
         default -> mergeToKey(qpKey, decodedValue);
       }
-    }
-
-    @Override
-    protected boolean isKeyValid(String keyName) {
-      return TicketParameter.keyFromString(keyName) != TicketParameter.INVALID;
     }
   }
 }

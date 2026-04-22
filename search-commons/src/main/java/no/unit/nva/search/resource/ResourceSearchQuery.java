@@ -1,18 +1,13 @@
 package no.unit.nva.search.resource;
 
 import static java.lang.String.format;
-import static no.unit.nva.constants.Defaults.DEFAULT_OFFSET;
-import static no.unit.nva.constants.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.constants.Words.HTTPS;
 import static no.unit.nva.constants.Words.IDENTIFIER;
-import static no.unit.nva.constants.Words.NONE;
 import static no.unit.nva.constants.Words.PI;
-import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.constants.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.constants.Words.STATUS;
-import static no.unit.nva.search.common.constant.Functions.trimSpace;
 import static no.unit.nva.search.resource.Constants.CRISTIN_ORGANIZATION_PATH;
 import static no.unit.nva.search.resource.Constants.CRISTIN_PERSON_PATH;
 import static no.unit.nva.search.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
@@ -280,44 +275,8 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     }
 
     @Override
-    protected void assignDefaultValues() {
-      requiredMissing()
-          .forEach(
-              key -> {
-                switch (key) {
-                  case FROM -> setValue(key.name(), DEFAULT_OFFSET);
-                  case SIZE -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
-                  case SORT -> setValue(key.name(), RELEVANCE_KEY_NAME);
-                  case AGGREGATION -> setValue(key.name(), NONE);
-                  default -> {
-                    /* ignore and continue */
-                  }
-                }
-              });
-    }
-
-    @JacocoGenerated
-    @Override
-    protected void applyRulesAfterValidation() {
-      // convert page to offset if offset is not set
-      if (query.parameters().isPresent(PAGE)) {
-        if (query.parameters().isPresent(FROM)) {
-          var page = query.parameters().get(PAGE).<Number>as();
-          var perPage = query.parameters().get(SIZE).<Number>as();
-          query.parameters().set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
-        }
-        query.parameters().remove(PAGE);
-      }
-    }
-
-    @Override
     protected Collection<String> validKeys() {
       return RESOURCE_PARAMETER_SET.stream().map(ResourceParameter::asLowerCase).toList();
-    }
-
-    @Override
-    protected boolean isKeyValid(String keyName) {
-      return ResourceParameter.keyFromString(keyName) != ResourceParameter.INVALID;
     }
 
     @Override
@@ -326,20 +285,15 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     }
 
     @Override
-    protected void setValue(String key, String value) {
-      var qpKey = ResourceParameter.keyFromString(key);
-      var decodedValue = getDecodedValue(qpKey, value);
+    protected void applyAdditionalRulesAfterValidation() {}
+
+    @Override
+    protected void setValueSpecific(ResourceParameter qpKey, String decodedValue) {
       switch (qpKey) {
-        case INVALID -> invalidKeys.add(key);
         case UNIT, UNIT_NOT, TOP_LEVEL_ORGANIZATION ->
             mergeToKey(qpKey, identifierToCristinId(decodedValue));
         case CONTRIBUTOR, CONTRIBUTOR_NOT ->
             mergeToKey(qpKey, identifierToCristinPersonId(decodedValue));
-        case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION ->
-            query.parameters().set(qpKey, decodedValue);
-        case NODES_SEARCHED -> query.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
-        case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
-        case SORT_ORDER -> mergeToKey(SORT, decodedValue);
         default -> mergeToKey(qpKey, decodedValue);
       }
     }
