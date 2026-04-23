@@ -1,0 +1,15 @@
+plugins {
+    id 'nva.root-module-conventions'
+}
+
+nva {
+    jacoco {
+        minMethodCoverage = 0.940
+        minClassCoverage = 0.986
+    }
+    spectral {
+        documents = [
+            'docs/openapi.yaml'] // TODO: Include all specs
+        rulesetFile = file('.spectral.yaml')
+    }
+}

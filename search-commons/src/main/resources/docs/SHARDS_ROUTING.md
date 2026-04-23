@@ -8,16 +8,16 @@ ytelse.
 
 #### 1. **Shards (Fragmenter)**
 
-- **Definisjon:** I OpenSearch (og Elasticsearch) er en indeks delt opp i mindre, håndterbare deler kalt *shards* eller
+- **Definisjon:** I OpenSearch (og Elasticsearch) er en indeks delt opp i mindre, håndterbare deler kalt _shards_ eller
   fragmenter.
 - **Antall Shards:** Når du oppretter en indeks, spesifiserer du antall primærshards. Dette tallet bestemmer hvor mye
   dataindeksen kan skaleres horisontalt.
-- **Shard ID:** Hver shard tildeles en unik identifikator (*shard ID*) innen indeksen, vanligvis numerisk (f.eks. 0, 1,
+- **Shard ID:** Hver shard tildeles en unik identifikator (_shard ID_) innen indeksen, vanligvis numerisk (f.eks. 0, 1,
   2, ...).
 
 #### 2. **Routing**
 
-- **Definisjon:** *Routing* bestemmer hvilken shard et bestemt dokument skal tilhøre innen en indeks. Det er en nøkkel
+- **Definisjon:** _Routing_ bestemmer hvilken shard et bestemt dokument skal tilhøre innen en indeks. Det er en nøkkel
   eller verdi som brukes til å fordele dokumenter jevnt over shards.
 - **Standard Routing:** Hvis ingen routing spesifiseres, bruker OpenSearch dokumentets unike ID som routing-verdi.
 - **Egendefinert Routing:** Brukere kan spesifisere en egen routing-verdi for å kontrollere dokumentplasseringen, noe
@@ -31,14 +31,15 @@ ytelse.
 
 - **Indre Mekanisme:** Når du indekserer et dokument, tar OpenSearch routing-verdien (enten den spesifiserte eller
   dokumentets ID) og bruker en konsistent hash-funksjon for å beregne hvilken shard dokumentet skal plasseres i. Denne
-  prosessen avgjør *shard ID* basert på routing-verdien.
+  prosessen avgjør _shard ID_ basert på routing-verdien.
 
   **Formel:**
+
   ```
   shard_id = hash(routing) % number_of_primary_shards
   ```
 
-- **Implikasjon:** Brukeren spesifiserer **routing key**, ikke direkte *shard ID*. Shard ID bestemmes automatisk basert
+- **Implikasjon:** Brukeren spesifiserer **routing key**, ikke direkte _shard ID_. Shard ID bestemmes automatisk basert
   på routing key og antall shards i indeksen.
 
 ### **Eksempel:**
@@ -46,17 +47,19 @@ ytelse.
 Anta at du har en indeks med 5 primærshards (Shard ID: 0 til 4).
 
 1. **Ingen Spesifisert Routing:**
-    - **Dokument-ID:** `doc123`
-    - **Routing key:** `doc123` (standard)
-    - **Shard ID:** `hash('doc123') % 5 = 2` → Dokumentet lagres i Shard 2.
+
+   - **Dokument-ID:** `doc123`
+   - **Routing key:** `doc123` (standard)
+   - **Shard ID:** `hash('doc123') % 5 = 2` → Dokumentet lagres i Shard 2.
 
 2. **Spesifisert Routing:**
-    - **Dokument-ID:** `child456`
-    - **Routing key:** `parent789` (for å plassere barn i samme shard som forelder)
-    - **Shard ID:** `hash('parent789') % 5 = 3` → Dokumentet lagres i Shard 3.
+
+   - **Dokument-ID:** `child456`
+   - **Routing key:** `parent789` (for å plassere barn i samme shard som forelder)
+   - **Shard ID:** `hash('parent789') % 5 = 3` → Dokumentet lagres i Shard 3.
 
    > **Merk:** For å sikre at både forelderen (`parent789`) og barnet (`child456`) er i samme shard, bruker du
-   `parent789` som routing key for begge dokumentene. Dermed får begge dokumentene samme Shard ID (3 i dette tilfellet).
+   > `parent789` som routing key for begge dokumentene. Dermed får begge dokumentene samme Shard ID (3 i dette tilfellet).
 
 ---
 
@@ -107,7 +110,7 @@ Anta at du har en indeks med 5 primærshards (Shard ID: 0 til 4).
 ## **Detaljert Sammenligning**
 
 | **Aspekt**            | **Routing**                                                                                        | **Shard ID**                                                                                           |
-|-----------------------|----------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|
+| --------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | **Definisjon**        | En nøkkel som bestemmer hvor et dokument plasseres innen en indeks.                                | Unik identifikator for en shard innen en indeks.                                                       |
 | **Brukerinteraksjon** | Brukeren spesifiserer en routing key ved indeksering eller spørring.                               | Shard ID tildeles automatisk av OpenSearch basert på routing key og indekskonfigurasjon.               |
 | **Spesifikasjon**     | Eksplisitt spesifisering av routing key nødvendig for kontrollert plassering av dokumenter.        | Shard ID bestemmes internt, og brukeren trenger vanligvis ikke å kjenne til det direkte.               |
@@ -185,7 +188,7 @@ POST /min_indeks/_doc/barn_1?routing=foreldre_1
 ## **Oppsummering**
 
 - **Routing** er en brukerspesifisert nøkkel som påvirker hvor et dokument plasseres i en indeks ved å bestemme hvilken
-  *shard* det tilhører.
+  _shard_ det tilhører.
 - **Shard ID** er en intern identifikator som OpenSearch tildeler til hver shard basert på routing key og indeksens
   shard-konfigurasjon.
 - **Brukere spesifiserer ikke direkte Shard ID**, men manipulerer shard-plasseringen via routing key.

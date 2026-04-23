@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: >
   NVA Search Resources API and Handler
@@ -16,7 +16,7 @@ Globals:
         SEARCH_INFRASTRUCTURE_API_URI: !Ref SearchInfrastructureApiUri
         SEARCH_INFRASTRUCTURE_AUTH_URI: !Ref SearchInfrastructureAuthUri
         COGNITO_HOST: !Ref CognitoUri
-        API_HOST: !Sub 'api.${CustomDomain}'
+        API_HOST: !Sub "api.${CustomDomain}"
         LARGE_API_RESPONSES_BUCKET: !Ref LargeApiResponsesBucketName
         COGNITO_AUTHORIZER_URLS: !Join [",", !Ref CognitoAuthorizerUrls]
   Api:
@@ -40,11 +40,11 @@ Parameters:
   SearchInfrastructureApiUri:
     Type: String
     Description: URI to external search infrastructure API (SWS).
-    Default: 'https://api.sws.aws.sikt.no'
+    Default: "https://api.sws.aws.sikt.no"
   SearchInfrastructureAuthUri:
     Type: String
     Description: URI to auth for external search infrastructure API (SWS).
-    Default: 'https://sws-auth.auth.eu-west-1.amazoncognito.com'
+    Default: "https://sws-auth.auth.eu-west-1.amazoncognito.com"
   CustomDomain:
     Type: AWS::SSM::Parameter::Value<String>
     Description: Custom API to connect this lambda to
@@ -68,46 +68,46 @@ Parameters:
     Default: /NVA/Events/PersistedEntriesBucketName
   IndexingErrorsBucketName:
     Type: String
-    Default: 'indexing-errors'
+    Default: "indexing-errors"
     Description: Name of bucket for failed index documents
   EventsBucketsName:
     Type: AWS::SSM::Parameter::Value<String>
-    Default: '/NVA/Events/EventsBucketName'
+    Default: "/NVA/Events/EventsBucketName"
   KeyBatchesBucketName:
     Type: String
-    Default: 'key-batches'
+    Default: "key-batches"
     Description: Name of bucket for key batches
   MaxConcurrency:
     Type: String
     Description: Maximum capacity for provisioned concurrency
-    Default: '10'
+    Default: "10"
   MinConcurrency:
     Type: String
     Description: Minimum capacity for provisioned concurrency
-    Default: '1'
+    Default: "1"
   Suffix:
     Type: String
-    Default: ''
+    Default: ""
     Description: Suffix used for naming resources for feature branches to avoid conflicts.
   ElasticSearchSize:
     Type: String
     Default: dummy-value
   SlackSnsArn:
     Type: AWS::SSM::Parameter::Value<String>
-    Default: '/NVA/Monitoring/SlackSnsArn'
+    Default: "/NVA/Monitoring/SlackSnsArn"
   LargeApiResponsesBucketArn:
-    Type: 'AWS::SSM::Parameter::Value<String>'
-    Default: '/NVA/LargeApiResponsesBucketArn'
+    Type: "AWS::SSM::Parameter::Value<String>"
+    Default: "/NVA/LargeApiResponsesBucketArn"
   LargeApiResponsesBucketName:
-    Type: 'AWS::SSM::Parameter::Value<String>'
-    Default: '/NVA/LargeApiResponsesBucketName'
+    Type: "AWS::SSM::Parameter::Value<String>"
+    Default: "/NVA/LargeApiResponsesBucketName"
   AllowedOrigins:
     Type: String
     Description: comma separated list of external clients that are allowed to contact the HTTP APIs, "*" indicates that all origins are allowed
-    Default: '*'
+    Default: "*"
 
 Conditions:
-  WithSuffix: !Not [ !Equals [ !Ref Suffix, '' ] ]
+  WithSuffix: !Not [!Equals [!Ref Suffix, ""]]
 
 Resources:
   NvaSearchApiCodeBuildReportGroup:
@@ -124,14 +124,14 @@ Resources:
   ReadSearchInfrastructureSecretsManagedPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      Description: 'Managed IAM policy to get access to read search infrastructure secrets from Secrets manager'
+      Description: "Managed IAM policy to get access to read search infrastructure secrets from Secrets manager"
       PolicyDocument:
         Version: 2012-10-17
         Statement:
           - Effect: Allow
             Action:
               - secretsmanager:GetSecretValue
-            Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:SearchInfrastructureCredentials*'
+            Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:SearchInfrastructureCredentials*"
 
   ReadOnlySearchInfrastructureRole:
     Type: AWS::IAM::Role
@@ -141,8 +141,8 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              Service: [ lambda.amazonaws.com ]
-            Action: [ 'sts:AssumeRole' ]
+              Service: [lambda.amazonaws.com]
+            Action: ["sts:AssumeRole"]
       ManagedPolicyArns:
         - !Ref ReadSearchInfrastructureSecretsManagedPolicy
       Policies:
@@ -155,7 +155,7 @@ Resources:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
-                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:*:*'
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:*:*"
         - PolicyName: readIdentitySecret
           PolicyDocument:
             Version: 2012-10-17
@@ -163,7 +163,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - secretsmanager:GetSecretValue
-                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:IdentityServiceSecret*'
+                Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:IdentityServiceSecret*"
         - PolicyName: readBackendCognitoClientCredentialsSecret
           PolicyDocument:
             Version: 2012-10-17
@@ -171,7 +171,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - secretsmanager:GetSecretValue
-                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:BackendCognitoClientCredentials*'
+                Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:BackendCognitoClientCredentials*"
         - PolicyName: accessLargeResponseBucket
           PolicyDocument:
             Version: 2012-10-17
@@ -179,7 +179,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - s3:*
-                Resource: !Sub '${LargeApiResponsesBucketArn}/*'
+                Resource: !Sub "${LargeApiResponsesBucketArn}/*"
 
   SearchHandlerRole:
     Type: AWS::IAM::Role
@@ -189,8 +189,8 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              Service: [ lambda.amazonaws.com ]
-            Action: [ 'sts:AssumeRole' ]
+              Service: [lambda.amazonaws.com]
+            Action: ["sts:AssumeRole"]
       Policies:
         - PolicyName: readFromS3
           PolicyDocument:
@@ -202,7 +202,7 @@ Resources:
                   - s3:List*
                   - s3:PutObject*
                   - events:*
-                Resource: '*'
+                Resource: "*"
         - PolicyName: writeLog
           PolicyDocument:
             Version: 2012-10-17
@@ -212,7 +212,7 @@ Resources:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
-                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:*:*'
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:*:*"
         - PolicyName: readSearchInfrastructureSecret
           PolicyDocument:
             Version: 2012-10-17
@@ -220,7 +220,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - secretsmanager:GetSecretValue
-                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:SearchInfrastructureCredentials*'
+                Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:SearchInfrastructureCredentials*"
 
   NvaSearchApi:
     Type: AWS::Serverless::Api
@@ -228,8 +228,8 @@ Resources:
       AccessLogSetting:
         DestinationArn: !GetAtt ApiAccessLogGroup.Arn
         Format: !Join
-          - ''
-          - - '{ '
+          - ""
+          - - "{ "
             - '"apiId": "$context.apiId", '
             - '"requestId": "$context.requestId", '
             - '"requestTime": "$context.requestTime", '
@@ -241,12 +241,12 @@ Resources:
             - '"error.message": "$context.error.message", '
             - '"userAgent": "$context.identity.userAgent", '
             - '"ip": "$context.identity.sourceIp" '
-            - '}'
+            - "}"
       StageName: Prod
       EndpointConfiguration: REGIONAL
       DefinitionBody:
-        'Fn::Transform':
-          Name: 'AWS::Include'
+        "Fn::Transform":
+          Name: "AWS::Include"
           Parameters:
             Location: ./docs/openapi.yaml
 
@@ -260,7 +260,7 @@ Resources:
               - sts:AssumeRole
             Effect: Allow
             Principal:
-              Service: [ codedeploy.amazonaws.com ]
+              Service: [codedeploy.amazonaws.com]
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSCodeDeployRoleForLambda
 
@@ -282,7 +282,7 @@ Resources:
         Variables:
           ALLOWED_ORIGIN: !Ref AllowedOrigins
           COGNITO_HOST: !Ref CognitoUri
-          BACKEND_CLIENT_SECRET_NAME: 'BackendCognitoClientCredentials'
+          BACKEND_CLIENT_SECRET_NAME: "BackendCognitoClientCredentials"
       Events:
         GetTickets:
           Type: Api
@@ -456,8 +456,8 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              Service: [ lambda.amazonaws.com ]
-            Action: [ 'sts:AssumeRole' ]
+              Service: [lambda.amazonaws.com]
+            Action: ["sts:AssumeRole"]
       Path: /
       Policies:
         - PolicyName: writeLog
@@ -472,7 +472,7 @@ Resources:
                 Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:*:*"
         - PolicyName: Events
           PolicyDocument:
-            Version: '2012-10-17'
+            Version: "2012-10-17"
             Statement:
               - Effect: Allow
                 Action:
@@ -494,7 +494,7 @@ Resources:
                   - s3:Get*
                   - s3:List*
                   - events:*
-                Resource: '*'
+                Resource: "*"
         - PolicyName: readSearchInfrastructureSecret
           PolicyDocument:
             Version: 2012-10-17
@@ -502,7 +502,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - secretsmanager:GetSecretValue
-                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:SearchInfrastructureCredentials*'
+                Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:SearchInfrastructureCredentials*"
 
   IndexResources:
     DependsOn:
@@ -528,7 +528,7 @@ Resources:
                 - Lambda Function Invocation Result - Success
               detail:
                 responsePayload:
-                  topic: [ "PublicationService.ExpandedEntry.Persisted", "ImportCandidates.ExpandedDataEntry.Persisted" ]
+                  topic: ["PublicationService.ExpandedEntry.Persisted", "ImportCandidates.ExpandedDataEntry.Persisted"]
       EventInvokeConfig:
         DestinationConfig:
           OnFailure:
@@ -540,7 +540,7 @@ Resources:
     Properties:
       Name: !If
         - WithSuffix
-        - !Join [ "-",[ "BatchIndexEventBus", !Ref Suffix ] ]
+        - !Join ["-", ["BatchIndexEventBus", !Ref Suffix]]
         - "BatchIndexEventBus"
 
   DeleteResources:
@@ -563,7 +563,7 @@ Resources:
                 - Lambda Function Invocation Result - Success
               detail:
                 responsePayload:
-                  topic: [ "PublicationService.ExpandedEntry.Deleted" ]
+                  topic: ["PublicationService.ExpandedEntry.Deleted"]
 
   DeleteImportCandidates:
     DependsOn:
@@ -585,7 +585,7 @@ Resources:
                 - Lambda Function Invocation Result - Success
               detail:
                 responsePayload:
-                  topic: [ "ImportCandidates.ExpandedEntry.Deleted" ]
+                  topic: ["ImportCandidates.ExpandedEntry.Deleted"]
 
   ResourcesIndexerDLQ:
     Type: AWS::SQS::Queue
@@ -610,7 +610,7 @@ Resources:
             EventBusName: !GetAtt BatchIndexEventBus.Name
             Pattern:
               detail:
-                topic: [ "SearchService.Index.Batch" ]
+                topic: ["SearchService.Index.Batch"]
       Environment:
         Variables:
           ALLOWED_ORIGIN: !Ref AllowedOrigins
@@ -643,7 +643,7 @@ Resources:
           EVENT_BUS: !GetAtt BatchIndexEventBus.Name
           PERSISTED_RESOURCES_BUCKET: !Ref ResourcesBucket
           KEY_BATCHES_BUCKET: !Ref KeyBatchesBucket
-          TOPIC: 'SearchService.Index.KeyBasedBatch'
+          TOPIC: "SearchService.Index.KeyBasedBatch"
           PERSISTED_RESOURCES_PATH: !Sub "s3://${ResourcesBucket}/resources"
       Events:
         BatchIndexEvent:
@@ -652,7 +652,7 @@ Resources:
             EventBusName: !GetAtt BatchIndexEventBus.Name
             Pattern:
               detail:
-                topic: [ 'SearchService.Index.KeyBasedBatch' ]
+                topic: ["SearchService.Index.KeyBasedBatch"]
 
   KeyBasedBatchIndexHandler:
     Type: AWS::Serverless::Function
@@ -664,11 +664,11 @@ Resources:
       Role: !GetAtt SearchHandlerRole.Arn
       Environment:
         Variables:
-          TOPIC: 'SearchService.Index.IndexKeyBatch'
+          TOPIC: "SearchService.Index.IndexKeyBatch"
           PERSISTED_RESOURCES_BUCKET: !Ref ResourcesBucket
-          KEY_BATCHES_BUCKET: !Sub '${KeyBatchesBucketName}-${AWS::AccountId}'
+          KEY_BATCHES_BUCKET: !Sub "${KeyBatchesBucketName}-${AWS::AccountId}"
           EVENT_BUS: !GetAtt BatchIndexEventBus.Name
-          MAX_PAYLOAD: '3291456'
+          MAX_PAYLOAD: "3291456"
           PERSISTED_RESOURCES_PATH: !Sub "s3://${ResourcesBucket}/resources"
       Events:
         BatchIndexEvent:
@@ -677,7 +677,7 @@ Resources:
             EventBusName: !GetAtt BatchIndexEventBus.Name
             Pattern:
               detail:
-                topic: [ 'SearchService.Index.IndexKeyBatch' ]
+                topic: ["SearchService.Index.IndexKeyBatch"]
 
   InitHandler:
     Type: AWS::Serverless::Function
@@ -768,8 +768,8 @@ Resources:
       AccessLogSetting:
         DestinationArn: !GetAtt PublicationOaiPmhApiAccessLogGroup.Arn
         Format: !Join
-          - ''
-          - - '{ '
+          - ""
+          - - "{ "
             - '"apiId": "$context.apiId", '
             - '"requestId": "$context.requestId", '
             - '"requestTime": "$context.requestTime", '
@@ -781,13 +781,13 @@ Resources:
             - '"error.message": "$context.error.message", '
             - '"userAgent": "$context.identity.userAgent", '
             - '"ip": "$context.identity.sourceIp" '
-            - '}'
+            - "}"
       StageName: Prod
       EndpointConfiguration:
         Type: REGIONAL
       DefinitionBody:
-        'Fn::Transform':
-          Name: 'AWS::Include'
+        "Fn::Transform":
+          Name: "AWS::Include"
           Parameters:
             Location: ./docs/oai-pmh-openapi.yaml
 
@@ -892,7 +892,7 @@ Resources:
           - Effect: Allow
             Principal:
               Service: "events.amazonaws.com"
-            Action: 'sqs:SendMessage'
+            Action: "sqs:SendMessage"
             Resource: !GetAtt ExternalUpdatesQueue.Arn
             Condition:
               ArnEquals:
@@ -901,7 +901,7 @@ Resources:
   ConsumeMessagesFromExternalEventsQueueManagedPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      Description: 'Managed IAM policy to consume messages from external events queue'
+      Description: "Managed IAM policy to consume messages from external events queue"
       PolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -915,7 +915,7 @@ Resources:
   ReadEventBucketManagedPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      Description: 'Managed IAM policy to consume messages from external events queue'
+      Description: "Managed IAM policy to consume messages from external events queue"
       PolicyDocument:
         Version: 2012-10-17
         Statement:
