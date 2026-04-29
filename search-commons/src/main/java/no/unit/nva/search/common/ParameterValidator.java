@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import no.unit.nva.search.common.constant.Patterns;
@@ -63,6 +64,7 @@ public abstract class ParameterValidator<
   private static final String SEARCH_AFTER_KEY_NAME = "SEARCH_AFTER";
   private static final String NODES_SEARCHED_KEY_NAME = "NODES_SEARCHED";
   protected final transient Set<String> invalidKeys = new HashSet<>(0);
+  protected final transient Set<String> malformedKeys = new HashSet<>(0);
   protected final transient SearchQuery<K> query;
   protected transient boolean notValidated = true;
 
@@ -110,6 +112,10 @@ public abstract class ParameterValidator<
     }
     if (!invalidKeys.isEmpty()) {
       throw new BadRequestException(validQueryParameterNamesMessage(invalidKeys, validKeys()));
+    }
+    if (!malformedKeys.isEmpty()) {
+      throw new BadRequestException(
+          "Malformed URL encoding in parameter(s): " + String.join(", ", malformedKeys));
     }
     validatedSort();
 
@@ -256,8 +262,13 @@ public abstract class ParameterValidator<
   }
 
   protected String getDecodedValue(ParameterKey<K> qpKey, String value) {
-    return (qpKey.valueEncoding() == ValueEncoding.NONE ? value : decodeUTF(value))
-        .replaceAll(Patterns.PATTERN_IS_NON_PRINTABLE_CHARACTERS, EMPTY_STRING);
+    try {
+      var decoded = qpKey.valueEncoding() == ValueEncoding.NONE ? value : decodeUTF(value);
+      return decoded.replaceAll(Patterns.PATTERN_IS_NON_PRINTABLE_CHARACTERS, EMPTY_STRING);
+    } catch (IllegalArgumentException malformedEncoding) {
+      malformedKeys.add(qpKey.asCamelCase());
+      return value;
+    }
   }
 
   /** Adds query and path parameters from requestInfo. */
@@ -278,7 +289,9 @@ public abstract class ParameterValidator<
    * @apiNote This is intended to be used in runtime
    */
   public ParameterValidator<K, Q> fromMultiValueParameters(Map<String, List<String>> parameters) {
-    parameters.forEach((k, v) -> v.forEach(value -> setValue(k, value)));
+    parameters.forEach(
+        (key, values) ->
+            values.stream().filter(Objects::nonNull).forEach(value -> setValue(key, value)));
     return this;
   }
 
