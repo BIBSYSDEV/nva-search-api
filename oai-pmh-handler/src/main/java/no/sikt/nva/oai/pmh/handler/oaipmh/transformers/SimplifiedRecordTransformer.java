@@ -3,7 +3,7 @@ package no.sikt.nva.oai.pmh.handler.oaipmh.transformers;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhDateTimeUtils.truncateToSeconds;
-import static no.sikt.nva.oai.pmh.handler.oaipmh.transformers.XmlUtils.createSafeElementType;
+import static no.sikt.nva.oai.pmh.handler.oaipmh.transformers.XmlUtils.sanitizeXmlValue;
 
 import jakarta.xml.bind.JAXBElement;
 import java.net.URI;
@@ -16,6 +16,7 @@ import java.util.function.Function;
 import no.sikt.nva.oai.pmh.handler.oaipmh.RecordTransformer;
 import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec;
 import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec.SetRoot;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.resource.response.Organization;
 import no.unit.nva.search.resource.response.PublicationDate;
 import no.unit.nva.search.resource.response.ResourceSearchResponse;
@@ -31,7 +32,6 @@ import org.openarchives.oai.pmh.v2.RecordType;
 public class SimplifiedRecordTransformer implements RecordTransformer {
 
   private static final ObjectFactory OBJECT_FACTORY = new ObjectFactory();
-  private static final String JOURNAL = "Journal";
   private static final char DASH = '-';
   private static final String LANGUAGE_EN = "en";
   private static final String LANGUAGE_NB = "nb";
@@ -88,6 +88,12 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
     }
   }
 
+  private static ElementType createSafeElementType(String value) {
+    var element = OBJECT_FACTORY.createElementType();
+    element.setValue(sanitizeXmlValue(value));
+    return element;
+  }
+
   private static void appendContributors(ResourceSearchResponse response, OaiDcType oaiDcType) {
     response.contributorsPreview().stream()
         .map(contributor -> contributor.identity().name())
@@ -102,16 +108,12 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
     var otherIdentifiers = response.otherIdentifiers();
     appendPrefixedIdentifiers(oaiDcType, otherIdentifiers.cristin(), "CRISTIN:");
     appendPrefixedIdentifiers(oaiDcType, otherIdentifiers.scopus(), "SCOPUS:");
-    otherIdentifiers
-        .handle()
-        .forEach(handle -> appendDcElement(oaiDcType, OBJECT_FACTORY::createIdentifier, handle));
+    appendPrefixedIdentifiers(oaiDcType, otherIdentifiers.handle(), "");
     appendPrefixedIdentifiers(oaiDcType, otherIdentifiers.isbn(), "ISBN:");
     appendPrefixedIdentifiers(oaiDcType, otherIdentifiers.issn(), "ISSN:");
-    if (nonNull(response.publishingDetails().doi())) {
-      appendDcElement(
-          oaiDcType,
-          OBJECT_FACTORY::createIdentifier,
-          response.publishingDetails().doi().toString());
+    var doi = response.publishingDetails().doi();
+    if (nonNull(doi)) {
+      appendDcElement(oaiDcType, OBJECT_FACTORY::createIdentifier, doi.toString());
     }
   }
 
@@ -160,7 +162,7 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
     if (isNull(details)) {
       return null;
     }
-    if (JOURNAL.equals(details.type())) {
+    if (Words.JOURNAL_AS_TYPE.equals(details.type())) {
       return nameOrId(details.name(), details.id());
     }
     var publisher = details.publisher();
