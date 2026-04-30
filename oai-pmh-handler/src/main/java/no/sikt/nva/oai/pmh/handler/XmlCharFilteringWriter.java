@@ -30,7 +30,8 @@ final class XmlCharFilteringWriter extends FilterWriter {
     for (var position = 0; position < length; position++) {
       var character = buffer[offset + position];
       if (isValidXmlChar(character)) {
-        sanitized[index++] = character;
+        sanitized[index] = character;
+        index++;
       }
     }
     super.write(sanitized, 0, index);
