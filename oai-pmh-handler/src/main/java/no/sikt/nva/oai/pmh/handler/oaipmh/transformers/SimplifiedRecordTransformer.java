@@ -6,9 +6,11 @@ import static no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhDateTimeUtils.truncateToS
 import static no.sikt.nva.oai.pmh.handler.oaipmh.transformers.XmlUtils.createSafeElementType;
 
 import jakarta.xml.bind.JAXBElement;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import no.sikt.nva.oai.pmh.handler.oaipmh.RecordTransformer;
@@ -154,24 +156,21 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
   }
 
   private static String resolvePublisherName(ResourceSearchResponse response) {
-    var publishingDetails = response.publishingDetails();
-    if (isNull(publishingDetails)) {
+    var details = response.publishingDetails();
+    if (isNull(details)) {
       return null;
     }
-    if (JOURNAL.equals(publishingDetails.type())) {
-      if (nonNull(publishingDetails.name())) {
-        return publishingDetails.name();
-      }
-      return nonNull(publishingDetails.id()) ? publishingDetails.id().toString() : null;
+    if (JOURNAL.equals(details.type())) {
+      return nameOrId(details.name(), details.id());
     }
-    var publisher = publishingDetails.publisher();
-    if (isNull(publisher)) {
-      return null;
-    }
-    if (nonNull(publisher.name())) {
-      return publisher.name();
-    }
-    return nonNull(publisher.id()) ? publisher.id().toString() : null;
+    var publisher = details.publisher();
+    return isNull(publisher) ? null : nameOrId(publisher.name(), publisher.id());
+  }
+
+  private static String nameOrId(String name, URI id) {
+    return Optional.ofNullable(name)
+        .or(() -> Optional.ofNullable(id).map(URI::toString))
+        .orElse(null);
   }
 
   private static HeaderType populateHeaderType(ResourceSearchResponse response) {
