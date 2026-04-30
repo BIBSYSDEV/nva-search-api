@@ -5,14 +5,15 @@ import static java.util.Objects.nonNull;
 import static no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhDateTimeUtils.truncateToSeconds;
 import static no.sikt.nva.oai.pmh.handler.oaipmh.transformers.XmlUtils.createSafeElementType;
 
+import jakarta.xml.bind.JAXBElement;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import no.sikt.nva.oai.pmh.handler.oaipmh.RecordTransformer;
 import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec;
 import no.sikt.nva.oai.pmh.handler.oaipmh.SetSpec.SetRoot;
-import no.unit.nva.search.resource.response.Contributor;
 import no.unit.nva.search.resource.response.Organization;
 import no.unit.nva.search.resource.response.PublicationDate;
 import no.unit.nva.search.resource.response.ResourceSearchResponse;
@@ -47,85 +48,76 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
     if (isNull(hits) || hits.isEmpty()) {
       return Collections.emptyList();
     }
-
     return hits.stream().map(this::toRecord).toList();
   }
 
   private RecordType toRecord(ResourceSearchResponse response) {
     var record = new RecordType();
-    var metadata = populateMetadataType(response);
-    var headerType = populateHeaderType(response);
-    record.setHeader(headerType);
-    record.setMetadata(metadata);
+    record.setHeader(populateHeaderType(response));
+    record.setMetadata(populateMetadataType(response));
     return record;
   }
 
   private static MetadataType populateMetadataType(ResourceSearchResponse response) {
     var metadata = OBJECT_FACTORY.createMetadataType();
     var oaiDcType = OBJECT_FACTORY.createOaiDcType();
-    appendIdentifier(response, oaiDcType);
+
+    appendDcElement(oaiDcType, OBJECT_FACTORY::createIdentifier, response.id().toString());
     appendAdditionalIdentifiers(response, oaiDcType);
-    appendTitle(response, oaiDcType);
-    appendDescriptions(response, oaiDcType);
-    appendLanguage(response, oaiDcType);
+    appendDcElement(oaiDcType, OBJECT_FACTORY::createTitle, response.mainTitle());
+    appendDcElement(oaiDcType, OBJECT_FACTORY::createDescription, response.mainLanguageAbstract());
+    appendDcElement(oaiDcType, OBJECT_FACTORY::createDescription, response.description());
+    appendDcElement(oaiDcType, OBJECT_FACTORY::createLanguage, extractLanguage(response));
     appendContributors(response, oaiDcType);
-    appendDate(response, oaiDcType);
-    appendType(response, oaiDcType);
-    appendPublisher(response, oaiDcType);
-    appendSubjects(response, oaiDcType);
+    appendDcElement(oaiDcType, OBJECT_FACTORY::createDate, formatPublicationDate(response));
+    appendDcElement(oaiDcType, OBJECT_FACTORY::createType, response.type());
+    appendDcElement(oaiDcType, OBJECT_FACTORY::createPublisher, resolvePublisherName(response));
+    response.tags().forEach(tag -> appendDcElement(oaiDcType, OBJECT_FACTORY::createSubject, tag));
+
     metadata.setAny(OBJECT_FACTORY.createDc(oaiDcType));
     return metadata;
   }
 
-  private static void appendDescriptions(ResourceSearchResponse response, OaiDcType oaiDcType) {
-    appendSanitizedDcDescription(response.mainLanguageAbstract(), oaiDcType);
-    appendSanitizedDcDescription(response.description(), oaiDcType);
-  }
-
-  private static void appendSanitizedDcDescription(String value, OaiDcType oaiDcType) {
-    var descriptionElement = createSafeElementType(value);
-    if (StringUtils.isNotEmpty(descriptionElement.getValue())) {
-      oaiDcType
-          .getTitleOrCreatorOrSubject()
-          .addLast(OBJECT_FACTORY.createDescription(descriptionElement));
-    }
-  }
-
-  private static void appendSubjects(ResourceSearchResponse response, OaiDcType oaiDcType) {
-    response.tags().forEach(tag -> appendAsSubject(tag, oaiDcType));
-  }
-
-  private static void appendAsSubject(String subject, OaiDcType oaiDcType) {
-    var subjectElement = createSafeElementType(subject);
-    if (StringUtils.isNotEmpty(subjectElement.getValue())) {
-      oaiDcType.getTitleOrCreatorOrSubject().addLast(OBJECT_FACTORY.createSubject(subjectElement));
+  private static void appendDcElement(
+      OaiDcType oaiDcType, Function<ElementType, JAXBElement<ElementType>> wrapper, String value) {
+    var element = createSafeElementType(value);
+    if (StringUtils.isNotEmpty(element.getValue())) {
+      oaiDcType.getTitleOrCreatorOrSubject().addLast(wrapper.apply(element));
     }
   }
 
   private static void appendContributors(ResourceSearchResponse response, OaiDcType oaiDcType) {
     response.contributorsPreview().stream()
-        .map(SimplifiedRecordTransformer::toContributorElement)
-        .forEach(
-            elementType ->
-                oaiDcType
-                    .getTitleOrCreatorOrSubject()
-                    .addLast(OBJECT_FACTORY.createContributor(elementType)));
-
+        .map(contributor -> contributor.identity().name())
+        .forEach(name -> appendDcElement(oaiDcType, OBJECT_FACTORY::createContributor, name));
     response.participatingOrganizations().stream()
-        .map(SimplifiedRecordTransformer::toContributorElement)
-        .forEach(
-            elementType ->
-                oaiDcType
-                    .getTitleOrCreatorOrSubject()
-                    .addLast(OBJECT_FACTORY.createContributor(elementType)));
+        .map(SimplifiedRecordTransformer::extractOrganizationName)
+        .forEach(name -> appendDcElement(oaiDcType, OBJECT_FACTORY::createContributor, name));
   }
 
-  private static ElementType toContributorElement(Contributor contributor) {
-    return createSafeElementType(contributor.identity().name());
+  private static void appendAdditionalIdentifiers(
+      ResourceSearchResponse response, OaiDcType oaiDcType) {
+    var otherIdentifiers = response.otherIdentifiers();
+    appendPrefixedIdentifiers(oaiDcType, otherIdentifiers.cristin(), "CRISTIN:");
+    appendPrefixedIdentifiers(oaiDcType, otherIdentifiers.scopus(), "SCOPUS:");
+    otherIdentifiers
+        .handle()
+        .forEach(handle -> appendDcElement(oaiDcType, OBJECT_FACTORY::createIdentifier, handle));
+    appendPrefixedIdentifiers(oaiDcType, otherIdentifiers.isbn(), "ISBN:");
+    appendPrefixedIdentifiers(oaiDcType, otherIdentifiers.issn(), "ISSN:");
+    if (nonNull(response.publishingDetails().doi())) {
+      appendDcElement(
+          oaiDcType,
+          OBJECT_FACTORY::createIdentifier,
+          response.publishingDetails().doi().toString());
+    }
   }
 
-  private static ElementType toContributorElement(Organization organization) {
-    return createSafeElementType(extractOrganizationName(organization));
+  private static void appendPrefixedIdentifiers(
+      OaiDcType oaiDcType, Set<String> identifiers, String prefix) {
+    identifiers.forEach(
+        identifier ->
+            appendDcElement(oaiDcType, OBJECT_FACTORY::createIdentifier, prefix + identifier));
   }
 
   private static String extractOrganizationName(Organization organization) {
@@ -136,91 +128,22 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
         .orElse(UriWrapper.fromUri(organization.id()).getLastPathElement());
   }
 
-  private static void appendIdentifier(ResourceSearchResponse response, OaiDcType oaiDcType) {
-    appendToOaiDc(oaiDcType, response.id().toString(), null);
+  private static String extractLanguage(ResourceSearchResponse response) {
+    return nonNull(response.language())
+        ? UriWrapper.fromUri(response.language()).getLastPathElement()
+        : null;
   }
 
-  private static void appendAdditionalIdentifiers(
-      ResourceSearchResponse response, OaiDcType oaiDcType) {
-    appendAll(oaiDcType, response.otherIdentifiers().cristin(), "CRISTIN:");
-    appendAll(oaiDcType, response.otherIdentifiers().scopus(), "SCOPUS:");
-    appendAll(oaiDcType, response.otherIdentifiers().handle(), null);
-    appendAll(oaiDcType, response.otherIdentifiers().isbn(), "ISBN:");
-    appendAll(oaiDcType, response.otherIdentifiers().issn(), "ISSN:");
-    if (nonNull(response.publishingDetails().doi())) {
-      appendToOaiDc(oaiDcType, response.publishingDetails().doi().toString(), null);
+  private static String formatPublicationDate(ResourceSearchResponse response) {
+    var publicationDate = response.publicationDate();
+    if (isNull(publicationDate) || isNull(publicationDate.year())) {
+      return null;
     }
+    return formatPublicationDate(publicationDate);
   }
 
-  private static void appendAll(OaiDcType oaiDcType, Set<String> identifiers, String prefix) {
-    identifiers.forEach(identifier -> appendToOaiDc(oaiDcType, identifier, prefix));
-  }
-
-  private static void appendToOaiDc(OaiDcType oaiDcType, String value, String prefix) {
-    var identifierElement = createSafeElementType(nonNull(prefix) ? prefix + value : value);
-    oaiDcType
-        .getTitleOrCreatorOrSubject()
-        .addLast(OBJECT_FACTORY.createIdentifier(identifierElement));
-  }
-
-  private static void appendTitle(ResourceSearchResponse response, OaiDcType oaiDcType) {
-    var titleElement = createSafeElementType(response.mainTitle());
-    if (!StringUtils.isEmpty(titleElement.getValue())) {
-      oaiDcType.getTitleOrCreatorOrSubject().addLast(OBJECT_FACTORY.createTitle(titleElement));
-    }
-  }
-
-  private static void appendLanguage(ResourceSearchResponse response, OaiDcType oaiDcType) {
-    if (nonNull(response.language())) {
-      var language = UriWrapper.fromUri(response.language()).getLastPathElement();
-      var element = createSafeElementType(language);
-      oaiDcType.getTitleOrCreatorOrSubject().addLast(OBJECT_FACTORY.createLanguage(element));
-    }
-  }
-
-  private static void appendPublisher(ResourceSearchResponse response, OaiDcType oaiDcType) {
-    if (nonNull(response.publishingDetails())) {
-      final String publisherName;
-      if (JOURNAL.equals(response.publishingDetails().type())) {
-        publisherName = resolvePublisherFromJournal(response);
-      } else if (nonNull(response.publishingDetails().publisher())) {
-        publisherName = resolvePublisherFromPublisher(response);
-      } else {
-        publisherName = null;
-      }
-
-      if (nonNull(publisherName)) {
-        var publisherElement = createSafeElementType(publisherName);
-        oaiDcType
-            .getTitleOrCreatorOrSubject()
-            .addLast(OBJECT_FACTORY.createPublisher(publisherElement));
-      }
-    }
-  }
-
-  private static String resolvePublisherFromPublisher(ResourceSearchResponse response) {
-    var publisher = response.publishingDetails().publisher();
-    return nonNull(publisher.name())
-        ? publisher.name()
-        : nonNull(publisher.id()) ? publisher.id().toString() : null;
-  }
-
-  private static String resolvePublisherFromJournal(ResourceSearchResponse response) {
-    var publishingDetails = response.publishingDetails();
-    return nonNull(publishingDetails.name())
-        ? publishingDetails.name()
-        : nonNull(publishingDetails.id()) ? publishingDetails.id().toString() : null;
-  }
-
-  private static void appendDate(ResourceSearchResponse response, OaiDcType oaiDcType) {
-    if (nonNull(response.publicationDate()) && nonNull(response.publicationDate().year())) {
-      var dateElement = createSafeElementType(asString(response.publicationDate()));
-      oaiDcType.getTitleOrCreatorOrSubject().addLast(OBJECT_FACTORY.createDate(dateElement));
-    }
-  }
-
-  private static String asString(PublicationDate publicationDate) {
-    StringBuilder builder = new StringBuilder(publicationDate.year());
+  private static String formatPublicationDate(PublicationDate publicationDate) {
+    var builder = new StringBuilder(publicationDate.year());
     if (nonNull(publicationDate.month())) {
       builder.append(DASH).append(publicationDate.month());
     }
@@ -230,16 +153,31 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
     return builder.toString();
   }
 
-  private static void appendType(ResourceSearchResponse response, OaiDcType oaiDcType) {
-    var typeElement = createSafeElementType(response.type());
-    oaiDcType.getTitleOrCreatorOrSubject().addLast(OBJECT_FACTORY.createType(typeElement));
+  private static String resolvePublisherName(ResourceSearchResponse response) {
+    var publishingDetails = response.publishingDetails();
+    if (isNull(publishingDetails)) {
+      return null;
+    }
+    if (JOURNAL.equals(publishingDetails.type())) {
+      if (nonNull(publishingDetails.name())) {
+        return publishingDetails.name();
+      }
+      return nonNull(publishingDetails.id()) ? publishingDetails.id().toString() : null;
+    }
+    var publisher = publishingDetails.publisher();
+    if (isNull(publisher)) {
+      return null;
+    }
+    if (nonNull(publisher.name())) {
+      return publisher.name();
+    }
+    return nonNull(publisher.id()) ? publisher.id().toString() : null;
   }
 
   private static HeaderType populateHeaderType(ResourceSearchResponse response) {
-    var headerType = new ObjectFactory().createHeaderType();
+    var headerType = OBJECT_FACTORY.createHeaderType();
     headerType.setIdentifier(response.id().toString());
-    var datestamp = truncateToSeconds(response.recordMetadata().modifiedDate());
-    headerType.setDatestamp(datestamp);
+    headerType.setDatestamp(truncateToSeconds(response.recordMetadata().modifiedDate()));
     headerType
         .getSetSpec()
         .add(new SetSpec(SetRoot.RESOURCE_TYPE_GENERAL, response.type()).getValue().orElseThrow());
@@ -247,17 +185,11 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
         .map(Organization::id)
         .map(UriWrapper::fromUri)
         .map(UriWrapper::getLastPathElement)
-        .forEach(identifier -> appendInstitutionSetSpec(headerType, identifier));
+        .forEach(
+            identifier ->
+                headerType
+                    .getSetSpec()
+                    .add(new SetSpec(SetRoot.INSTITUTION, identifier).getValue().orElseThrow()));
     return headerType;
-  }
-
-  private static void appendInstitutionSetSpec(
-      HeaderType headerType, String participatingOrganizationIdentifier) {
-    headerType
-        .getSetSpec()
-        .add(
-            new SetSpec(SetRoot.INSTITUTION, participatingOrganizationIdentifier)
-                .getValue()
-                .orElseThrow());
   }
 }
