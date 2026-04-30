@@ -3,7 +3,7 @@ package no.sikt.nva.oai.pmh.handler.oaipmh.transformers;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhDateTimeUtils.truncateToSeconds;
-import static no.sikt.nva.oai.pmh.handler.oaipmh.transformers.XmlUtils.sanitizeXmlValue;
+import static no.sikt.nva.oai.pmh.handler.oaipmh.transformers.XmlUtils.createSafeElementType;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -83,10 +83,8 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
   }
 
   private static void appendSanitizedDcDescription(String value, OaiDcType oaiDcType) {
-    var sanitizedValue = sanitizeXmlValue(value);
-    if (StringUtils.isNotEmpty(sanitizedValue)) {
-      var descriptionElement = OBJECT_FACTORY.createElementType();
-      descriptionElement.setValue(sanitizedValue);
+    var descriptionElement = createSafeElementType(value);
+    if (StringUtils.isNotEmpty(descriptionElement.getValue())) {
       oaiDcType
           .getTitleOrCreatorOrSubject()
           .addLast(OBJECT_FACTORY.createDescription(descriptionElement));
@@ -98,10 +96,8 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
   }
 
   private static void appendAsSubject(String subject, OaiDcType oaiDcType) {
-    var sanitizedSubject = sanitizeXmlValue(subject);
-    if (StringUtils.isNotEmpty(sanitizedSubject)) {
-      var subjectElement = OBJECT_FACTORY.createElementType();
-      subjectElement.setValue(sanitizedSubject);
+    var subjectElement = createSafeElementType(subject);
+    if (StringUtils.isNotEmpty(subjectElement.getValue())) {
       oaiDcType.getTitleOrCreatorOrSubject().addLast(OBJECT_FACTORY.createSubject(subjectElement));
     }
   }
@@ -125,15 +121,11 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
   }
 
   private static ElementType toContributorElement(Contributor contributor) {
-    var contributorElement = OBJECT_FACTORY.createElementType();
-    contributorElement.setValue(contributor.identity().name());
-    return contributorElement;
+    return createSafeElementType(contributor.identity().name());
   }
 
   private static ElementType toContributorElement(Organization organization) {
-    var contributorElement = OBJECT_FACTORY.createElementType();
-    contributorElement.setValue(extractOrganizationName(organization));
-    return contributorElement;
+    return createSafeElementType(extractOrganizationName(organization));
   }
 
   private static String extractOrganizationName(Organization organization) {
@@ -165,27 +157,23 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
   }
 
   private static void appendToOaiDc(OaiDcType oaiDcType, String value, String prefix) {
-    var identifierElement = OBJECT_FACTORY.createElementType();
-    identifierElement.setValue(nonNull(prefix) ? prefix + value : value);
+    var identifierElement = createSafeElementType(nonNull(prefix) ? prefix + value : value);
     oaiDcType
         .getTitleOrCreatorOrSubject()
         .addLast(OBJECT_FACTORY.createIdentifier(identifierElement));
   }
 
   private static void appendTitle(ResourceSearchResponse response, OaiDcType oaiDcType) {
-    var mainTitle = sanitizeXmlValue(response.mainTitle());
-    if (!StringUtils.isEmpty(mainTitle)) {
-      var titleElement = OBJECT_FACTORY.createElementType();
-      titleElement.setValue(mainTitle);
+    var titleElement = createSafeElementType(response.mainTitle());
+    if (!StringUtils.isEmpty(titleElement.getValue())) {
       oaiDcType.getTitleOrCreatorOrSubject().addLast(OBJECT_FACTORY.createTitle(titleElement));
     }
   }
 
   private static void appendLanguage(ResourceSearchResponse response, OaiDcType oaiDcType) {
     if (nonNull(response.language())) {
-      var element = OBJECT_FACTORY.createElementType();
       var language = UriWrapper.fromUri(response.language()).getLastPathElement();
-      element.setValue(language);
+      var element = createSafeElementType(language);
       oaiDcType.getTitleOrCreatorOrSubject().addLast(OBJECT_FACTORY.createLanguage(element));
     }
   }
@@ -202,8 +190,7 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
       }
 
       if (nonNull(publisherName)) {
-        var publisherElement = OBJECT_FACTORY.createElementType();
-        publisherElement.setValue(publisherName);
+        var publisherElement = createSafeElementType(publisherName);
         oaiDcType
             .getTitleOrCreatorOrSubject()
             .addLast(OBJECT_FACTORY.createPublisher(publisherElement));
@@ -227,8 +214,7 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
 
   private static void appendDate(ResourceSearchResponse response, OaiDcType oaiDcType) {
     if (nonNull(response.publicationDate()) && nonNull(response.publicationDate().year())) {
-      var dateElement = OBJECT_FACTORY.createElementType();
-      dateElement.setValue(asString(response.publicationDate()));
+      var dateElement = createSafeElementType(asString(response.publicationDate()));
       oaiDcType.getTitleOrCreatorOrSubject().addLast(OBJECT_FACTORY.createDate(dateElement));
     }
   }
@@ -245,8 +231,7 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
   }
 
   private static void appendType(ResourceSearchResponse response, OaiDcType oaiDcType) {
-    var typeElement = OBJECT_FACTORY.createElementType();
-    typeElement.setValue(response.type());
+    var typeElement = createSafeElementType(response.type());
     oaiDcType.getTitleOrCreatorOrSubject().addLast(OBJECT_FACTORY.createType(typeElement));
   }
 
