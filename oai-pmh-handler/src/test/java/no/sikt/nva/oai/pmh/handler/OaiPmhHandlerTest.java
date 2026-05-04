@@ -785,6 +785,31 @@ class OaiPmhHandlerTest {
   }
 
   @Test
+  void shouldStripXmlIllegalControlCharactersFromContributorName()
+      throws IOException, JAXBException {
+    var pollutedContributorName = "Per Nordmann";
+    var sanitizedContributorName = "Per Nordmann";
+    var hit =
+        ResourceDocumentFactory.builder(
+                RESOURCE_ID, RESOURCE_TITLE, PUBLICATION_YEAR, PUBLICATION_MONTH, PUBLICATION_DAY)
+            .withTopLevelOrganization(NTNU_ID, NTNU_LABELS)
+            .withContributor(pollutedContributorName, null)
+            .academicArticle(new SerialChannelBuilder("Journal", JOURNAL_NAME))
+            .apply()
+            .build();
+    var inputStream = hitAndRequest(wrapHits(hit));
+
+    var gatewayResponse = invokeHandler(inputStream);
+
+    assertThat(gatewayResponse.getStatusCode(), is(equalTo(HTTP_OK)));
+    assertThat(gatewayResponse.getBody(), not(containsString("")));
+
+    var response = Input.fromString(gatewayResponse.getBody()).build();
+    var contributors = extractValuesFromDcElements("contributor", response);
+    assertThat(contributors, hasItem(sanitizedContributorName));
+  }
+
+  @Test
   void shouldMapAbstractToRecordMetadataDcDescription() throws IOException, JAXBException {
     var inputStream = defaultHitAndRequest();
 

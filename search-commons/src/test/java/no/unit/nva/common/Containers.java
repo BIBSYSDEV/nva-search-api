@@ -2,7 +2,6 @@ package no.unit.nva.common;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.common.TestConstants.DELAY_AFTER_INDEXING;
-import static no.unit.nva.common.TestConstants.OPEN_SEARCH_IMAGE;
 import static no.unit.nva.constants.IndexMappingsAndSettings.IMPORT_CANDIDATE_MAPPINGS;
 import static no.unit.nva.constants.IndexMappingsAndSettings.RESOURCE_MAPPINGS;
 import static no.unit.nva.constants.IndexMappingsAndSettings.RESOURCE_SETTINGS;
@@ -11,6 +10,7 @@ import static no.unit.nva.constants.Words.IDENTIFIER;
 import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.constants.Words.TICKETS;
+import static no.unit.nva.indexing.testutils.Constants.OPEN_SEARCH_IMAGE;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
