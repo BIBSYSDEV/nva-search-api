@@ -1,6 +1,8 @@
 package no.unit.nva.search.common;
 
 import static java.util.Objects.isNull;
+import static no.unit.nva.constants.Defaults.DEFAULT_OFFSET;
+import static no.unit.nva.constants.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.constants.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.constants.ErrorMessages.PAGINATION_PARAMETERS_ARE_MUTUAL_EXCLUSIVE;
 import static no.unit.nva.constants.ErrorMessages.RELEVANCE_SEARCH_AFTER_ARE_MUTUAL_EXCLUSIVE;
@@ -12,10 +14,12 @@ import static no.unit.nva.constants.Words.ALL;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.HTTPS;
 import static no.unit.nva.constants.Words.NAME_AND_SORT_LENGTH;
+import static no.unit.nva.constants.Words.NONE;
 import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.search.common.ContentTypeUtils.extractContentTypeFromRequestInfo;
 import static no.unit.nva.search.common.constant.Functions.decodeUTF;
 import static no.unit.nva.search.common.constant.Functions.mergeWithColonOrComma;
+import static no.unit.nva.search.common.constant.Functions.trimSpace;
 import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 
@@ -50,6 +54,14 @@ public abstract class ParameterValidator<
   protected static final Logger logger = LoggerFactory.getLogger(ParameterValidator.class);
 
   private static final int MAX_RESULT_WINDOW_SIZE = 10_000;
+  private static final String FROM_KEY_NAME = "FROM";
+  private static final String SIZE_KEY_NAME = "SIZE";
+  private static final String PAGE_KEY_NAME = "PAGE";
+  private static final String SORT_KEY_NAME = "SORT";
+  private static final String SORT_ORDER_KEY_NAME = "SORT_ORDER";
+  private static final String AGGREGATION_KEY_NAME = "AGGREGATION";
+  private static final String SEARCH_AFTER_KEY_NAME = "SEARCH_AFTER";
+  private static final String NODES_SEARCHED_KEY_NAME = "NODES_SEARCHED";
   protected final transient Set<String> invalidKeys = new HashSet<>(0);
   protected final transient SearchQuery<K> query;
   protected transient boolean notValidated = true;
@@ -108,24 +120,56 @@ public abstract class ParameterValidator<
   }
 
   /**
-   * DefaultValues are only assigned if they are set as required, otherwise ignored.
-   *
-   * <p>Usage: <samp>requiredMissing().forEach(key -> { <br>
-   * switch (key) {<br>
-   * case LANGUAGE -> query.setValue(key, DEFAULT_LANGUAGE_CODE);<br>
-   * default -> { // do nothing }<br>
-   * }});<br>
-   * </samp>
+   * Assigns defaults for required-but-missing pagination, sort and aggregation keys. Subclasses
+   * override {@link #getDefaultSort()} to change the default sort; other defaults are fixed.
    */
-  protected abstract void assignDefaultValues();
+  protected void assignDefaultValues() {
+    requiredMissing()
+        .forEach(
+            key -> {
+              switch (key.name()) {
+                case FROM_KEY_NAME -> setValue(key.name(), DEFAULT_OFFSET);
+                case SIZE_KEY_NAME -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
+                case SORT_KEY_NAME -> setValue(key.name(), getDefaultSort());
+                case AGGREGATION_KEY_NAME -> setValue(key.name(), NONE);
+                default -> {}
+              }
+            });
+  }
 
-  protected abstract void applyRulesAfterValidation();
+  /** Default sort applied when SORT is required but missing. Override to customize. */
+  protected String getDefaultSort() {
+    return RELEVANCE_KEY_NAME;
+  }
+
+  /**
+   * Runs the shared page-to-offset conversion, then delegates to {@link
+   * #applyAdditionalRulesAfterValidation()} for type-specific rules.
+   */
+  protected void applyRulesAfterValidation() {
+    convertPageToOffsetIfNeeded();
+    applyAdditionalRulesAfterValidation();
+  }
+
+  /** Hook for type-specific post-validation rules (e.g. business-rule parameter coupling). */
+  protected abstract void applyAdditionalRulesAfterValidation();
+
+  private void convertPageToOffsetIfNeeded() {
+    var pageKey = query.toKey(PAGE_KEY_NAME);
+    if (query.parameters().isPresent(pageKey)) {
+      var fromKey = query.toKey(FROM_KEY_NAME);
+      if (query.parameters().isPresent(fromKey)) {
+        var page = query.parameters().get(pageKey).<Number>as().longValue();
+        var perPage = query.parameters().get(query.toKey(SIZE_KEY_NAME)).<Number>as().longValue();
+        query.parameters().set(fromKey, String.valueOf(page * perPage));
+      }
+      query.parameters().remove(pageKey);
+    }
+  }
 
   protected abstract Collection<String> validKeys();
 
   protected abstract Collection<String> validSortKeys();
-
-  protected abstract boolean isKeyValid(String keyName);
 
   protected void validateSortKeyName(String name) {
     var nameSort = name.split(COLON_OR_SPACE);
@@ -140,17 +184,39 @@ public abstract class ParameterValidator<
   }
 
   /**
-   * Sample code for setValue.
-   *
-   * <p>Usage: <samp>var qpKey = keyFromString(key,value);<br>
-   * if(qpKey.equals(INVALID)) {<br>
-   * invalidKeys.add(key);<br>
-   * } else {<br>
-   * query.setValue(qpKey, value);<br>
-   * }<br>
-   * </samp>
+   * Decodes and stores a parameter value. Unrecognized keys are collected in {@link #invalidKeys}
+   * (reported later as a batch). Pagination, sort, sort-order and field-filter keys have shared
+   * handling here; anything else is delegated to {@link #setCustomValue(Enum, String)}.
    */
-  protected abstract void setValue(String key, String value);
+  protected void setValue(String key, String value) {
+    var qpKey = query.toKey(key);
+    if (qpKey.isInvalid()) {
+      invalidKeys.add(key);
+    } else {
+      var decodedValue = getDecodedValue(qpKey, value);
+      switch (qpKey.name()) {
+        case SEARCH_AFTER_KEY_NAME,
+            FROM_KEY_NAME,
+            SIZE_KEY_NAME,
+            PAGE_KEY_NAME,
+            AGGREGATION_KEY_NAME ->
+            query.parameters().set(qpKey, decodedValue);
+        case NODES_SEARCHED_KEY_NAME ->
+            query.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
+        case SORT_KEY_NAME -> mergeToKey(qpKey, trimSpace(decodedValue));
+        case SORT_ORDER_KEY_NAME -> mergeToKey(query.toKey(SORT_KEY_NAME), decodedValue);
+        default -> setCustomValue(qpKey, decodedValue);
+      }
+    }
+  }
+
+  /**
+   * Hook for type-specific parameter handling (e.g. URI transformation, enum conversion). Override
+   * to transform the value before storing it under its key.
+   */
+  protected void setCustomValue(K qpKey, String decodedValue) {
+    mergeToKey(qpKey, decodedValue);
+  }
 
   /**
    * Validate sort keys.
@@ -308,7 +374,7 @@ public abstract class ParameterValidator<
     return ALL.equalsIgnoreCase(value) || isNull(value)
         ? ALL
         : Arrays.stream(value.split(COMMA))
-            .filter(this::isKeyValid) // ignoring invalid keys
+            .filter(name -> query.toKey(name).isValid())
             .collect(Collectors.joining(COMMA));
   }
 
