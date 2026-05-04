@@ -54,7 +54,7 @@
           },
           "identity": {
             "verificationStatus": "Verified",
-            "name": "P\u0001er Nor\u0001dmann",
+            "name": "Saverio Messineo",
             "id": "https://api.unittests.nva.aws.unit.no/cristin/person/35885",
             "type": "Identity"
           },
@@ -130,7 +130,7 @@
           },
           "identity": {
             "verificationStatus": "Verified",
-            "name": "P\u0001er Nor\u0001dmann",
+            "name": "Saverio Messineo",
             "id": "https://api.unittests.nva.aws.unit.no/cristin/person/35885",
             "type": "Identity"
           },
@@ -293,7 +293,7 @@
         "contributorCristinIds": [
           {
             "verificationStatus": "Verified",
-            "name": "P\u0001er Nor\u0001dmann",
+            "name": "Saverio Messineo",
             "id": "https://api.unittests.nva.aws.unit.no/cristin/person/35885",
             "type": "Identity"
           },
