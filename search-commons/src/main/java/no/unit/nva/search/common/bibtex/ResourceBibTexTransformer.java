@@ -7,10 +7,10 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+@SuppressWarnings("PMD.GodClass")
 public final class ResourceBibTexTransformer {
 
   // Publication context types
-  private static final String JOURNAL = "Journal";
   private static final String UNCONFIRMED_JOURNAL = "UnconfirmedJournal";
   private static final String ANTHOLOGY = "Anthology";
   private static final String BOOK_ANTHOLOGY = "BookAnthology";
@@ -66,62 +66,67 @@ public final class ResourceBibTexTransformer {
     "jul", "aug", "sep", "oct", "nov", "dec"
   };
 
+  private static final String ARTICLE = "article";
+  private static final String BOOK = "book";
+  private static final String INBOOK = "inbook";
+  private static final String INPROCEEDINGS = "inproceedings";
+  private static final String TECHREPORT = "techreport";
+  private static final String MASTERSTHESIS = "mastersthesis";
+  private static final String PHDTHESIS = "phdthesis";
   private static final Map<String, String> TYPE_MAP =
       Map.ofEntries(
           // Journal publications → @article
-          Map.entry("AcademicArticle", "article"),
-          Map.entry("AcademicCommentary", "article"),
-          Map.entry("AcademicLiteratureReview", "article"),
-          Map.entry("CaseReport", "article"),
-          Map.entry("JournalCorrigendum", "article"),
-          Map.entry("JournalLeader", "article"),
-          Map.entry("JournalLetter", "article"),
-          Map.entry("JournalReview", "article"),
-          Map.entry("MediaFeatureArticle", "article"),
-          Map.entry("MediaReaderOpinion", "article"),
-          Map.entry("PopularScienceArticle", "article"),
-          Map.entry("ProfessionalArticle", "article"),
-          Map.entry("StudyProtocol", "article"),
+          Map.entry("AcademicArticle", ARTICLE),
+          Map.entry("AcademicCommentary", ARTICLE),
+          Map.entry("AcademicLiteratureReview", ARTICLE),
+          Map.entry("JournalCorrigendum", ARTICLE),
+          Map.entry("JournalLeader", ARTICLE),
+          Map.entry("JournalLetter", ARTICLE),
+          Map.entry("JournalReview", ARTICLE),
+          Map.entry("MediaFeatureArticle", ARTICLE),
+          Map.entry("MediaReaderOpinion", ARTICLE),
+          Map.entry("PopularScienceArticle", ARTICLE),
+          Map.entry("ProfessionalArticle", ARTICLE),
+          Map.entry("StudyProtocol", ARTICLE),
           // Monographs → @book
-          Map.entry("AcademicMonograph", "book"),
-          Map.entry("BookAnthology", "book"),
-          Map.entry("Encyclopedia", "book"),
-          Map.entry("ExhibitionCatalog", "book"),
-          Map.entry("NonFictionMonograph", "book"),
-          Map.entry("PopularScienceMonograph", "book"),
-          Map.entry("Textbook", "book"),
-          // Chapters in books → @incollection
-          Map.entry("AcademicChapter", "incollection"),
-          Map.entry("ChapterConferenceAbstract", "incollection"),
-          Map.entry("EncyclopediaChapter", "incollection"),
-          Map.entry("ExhibitionCatalogChapter", "incollection"),
-          Map.entry("Introduction", "incollection"),
-          Map.entry("NonFictionChapter", "incollection"),
-          Map.entry("PopularScienceChapter", "incollection"),
-          Map.entry("TextbookChapter", "incollection"),
+          Map.entry("AcademicMonograph", BOOK),
+          Map.entry("BookAnthology", BOOK),
+          Map.entry("Encyclopedia", BOOK),
+          Map.entry("ExhibitionCatalog", BOOK),
+          Map.entry("NonFictionMonograph", BOOK),
+          Map.entry("PopularScienceMonograph", BOOK),
+          Map.entry("Textbook", BOOK),
           // Chapters in reports → @inbook
-          Map.entry("ChapterInReport", "inbook"),
+          Map.entry("EncyclopediaChapter", INBOOK),
+          Map.entry("ExhibitionCatalogChapter", INBOOK),
+          Map.entry("Introduction", INBOOK),
+          Map.entry("NonFictionChapter", INBOOK),
+          Map.entry("PopularScienceChapter", INBOOK),
+          Map.entry("TextbookChapter", INBOOK),
+          Map.entry("AcademicChapter", INBOOK),
+          Map.entry("ChapterInReport", INBOOK),
           // Conference → @inproceedings
-          Map.entry("ConferenceAbstract", "inproceedings"),
-          Map.entry("ConferenceLecture", "inproceedings"),
-          Map.entry("ConferencePoster", "inproceedings"),
+          Map.entry("ConferenceAbstract", INPROCEEDINGS),
+          Map.entry("ChapterConferenceAbstract", INPROCEEDINGS),
+          Map.entry("ConferenceLecture", INPROCEEDINGS),
+          Map.entry("ConferencePoster", INPROCEEDINGS),
           // Conference proceedings / journal issue → @proceedings
-          Map.entry("ConferenceReport", "proceedings"),
-          Map.entry("JournalIssue", "proceedings"),
           // Reports → @techreport
-          Map.entry("ReportBasic", "techreport"),
-          Map.entry("ReportBookOfAbstract", "techreport"),
-          Map.entry("ReportPolicy", "techreport"),
-          Map.entry("ReportResearch", "techreport"),
-          Map.entry("ReportWorkingPaper", "techreport"),
+          Map.entry("ConferenceReport", TECHREPORT),
+          Map.entry("CaseReport", TECHREPORT),
+          Map.entry("ReportBasic", TECHREPORT),
+          Map.entry("ReportBookOfAbstract", TECHREPORT),
+          Map.entry("ReportPolicy", TECHREPORT),
+          Map.entry("ReportResearch", TECHREPORT),
+          Map.entry("ReportWorkingPaper", TECHREPORT),
           // Theses
-          Map.entry("DegreeBachelor", "mastersthesis"),
-          Map.entry("DegreeLicentiate", "mastersthesis"),
-          Map.entry("DegreeMaster", "mastersthesis"),
-          Map.entry("ArtisticDegreePhd", "phdthesis"),
-          Map.entry("DegreePhd", "phdthesis"),
-          // Other student work → @unpublished
-          Map.entry("OtherStudentWork", "unpublished"));
+          Map.entry("DegreeBachelor", MASTERSTHESIS),
+          Map.entry("DegreeLicentiate", MASTERSTHESIS),
+          Map.entry("DegreeMaster", MASTERSTHESIS),
+          Map.entry("ArtisticDegreePhd", PHDTHESIS),
+          Map.entry("DegreePhd", PHDTHESIS));
+  public static final String PAGES = "pages";
+
   // Everything else (artistic, media, data, software) → @misc (default)
 
   private ResourceBibTexTransformer() {}
@@ -162,38 +167,35 @@ public final class ResourceBibTexTransformer {
   private static void addTypeSpecificFields(
       JsonNode doc, String bibType, Map<String, String> fields) {
     switch (bibType) {
-      case "article" -> {
+      case ARTICLE -> {
         putIfPresent(fields, "issn", extractIssn(doc));
         putIfPresent(fields, "journal", extractJournalName(doc));
         putIfPresent(fields, "number", extractText(doc, ISSUE_POINTER, null));
-        putIfPresent(fields, "pages", extractPages(doc));
+        putIfPresent(fields, PAGES, extractPages(doc));
         putIfPresent(fields, "volume", extractText(doc, VOLUME_POINTER, null));
       }
-      case "book" -> {
+      case BOOK -> {
         putIfPresent(fields, "publisher", extractText(doc, CONTEXT_PUBLISHER_NAME_POINTER, null));
         putIfPresent(fields, "series", extractText(doc, CONTEXT_SERIES_NAME_POINTER, null));
       }
-      case "incollection" -> {
+      case INBOOK -> {
         putIfPresent(fields, "booktitle", extractAnthologyTitle(doc));
-        putIfPresent(fields, "pages", extractPages(doc));
+        putIfPresent(fields, PAGES, extractPages(doc));
         putIfPresent(fields, "publisher", extractAnthologyPublisher(doc));
       }
-      case "inbook" -> {
+      case INPROCEEDINGS -> {
         putIfPresent(fields, "booktitle", extractText(doc, CONTEXT_NAME_POINTER, null));
-        putIfPresent(fields, "pages", extractPages(doc));
-        putIfPresent(fields, "publisher", extractText(doc, CONTEXT_PUBLISHER_NAME_POINTER, null));
+        putIfPresent(fields, PAGES, extractPages(doc));
       }
-      case "inproceedings" -> {
-        putIfPresent(fields, "booktitle", extractText(doc, CONTEXT_NAME_POINTER, null));
-        putIfPresent(fields, "pages", extractPages(doc));
-      }
-      case "techreport" -> {
+      case TECHREPORT -> {
         putIfPresent(fields, "institution", extractText(doc, CONTEXT_PUBLISHER_NAME_POINTER, null));
       }
-      case "mastersthesis", "phdthesis" -> {
+      case MASTERSTHESIS, PHDTHESIS -> {
         putIfPresent(fields, "school", extractText(doc, CONTEXT_PUBLISHER_NAME_POINTER, null));
       }
-      default -> { /* @misc, @proceedings, @unpublished: universal fields suffice */ }
+      default -> {
+        /* @misc, @proceedings, @unpublished: universal fields suffice */
+      }
     }
   }
 

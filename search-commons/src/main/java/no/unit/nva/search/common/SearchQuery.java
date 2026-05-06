@@ -1,6 +1,7 @@
 package no.unit.nva.search.common;
 
 import static java.util.Objects.nonNull;
+import static no.unit.nva.constants.Defaults.BIBTEX_UTF_8;
 import static no.unit.nva.constants.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.constants.Defaults.ZERO_RESULTS_AGGREGATION_ONLY;
 import static no.unit.nva.constants.Words.ALL;
@@ -9,7 +10,6 @@ import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.EXCLUDE_KEYWORD;
 import static no.unit.nva.constants.Words.POST_FILTER;
 import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
-import static no.unit.nva.constants.Defaults.BIBTEX_UTF_8;
 import static no.unit.nva.constants.Words.SORT_LAST;
 import static no.unit.nva.constants.Words.TEXT_X_BIBTEX;
 import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
