@@ -1,30 +1,27 @@
 package no.unit.nva.search.common.bibtex;
 
+import static java.util.function.Predicate.not;
+
 import com.fasterxml.jackson.databind.JsonNode;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.net.URI;
+import java.time.Month;
+import java.time.format.TextStyle;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import org.jspecify.annotations.NonNull;
 
-@SuppressWarnings("PMD.GodClass")
 public final class ResourceBibTexTransformer {
 
-  // Publication context types
-  private static final String UNCONFIRMED_JOURNAL = "UnconfirmedJournal";
-  private static final String ANTHOLOGY = "Anthology";
-  private static final String BOOK_ANTHOLOGY = "BookAnthology";
-
-  // JSON pointers — publication-level
-  private static final String ID_POINTER = "/id";
   private static final String MAIN_TITLE_POINTER = "/entityDescription/mainTitle";
   private static final String YEAR_POINTER = "/entityDescription/publicationDate/year";
   private static final String MONTH_POINTER = "/entityDescription/publicationDate/month";
   private static final String CONTRIBUTORS_POINTER = "/entityDescription/contributors";
   private static final String IDENTITY_NAME_POINTER = "/identity/name";
   private static final String DOI_POINTER = "/entityDescription/reference/doi";
-
-  // JSON pointers — publication context
   private static final String CONTEXT_TYPE_POINTER =
       "/entityDescription/reference/publicationContext/type";
   private static final String CONTEXT_NAME_POINTER =
@@ -39,15 +36,11 @@ public final class ResourceBibTexTransformer {
       "/entityDescription/reference/publicationContext/publisher/name";
   private static final String CONTEXT_SERIES_NAME_POINTER =
       "/entityDescription/reference/publicationContext/series/name";
-
-  // JSON pointers — anthology (chapter) context: book title and publisher are nested
   private static final String ANTHOLOGY_MAIN_TITLE_POINTER =
       "/entityDescription/reference/publicationContext/entityDescription/mainTitle";
   private static final String ANTHOLOGY_PUBLISHER_NAME_POINTER =
       "/entityDescription/reference/publicationContext/entityDescription/reference"
           + "/publicationContext/publisher/name";
-
-  // JSON pointers — publication instance
   private static final String INSTANCE_TYPE_POINTER =
       "/entityDescription/reference/publicationInstance/type";
   private static final String VOLUME_POINTER =
@@ -61,137 +54,84 @@ public final class ResourceBibTexTransformer {
 
   private static final String AND = " and ";
   private static final String ENTRY_SEPARATOR = "\n\n";
-  private static final String[] MONTH_ABBR = {
-    "jan", "feb", "mar", "apr", "may", "jun",
-    "jul", "aug", "sep", "oct", "nov", "dec"
-  };
+  private static final String PAGES = "pages";
+  private static final String DOI_URI_HOST_REGEX = "(?i)https?://doi\\.org/";
+  public static final String EMPTY_STRING = "";
 
-  private static final String ARTICLE = "article";
-  private static final String BOOK = "book";
-  private static final String INBOOK = "inbook";
-  private static final String INPROCEEDINGS = "inproceedings";
-  private static final String TECHREPORT = "techreport";
-  private static final String MASTERSTHESIS = "mastersthesis";
-  private static final String PHDTHESIS = "phdthesis";
-  private static final Map<String, String> TYPE_MAP =
-      Map.ofEntries(
-          // Journal publications → @article
-          Map.entry("AcademicArticle", ARTICLE),
-          Map.entry("AcademicCommentary", ARTICLE),
-          Map.entry("AcademicLiteratureReview", ARTICLE),
-          Map.entry("JournalCorrigendum", ARTICLE),
-          Map.entry("JournalLeader", ARTICLE),
-          Map.entry("JournalLetter", ARTICLE),
-          Map.entry("JournalReview", ARTICLE),
-          Map.entry("MediaFeatureArticle", ARTICLE),
-          Map.entry("MediaReaderOpinion", ARTICLE),
-          Map.entry("PopularScienceArticle", ARTICLE),
-          Map.entry("ProfessionalArticle", ARTICLE),
-          Map.entry("StudyProtocol", ARTICLE),
-          // Monographs → @book
-          Map.entry("AcademicMonograph", BOOK),
-          Map.entry("BookAnthology", BOOK),
-          Map.entry("Encyclopedia", BOOK),
-          Map.entry("ExhibitionCatalog", BOOK),
-          Map.entry("NonFictionMonograph", BOOK),
-          Map.entry("PopularScienceMonograph", BOOK),
-          Map.entry("Textbook", BOOK),
-          // Chapters in reports → @inbook
-          Map.entry("EncyclopediaChapter", INBOOK),
-          Map.entry("ExhibitionCatalogChapter", INBOOK),
-          Map.entry("Introduction", INBOOK),
-          Map.entry("NonFictionChapter", INBOOK),
-          Map.entry("PopularScienceChapter", INBOOK),
-          Map.entry("TextbookChapter", INBOOK),
-          Map.entry("AcademicChapter", INBOOK),
-          Map.entry("ChapterInReport", INBOOK),
-          // Conference → @inproceedings
-          Map.entry("ConferenceAbstract", INPROCEEDINGS),
-          Map.entry("ChapterConferenceAbstract", INPROCEEDINGS),
-          Map.entry("ConferenceLecture", INPROCEEDINGS),
-          Map.entry("ConferencePoster", INPROCEEDINGS),
-          // Conference proceedings / journal issue → @proceedings
-          // Reports → @techreport
-          Map.entry("ConferenceReport", TECHREPORT),
-          Map.entry("CaseReport", TECHREPORT),
-          Map.entry("ReportBasic", TECHREPORT),
-          Map.entry("ReportBookOfAbstract", TECHREPORT),
-          Map.entry("ReportPolicy", TECHREPORT),
-          Map.entry("ReportResearch", TECHREPORT),
-          Map.entry("ReportWorkingPaper", TECHREPORT),
-          // Theses
-          Map.entry("DegreeBachelor", MASTERSTHESIS),
-          Map.entry("DegreeLicentiate", MASTERSTHESIS),
-          Map.entry("DegreeMaster", MASTERSTHESIS),
-          Map.entry("ArtisticDegreePhd", PHDTHESIS),
-          Map.entry("DegreePhd", PHDTHESIS));
-  public static final String PAGES = "pages";
-
-  // Everything else (artistic, media, data, software) → @misc (default)
+  // NVA publication context types
+  private static final String CONTEXT_TYPE_UNCONFIRMED_JOURNAL = "UnconfirmedJournal";
+  private static final String CONTEXT_TYPE_ANTHOLOGY = "Anthology";
+  private static final String CONTEXT_TYPE_BOOK_ANTHOLOGY = "BookAnthology";
+  private static final int JANUARY = 1;
+  private static final int DECEMBER = 12;
+  public static final String INTERVAL = "--";
 
   private ResourceBibTexTransformer() {}
 
-  public static String transform(List<JsonNode> hits) {
+  public static String transform(Collection<JsonNode> hits) {
     return hits.stream()
         .map(ResourceBibTexTransformer::toEntry)
         .collect(Collectors.joining(ENTRY_SEPARATOR));
   }
 
   private static String toEntry(JsonNode doc) {
-    var id = extractText(doc, ID_POINTER, "");
+    var id = extractText(doc, "/id").orElse(EMPTY_STRING);
     var key = deriveKey(id);
-    var nvaType = extractText(doc, INSTANCE_TYPE_POINTER, "");
-    var bibType = TYPE_MAP.getOrDefault(nvaType, "misc");
+    var nvaType = extractText(doc, INSTANCE_TYPE_POINTER).orElse(EMPTY_STRING);
+    var bibType = BibtexType.toBibtexType(nvaType);
 
-    var fields = new TreeMap<String, String>();
+    var fields = new LinkedHashSet<BibtexField>();
     addUniversalFields(doc, id, fields);
     addTypeSpecificFields(doc, bibType, fields);
 
-    var fieldsString =
-        fields.entrySet().stream()
-            .map(e -> "  " + e.getKey() + " = {" + e.getValue() + "}")
-            .collect(Collectors.joining(",\n"));
-
-    return "@" + bibType + "{" + key + ",\n" + fieldsString + "\n}";
+    return new BibtexEntry(bibType, key, fields).toString();
   }
 
-  private static void addUniversalFields(JsonNode doc, String id, Map<String, String> fields) {
-    putIfPresent(fields, "author", extractAuthors(doc));
-    putIfPresent(fields, "doi", extractDoi(doc));
-    putIfPresent(fields, "month", extractMonth(doc));
-    putIfPresent(fields, "title", extractText(doc, MAIN_TITLE_POINTER, null));
-    putIfPresent(fields, "url", id.isBlank() ? null : id);
-    putIfPresent(fields, "year", extractText(doc, YEAR_POINTER, null));
+  private static void addUniversalFields(JsonNode doc, String id, Collection<BibtexField> fields) {
+    extractAuthors(doc).ifPresent(authors -> addField(fields, "author", authors));
+    extractDoi(doc).ifPresent(doi -> addField(fields, "doi", doi));
+    extractMonth(doc).ifPresent(month -> addField(fields, "month", month));
+    extractText(doc, MAIN_TITLE_POINTER).ifPresent(title -> addField(fields, "title", title));
+    if (!id.isBlank()) {
+      addField(fields, "url", id);
+    }
+    extractText(doc, YEAR_POINTER).ifPresent(year -> addField(fields, "year", year));
   }
 
   private static void addTypeSpecificFields(
-      JsonNode doc, String bibType, Map<String, String> fields) {
+      JsonNode doc, BibtexConstants bibType, Collection<BibtexField> fields) {
     switch (bibType) {
       case ARTICLE -> {
-        putIfPresent(fields, "issn", extractIssn(doc));
-        putIfPresent(fields, "journal", extractJournalName(doc));
-        putIfPresent(fields, "number", extractText(doc, ISSUE_POINTER, null));
-        putIfPresent(fields, PAGES, extractPages(doc));
-        putIfPresent(fields, "volume", extractText(doc, VOLUME_POINTER, null));
+        extractIssn(doc).ifPresent(issn -> addField(fields, "issn", issn));
+        extractJournalName(doc).ifPresent(journal -> addField(fields, "journal", journal));
+        extractText(doc, ISSUE_POINTER).ifPresent(issue -> addField(fields, "number", issue));
+        extractPages(doc).ifPresent(pages -> addField(fields, PAGES, pages));
+        extractText(doc, VOLUME_POINTER).ifPresent(volume -> addField(fields, "volume", volume));
       }
       case BOOK -> {
-        putIfPresent(fields, "publisher", extractText(doc, CONTEXT_PUBLISHER_NAME_POINTER, null));
-        putIfPresent(fields, "series", extractText(doc, CONTEXT_SERIES_NAME_POINTER, null));
+        extractText(doc, CONTEXT_PUBLISHER_NAME_POINTER)
+            .ifPresent(publisher -> addField(fields, "publisher", publisher));
+        extractText(doc, CONTEXT_SERIES_NAME_POINTER)
+            .ifPresent(series -> addField(fields, "series", series));
       }
       case INBOOK -> {
-        putIfPresent(fields, "booktitle", extractAnthologyTitle(doc));
-        putIfPresent(fields, PAGES, extractPages(doc));
-        putIfPresent(fields, "publisher", extractAnthologyPublisher(doc));
+        extractAnthologyTitle(doc).ifPresent(title -> addField(fields, "booktitle", title));
+        extractPages(doc).ifPresent(pages -> addField(fields, PAGES, pages));
+        extractAnthologyPublisher(doc)
+            .ifPresent(publisher -> addField(fields, "publisher", publisher));
       }
       case INPROCEEDINGS -> {
-        putIfPresent(fields, "booktitle", extractText(doc, CONTEXT_NAME_POINTER, null));
-        putIfPresent(fields, PAGES, extractPages(doc));
+        extractText(doc, CONTEXT_NAME_POINTER)
+            .ifPresent(title -> addField(fields, "booktitle", title));
+        extractPages(doc).ifPresent(pages -> addField(fields, PAGES, pages));
       }
       case TECHREPORT -> {
-        putIfPresent(fields, "institution", extractText(doc, CONTEXT_PUBLISHER_NAME_POINTER, null));
+        extractText(doc, CONTEXT_PUBLISHER_NAME_POINTER)
+            .ifPresent(institution -> addField(fields, "institution", institution));
       }
       case MASTERSTHESIS, PHDTHESIS -> {
-        putIfPresent(fields, "school", extractText(doc, CONTEXT_PUBLISHER_NAME_POINTER, null));
+        extractText(doc, CONTEXT_PUBLISHER_NAME_POINTER)
+            .ifPresent(school -> addField(fields, "school", school));
       }
       default -> {
         /* @misc, @proceedings, @unpublished: universal fields suffice */
@@ -199,65 +139,73 @@ public final class ResourceBibTexTransformer {
     }
   }
 
-  private static String extractJournalName(JsonNode doc) {
-    var contextType = extractText(doc, CONTEXT_TYPE_POINTER, "");
-    if (UNCONFIRMED_JOURNAL.equals(contextType)) {
-      return extractText(doc, CONTEXT_TITLE_POINTER, null);
+  private static void addField(Collection<BibtexField> fields, String name, String value) {
+    if (!value.isBlank()) {
+      fields.add(new BibtexField(name, value));
     }
-    return extractText(doc, CONTEXT_NAME_POINTER, null);
   }
 
-  private static String extractAnthologyTitle(JsonNode doc) {
-    var contextType = extractText(doc, CONTEXT_TYPE_POINTER, "");
-    if (ANTHOLOGY.equals(contextType) || BOOK_ANTHOLOGY.equals(contextType)) {
-      return extractText(doc, ANTHOLOGY_MAIN_TITLE_POINTER, null);
+  private static Optional<String> extractJournalName(JsonNode doc) {
+    var contextType = extractText(doc, CONTEXT_TYPE_POINTER).orElse(EMPTY_STRING);
+    if (CONTEXT_TYPE_UNCONFIRMED_JOURNAL.equals(contextType)) {
+      return extractText(doc, CONTEXT_TITLE_POINTER);
     }
-    return extractText(doc, CONTEXT_NAME_POINTER, null);
+    return extractText(doc, CONTEXT_NAME_POINTER);
   }
 
-  private static String extractAnthologyPublisher(JsonNode doc) {
-    var contextType = extractText(doc, CONTEXT_TYPE_POINTER, "");
-    if (ANTHOLOGY.equals(contextType) || BOOK_ANTHOLOGY.equals(contextType)) {
-      return extractText(doc, ANTHOLOGY_PUBLISHER_NAME_POINTER, null);
-    }
-    return extractText(doc, CONTEXT_PUBLISHER_NAME_POINTER, null);
+  private static boolean isAnthologyContext(JsonNode doc) {
+    var contextType = extractText(doc, CONTEXT_TYPE_POINTER).orElse(EMPTY_STRING);
+    return CONTEXT_TYPE_ANTHOLOGY.equals(contextType)
+        || CONTEXT_TYPE_BOOK_ANTHOLOGY.equals(contextType);
   }
 
-  private static String extractIssn(JsonNode doc) {
-    var online = extractText(doc, CONTEXT_ONLINE_ISSN_POINTER, null);
-    return online != null ? online : extractText(doc, CONTEXT_PRINT_ISSN_POINTER, null);
+  private static Optional<String> extractAnthologyTitle(JsonNode doc) {
+    return isAnthologyContext(doc)
+        ? extractText(doc, ANTHOLOGY_MAIN_TITLE_POINTER)
+        : extractText(doc, CONTEXT_NAME_POINTER);
   }
 
-  private static String extractDoi(JsonNode doc) {
-    var doi = extractText(doc, DOI_POINTER, null);
-    if (doi == null) {
-      return null;
-    }
-    return doi.replaceFirst("(?i)https?://doi\\.org/", "").strip();
+  private static Optional<String> extractAnthologyPublisher(JsonNode doc) {
+    return isAnthologyContext(doc)
+        ? extractText(doc, ANTHOLOGY_PUBLISHER_NAME_POINTER)
+        : extractText(doc, CONTEXT_PUBLISHER_NAME_POINTER);
   }
 
-  private static String extractAuthors(JsonNode doc) {
+  private static Optional<String> extractIssn(JsonNode doc) {
+    return extractText(doc, CONTEXT_ONLINE_ISSN_POINTER)
+        .or(() -> extractText(doc, CONTEXT_PRINT_ISSN_POINTER));
+  }
+
+  private static Optional<String> extractDoi(JsonNode doc) {
+    return extractText(doc, DOI_POINTER)
+        .map(doi -> doi.replaceFirst(DOI_URI_HOST_REGEX, EMPTY_STRING).strip());
+  }
+
+  private static Optional<String> extractAuthors(JsonNode doc) {
     var contributors = doc.at(CONTRIBUTORS_POINTER);
     if (contributors.isMissingNode() || !contributors.isArray()) {
-      return null;
+      return Optional.empty();
     }
-    var names =
-        StreamSupport.stream(contributors.spliterator(), false)
-            .map(c -> extractText(c, IDENTITY_NAME_POINTER, null))
-            .filter(name -> name != null && !name.isBlank())
-            .collect(Collectors.joining(AND));
-    return names.isBlank() ? null : names;
+    return StreamSupport.stream(contributors.spliterator(), false)
+        .flatMap(contributor -> extractText(contributor, IDENTITY_NAME_POINTER).stream())
+        .filter(not(String::isBlank))
+        .collect(
+            Collectors.collectingAndThen(
+                Collectors.joining(AND),
+                names -> names.isEmpty() ? Optional.empty() : Optional.of(names)));
   }
 
-  private static String extractMonth(JsonNode doc) {
-    var raw = extractText(doc, MONTH_POINTER, null);
-    if (raw == null) {
-      return null;
-    }
+  private static Optional<String> extractMonth(JsonNode doc) {
+    return extractText(doc, MONTH_POINTER).map(ResourceBibTexTransformer::constructMonthName);
+  }
+
+  private static @NonNull String constructMonthName(String raw) {
     try {
       int month = Integer.parseInt(raw.strip());
-      if (month >= 1 && month <= 12) {
-        return MONTH_ABBR[month - 1];
+      if (month >= JANUARY && month <= DECEMBER) {
+        return Month.of(month)
+            .getDisplayName(TextStyle.SHORT_STANDALONE, Locale.ROOT)
+            .toLowerCase(Locale.ROOT);
       }
     } catch (NumberFormatException ignored) {
       // already an abbreviation or other string
@@ -265,56 +213,35 @@ public final class ResourceBibTexTransformer {
     return raw;
   }
 
-  private static String extractPages(JsonNode doc) {
-    var begin = extractText(doc, PAGES_BEGIN_POINTER, null);
-    if (begin == null) {
-      return null;
-    }
-    var end = extractText(doc, PAGES_END_POINTER, null);
-    return end != null ? begin + "--" + end : begin;
+  private static Optional<String> extractPages(JsonNode doc) {
+    return extractText(doc, PAGES_BEGIN_POINTER)
+        .map(
+            begin ->
+                extractText(doc, PAGES_END_POINTER)
+                    .map(end -> begin + INTERVAL + end)
+                    .orElse(begin));
   }
 
   private static String deriveKey(String id) {
     if (id.isBlank()) {
       return "unknown";
     }
-    var lastSlash = id.lastIndexOf('/');
-    return lastSlash >= 0 && lastSlash < id.length() - 1 ? id.substring(lastSlash + 1) : id;
-  }
-
-  private static void putIfPresent(Map<String, String> fields, String name, String value) {
-    if (value != null && !value.isBlank()) {
-      fields.put(name, value);
+    try {
+      var path = URI.create(id).getPath();
+      if (path != null && path.contains("/")) {
+        var lastSegment = path.substring(path.lastIndexOf('/') + JANUARY);
+        if (!lastSegment.isBlank()) {
+          return lastSegment;
+        }
+      }
+    } catch (IllegalArgumentException ignored) {
+      // fall through to raw id
     }
+    return id;
   }
 
-  private static String extractText(JsonNode node, String pointer, String defaultValue) {
+  private static Optional<String> extractText(JsonNode node, String pointer) {
     var value = node.at(pointer);
-    return value.isMissingNode() || value.isNull() ? defaultValue : value.asText();
-  }
-
-  public static List<String> getJsonFields() {
-    return List.of(
-        "id",
-        "entityDescription.mainTitle",
-        "entityDescription.publicationDate.year",
-        "entityDescription.publicationDate.month",
-        "entityDescription.contributors.identity.name",
-        "entityDescription.reference.doi",
-        "entityDescription.reference.publicationInstance.type",
-        "entityDescription.reference.publicationInstance.volume",
-        "entityDescription.reference.publicationInstance.issue",
-        "entityDescription.reference.publicationInstance.pages.begin",
-        "entityDescription.reference.publicationInstance.pages.end",
-        "entityDescription.reference.publicationContext.type",
-        "entityDescription.reference.publicationContext.name",
-        "entityDescription.reference.publicationContext.title",
-        "entityDescription.reference.publicationContext.onlineIssn",
-        "entityDescription.reference.publicationContext.printIssn",
-        "entityDescription.reference.publicationContext.publisher.name",
-        "entityDescription.reference.publicationContext.series.name",
-        "entityDescription.reference.publicationContext.entityDescription.mainTitle",
-        "entityDescription.reference.publicationContext.entityDescription.reference"
-            + ".publicationContext.publisher.name");
+    return value.isMissingNode() || value.isNull() ? Optional.empty() : Optional.of(value.asText());
   }
 }
