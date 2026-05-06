@@ -9,7 +9,9 @@ import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.EXCLUDE_KEYWORD;
 import static no.unit.nva.constants.Words.POST_FILTER;
 import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
+import static no.unit.nva.constants.Defaults.BIBTEX_UTF_8;
 import static no.unit.nva.constants.Words.SORT_LAST;
+import static no.unit.nva.constants.Words.TEXT_X_BIBTEX;
 import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search.common.enums.FieldOperator.NOT_ALL_OF;
 import static no.unit.nva.search.common.enums.FieldOperator.NOT_ANY_OF;
@@ -204,6 +206,8 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
   final void setMediaType(String mediaType) {
     if (nonNull(mediaType) && mediaType.contains(Words.TEXT_CSV)) {
       this.mediaType = CSV_UTF_8;
+    } else if (nonNull(mediaType) && mediaType.contains(TEXT_X_BIBTEX)) {
+      this.mediaType = BIBTEX_UTF_8;
     } else {
       this.mediaType = JSON_UTF_8;
     }

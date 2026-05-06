@@ -84,6 +84,10 @@ class SearchResourceLegacyHandlerTest {
     return Stream.of(null, "application/json", "application/json; charset=utf-8");
   }
 
+  public static Stream<String> acceptHeaderValuesProducingBibTexProvider() {
+    return Stream.of(Words.TEXT_X_BIBTEX);
+  }
+
   @BeforeEach
   void setUp() {
 
@@ -104,6 +108,20 @@ class SearchResourceLegacyHandlerTest {
         GatewayResponse.fromOutputStream(outputStream, String.class);
     assertThat(
         gatewayResponse.getHeaders().get("Content-Type"), is(equalTo("text/csv; charset=utf-8")));
+  }
+
+  @ParameterizedTest(name = "should return text/x-bibtex for accept header {0}")
+  @MethodSource("acceptHeaderValuesProducingBibTexProvider")
+  void shouldReturnBibTexWithGivenAcceptHeader(String acceptHeaderValue) throws IOException {
+    prepareRestHighLevelClientOkResponse(List.of(csvWithFullDate(), csvWithYearOnly()));
+    handler.handleRequest(
+        getRequestInputStreamAccepting(acceptHeaderValue), outputStream, mock(Context.class));
+
+    GatewayResponse<String> gatewayResponse =
+        GatewayResponse.fromOutputStream(outputStream, String.class);
+    assertThat(
+        gatewayResponse.getHeaders().get("Content-Type"), is(equalTo("text/x-bibtex")));
+    assertThat(gatewayResponse.getBody().contains("@"), is(true));
   }
 
   private ExportCsv csvWithYearOnly() {
