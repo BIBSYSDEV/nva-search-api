@@ -40,10 +40,15 @@ class ResourceBibTexTransformerTest {
   static Stream<Arguments> bookTypes() {
     return Stream.of(
             "AcademicMonograph",
+            "Architecture",
+            "ArtisticDesign",
             "BookAnthology",
             "Encyclopedia",
             "ExhibitionCatalog",
+            "LiteraryArts",
+            "MusicPerformance",
             "NonFictionMonograph",
+            "OtherArtisticOutput",
             "PopularScienceMonograph",
             "Textbook")
         .map(t -> Arguments.of(t, "book"));
@@ -259,6 +264,95 @@ class ResourceBibTexTransformerTest {
     assertThat(result, containsString("  url = {https://api.nva.unit.no/publication/abc-123}"));
   }
 
+  @Test
+  void shouldUseTopLevelHandleFieldWhenPresent() {
+    var doc = docWithInstanceType("AcademicArticle");
+    setPath(doc, "id", "https://api.nva.unit.no/publication/abc-123");
+    setPath(doc, "handle", "https://hdl.handle.net/11250/9999999");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  url = {https://hdl.handle.net/11250/9999999}"));
+    assertThat(result, startsWith("@article{9999999,"));
+  }
+
+  @Test
+  void shouldUseHandleSuffixAsKeyWhenPresent() {
+    var doc = docWithInstanceType("AcademicArticle");
+    setPath(doc, "id", "https://api.nva.unit.no/publication/abc-123");
+    setPath(doc, "handle", "https://hdl.handle.net/11250/4144299");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, startsWith("@article{4144299,"));
+  }
+
+  @Test
+  void shouldFallBackToIdForUrlAndKeyWhenHandleAbsent() {
+    var doc = docWithInstanceType("AcademicArticle");
+    setPath(doc, "id", "https://api.nva.unit.no/publication/abc-123");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, startsWith("@article{abc-123,"));
+    assertThat(result, containsString("  url = {https://api.nva.unit.no/publication/abc-123}"));
+  }
+
+  @Test
+  void shouldExtractAbstract() {
+    var doc = docWithInstanceType("AcademicArticle");
+    ((com.fasterxml.jackson.databind.node.ObjectNode) doc.path("entityDescription"))
+        .put("abstract", "This is the abstract.");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  abstract = {This is the abstract.}"));
+  }
+
+  @Test
+  void shouldExtractKeywordsFromTags() {
+    var doc = docWithInstanceType("AcademicArticle");
+    setTags(doc, "climate change", "Arctic");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  keywords = {climate change, Arctic}"));
+  }
+
+  @Test
+  void shouldAddNvaTypeAsNote() {
+    var doc = docWithInstanceType("AcademicArticle");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  note = {nva type: AcademicArticle}"));
+  }
+
+  @Test
+  void shouldAddNvaTypeAsNoteForMisc() {
+    var doc = docWithInstanceType("DataSet");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  note = {nva type: DataSet}"));
+  }
+
+  @Test
+  void shouldUseFallbackDoiFromTopLevelField() {
+    var doc = docWithInstanceType("AcademicArticle");
+    doc.putObject("entityDescription").putObject("reference");
+    setPath(doc, "doi", "https://doi.org/10.1234/fallback");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  doi = {10.1234/fallback}"));
+  }
+
+  @Test
+  void shouldAddNvaTypeAsNoteForTechReport() {
+    var doc = docWithInstanceType("ReportResearch");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  note = {nva type: ReportResearch}"));
+  }
+
+  @Test
+  void shouldAddNvaTypeAsNoteForMastersThesis() {
+    var doc = docWithInstanceType("DegreeMaster");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  note = {nva type: DegreeMaster}"));
+  }
+
+  @Test
+  void shouldAddNvaTypeAsNoteForPhdThesis() {
+    var doc = docWithInstanceType("DegreePhd");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  note = {nva type: DegreePhd}"));
+  }
+
   // -- @article fields -------------------------------------------------------
 
   @Test
@@ -322,6 +416,56 @@ class ResourceBibTexTransformerTest {
     assertThat(result, containsString("  series = {Lecture Notes in CS}"));
   }
 
+  @Test
+  void shouldExtractIsbnForBook() {
+    var doc = docWithInstanceType("AcademicMonograph");
+    setContextIsbn(doc, "9781234567890");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  isbn = {9781234567890}"));
+  }
+
+  @Test
+  void shouldExtractMonographPagesForBook() {
+    var doc = docWithInstanceType("AcademicMonograph");
+    setMonographPages(doc, "248");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  pages = {248}"));
+  }
+
+  @Test
+  void shouldExtractPublisherFromLiteraryArtsMonographManifestation() {
+    var doc = docWithInstanceType("LiteraryArts");
+    addLiteraryArtsMonographManifestation(doc, "Gyldendal", null, null);
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  publisher = {Gyldendal}"));
+  }
+
+  @Test
+  void shouldExtractIsbnFromLiteraryArtsMonographManifestation() {
+    var doc = docWithInstanceType("LiteraryArts");
+    addLiteraryArtsMonographManifestation(doc, null, "9780949004086", null);
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  isbn = {9780949004086}"));
+  }
+
+  @Test
+  void shouldExtractPagesFromLiteraryArtsMonographManifestation() {
+    var doc = docWithInstanceType("LiteraryArts");
+    addLiteraryArtsMonographManifestation(doc, null, null, "190");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  pages = {190}"));
+  }
+
+  @Test
+  void shouldPreferContextPublisherOverManifestationPublisher() {
+    var doc = docWithInstanceType("AcademicMonograph");
+    setBookContext(doc, "Springer", null);
+    addLiteraryArtsMonographManifestation(doc, "Gyldendal", null, null);
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  publisher = {Springer}"));
+    assertThat(result, not(containsString("Gyldendal")));
+  }
+
   // -- @inbook fields --------------------------------------------------------
 
   @Test
@@ -344,12 +488,29 @@ class ResourceBibTexTransformerTest {
   }
 
   @Test
-  void shouldExtractNestedBooktitleAndPublisherForBookAnthologyChapter() {
-    var doc = docWithInstanceType("AcademicChapter");
-    setAnthologyContext(doc, "BookAnthology", "Handbook of Things", "Springer");
+  void shouldExtractPagesFromMonographPages() {
+    var doc = docWithInstanceType("ReportResearch");
+    setMonographPages(doc, "248");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
-    assertThat(result, containsString("  booktitle = {Handbook of Things}"));
-    assertThat(result, containsString("  publisher = {Springer}"));
+    assertThat(result, containsString("  pages = {248}"));
+  }
+
+  @Test
+  void shouldNotIncludePagesWhenMonographPagesFieldAbsent() {
+    var doc = docWithInstanceType("ReportResearch");
+    setMonographPages(doc, null);
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, not(containsString("pages")));
+  }
+
+  // -- @inproceedings fields -------------------------------------------------
+
+  @Test
+  void shouldExtractPagesForInproceedings() {
+    var doc = docWithInstanceType("ConferenceLecture");
+    setInstance(doc, "ConferenceLecture", null, null, "42", "50");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  pages = {42--50}"));
   }
 
   // -- @techreport fields ----------------------------------------------------
@@ -360,6 +521,22 @@ class ResourceBibTexTransformerTest {
     setReportContext(doc, null, "SINTEF");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, containsString("  institution = {SINTEF}"));
+  }
+
+  @Test
+  void shouldExtractIsbnForTechReport() {
+    var doc = docWithInstanceType("ReportResearch");
+    setContextIsbn(doc, "9789876543210");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  isbn = {9789876543210}"));
+  }
+
+  @Test
+  void shouldExtractSeriesForTechReport() {
+    var doc = docWithInstanceType("ReportResearch");
+    setReportContextWithSeries(doc, null, "SINTEF", "SINTEF Report");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  series = {SINTEF Report}"));
   }
 
   // -- thesis fields ---------------------------------------------------------
@@ -374,12 +551,36 @@ class ResourceBibTexTransformerTest {
   }
 
   @Test
+  void shouldExtractMonographPagesForMastersThesis() {
+    var doc = docWithInstanceType("DegreeMaster");
+    setMonographPages(doc, "120");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  pages = {120}"));
+  }
+
+  @Test
   void shouldExtractSchoolForPhdThesis() {
     var doc = docWithInstanceType("DegreePhd");
     setReportContext(doc, null, "University of Oslo");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, startsWith("@phdthesis{"));
     assertThat(result, containsString("  school = {University of Oslo}"));
+  }
+
+  @Test
+  void shouldExtractIsbnForPhdThesis() {
+    var doc = docWithInstanceType("DegreePhd");
+    setContextIsbn(doc, "9789876543211");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  isbn = {9789876543211}"));
+  }
+
+  @Test
+  void shouldExtractMonographPagesForPhdThesis() {
+    var doc = docWithInstanceType("DegreePhd");
+    setMonographPages(doc, "350");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  pages = {350}"));
   }
 
   // -- helpers ---------------------------------------------------------------
@@ -491,5 +692,44 @@ class ResourceBibTexTransformerTest {
         .putObject("publicationContext")
         .putObject("publisher")
         .put("name", publisherName);
+  }
+
+  private static void setMonographPages(ObjectNode doc, String pageCount) {
+    var instance =
+        (ObjectNode) doc.path("entityDescription").path("reference").path("publicationInstance");
+    var pages = instance.putObject("pages");
+    pages.put("type", "MonographPages");
+    if (pageCount != null) pages.put("pages", pageCount);
+  }
+
+  private static void setContextIsbn(ObjectNode doc, String isbn) {
+    var ctx =
+        (ObjectNode) doc.path("entityDescription").path("reference").path("publicationContext");
+    ctx.putArray("isbnList").add(isbn);
+  }
+
+  private static void setReportContextWithSeries(
+      ObjectNode doc, String contextName, String publisherName, String seriesName) {
+    setReportContext(doc, contextName, publisherName);
+    var ctx =
+        (ObjectNode) doc.path("entityDescription").path("reference").path("publicationContext");
+    if (seriesName != null) ctx.putObject("series").put("name", seriesName);
+  }
+
+  private static void setTags(ObjectNode doc, String... tags) {
+    var arr = ((ObjectNode) doc.path("entityDescription")).putArray("tags");
+    for (var tag : tags) arr.add(tag);
+  }
+
+  private static void addLiteraryArtsMonographManifestation(
+      ObjectNode doc, String publisherName, String isbn, String pages) {
+    var instance =
+        (ObjectNode) doc.path("entityDescription").path("reference").path("publicationInstance");
+    var manifestations = instance.putArray("manifestations");
+    var m = manifestations.addObject();
+    m.put("type", "LiteraryArtsMonograph");
+    if (publisherName != null) m.putObject("publisher").put("name", publisherName);
+    if (isbn != null) m.putArray("isbnList").add(isbn);
+    if (pages != null) m.putObject("pages").put("pages", pages);
   }
 }

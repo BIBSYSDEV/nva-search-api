@@ -1,0 +1,829 @@
+{
+  "id": "https://api.nva.unit.no/search/resources?instanceType=DegreePhd&aggregation=none&size=3&sort=modifiedDate%3Adesc%2Cidentifier&from=0",
+  "totalHits": 35814,
+  "hits": [
+    {
+      "identifier": "019dfde0c30e-ed92bc51-fd96-4de8-8a0f-8108becb09c1",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/186.36.11.0",
+        "https://api.nva.unit.no/cristin/organization/186.10.0.0",
+        "https://api.nva.unit.no/cristin/organization/186.36.3.0",
+        "https://api.nva.unit.no/cristin/organization/186.36.0.0",
+        "https://api.nva.unit.no/cristin/organization/186.36.3.91",
+        "https://api.nva.unit.no/cristin/organization/186.0.0.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "904217@186.0.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/186.0.0.0"
+      },
+      "type": "Publication",
+      "associatedArtifacts": [
+        {
+          "identifier": "4fae3cf3-7824-4090-beb7-e1060fa49057",
+          "license": {
+            "name": "CC-BY",
+            "type": "License",
+            "value": "https://creativecommons.org/licenses/by/4.0/",
+            "labels": {
+              "nb": "Creative Commons - Navngivelse",
+              "en": "Creative Commons - Attribution"
+            }
+          },
+          "rightsRetentionStrategy": {
+            "configuredType": "RightsRetentionStrategy",
+            "type": "NullRightsRetentionStrategy"
+          },
+          "uploadDetails": {
+            "type": "UserUploadDetails",
+            "uploadedDate": "2026-05-06T15:24:20.438049687Z",
+            "uploadedBy": "904217@186.0.0.0"
+          },
+          "size": "34384478",
+          "name": "Thesis FINAL_Mana Tugend.pdf",
+          "embargoDate": "2030-05-18T22:00:00Z",
+          "mimeType": "application/pdf",
+          "publishedDate": "2026-05-06T15:31:53.747669468Z",
+          "type": "OpenFile"
+        }
+      ],
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-05-06T15:31:57.997658752Z",
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/186.0.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "pages": {
+              "illustrated": "false",
+              "pages": "368",
+              "type": "MonographPages"
+            },
+            "type": "DegreePhd"
+          },
+          "publicationContext": {
+            "isbnList": [
+              "9788293021551"
+            ],
+            "series": {
+              "type": "UnconfirmedSeries"
+            },
+            "publisher": {
+              "valid": "true",
+              "identifier": "DB1B17B3-1CA4-4A7A-9CDC-292FDD7B4BE5",
+              "year": "2026",
+              "name": "UiT Norges arktiske universitet",
+              "id": "https://api.nva.unit.no/publication-channels-v2/publisher/DB1B17B3-1CA4-4A7A-9CDC-292FDD7B4BE5/2026",
+              "type": "Publisher",
+              "scientificValue": "LevelZero",
+              "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/forlag?pid=DB1B17B3-1CA4-4A7A-9CDC-292FDD7B4BE5"
+            },
+            "type": "Degree"
+          }
+        },
+        "contributorsCount": 2,
+        "mainTitle": "Sustaining Good Relations with Nature: An Analysis of Rights of Nature and Relationality Towards the Restorying of International Environmental Law",
+        "description": "Alors que les syst\u00e8mes \u00e9cologiques de la plan\u00e8te font face \u00e0 un effondrement sans pr\u00e9c\u00e9dent, principalement caus\u00e9 par l\u2019activit\u00e9 humaine, cette th\u00e8se r\u00e9pond aux appels en faveur d\u2019une \u00ab re-narration radicale \u00bb du droit international de l\u2019environnement, en retravaillant les r\u00e9cits et les hypoth\u00e8ses \u00e0 travers lesquels le droit organise les relations entre l\u2019humain et la nature. Elle examine comment le droit international de l\u2019environnement pourrait \u00eatre re-narr\u00e9 \u00e0 travers des approches relationnelles des relations homme-nature. La th\u00e8se soutient que les limites persistantes du droit de l\u2019environnement proviennent des fondements dualistes et anthropocentriques de la modernit\u00e9 juridique, qui construisent l\u2019humain et la nature comme des entit\u00e9s s\u00e9par\u00e9es et hi\u00e9rarchiquement ordonn\u00e9es. La relationalit\u00e9 est d\u00e9velopp\u00e9e et appliqu\u00e9e comme cadre th\u00e9orique central et outil m\u00e9thodologique de cette \u00e9tude. Elle fonctionne de mani\u00e8re diagnostique pour r\u00e9v\u00e9ler les dualismes incorpor\u00e9s dans le droit de l\u2019environnement, de mani\u00e8re interpr\u00e9tative pour \u00e9tudier les droits de la nature en tant que d\u00e9veloppement juridique potentiellement transformateur, et de mani\u00e8re r\u00e9g\u00e9n\u00e9rative pour re-narrer la compr\u00e9hension par le droit des relations homme-nature. Alors que les droits de la nature r\u00e9v\u00e8lent des possibilit\u00e9s relationnelles, le droit relationnel \u00e9tend ces possibilit\u00e9s, pr\u00e9figurant des changements dans la fa\u00e7on dont le droit conceptualise les relations entre l\u2019humain et la nature. La th\u00e8se conceptualise les droits de la nature comme une forme d\u2019ambigu\u00eft\u00e9 productive : ils sont \u00e0 la fois radicaux dans leur remise en question de l\u2019exceptionnalisme humain et conservateurs dans leur d\u00e9pendance aux formes juridiques \u00e9tablies. Cette tension constitue un espace productif pour explorer le tournant vers le droit relationnel. La th\u00e8se adopte une m\u00e9thodologie juridique critique et s\u2019appuie sur deux \u00e9tudes de cas dans la r\u00e9gion Pacifique. La premi\u00e8re examine comment les compr\u00e9hensions relationnelles sont int\u00e9gr\u00e9es dans la reconnaissance juridique de la rivi\u00e8re Whanganui en Aotearoa Nouvelle-Z\u00e9lande. La seconde explore des aper\u00e7us de pratiques juridiques relationnelles dans la r\u00e9gion Pacifique. L\u2019analyse r\u00e9v\u00e8le comment les approches relationnelles perturbent les hypoth\u00e8ses juridiques dominantes et pr\u00e9figurent des futurs juridiques alternatifs. Elle contribue au corpus croissant de recherches sur les droits de la nature et les approches relationnelles de la gouvernance environnementale, offrant des voies vers des imaginaires plus r\u00e9ciproques et plus-than-humains face aux crises socio-\u00e9cologiques mondiales.",
+        "alternativeAbstracts": {
+          "und": "Planetens \u00f8kologiske systemer st\u00e5r overfor et enest\u00e5ende sammenbrudd, i stor grad drevet av menneskelig aktivitet. Denne avhandlingen svarer p\u00e5 behovet for en \u2018radikal gjenfortelling\u2019 av internasjonal milj\u00f8rett, forst\u00e5tt som en omarbeiding av de fortellingene og forutsetningene som former hvordan retten organiserer forholdet mellom mennesker og natur. Den unders\u00f8ker hvordan lovverket kan gjenfortelles gjennom relasjonelle tiln\u00e6rminger til forholdet mellom mennesket og natur. Avhandlingen argumenterer for at de vedvarende begrensningene i milj\u00f8rett stammer fra de dualistiske og antroposentriske grunnlagene i den juridiske moderniteten, som konstruerer mennesker og natur som separate og hierarkisk enheter. Relasjonalitet utvikles og anvendes som det sentrale teoretiske rammeverket og metodologiske verkt\u00f8yet for denne studien. Det fungerer diagnostisk for \u00e5 avdekke dualismene som er innebygd i milj\u00f8retten, fortolkende for \u00e5 unders\u00f8ke naturens rettigheter som en omstridt, men potensielt transformativ juridisk utvikling, og regenerativt for \u00e5 gjenfortelle rettens forst\u00e5else av menneske\u2013natur-relasjoner. Mens naturens rettigheter avsl\u00f8rer relasjonelle muligheter, utvider relasjonell rett disse mulighetene og antyder endringer i hvordan retten konseptualiserer forholdet mellom mennesker og natur. Avhandlingen konseptualiserer naturens rettigheter som en form for produktiv tvetydighet, som samtidig er radikal i sin utfordring av menneskelig eksepsjonalisme og konservativ i sin avhengighet av etablerte juridiske former. Denne spenningen fungerer som et produktivt sted for \u00e5 utforske overgangen mot relasjonell rett. Avhandlingen benytter en kritisk juridisk metodologi og trekker p\u00e5 to casestudier fra Stillehavsregionen. Den f\u00f8rste unders\u00f8ker hvordan relasjonelle forst\u00e5elser er innebygd i den juridiske anerkjennelsen av Whanganui-elven i Aotearoa New Zealand. Den andre utforsker glimt av relasjonelle juridiske praksiser i Stillehavet. Analysen avdekker hvordan relasjonelle tiln\u00e6rminger utfordrer dominerende juridiske antakelser og antyder alternative juridiske fremtider. Den bidrar til den voksende forskningslitteraturen om naturens rettigheter og relasjonelle tiln\u00e6rminger til milj\u00f8styring, og tilbyr veier mot mer gjensidige og mer-enn-menneskelige forestillinger i m\u00f8te med globale sosio-\u00f8kologiske kriser."
+        },
+        "language": "http://lexvo.org/id/iso639-3/eng",
+        "abstract": "As the planet faces unprecedented ecological collapse, driven primarily by human activity, this thesis responds to calls for a \u2018radical restorying\u2019 of international environmental law by reworking the narratives and assumptions through which law organizes human-nature relationships. It examines how international environmental law might be restoried through relational approaches to human-nature relations. The thesis argues that the enduring limitations of environmental law stem from the dualistic and anthropocentric foundations of legal modernity, which construct humans and nature as separate and hierarchically ordered. Relationality is developed and applied as the central theoretical framework and methodological tool for this study. It functions diagnostically to reveal the dualisms embedded in environmental law, interpretatively to study the rights of nature as a legal development with a transformative potential, and regeneratively to restory law\u2019s understanding of human-nature relationships. While the rights of nature reveal relational possibilities, relational law extends these possibilities, prefiguring shifts in how law conceptualizes human-nature relationships. The thesis conceptualizes the rights of nature as a form of productive ambiguity: they are simultaneously radical in their challenge to human exceptionalism and conservative in their reliance on established legal forms. This tension serves as a productive site for exploring the turn towards relational law. The thesis employs a critical legal methodology and draws on two case studies from the Pacific region. The first examines how relational understandings are embedded in the legal recognition of the Whanganui River in Aotearoa New Zealand. The second explores glimpses of relational legal practices in the Pacific Ocean. The analysis reveals how relational approaches unsettle dominant legal assumptions and prefigure alternative legal futures. It contributes to the growing body of scholarship on rights of nature and relational approaches to environmental governance, offering pathways toward more reciprocal and more-than-human imaginaries in the face of global socio-ecological crises.",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Mana Elise Hera Tugend",
+              "id": "https://api.nva.unit.no/cristin/person/1316345",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/186.36.3.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/186.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/186.36.3.91",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Norsk senter for havrett",
+                  "en": "Norwegian Centre for the Law of the Sea"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "2",
+            "role": {
+              "type": "Supervisor"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Margherita Paola Poto",
+              "id": "https://api.nva.unit.no/cristin/person/800466",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/186.36.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/186.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/186.36.11.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Forskning Jurfak"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Mana Elise Hera Tugend",
+              "id": "https://api.nva.unit.no/cristin/person/1316345",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/186.36.3.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/186.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/186.36.3.91",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Norsk senter for havrett",
+                  "en": "Norwegian Centre for the Law of the Sea"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "2",
+            "role": {
+              "type": "Supervisor"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Margherita Paola Poto",
+              "id": "https://api.nva.unit.no/cristin/person/800466",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/186.36.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/186.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/186.36.11.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Forskning Jurfak"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "month": "5",
+          "year": "2026",
+          "type": "PublicationDate",
+          "day": "19"
+        },
+        "tags": [
+          "Pacific Ocean",
+          "Whanganui River",
+          "Environmental law",
+          "Relationality",
+          "Law of the sea",
+          "Human-Nature Relationship",
+          "Rights of Nature",
+          "Re-storying"
+        ]
+      },
+      "createdDate": "2026-05-06T15:20:58.891784270Z",
+      "publicationContextUris": [
+        "https://api.nva.unit.no/publication-channels-v2/publisher/DB1B17B3-1CA4-4A7A-9CDC-292FDD7B4BE5/2026"
+      ],
+      "childPublications": [],
+      "modifiedDate": "2026-05-06T15:31:34.087032007Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "nva@null",
+          "type": "CristinIdentifier",
+          "value": "10438376"
+        },
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/5514389"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/7c277049-48de-4901-bc7e-21768835d461",
+        "type": "Organization"
+      },
+      "filesStatus": "noFiles",
+      "id": "https://api.nva.unit.no/publication/019dfde0c30e-ed92bc51-fd96-4de8-8a0f-8108becb09c1",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2026-05-06T15:31:28.935891211Z",
+      "scientificIndex": {},
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/186.0.0.0"
+                }
+              ],
+              "hasPart": [
+                {
+                  "partOf": [
+                    {
+                      "id": "https://api.nva.unit.no/cristin/organization/186.10.0.0"
+                    }
+                  ],
+                  "hasPart": [
+                    {
+                      "partOf": [
+                        {
+                          "id": "https://api.nva.unit.no/cristin/organization/186.36.0.0"
+                        }
+                      ],
+                      "hasPart": [
+                        {
+                          "partOf": [
+                            {
+                              "id": "https://api.nva.unit.no/cristin/organization/186.36.3.0"
+                            }
+                          ],
+                          "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/186.0.0.0",
+                          "countryCode": "NO",
+                          "id": "https://api.nva.unit.no/cristin/organization/186.36.3.91",
+                          "type": "Organization",
+                          "labels": {
+                            "nb": "Norsk senter for havrett",
+                            "en": "Norwegian Centre for the Law of the Sea"
+                          }
+                        }
+                      ],
+                      "countryCode": "NO",
+                      "id": "https://api.nva.unit.no/cristin/organization/186.36.3.0",
+                      "type": "Organization",
+                      "labels": {
+                        "nb": "Felles Jurfak"
+                      }
+                    },
+                    {
+                      "partOf": [
+                        {
+                          "id": "https://api.nva.unit.no/cristin/organization/186.36.0.0"
+                        }
+                      ],
+                      "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/186.0.0.0",
+                      "countryCode": "NO",
+                      "id": "https://api.nva.unit.no/cristin/organization/186.36.11.0",
+                      "type": "Organization",
+                      "labels": {
+                        "nb": "Forskning Jurfak"
+                      }
+                    }
+                  ],
+                  "countryCode": "NO",
+                  "id": "https://api.nva.unit.no/cristin/organization/186.36.0.0",
+                  "type": "Organization",
+                  "labels": {
+                    "nb": "Det juridiske fakultet",
+                    "en": "Faculty of Law"
+                  }
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/186.10.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Universitetet i Troms\u00f8 - Norges arktiske universitet"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/186.0.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Mana Elise Hera Tugend",
+              "id": "https://api.nva.unit.no/cristin/person/1316345",
+              "type": "Identity"
+            },
+            {
+              "verificationStatus": "Verified",
+              "name": "Margherita Paola Poto",
+              "id": "https://api.nva.unit.no/cristin/person/800466",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nb": "Universitetet i Troms\u00f8 - Norges arktiske universitet",
+            "en": "UiT The Arctic University of Norway"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    },
+    {
+      "identifier": "019dfd713c62-7fca1661-2484-41b8-96cc-a5095e5d3c95",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/184.12.0.0",
+        "https://api.nva.unit.no/cristin/organization/184.12.12.0",
+        "https://api.nva.unit.no/cristin/organization/184.0.0.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "student-thesis-integration@uib",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/184.0.0.0"
+      },
+      "type": "Publication",
+      "associatedArtifacts": [
+        {
+          "identifier": "799c0569-2cdc-4123-bccb-d3a1a4617697",
+          "license": {
+            "name": "COPYRIGHT-ACT",
+            "type": "License",
+            "value": "https://nva.sikt.no/license/copyright-act/1.0",
+            "labels": {
+              "nb": "Generelle bruksvilk\u00e5r",
+              "en": "General Terms of Use"
+            }
+          },
+          "rightsRetentionStrategy": {
+            "configuredType": "Unknown",
+            "type": "NullRightsRetentionStrategy"
+          },
+          "size": "2649295",
+          "name": "archive.pdf",
+          "embargoDate": "2036-05-06T00:00:00Z",
+          "mimeType": "application/pdf",
+          "publishedDate": "2026-05-06T13:19:13.531168103Z",
+          "type": "OpenFile",
+          "legalNote": "Copyright the Author. All rights reserved"
+        }
+      ],
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-05-06T13:19:18.268256178Z",
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/184.0.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "type": "DegreePhd",
+            "submittedDate": {
+              "month": "05",
+              "year": "2026",
+              "type": "PublicationDate",
+              "day": "19"
+            }
+          },
+          "publicationContext": {
+            "isbnList": [
+              "9788230879573",
+              "9788230882580"
+            ],
+            "course": {
+              "type": "UnconfirmedCourse"
+            },
+            "publisher": {
+              "valid": "true",
+              "identifier": "CBCE38D7-C6C6-4CE9-BCED-D64610033E9B",
+              "year": "2026",
+              "name": "Universitetet i Bergen",
+              "id": "https://api.nva.unit.no/publication-channels-v2/publisher/CBCE38D7-C6C6-4CE9-BCED-D64610033E9B/2026",
+              "type": "Publisher",
+              "scientificValue": "LevelZero",
+              "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/forlag?pid=CBCE38D7-C6C6-4CE9-BCED-D64610033E9B"
+            },
+            "type": "Degree"
+          }
+        },
+        "contributorsCount": 1,
+        "mainTitle": "Anonymity Evaluation and Tagging-resistant Encryption in Onion Routing",
+        "alternativeAbstracts": {
+          "und": "  This thesis addresses critical aspects of anonymity and security in onion\n    routing networks, with a particular focus on the Tor network. Onion routing\n    provides a foundation for anonymous communication online, but its practical\n    instantiation faces challenges in rigorously evaluating the anonymity\n    offered and in defending against specific cryptographic vulnerabilities,\n    such as tagging attacks. This work tackles these challenges through a dual\n    approach: first, by developing comprehensive frameworks for the evaluation\n    of anonymity in dynamic network scenarios, and second, by proposing a novel,\n    secure relay encryption scheme designed to enhance Tor's robustness.\n\n  The first part of this thesis introduces a formal model and novel metrics to\n    quantify anonymity in onion routing systems. This framework aims to provide\n    a more nuanced understanding of the privacy guarantees under various\n    adversarial models and network conditions. It is then extended to\n    incorporate the dynamic security aspects inherent in long-lived systems like\n    Tor, considering factors such as evolving network topology and adaptive\n    adversary strategies. These contributions facilitate a more precise and\n    comparable assessment of different attacks and proposed defences.\n\n  The second part of the thesis confronts the known vulnerability of Tor's relay\n    encryption to tagging attacks, which stems from its use of a malleable\n    encryption mode. We introduce Counter Galois Onion (CGO), a new onion\n    encryption scheme designed to be fast, forward-secure, and non-malleable.\n    CGO leverages existing principles for authenticated encryption and is built\n    upon a novel cryptographic primitive to achieve efficiency and forward\n    secrecy. The security of CGO is formally proven in a dedicated security\n    model, demonstrating its suitability as a robust replacement for Tor's\n    current relay encryption mechanism."
+        },
+        "language": "http://lexvo.org/id/iso639-3/eng",
+        "abstract": "  Denne avhandlingen tar for seg kritiske aspekter ved anonymitet og sikkerhet i\n    onion routing-nettverk, med et spesielt fokus p\u00e5 Tor-nettverket.\n    Onion-ruting gir et teoretisk grunnlag for anonym kommunikasjon over\n    nettverk. Imidlertid er det utfordrende \u00e5 gjennomf\u00f8re en grundig evaluering\n    av anonymiteten som tilbys gjennom en praktisk instansiering, og \u00e5 forsvare\n    en slik instansiering mot spesifikke kryptografiske s\u00e5rbarheter som\n    tagging-angrep. Dette arbeidet m\u00f8ter disse utfordringene gjennom en dobbel\n    tiln\u00e6rming: for det f\u00f8rste ved \u00e5 utvikle et omfattende rammeverk for\n    evaluering av anonymitet i dynamiske nettverksscenarioer, og for det andre\n    ved \u00e5 foresl\u00e5 et nytt rel\u00e9krypteringsskjema utviklet med sikte p\u00e5 \u00e5 forbedre\n    Tors robusthet.\n\n  Den f\u00f8rste delen av denne avhandlingen introduserer en formell modell og nye\n    m\u00e5linger for \u00e5 kvantifisere anonymitet i onion-ruting-systemer. Dette\n    rammeverket tar sikte p\u00e5 \u00e5 gi en mer nyansert forst\u00e5else av\n    personverngarantiene under ulike angrepsmodeller og nettverksforhold.\n    Det utvides deretter til \u00e5 inkludere de dynamiske sikkerhetsaspektene som er\n    iboende i langlivede systemer som Tor, med tanke p\u00e5 faktorer som adaptive\n    angrepsstrategier og en nettverkstopologi i stadig utvikling. Disse\n    bidragene legger til rette for en mer presis og sammenlignbar vurdering av\n    ulike angrep og foresl\u00e5tte forsvar.\n\n  Den andre delen av avhandlingen konfronterer den kjente s\u00e5rbarheten til Tors\n    rel\u00e9kryptering for tagging-angrep, som stammer fra bruken av en formbar\n    krypteringsmodus. Vi introduserer Counter Galois Onion (CGO), et nytt\n    onion-krypteringsskjema designet for \u00e5 v\u00e6re raskt, fremoversikkert og\n    ikke-formbart. CGO utnytter eksisterende prinsipper for autentisert\n    kryptering og er bygget p\u00e5 en ny kryptografisk primitiv for \u00e5 oppn\u00e5\n    effektivitet og fremoverhemmelighet (forward secrecy). Sikkerheten til CGO\n    er formelt bevist i en dedikert sikkerhetsmodell, som demonstrerer dens\n    egnethet som en robust erstatning for Tors n\u00e5v\u00e6rende\n    rel\u00e9krypteringsmekanisme.",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "name": "Alessandro Melloni",
+              "orcId": "https://orcid.org/0000-0002-8851-6452",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/184.12.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/184.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/184.12.12.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for informatikk",
+                  "en": "Department of Informatics"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "name": "Alessandro Melloni",
+              "orcId": "https://orcid.org/0000-0002-8851-6452",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/184.12.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/184.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/184.12.12.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for informatikk",
+                  "en": "Department of Informatics"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "month": "05",
+          "year": "2026",
+          "type": "PublicationDate",
+          "day": "19"
+        }
+      },
+      "createdDate": "2026-05-06T13:19:09.922366889Z",
+      "publicationContextUris": [
+        "https://api.nva.unit.no/publication-channels-v2/publisher/CBCE38D7-C6C6-4CE9-BCED-D64610033E9B/2026"
+      ],
+      "childPublications": [],
+      "modifiedDate": "2026-05-06T13:19:16.988125656Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/5514367"
+        },
+        {
+          "sourceName": "nva@null",
+          "type": "CristinIdentifier",
+          "value": "10438362"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/03d45f83-fb40-44ac-89bc-e8a425866dbc",
+        "type": "Organization"
+      },
+      "filesStatus": "noFiles",
+      "id": "https://api.nva.unit.no/publication/019dfd713c62-7fca1661-2484-41b8-96cc-a5095e5d3c95",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2026-05-06T13:19:09.922366889Z",
+      "scientificIndex": {},
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/184.0.0.0"
+                }
+              ],
+              "hasPart": [
+                {
+                  "partOf": [
+                    {
+                      "id": "https://api.nva.unit.no/cristin/organization/184.12.0.0"
+                    }
+                  ],
+                  "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/184.0.0.0",
+                  "countryCode": "NO",
+                  "id": "https://api.nva.unit.no/cristin/organization/184.12.12.0",
+                  "type": "Organization",
+                  "labels": {
+                    "nb": "Institutt for informatikk",
+                    "en": "Department of Informatics"
+                  }
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/184.12.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Fakultet for naturvitenskap og teknologi",
+                "en": "Faculty of Science and Technology"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/184.0.0.0",
+          "type": "Organization",
+          "labels": {
+            "nb": "Universitetet i Bergen",
+            "en": "University of Bergen"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    },
+    {
+      "identifier": "019dfd70f0aa-59e19585-e01c-4716-813b-45600d97572c",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/184.13.0.0",
+        "https://api.nva.unit.no/cristin/organization/184.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/184.13.24.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "student-thesis-integration@uib",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/184.0.0.0"
+      },
+      "type": "Publication",
+      "associatedArtifacts": [
+        {
+          "identifier": "a1044325-5fd1-469b-b3ad-20a2afa46417",
+          "license": {
+            "name": "COPYRIGHT-ACT",
+            "type": "License",
+            "value": "https://nva.sikt.no/license/copyright-act/1.0",
+            "labels": {
+              "nb": "Generelle bruksvilk\u00e5r",
+              "en": "General Terms of Use"
+            }
+          },
+          "rightsRetentionStrategy": {
+            "configuredType": "Unknown",
+            "type": "NullRightsRetentionStrategy"
+          },
+          "size": "4630418",
+          "name": "archive.pdf",
+          "embargoDate": "2036-05-06T00:00:00Z",
+          "mimeType": "application/pdf",
+          "publishedDate": "2026-05-06T13:19:00.321090261Z",
+          "type": "OpenFile",
+          "legalNote": "Copyright the Author. All rights reserved"
+        }
+      ],
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-05-06T13:19:05.722758522Z",
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/184.0.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "type": "DegreePhd",
+            "submittedDate": {
+              "month": "04",
+              "year": "2026",
+              "type": "PublicationDate",
+              "day": "30"
+            }
+          },
+          "publicationContext": {
+            "isbnList": [
+              "9788230883037",
+              "9788230892114"
+            ],
+            "course": {
+              "type": "UnconfirmedCourse"
+            },
+            "publisher": {
+              "valid": "true",
+              "identifier": "CBCE38D7-C6C6-4CE9-BCED-D64610033E9B",
+              "year": "2026",
+              "name": "Universitetet i Bergen",
+              "id": "https://api.nva.unit.no/publication-channels-v2/publisher/CBCE38D7-C6C6-4CE9-BCED-D64610033E9B/2026",
+              "type": "Publisher",
+              "scientificValue": "LevelZero",
+              "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/forlag?pid=CBCE38D7-C6C6-4CE9-BCED-D64610033E9B"
+            },
+            "type": "Degree"
+          }
+        },
+        "contributorsCount": 1,
+        "mainTitle": "Bipolar Disorder \u2013 A Disorder of Fluctuating Energy Levels  : A Study of Motor Activity",
+        "alternativeAbstracts": {
+          "und": "Bipolar disorder is a complex, chronic, and disabling mental disorder of unknown etiology, defined by recurring, alternating mood episodes of mania and depression separated by euthymic periods. Bipolar disorder has been described as a disorder of fluctuating energy levels, and systematic reviews of activation in bipolar disorder have found mania and depression to be associated with contradictory energy levels. These energy fluctuations are observable in motor activity time series. However, the motor activity associated with bipolar disorder must generally be regarded as an understudied topic.\nThe overall aim of this thesis was to investigate the basis for developing a clinical tool that can help monitor mood fluctuations in bipolar patients and improve the clinical management of the disorder. This was done by investigating whether objective biological measures can aid existing diagnostic practice, applying machine learning techniques to analyze motor activity patterns from depressed patients and healthy controls; by characterizing the motor activity patterns of the bipolar manic state by comparing manic patients intra-individually to their euthymic selves; and by identifying critical transition periods preceding bipolar mood state changes in motor activity time series, using an unsupervised change point detection algorithm. \nMotor activity was collected with a wrist-worn actigraph through two different studies. The first study included depressed patients diagnosed with either unipolar or bipolar disorder and compared them to healthy controls by applying various machine-learning techniques, including deep neural networks. The second study was two-phased, composed of a within-subject case-control part, and a prospective cohort study following up the participants for one year. In the first phase, hospitalized manic patients were compared to themselves when in remission using various mathematical models. In the second phase, the motor activity time series of patients who relapsed during follow-up were analyzed by an unsupervised change point detection machine-learning algorithm.\nWe found a signal in motor activity time series that recognizes the current bipolar mood state, both compared to healthy controls, and within subjects. Furthermore, we found early warning signs in motor activity time series forecasting upcoming changes in mood state.\nIn conclusion, motor activity seems to possess innovative potential for improving the clinical management of bipolar disorder by developing tools or devices for diagnosis, early detection, or forecasting of mood episodes. However, to realize such potential, real-time automation of the analytical processes through machine learning appears necessary, and further studies on how bipolar energy fluctuates are in demand.\n"
+        },
+        "language": "http://lexvo.org/id/iso639-3/eng",
+        "abstract": "Bipolar lidelse er en kompleks, kronisk og funksjonsnedsettende psykisk lidelse, med ukjent \u00e5rsak. Sykdommen defineres likevel av tilbakevendende og vekslende stemningsepisoder av mani og depresjon, adskilt av perioder med symptomfrihet. Bipolar lidelse er beskrevet som en lidelse preget av svingende energiniv\u00e5er, og systematiske oversikter over aktivering ved bipolar lidelse har funnet at mani og depresjon er assosiert med motsatte energiniv\u00e5er. Disse energisvingningene er observerbare i tidsserier av motorisk aktivitet. Generelt sett m\u00e5 motorisk aktivitet ved bipolar lidelse betraktes som et lite utforsket fagomr\u00e5de.\nDet overordnede m\u00e5let med avhandlingen var \u00e5 unders\u00f8ke grunnlaget for \u00e5 utvikle et klinisk verkt\u00f8y som kan overv\u00e5ke stemningssvingninger hos bipolare pasienter og forbedre behandlingen. Dette ble gjort ved \u00e5 vurdere om objektive biologiske m\u00e5l kan st\u00f8tte diagnostisk praksis, ved bruk av maskinl\u00e6ring for \u00e5 analysere motorisk aktivitet hos deprimerte og friske, sammenligne mani og symptomfri tilstand ved bipolar lidelse, samt identifisere overgangsperioder f\u00f8r tilbakefall gjennom en uoverv\u00e5ket algoritme for endringspunktdeteksjon.\nMotor aktivitet ble registrert med et aktigraf-armb\u00e5nd i to ulike studier. Den f\u00f8rste studien inkluderte deprimerte pasienter diagnostisert med enten unipolar eller bipolar lidelse, som ble sammenlignet med friske kontroller ved hjelp av ulike maskinl\u00e6ringsteknikker, inkludert dype nevrale nettverk. Den andre studien var todelt, og bestod av en kasus-kontroll-del samt en prospektiv kohortstudie med ett \u00e5rs oppf\u00f8lging. I den f\u00f8rste fasen ble innlagte maniske pasienter sammenlignet med seg selv i remisjon ved hjelp av ulike matematiske modeller. I den andre fasen ble tidsseriene for motorisk aktivitet hos pasienter som opplevde tilbakefall i l\u00f8pet av oppf\u00f8lgingen analysert med en uoverv\u00e5ket (unsupervised) maskinl\u00e6ringsalgoritme for identifisering av endringspunkter i tidsserien. \nVi fant et signal i tidsseriene for motorisk aktivitet som gjenkjenner den aktuelle stemningstilstanden ved bipolar lidelse, b\u00e5de sammenlignet med friske kontroller og innen individer. Videre fant vi tidlige varselsignaler i motorisk aktivitet som forutsier kommende endringer i stemningstilstand.\nVi kan konkludere med at motorisk aktivitet ser ut til \u00e5 ha et innovativt potensial for \u00e5 forbedre den kliniske h\u00e5ndteringen av bipolar lidelse, og \u00e5 muliggj\u00f8re utvikling av et verkt\u00f8y for diagnostikk, tidlig oppdagelse eller prediksjon av stemningsepisoder. For \u00f8vrig, for \u00e5 kunne realisere dette potensialet, fremst\u00e5r automatisering av analyseprosessene i sanntid som en n\u00f8dvendighet. I tillegg er det behov for videre studier av hvordan energiniv\u00e5er svinger ved ulike tilstander innen bipolar lidelse.\n",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "name": "Petter Jakobsen",
+              "orcId": "https://orcid.org/0000-0002-7671-2456",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/184.13.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/184.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/184.13.24.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Klinisk institutt 1",
+                  "en": "Department of Clinical Medicine"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "name": "Petter Jakobsen",
+              "orcId": "https://orcid.org/0000-0002-7671-2456",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/184.13.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/184.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/184.13.24.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Klinisk institutt 1",
+                  "en": "Department of Clinical Medicine"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "month": "04",
+          "year": "2026",
+          "type": "PublicationDate",
+          "day": "30"
+        }
+      },
+      "createdDate": "2026-05-06T13:18:50.538625306Z",
+      "publicationContextUris": [
+        "https://api.nva.unit.no/publication-channels-v2/publisher/CBCE38D7-C6C6-4CE9-BCED-D64610033E9B/2026"
+      ],
+      "childPublications": [],
+      "modifiedDate": "2026-05-06T13:19:04.510095742Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/5514366"
+        },
+        {
+          "sourceName": "nva@null",
+          "type": "CristinIdentifier",
+          "value": "10438361"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/03d45f83-fb40-44ac-89bc-e8a425866dbc",
+        "type": "Organization"
+      },
+      "filesStatus": "noFiles",
+      "id": "https://api.nva.unit.no/publication/019dfd70f0aa-59e19585-e01c-4716-813b-45600d97572c",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2026-05-06T13:18:50.538625306Z",
+      "scientificIndex": {},
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/184.0.0.0"
+                }
+              ],
+              "hasPart": [
+                {
+                  "partOf": [
+                    {
+                      "id": "https://api.nva.unit.no/cristin/organization/184.13.0.0"
+                    }
+                  ],
+                  "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/184.0.0.0",
+                  "countryCode": "NO",
+                  "id": "https://api.nva.unit.no/cristin/organization/184.13.24.0",
+                  "type": "Organization",
+                  "labels": {
+                    "nb": "Klinisk institutt 1",
+                    "en": "Department of Clinical Medicine"
+                  }
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/184.13.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Det medisinske fakultet",
+                "en": "Faculty of Medicine"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/184.0.0.0",
+          "type": "Organization",
+          "labels": {
+            "nb": "Universitetet i Bergen",
+            "en": "University of Bergen"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    }
+  ],
+  "nextResults": "https://api.nva.unit.no/search/resources?instanceType=DegreePhd&aggregation=none&size=3&sort=modifiedDate%3Adesc%2Cidentifier&from=3",
+  "nextSearchAfterResults": "https://api.nva.unit.no/search/resources?instanceType=DegreePhd&aggregation=none&size=3&sort=modifiedDate%3Adesc%2Cidentifier&search_after=1778073544510%2C019dfd70f0aa-59e19585-e01c-4716-813b-45600d97572c",
+  "@context": "https://bibsysdev.github.io/src/search/paginated-search-result.json"
+}

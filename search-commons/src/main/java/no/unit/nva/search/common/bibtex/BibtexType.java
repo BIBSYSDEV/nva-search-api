@@ -24,10 +24,15 @@ public class BibtexType {
           BibtexConstants.ARTICLE;
 
       case "AcademicMonograph",
+          "Architecture",
+          "ArtisticDesign",
           "BookAnthology",
           "Encyclopedia",
           "ExhibitionCatalog",
+          "LiteraryArts",
+          "MusicPerformance",
           "NonFictionMonograph",
+          "OtherArtisticOutput",
           "PopularScienceMonograph",
           "Textbook" ->
           BibtexConstants.BOOK;
