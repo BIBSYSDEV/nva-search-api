@@ -202,7 +202,8 @@ public final class BibtexFieldExtractors {
   }
 
   public static BibtexFieldExtractor anthologyIsbn() {
-    return doc -> extractText(doc, ANTHOLOGY_ISBN_POINTER).map(isbn -> new BibtexField("isbn", isbn));
+    return doc ->
+        extractText(doc, ANTHOLOGY_ISBN_POINTER).map(isbn -> new BibtexField("isbn", isbn));
   }
 
   public static BibtexFieldExtractor anthologyPublisher() {
@@ -215,13 +216,16 @@ public final class BibtexFieldExtractors {
 
   static Optional<String> extractText(JsonNode node, String pointer) {
     var value = node.at(pointer);
-    if (value.isMissingNode() || value.isNull()) return Optional.empty();
+    if (value.isMissingNode() || value.isNull()) {
+      return Optional.empty();
+    }
     var text = value.asText();
     return text.isBlank() ? Optional.empty() : Optional.of(text);
   }
 
   private static boolean isAnthologyContext(JsonNode doc) {
-    return CONTEXT_TYPE_ANTHOLOGY.equals(extractText(doc, CONTEXT_TYPE_POINTER).orElse(EMPTY_STRING));
+    return CONTEXT_TYPE_ANTHOLOGY.equals(
+        extractText(doc, CONTEXT_TYPE_POINTER).orElse(EMPTY_STRING));
   }
 
   private static Optional<String> extractFromMonographManifestation(
@@ -231,7 +235,9 @@ public final class BibtexFieldExtractors {
       return Optional.empty();
     }
     return StreamSupport.stream(manifestations.spliterator(), false)
-        .filter(manifestation -> LITERARY_ARTS_MONOGRAPH_TYPE.equals(manifestation.path("type").asText()))
+        .filter(
+            manifestation ->
+                LITERARY_ARTS_MONOGRAPH_TYPE.equals(manifestation.path("type").asText()))
         .flatMap(manifestation -> extractText(manifestation, fieldPointer).stream())
         .findFirst();
   }
