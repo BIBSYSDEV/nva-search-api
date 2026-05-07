@@ -3,7 +3,7 @@ package no.unit.nva.indexing.testutils;
 import nva.commons.core.JacocoGenerated;
 
 public final class Constants {
-  public static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.19.5";
+  public static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:3.5.0";
   public static final String TEST_SCOPE = "example-scope";
   public static final String TEST_TOKEN =
       "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2Njg1MTE4NTcsImV4cCI6MTcw"
