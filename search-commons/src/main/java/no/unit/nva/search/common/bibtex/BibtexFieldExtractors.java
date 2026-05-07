@@ -64,11 +64,13 @@ public final class BibtexFieldExtractors {
   private static final String LITERARY_ARTS_MONOGRAPH_TYPE = "LiteraryArtsMonograph";
   private static final int JANUARY = 1;
   private static final int DECEMBER = 12;
+  public static final String EMPTY_STRING = "";
+  public static final String COMMA_SPACE_DELIMITER = ", ";
 
   private BibtexFieldExtractors() {}
 
   public static BibtexFieldExtractor text(String field, String pointer) {
-    return doc -> extractText(doc, pointer).map(v -> new BibtexField(field, v));
+    return doc -> extractText(doc, pointer).map(value -> new BibtexField(field, value));
   }
 
   public static BibtexFieldExtractor authors() {
@@ -78,7 +80,7 @@ public final class BibtexFieldExtractors {
         return Optional.empty();
       }
       return StreamSupport.stream(contributors.spliterator(), false)
-          .flatMap(c -> extractText(c, IDENTITY_NAME_POINTER).stream())
+          .flatMap(contributor -> extractText(contributor, IDENTITY_NAME_POINTER).stream())
           .filter(not(String::isBlank))
           .collect(
               Collectors.collectingAndThen(
@@ -94,25 +96,25 @@ public final class BibtexFieldExtractors {
     return doc ->
         extractText(doc, DOI_POINTER)
             .or(() -> extractText(doc, NVA_DOI_POINTER))
-            .map(d -> d.replaceFirst(DOI_URI_HOST_REGEX, "").strip())
+            .map(doi -> doi.replaceFirst(DOI_URI_HOST_REGEX, EMPTY_STRING).strip())
             .filter(not(String::isBlank))
-            .map(d -> new BibtexField("doi", d));
+            .map(doi -> new BibtexField("doi", doi));
   }
 
   public static BibtexFieldExtractor issn() {
     return doc ->
         extractText(doc, CONTEXT_ONLINE_ISSN_POINTER)
             .or(() -> extractText(doc, CONTEXT_PRINT_ISSN_POINTER))
-            .map(v -> new BibtexField("issn", v));
+            .map(issn -> new BibtexField("issn", issn));
   }
 
   public static BibtexFieldExtractor journalName() {
     return doc -> {
-      var contextType = extractText(doc, CONTEXT_TYPE_POINTER).orElse("");
+      var contextType = extractText(doc, CONTEXT_TYPE_POINTER).orElse(EMPTY_STRING);
       return (CONTEXT_TYPE_UNCONFIRMED_JOURNAL.equals(contextType)
               ? extractText(doc, CONTEXT_TITLE_POINTER)
               : extractText(doc, CONTEXT_NAME_POINTER))
-          .map(v -> new BibtexField("journal", v));
+          .map(name -> new BibtexField("journal", name));
     };
   }
 
@@ -126,7 +128,7 @@ public final class BibtexFieldExtractors {
           StreamSupport.stream(tags.spliterator(), false)
               .map(JsonNode::asText)
               .filter(not(String::isBlank))
-              .collect(Collectors.joining(", "));
+              .collect(Collectors.joining(COMMA_SPACE_DELIMITER));
       return joined.isEmpty() ? Optional.empty() : Optional.of(new BibtexField("keywords", joined));
     };
   }
@@ -135,14 +137,14 @@ public final class BibtexFieldExtractors {
     return doc ->
         extractText(doc, MONTH_POINTER)
             .map(BibtexFieldExtractors::constructMonthName)
-            .map(v -> new BibtexField("month", v));
+            .map(month -> new BibtexField("month", month));
   }
 
   public static BibtexFieldExtractor nvaTypeNote() {
     return doc ->
         extractText(doc, INSTANCE_TYPE_POINTER)
             .filter(not(String::isBlank))
-            .map(t -> new BibtexField("note", "nva type: " + t));
+            .map(type -> new BibtexField("note", "nva type: " + type));
   }
 
   public static BibtexFieldExtractor pages() {
@@ -154,7 +156,7 @@ public final class BibtexFieldExtractors {
                         .map(end -> begin + INTERVAL + end)
                         .orElse(begin))
             .or(() -> extractText(doc, PAGES_MONOGRAPH_POINTER))
-            .map(v -> new BibtexField("pages", v));
+            .map(pages -> new BibtexField("pages", pages));
   }
 
   public static BibtexFieldExtractor pagesOrManifestationPages() {
@@ -167,25 +169,25 @@ public final class BibtexFieldExtractors {
                         .orElse(begin))
             .or(() -> extractText(doc, PAGES_MONOGRAPH_POINTER))
             .or(() -> extractFromMonographManifestation(doc, "/pages/pages"))
-            .map(v -> new BibtexField("pages", v));
+            .map(pages -> new BibtexField("pages", pages));
   }
 
   public static BibtexFieldExtractor isbn(String pointer) {
-    return doc -> extractText(doc, pointer).map(v -> new BibtexField("isbn", v));
+    return doc -> extractText(doc, pointer).map(isbn -> new BibtexField("isbn", isbn));
   }
 
   public static BibtexFieldExtractor isbnOrManifestationIsbn() {
     return doc ->
         extractText(doc, CONTEXT_ISBN_POINTER)
             .or(() -> extractFromMonographManifestation(doc, "/isbnList/0"))
-            .map(v -> new BibtexField("isbn", v));
+            .map(isbn -> new BibtexField("isbn", isbn));
   }
 
   public static BibtexFieldExtractor publisherOrManifestationPublisher() {
     return doc ->
         extractText(doc, CONTEXT_PUBLISHER_NAME_POINTER)
             .or(() -> extractFromMonographManifestation(doc, "/publisher/name"))
-            .map(v -> new BibtexField("publisher", v));
+            .map(name -> new BibtexField("publisher", name));
   }
 
   public static BibtexFieldExtractor anthologyTitle() {
@@ -193,11 +195,11 @@ public final class BibtexFieldExtractors {
         (isAnthologyContext(doc)
                 ? extractText(doc, ANTHOLOGY_MAIN_TITLE_POINTER)
                 : extractText(doc, CONTEXT_NAME_POINTER))
-            .map(v -> new BibtexField("booktitle", v));
+            .map(title -> new BibtexField("booktitle", title));
   }
 
   public static BibtexFieldExtractor anthologyIsbn() {
-    return doc -> extractText(doc, ANTHOLOGY_ISBN_POINTER).map(v -> new BibtexField("isbn", v));
+    return doc -> extractText(doc, ANTHOLOGY_ISBN_POINTER).map(isbn -> new BibtexField("isbn", isbn));
   }
 
   public static BibtexFieldExtractor anthologyPublisher() {
@@ -205,7 +207,7 @@ public final class BibtexFieldExtractors {
         (isAnthologyContext(doc)
                 ? extractText(doc, ANTHOLOGY_PUBLISHER_NAME_POINTER)
                 : extractText(doc, CONTEXT_PUBLISHER_NAME_POINTER))
-            .map(v -> new BibtexField("publisher", v));
+            .map(name -> new BibtexField("publisher", name));
   }
 
   static Optional<String> extractText(JsonNode node, String pointer) {
@@ -214,7 +216,7 @@ public final class BibtexFieldExtractors {
   }
 
   private static boolean isAnthologyContext(JsonNode doc) {
-    return CONTEXT_TYPE_ANTHOLOGY.equals(extractText(doc, CONTEXT_TYPE_POINTER).orElse(""));
+    return CONTEXT_TYPE_ANTHOLOGY.equals(extractText(doc, CONTEXT_TYPE_POINTER).orElse(EMPTY_STRING));
   }
 
   private static Optional<String> extractFromMonographManifestation(
@@ -224,8 +226,8 @@ public final class BibtexFieldExtractors {
       return Optional.empty();
     }
     return StreamSupport.stream(manifestations.spliterator(), false)
-        .filter(m -> LITERARY_ARTS_MONOGRAPH_TYPE.equals(m.path("type").asText()))
-        .flatMap(m -> extractText(m, fieldPointer).stream())
+        .filter(manifestation -> LITERARY_ARTS_MONOGRAPH_TYPE.equals(manifestation.path("type").asText()))
+        .flatMap(manifestation -> extractText(manifestation, fieldPointer).stream())
         .findFirst();
   }
 
