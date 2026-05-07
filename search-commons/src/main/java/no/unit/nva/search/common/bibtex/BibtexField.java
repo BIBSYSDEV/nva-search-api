@@ -7,6 +7,14 @@ public record BibtexField(String key, String value) {
 
   @Override
   public String toString() {
-    return "  %s = {%s}".formatted(key, value);
+    return "  %s = {%s}".formatted(key, sanitize(value));
+  }
+
+  private static String sanitize(String s) {
+    return s.replace("\\", "\\\\")
+        .replace("{", "\\{")
+        .replace("}", "\\}")
+        .replace("%", "\\%")
+        .replace("#", "\\#");
   }
 }

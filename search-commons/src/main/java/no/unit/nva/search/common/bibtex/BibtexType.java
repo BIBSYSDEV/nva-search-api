@@ -1,11 +1,8 @@
 package no.unit.nva.search.common.bibtex;
 
-import nva.commons.core.JacocoGenerated;
+public final class BibtexType {
 
-public class BibtexType {
-
-  @JacocoGenerated
-  public BibtexType() {}
+  private BibtexType() {}
 
   public static BibtexConstants toBibtexType(String nvaType) {
     return switch (nvaType) {

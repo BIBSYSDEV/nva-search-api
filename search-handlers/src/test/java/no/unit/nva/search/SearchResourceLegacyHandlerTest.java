@@ -119,7 +119,9 @@ class SearchResourceLegacyHandlerTest {
 
     GatewayResponse<String> gatewayResponse =
         GatewayResponse.fromOutputStream(outputStream, String.class);
-    assertThat(gatewayResponse.getHeaders().get("Content-Type"), is(equalTo("text/x-bibtex")));
+    assertThat(
+        gatewayResponse.getHeaders().get("Content-Type"),
+        is(equalTo("text/x-bibtex; charset=utf-8")));
     assertThat(gatewayResponse.getBody().contains("@"), is(true));
   }
 

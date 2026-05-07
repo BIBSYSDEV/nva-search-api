@@ -134,12 +134,16 @@ public final class ResourceBibTexTransformer {
       if (path != null && path.contains("/")) {
         var lastSegment = path.substring(path.lastIndexOf('/') + 1);
         if (!lastSegment.isBlank()) {
-          return lastSegment;
+          return sanitizeKey(lastSegment);
         }
       }
     } catch (IllegalArgumentException ignored) {
       // fall through to raw id
     }
-    return id;
+    return sanitizeKey(id);
+  }
+
+  private static String sanitizeKey(String raw) {
+    return raw.replaceAll("[{}\\\\%#]", "");
   }
 }

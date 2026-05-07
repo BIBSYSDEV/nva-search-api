@@ -1,5 +1,6 @@
 package no.unit.nva.search.common.bibtex;
 
+import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
@@ -17,7 +18,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class ResourceBibTexTransformerTest {
 
-  private static final ObjectMapper MAPPER = new ObjectMapper();
+  private static final ObjectMapper MAPPER = dtoObjectMapper;
 
   // -- type mapping ----------------------------------------------------------
 
@@ -403,6 +404,49 @@ class ResourceBibTexTransformerTest {
     setInstance(doc, "AcademicArticle", null, null, "42", null);
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, containsString("  pages = {42}"));
+  }
+
+  @Test
+  void shouldNotProducePagesFieldWhenBeginIsBlankString() {
+    var doc = docWithInstanceType("AcademicArticle");
+    var instance =
+        (ObjectNode) doc.path("entityDescription").path("reference").path("publicationInstance");
+    instance.putObject("pages").put("begin", "");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, not(containsString("pages")));
+  }
+
+  @Test
+  void shouldNotProduceTrailingIntervalWhenEndIsBlankString() {
+    var doc = docWithInstanceType("AcademicArticle");
+    var instance =
+        (ObjectNode) doc.path("entityDescription").path("reference").path("publicationInstance");
+    instance.putObject("pages").put("begin", "100").put("end", "");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  pages = {100}"));
+    assertThat(result, not(containsString("100--")));
+  }
+
+  @Test
+  void shouldNormalizeEnDashToDoubleHyphenInPageRange() {
+    var doc = docWithInstanceType("AcademicArticle");
+    var instance =
+        (ObjectNode) doc.path("entityDescription").path("reference").path("publicationInstance");
+    instance.putObject("pages").put("begin", "100").put("end", "110");
+    // Simulate data where end was stored with a leading en-dash (typographic error)
+    var doc2 = docWithInstanceType("AcademicArticle");
+    setMonographPages(doc2, "100–110");
+    var result2 = ResourceBibTexTransformer.transform(List.of(doc2));
+    assertThat(result2, containsString("  pages = {100--110}"));
+  }
+
+  @Test
+  void shouldEscapeSpecialBibTexCharactersInFieldValues() {
+    var doc = docWithInstanceType("AcademicArticle");
+    ((ObjectNode) doc.path("entityDescription"))
+        .put("mainTitle", "100% {braces} #hashtag \\backslash");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  title = {100\\% \\{braces\\} \\#hashtag \\\\backslash}"));
   }
 
   // -- @book fields ----------------------------------------------------------

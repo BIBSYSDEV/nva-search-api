@@ -58,6 +58,7 @@ public final class BibtexFieldExtractors {
 
   private static final String AND = " and ";
   private static final String INTERVAL = "--";
+  private static final String EN_DASH = "–";
   private static final String DOI_URI_HOST_REGEX = "(?i)https?://doi\\.org/";
   private static final String CONTEXT_TYPE_UNCONFIRMED_JOURNAL = "UnconfirmedJournal";
   private static final String CONTEXT_TYPE_ANTHOLOGY = "Anthology";
@@ -156,6 +157,7 @@ public final class BibtexFieldExtractors {
                         .map(end -> begin + INTERVAL + end)
                         .orElse(begin))
             .or(() -> extractText(doc, PAGES_MONOGRAPH_POINTER))
+            .map(BibtexFieldExtractors::normalizePages)
             .map(pages -> new BibtexField("pages", pages));
   }
 
@@ -169,6 +171,7 @@ public final class BibtexFieldExtractors {
                         .orElse(begin))
             .or(() -> extractText(doc, PAGES_MONOGRAPH_POINTER))
             .or(() -> extractFromMonographManifestation(doc, "/pages/pages"))
+            .map(BibtexFieldExtractors::normalizePages)
             .map(pages -> new BibtexField("pages", pages));
   }
 
@@ -212,7 +215,9 @@ public final class BibtexFieldExtractors {
 
   static Optional<String> extractText(JsonNode node, String pointer) {
     var value = node.at(pointer);
-    return value.isMissingNode() || value.isNull() ? Optional.empty() : Optional.of(value.asText());
+    if (value.isMissingNode() || value.isNull()) return Optional.empty();
+    var text = value.asText();
+    return text.isBlank() ? Optional.empty() : Optional.of(text);
   }
 
   private static boolean isAnthologyContext(JsonNode doc) {
@@ -229,6 +234,10 @@ public final class BibtexFieldExtractors {
         .filter(manifestation -> LITERARY_ARTS_MONOGRAPH_TYPE.equals(manifestation.path("type").asText()))
         .flatMap(manifestation -> extractText(manifestation, fieldPointer).stream())
         .findFirst();
+  }
+
+  private static String normalizePages(String raw) {
+    return raw.replace(EN_DASH, INTERVAL);
   }
 
   private static String constructMonthName(String raw) {
