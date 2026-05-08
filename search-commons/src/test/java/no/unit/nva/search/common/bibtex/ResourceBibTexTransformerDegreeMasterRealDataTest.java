@@ -1,31 +1,27 @@
 package no.unit.nva.search.common.bibtex;
 
-import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.StreamSupport;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-class ResourceBibTexTransformerDegreeMasterRealDataTest {
+class ResourceBibTexTransformerDegreeMasterRealDataTest implements BibtexTransformerBase {
 
-  private static final ObjectMapper MAPPER = new ObjectMapper();
+  private static final Path PATH = Path.of("bibtex_degree_master.json");
   private static List<JsonNode> hits;
   private static String bibtex;
 
   @BeforeAll
-  static void loadAndTransform() throws IOException {
-    var json = stringFromResources(Path.of("bibtex_degree_master.json"));
-    var root = MAPPER.readTree(json);
-    hits = StreamSupport.stream(root.path("hits").spliterator(), false).toList();
-    bibtex = ResourceBibTexTransformer.transform(hits);
+  static void setup() throws IOException {
+    var testData = BibtexTransformerBase.loadAndTransform(PATH);
+    hits = testData.hits();
+    bibtex = testData.bibtext();
   }
 
   @Test
