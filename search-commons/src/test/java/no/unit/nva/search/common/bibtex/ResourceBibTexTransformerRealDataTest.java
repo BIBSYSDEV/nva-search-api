@@ -72,7 +72,7 @@ class ResourceBibTexTransformerRealDataTest implements BibtexTransformerBase {
   @Test
   void shouldNotIncludePagesWhenBothBoundsAbsent() {
     // hit [5] EncyclopediaChapter has Range with no begin/end
-    assertThat(bibtex, not(containsString("  pages = {—")));
+    assertThat(bibtex, not(containsString("  pages = {--")));
   }
 
   @Test
