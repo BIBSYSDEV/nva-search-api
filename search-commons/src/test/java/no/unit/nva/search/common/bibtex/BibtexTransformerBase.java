@@ -1,6 +1,8 @@
 package no.unit.nva.search.common.bibtex;
 
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,5 +23,10 @@ public interface BibtexTransformerBase {
     return new Pair(hits, bibtex);
   }
 
-  record Pair(List<JsonNode> hits, String bibtext) {}
+  default void assertTypeMatch(String bibtex, String matcher) {
+    var lines = bibtex.lines().filter(line -> line.startsWith("@")).toList();
+    assertThat(lines.stream().allMatch(line -> line.startsWith(matcher)), is(true));
+  }
+
+  record Pair(List<JsonNode> hits, String bibtex) {}
 }

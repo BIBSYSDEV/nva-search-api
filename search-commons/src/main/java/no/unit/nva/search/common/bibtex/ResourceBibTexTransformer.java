@@ -96,6 +96,7 @@ public final class ResourceBibTexTransformer {
                   isbn(CONTEXT_ISBN_POINTER),
                   pages(),
                   text("school", CONTEXT_PUBLISHER_NAME_POINTER))));
+  private static final String EMPTY_STRING = "";
 
   private ResourceBibTexTransformer() {}
 
@@ -106,10 +107,10 @@ public final class ResourceBibTexTransformer {
   }
 
   private static String toEntry(JsonNode doc) {
-    var id = extractText(doc, ID_POINTER).orElse("");
+    var id = extractText(doc, ID_POINTER).orElse(EMPTY_STRING);
     var url = extractText(doc, HANDLE_POINTER).orElse(id);
     var key = deriveKey(url);
-    var nvaType = extractText(doc, INSTANCE_TYPE_POINTER).orElse("");
+    var nvaType = extractText(doc, INSTANCE_TYPE_POINTER).orElse(EMPTY_STRING);
     var bibType = BibtexType.toBibtexType(nvaType);
 
     var fields = new LinkedHashSet<BibtexField>();
@@ -119,7 +120,7 @@ public final class ResourceBibTexTransformer {
     Stream.concat(
             UNIVERSAL_EXTRACTORS.stream(),
             TYPE_EXTRACTORS.getOrDefault(bibType, List.of()).stream())
-        .flatMap(e -> e.extract(doc).stream())
+        .flatMap(extractor -> extractor.extract(doc).stream())
         .forEach(fields::add);
 
     return new BibtexEntry(bibType, key, fields).toString();
@@ -144,6 +145,6 @@ public final class ResourceBibTexTransformer {
   }
 
   private static String sanitizeKey(String raw) {
-    return raw.replaceAll("[{}\\\\%#]", "");
+    return raw.replaceAll("[{}\\\\%#]", EMPTY_STRING);
   }
 }

@@ -11,7 +11,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-class ResourceBibTexTransformerMonographRealDataTest {
+class ResourceBibTexTransformerMonographRealDataTest implements BibtexTransformerBase {
 
   public static final Path PATH = Path.of("bibtex_academic_monograph.json");
   private static List<JsonNode> hits;
@@ -21,7 +21,7 @@ class ResourceBibTexTransformerMonographRealDataTest {
   static void loadAndTransform() throws IOException {
     var data = BibtexTransformerBase.loadAndTransform(PATH);
     hits = data.hits();
-    bibtex = data.bibtext();
+    bibtex = data.bibtex();
   }
 
   @Test
@@ -32,8 +32,7 @@ class ResourceBibTexTransformerMonographRealDataTest {
 
   @Test
   void shouldMapAllToBook() {
-    var lines = bibtex.lines().filter(l -> l.startsWith("@")).toList();
-    assertThat(lines.stream().allMatch(l -> l.startsWith("@book{")), is(true));
+    assertTypeMatch(bibtex, "@book{");
   }
 
   @Test

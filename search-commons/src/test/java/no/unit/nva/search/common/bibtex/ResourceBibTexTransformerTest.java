@@ -35,7 +35,7 @@ class ResourceBibTexTransformerTest {
             "MediaReaderOpinion",
             "PopularScienceArticle",
             "ProfessionalArticle")
-        .map(t -> Arguments.of(t, "article"));
+        .map(type -> Arguments.of(type, "article"));
   }
 
   static Stream<Arguments> bookTypes() {
@@ -52,7 +52,7 @@ class ResourceBibTexTransformerTest {
             "OtherArtisticOutput",
             "PopularScienceMonograph",
             "Textbook")
-        .map(t -> Arguments.of(t, "book"));
+        .map(type -> Arguments.of(type, "book"));
   }
 
   static Stream<Arguments> inbookTypes() {
@@ -65,7 +65,7 @@ class ResourceBibTexTransformerTest {
             "NonFictionChapter",
             "PopularScienceChapter",
             "TextbookChapter")
-        .map(t -> Arguments.of(t, "inbook"));
+        .map(type -> Arguments.of(type, "inbook"));
   }
 
   static Stream<Arguments> inproceedingsTypes() {
@@ -74,7 +74,7 @@ class ResourceBibTexTransformerTest {
             "ConferenceAbstract",
             "ConferenceLecture",
             "ConferencePoster")
-        .map(t -> Arguments.of(t, "inproceedings"));
+        .map(type -> Arguments.of(type, "inproceedings"));
   }
 
   static Stream<Arguments> techreportTypes() {
@@ -86,16 +86,16 @@ class ResourceBibTexTransformerTest {
             "ReportPolicy",
             "ReportResearch",
             "ReportWorkingPaper")
-        .map(t -> Arguments.of(t, "techreport"));
+        .map(type -> Arguments.of(type, "techreport"));
   }
 
   static Stream<Arguments> mastersthesisTypes() {
     return Stream.of("DegreeBachelor", "DegreeLicentiate", "DegreeMaster")
-        .map(t -> Arguments.of(t, "mastersthesis"));
+        .map(type -> Arguments.of(type, "mastersthesis"));
   }
 
   static Stream<Arguments> phdthesisTypes() {
-    return Stream.of("ArtisticDegreePhd", "DegreePhd").map(t -> Arguments.of(t, "phdthesis"));
+    return Stream.of("ArtisticDegreePhd", "DegreePhd").map(type -> Arguments.of(type, "phdthesis"));
   }
 
   @ParameterizedTest(name = "{0} → @{1}")

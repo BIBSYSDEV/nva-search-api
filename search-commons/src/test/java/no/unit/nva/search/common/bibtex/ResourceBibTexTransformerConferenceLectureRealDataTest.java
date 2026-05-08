@@ -22,7 +22,7 @@ class ResourceBibTexTransformerConferenceLectureRealDataTest implements BibtexTr
   static void loadAndTransform() throws IOException {
     var data = BibtexTransformerBase.loadAndTransform(PATH);
     hits = data.hits();
-    bibtex = data.bibtext();
+    bibtex = data.bibtex();
   }
 
   @Test
@@ -33,8 +33,7 @@ class ResourceBibTexTransformerConferenceLectureRealDataTest implements BibtexTr
 
   @Test
   void shouldMapAllToInproceedings() {
-    var lines = bibtex.lines().filter(l -> l.startsWith("@")).toList();
-    assertThat(lines.stream().allMatch(l -> l.startsWith("@inproceedings{")), is(true));
+    assertTypeMatch(bibtex, "@inproceedings{");
   }
 
   @Test

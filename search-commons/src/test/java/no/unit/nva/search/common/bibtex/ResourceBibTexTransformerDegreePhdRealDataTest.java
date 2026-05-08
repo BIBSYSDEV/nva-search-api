@@ -11,7 +11,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-class ResourceBibTexTransformerDegreePhdRealDataTest {
+class ResourceBibTexTransformerDegreePhdRealDataTest implements BibtexTransformerBase {
 
   public static final Path PATH = Path.of("bibtex_degree_phd.json");
   private static List<JsonNode> hits;
@@ -21,7 +21,7 @@ class ResourceBibTexTransformerDegreePhdRealDataTest {
   static void loadAndTransform() throws IOException {
     var data = BibtexTransformerBase.loadAndTransform(PATH);
     hits = data.hits();
-    bibtex = data.bibtext();
+    bibtex = data.bibtex();
   }
 
   @Test
@@ -32,8 +32,7 @@ class ResourceBibTexTransformerDegreePhdRealDataTest {
 
   @Test
   void shouldMapAllToPhdthesis() {
-    var lines = bibtex.lines().filter(l -> l.startsWith("@")).toList();
-    assertThat(lines.stream().allMatch(l -> l.startsWith("@phdthesis{")), is(true));
+    assertTypeMatch(bibtex, "@phdthesis{");
   }
 
   @Test

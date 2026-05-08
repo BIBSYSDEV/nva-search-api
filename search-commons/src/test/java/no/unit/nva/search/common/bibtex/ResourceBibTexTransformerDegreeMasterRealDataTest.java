@@ -21,7 +21,7 @@ class ResourceBibTexTransformerDegreeMasterRealDataTest implements BibtexTransfo
   static void setup() throws IOException {
     var testData = BibtexTransformerBase.loadAndTransform(PATH);
     hits = testData.hits();
-    bibtex = testData.bibtext();
+    bibtex = testData.bibtex();
   }
 
   @Test
@@ -32,8 +32,7 @@ class ResourceBibTexTransformerDegreeMasterRealDataTest implements BibtexTransfo
 
   @Test
   void shouldMapAllToMastersthesis() {
-    var lines = bibtex.lines().filter(l -> l.startsWith("@")).toList();
-    assertThat(lines.stream().allMatch(l -> l.startsWith("@mastersthesis{")), is(true));
+    assertTypeMatch(bibtex, "@mastersthesis{");
   }
 
   @Test

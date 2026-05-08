@@ -229,11 +229,11 @@ public class SimplifiedMutator implements JsonNodeMutator {
         .path(ADDITIONAL_IDENTIFIERS)
         .iterator()
         .forEachRemaining(
-            i -> {
-              switch (i.path(TYPE).textValue()) {
-                case HANDLE_IDENTIFIER -> handleIdentifiers.add(i.path(VALUE).textValue());
-                case SCOPUS_IDENTIFIER -> scopusIdentifiers.add(i.path(VALUE).textValue());
-                case CRISTIN_IDENTIFIER -> cristinIdentifiers.add(i.path(VALUE).textValue());
+            node -> {
+              switch (node.path(TYPE).textValue()) {
+                case HANDLE_IDENTIFIER -> handleIdentifiers.add(node.path(VALUE).textValue());
+                case SCOPUS_IDENTIFIER -> scopusIdentifiers.add(node.path(VALUE).textValue());
+                case CRISTIN_IDENTIFIER -> cristinIdentifiers.add(node.path(VALUE).textValue());
                 default -> {}
               }
             });

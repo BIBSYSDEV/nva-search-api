@@ -21,7 +21,7 @@ class ResourceBibTexTransformerReportRealDataTest implements BibtexTransformerBa
   static void loadAndTransform() throws IOException {
     var data = BibtexTransformerBase.loadAndTransform(PATH);
     hits = data.hits();
-    bibtex = data.bibtext();
+    bibtex = data.bibtex();
   }
 
   @Test
@@ -32,8 +32,7 @@ class ResourceBibTexTransformerReportRealDataTest implements BibtexTransformerBa
 
   @Test
   void shouldMapAllToTechreport() {
-    var lines = bibtex.lines().filter(l -> l.startsWith("@")).toList();
-    assertThat(lines.stream().allMatch(l -> l.startsWith("@techreport{")), is(true));
+    assertTypeMatch(bibtex, "@techreport{");
   }
 
   @Test

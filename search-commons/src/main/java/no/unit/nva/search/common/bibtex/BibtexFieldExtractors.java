@@ -65,8 +65,8 @@ public final class BibtexFieldExtractors {
   private static final String LITERARY_ARTS_MONOGRAPH_TYPE = "LiteraryArtsMonograph";
   private static final int JANUARY = 1;
   private static final int DECEMBER = 12;
-  public static final String EMPTY_STRING = "";
-  public static final String COMMA_SPACE_DELIMITER = ", ";
+  private static final String EMPTY_STRING = "";
+  private static final String COMMA_SPACE_DELIMITER = ", ";
 
   private BibtexFieldExtractors() {}
 
