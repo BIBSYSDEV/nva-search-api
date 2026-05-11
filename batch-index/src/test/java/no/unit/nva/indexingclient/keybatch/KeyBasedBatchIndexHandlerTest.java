@@ -285,7 +285,7 @@ class KeyBasedBatchIndexHandlerTest {
 
   private List<IndexDocument> createExpectedDocuments(int numberOfDocuments) {
     return IntStream.range(0, numberOfDocuments)
-        .mapToObj(i -> new IndexDocument(randomConsumptionAttribute(), randomValidNode()))
+        .mapToObj(ignored -> new IndexDocument(randomConsumptionAttribute(), randomValidNode()))
         .map(this::insertResourceInPersistedResourcesBucket)
         .toList();
   }

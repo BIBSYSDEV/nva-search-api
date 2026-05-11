@@ -1,0 +1,795 @@
+{
+  "id": "https://api.nva.unit.no/search/resources?instanceType=ConferenceLecture&aggregation=none&size=3&sort=modifiedDate%3Adesc%2Cidentifier&from=0",
+  "totalHits": 438783,
+  "hits": [
+    {
+      "identifier": "019dfebbc827-a2073198-bdec-4d48-a70b-fb9c79a0aaef",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/204.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/204.70.0.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "1578997@204.0.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/204.0.0.0"
+      },
+      "type": "Publication",
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-05-06T19:23:45.301788994Z",
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/204.0.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "pages": {
+              "type": "NullPages"
+            },
+            "type": "ConferenceLecture"
+          },
+          "publicationContext": {
+            "agent": {
+              "name": "Norsk Sykepleierforbund",
+              "type": "UnconfirmedOrganization"
+            },
+            "name": "Fagdag migrasjonshelse",
+            "place": {
+              "countryCode": "NO",
+              "name": "Bod\u00f8",
+              "type": "UnconfirmedPlace"
+            },
+            "time": {
+              "from": "2026-05-05T22:00:00Z",
+              "to": "2026-05-05T22:00:00Z",
+              "type": "Period"
+            },
+            "type": "Event"
+          }
+        },
+        "contributorsCount": 1,
+        "mainTitle": "Mellom forst\u00e5else og dominans: Spr\u00e5k, interkulturalitet og makt i sykepleie",
+        "language": "http://lexvo.org/id/iso639-3/nob",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Marcel K\u00f6hler",
+              "orcId": "https://orcid.org/0009-0007-1827-1692",
+              "id": "https://api.nva.unit.no/cristin/person/1578997",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "true",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/204.0.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/204.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/204.70.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Fakultet for sykepleie og helsevitenskap",
+                  "en": "Faculty of Nursing and Health Sciences"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Marcel K\u00f6hler",
+              "orcId": "https://orcid.org/0009-0007-1827-1692",
+              "id": "https://api.nva.unit.no/cristin/person/1578997",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "true",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/204.0.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/204.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/204.70.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Fakultet for sykepleie og helsevitenskap",
+                  "en": "Faculty of Nursing and Health Sciences"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "month": "5",
+          "year": "2026",
+          "type": "PublicationDate",
+          "day": "6"
+        }
+      },
+      "createdDate": "2026-05-06T19:20:12.579896240Z",
+      "publicationContextUris": [],
+      "childPublications": [],
+      "modifiedDate": "2026-05-06T19:23:43.900067237Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "nva@null",
+          "type": "CristinIdentifier",
+          "value": "10438417"
+        },
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/5514420"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/ebfffe1c-15a8-41a4-a27b-d4e9a5671f02",
+        "type": "Organization"
+      },
+      "filesStatus": "noFiles",
+      "id": "https://api.nva.unit.no/publication/019dfebbc827-a2073198-bdec-4d48-a70b-fb9c79a0aaef",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2026-05-06T19:23:37.761730939Z",
+      "scientificIndex": {},
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/204.0.0.0"
+                }
+              ],
+              "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/204.0.0.0",
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/204.70.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Fakultet for sykepleie og helsevitenskap",
+                "en": "Faculty of Nursing and Health Sciences"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/204.0.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Marcel K\u00f6hler",
+              "orcId": "https://orcid.org/0009-0007-1827-1692",
+              "id": "https://api.nva.unit.no/cristin/person/1578997",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nb": "Nord universitet",
+            "en": "Nord University"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    },
+    {
+      "identifier": "019dfea9c483-f4d35a21-a268-4f76-a5f2-7121a9fd38bb",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/7401.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/7501.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/7401.90.0.0",
+        "https://api.nva.unit.no/cristin/organization/7401.90.30.0"
+      ],
+      "projects": [
+        {
+          "name": "Sustainable feed production from Norwegian bio-resources for livestock and aquaculture (SUSFEED)",
+          "id": "https://api.nva.unit.no/cristin/project/2537346",
+          "type": "ResearchProject"
+        }
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "411478@7401.0.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/7401.0.0.0"
+      },
+      "type": "Publication",
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-05-06T19:12:16.782902538Z",
+      "fundings": [
+        {
+          "identifier": "326825",
+          "source": {
+            "identifier": "NFR",
+            "id": "https://api.nva.unit.no/cristin/funding-sources/NFR",
+            "type": "FundingSource",
+            "labels": {
+              "nb": "Norges forskningsr\u00e5d",
+              "en": "Research Council of Norway (RCN)"
+            }
+          },
+          "type": "UnconfirmedFunding",
+          "labels": {
+            "nb": "Norges forskningsr\u00e5d",
+            "en": "Research Council of Norway (RCN)"
+          }
+        }
+      ],
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/7501.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/7401.0.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "pages": {
+              "type": "NullPages"
+            },
+            "type": "ConferenceLecture"
+          },
+          "publicationContext": {
+            "agent": {
+              "name": "Nord universitet",
+              "type": "UnconfirmedOrganization"
+            },
+            "name": "Nord GLOBAL 26. 4th International Joint Conference on Global  Change: Nordic Solutions through Sustainable  Resource Management and Animal Production",
+            "place": {
+              "countryCode": "NO",
+              "name": "Steinkjer",
+              "type": "UnconfirmedPlace"
+            },
+            "time": {
+              "from": "2026-04-21T22:00:00Z",
+              "to": "2026-04-23T22:00:00Z",
+              "type": "Period"
+            },
+            "type": "Event"
+          },
+          "doi": "https://www.nord.no/sites/default/files/inline-images/Book-of-Abstracts_NordGlobal_2026.pdf"
+        },
+        "contributorsCount": 3,
+        "mainTitle": "Feed self-sufficiency and scarce domestic resources:  Emerging conflicts of interest",
+        "language": "http://lexvo.org/id/iso639-3/eng",
+        "abstract": "The Norwegian government has ambitious goals to increase the share of domestically \nproduced ingredients in feed for farmed animals and fish. However, a transition in this direction \nwill have implications far beyond feed value chains. Based on a case study from the NFR \nproject SusFeed (2021\u20132026), we examine the consequences of large-scale domestic \nproduction of grass protein concentrate and phototrophic microalgae, with particular emphasis \non land and energy use. While these feed ingredients have proven technically viable \nelsewhere, they are still at an early pilot stage in Norway. Scaling up grass protein biorefineries \nwould require substantial areas of high-quality agricultural land. At the same time, such \ndevelopment could encourage more environmentally and soil-health-friendly crop rotation \npractices. Changes in land use would affect farmers, food value chains, and surrounding local \ncommunities, and could also influence common goods such as national food security and food \nself-sufficiency. Moreover, converting grass into dry protein concentrate requires significant \nenergy inputs. Phototrophic microalgae production has more modest land requirements but \ndepends on energy-intensive processes such as artificial light\u2013driven photosynthesis and \nwater circulation. Current production benefits from synergies with the metallurgical industry by \ncapturing CO\u2082 and utilizing excess heat. Further scaling, however, may intensify electricity \ncompetition, affect other industrial value chains and local communities, and contribute to the \nconversion of natural land for renewable energy production. High-quality farmland and \nrenewable electric energy are scarce and valuable resources. By analyzing the implications of \nscaling up grass biorefining and microalgae production in line with current policy ambitions, \nthe SusFeed project highlights how circular business models ultimately face biophysical limits \nto growth. Finally, our findings raise normative questions about stakeholder involvement, \nfairness, and allocation: how, and by whom, should scarce land and energy resources be \ndistributed between export-oriented aquaculture and domestic food production, and across \ncompeting industrial sectors?",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Anne Sigrid Haugset",
+              "orcId": "https://orcid.org/0009-0001-9777-7718",
+              "id": "https://api.nva.unit.no/cristin/person/411478",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/7401.90.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/7401.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/7401.90.30.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Teknologiledelse",
+                  "en": "Technology Management"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "2",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Roald Sand",
+              "id": "https://api.nva.unit.no/cristin/person/403710",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/7401.90.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/7401.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/7401.90.30.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Teknologiledelse",
+                  "en": "Technology Management"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "3",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Egil Petter Str\u00e6te",
+              "orcId": "https://orcid.org/0000-0002-3995-9898",
+              "id": "https://api.nva.unit.no/cristin/person/29810",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "institutionId": "https://api.nva.unit.no/cristin/organization/7501.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/7501.0.0.0",
+                "type": "Organization",
+                "contributorCristinIds": [
+                  {
+                    "verificationStatus": "Verified",
+                    "name": "Egil Petter Str\u00e6te",
+                    "orcId": "https://orcid.org/0000-0002-3995-9898",
+                    "id": "https://api.nva.unit.no/cristin/person/29810",
+                    "type": "Identity"
+                  }
+                ],
+                "labels": {
+                  "nb": "RURALIS \u2013 Institutt for rural- og regionalforskning",
+                  "en": "RURALIS \u2013 Institute for Rural and Regional Research"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Anne Sigrid Haugset",
+              "orcId": "https://orcid.org/0009-0001-9777-7718",
+              "id": "https://api.nva.unit.no/cristin/person/411478",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/7401.90.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/7401.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/7401.90.30.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Teknologiledelse",
+                  "en": "Technology Management"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "2",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Roald Sand",
+              "id": "https://api.nva.unit.no/cristin/person/403710",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/7401.90.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/7401.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/7401.90.30.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Teknologiledelse",
+                  "en": "Technology Management"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "3",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Egil Petter Str\u00e6te",
+              "orcId": "https://orcid.org/0000-0002-3995-9898",
+              "id": "https://api.nva.unit.no/cristin/person/29810",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "institutionId": "https://api.nva.unit.no/cristin/organization/7501.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/7501.0.0.0",
+                "type": "Organization",
+                "contributorCristinIds": [
+                  {
+                    "verificationStatus": "Verified",
+                    "name": "Egil Petter Str\u00e6te",
+                    "orcId": "https://orcid.org/0000-0002-3995-9898",
+                    "id": "https://api.nva.unit.no/cristin/person/29810",
+                    "type": "Identity"
+                  }
+                ],
+                "labels": {
+                  "nb": "RURALIS \u2013 Institutt for rural- og regionalforskning",
+                  "en": "RURALIS \u2013 Institute for Rural and Regional Research"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "month": "4",
+          "year": "2026",
+          "type": "PublicationDate",
+          "day": "24"
+        }
+      },
+      "createdDate": "2026-05-06T19:00:32.003970187Z",
+      "publicationContextUris": [],
+      "childPublications": [],
+      "modifiedDate": "2026-05-06T19:12:15.479276857Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "nva@null",
+          "type": "CristinIdentifier",
+          "value": "10438415"
+        },
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/5514418"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/668f1338-4026-4668-8ab8-426fd9176abb",
+        "type": "Organization"
+      },
+      "filesStatus": "noFiles",
+      "id": "https://api.nva.unit.no/publication/019dfea9c483-f4d35a21-a268-4f76-a5f2-7121a9fd38bb",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2026-05-06T19:12:11.292336629Z",
+      "scientificIndex": {},
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/7401.0.0.0"
+                }
+              ],
+              "hasPart": [
+                {
+                  "partOf": [
+                    {
+                      "id": "https://api.nva.unit.no/cristin/organization/7401.90.0.0"
+                    }
+                  ],
+                  "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/7401.0.0.0",
+                  "countryCode": "NO",
+                  "id": "https://api.nva.unit.no/cristin/organization/7401.90.30.0",
+                  "type": "Organization",
+                  "labels": {
+                    "nb": "Teknologiledelse",
+                    "en": "Technology Management"
+                  }
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/7401.90.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "SINTEF Digital",
+                "en": "SINTEF Digital"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/7401.0.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Roald Sand",
+              "id": "https://api.nva.unit.no/cristin/person/403710",
+              "type": "Identity"
+            },
+            {
+              "verificationStatus": "Verified",
+              "name": "Anne Sigrid Haugset",
+              "orcId": "https://orcid.org/0009-0001-9777-7718",
+              "id": "https://api.nva.unit.no/cristin/person/411478",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nn": "SINTEF AS",
+            "nb": "SINTEF AS",
+            "en": "SINTEF"
+          }
+        },
+        {
+          "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/7501.0.0.0",
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/7501.0.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Egil Petter Str\u00e6te",
+              "orcId": "https://orcid.org/0000-0002-3995-9898",
+              "id": "https://api.nva.unit.no/cristin/person/29810",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nb": "RURALIS \u2013 Institutt for rural- og regionalforskning",
+            "en": "RURALIS \u2013 Institute for Rural and Regional Research"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    },
+    {
+      "identifier": "019dfd77896f-494a2a20-c6c3-4083-a416-e4fb3b457a93",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/5932.5.0.0",
+        "https://api.nva.unit.no/cristin/organization/5932.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/5932.5.4.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "1102972@5932.0.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/5932.0.0.0"
+      },
+      "type": "Publication",
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-05-06T13:48:45.698384567Z",
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/5932.0.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "pages": {
+              "type": "NullPages"
+            },
+            "type": "ConferenceLecture"
+          },
+          "publicationContext": {
+            "agent": {
+              "name": "NTNU - Gj\u00e6revollsenteret",
+              "type": "UnconfirmedOrganization"
+            },
+            "name": "Gj\u00e6revollkonferansen 2025",
+            "place": {
+              "countryCode": "NO",
+              "name": "Trondheim",
+              "type": "UnconfirmedPlace"
+            },
+            "time": {
+              "from": "2025-01-14T23:00:00Z",
+              "to": "2026-05-15T22:00:00Z",
+              "type": "Period"
+            },
+            "type": "Event"
+          },
+          "doi": "https://www.youtube.com/watch?v=nl5uJ9yFuR8"
+        },
+        "contributorsCount": 1,
+        "mainTitle": "Hva er naturregnskapets rolle for \u00e5 ta vare p\u00e5 norsk natur?",
+        "language": "http://lexvo.org/id/iso639-3/nob",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "RoleOther"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Iulie Aslaksen",
+              "id": "https://api.nva.unit.no/cristin/person/1113405",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/5932.5.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/5932.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/5932.5.4.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Forskningsavdelingen, Milj\u00f8-, ressurs- og innovasjons\u00f8konomi",
+                  "en": "Department, Environmental, resource and innovation economics"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "RoleOther"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Iulie Aslaksen",
+              "id": "https://api.nva.unit.no/cristin/person/1113405",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/5932.5.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/5932.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/5932.5.4.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Forskningsavdelingen, Milj\u00f8-, ressurs- og innovasjons\u00f8konomi",
+                  "en": "Department, Environmental, resource and innovation economics"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "month": "1",
+          "year": "2025",
+          "type": "PublicationDate",
+          "day": "16"
+        }
+      },
+      "createdDate": "2026-05-06T13:26:02.861294271Z",
+      "publicationContextUris": [],
+      "childPublications": [],
+      "modifiedDate": "2026-05-06T13:48:44.800233752Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/5514376"
+        },
+        {
+          "sourceName": "nva@null",
+          "type": "CristinIdentifier",
+          "value": "10438363"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/8b699c48-85e0-40b3-b686-d91bed21b7ad",
+        "type": "Organization"
+      },
+      "filesStatus": "noFiles",
+      "id": "https://api.nva.unit.no/publication/019dfd77896f-494a2a20-c6c3-4083-a416-e4fb3b457a93",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2026-05-06T13:48:38.512347519Z",
+      "scientificIndex": {},
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/5932.0.0.0"
+                }
+              ],
+              "hasPart": [
+                {
+                  "partOf": [
+                    {
+                      "id": "https://api.nva.unit.no/cristin/organization/5932.5.0.0"
+                    }
+                  ],
+                  "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/5932.0.0.0",
+                  "countryCode": "NO",
+                  "id": "https://api.nva.unit.no/cristin/organization/5932.5.4.0",
+                  "type": "Organization",
+                  "labels": {
+                    "nb": "Forskningsavdelingen, Milj\u00f8-, ressurs- og innovasjons\u00f8konomi",
+                    "en": "Department, Environmental, resource and innovation economics"
+                  }
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/5932.5.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Forskningsavdelingen",
+                "en": "Research Department"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/5932.0.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Iulie Aslaksen",
+              "id": "https://api.nva.unit.no/cristin/person/1113405",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nb": "Statistisk sentralbyr\u00e5",
+            "en": "Statistics Norway"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    }
+  ],
+  "nextResults": "https://api.nva.unit.no/search/resources?instanceType=ConferenceLecture&aggregation=none&size=3&sort=modifiedDate%3Adesc%2Cidentifier&from=3",
+  "nextSearchAfterResults": "https://api.nva.unit.no/search/resources?instanceType=ConferenceLecture&aggregation=none&size=3&sort=modifiedDate%3Adesc%2Cidentifier&search_after=1778075324800%2C019dfd77896f-494a2a20-c6c3-4083-a416-e4fb3b457a93",
+  "@context": "https://bibsysdev.github.io/src/search/paginated-search-result.json"
+}

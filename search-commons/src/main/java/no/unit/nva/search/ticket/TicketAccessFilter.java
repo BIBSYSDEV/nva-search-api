@@ -282,7 +282,7 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
             .map(AsType::as)
             .map(Object::toString)
             .map(String::trim)
-            .filter(s -> !s.isEmpty()); // Owner can be empty and ignored
+            .filter(string -> !string.isEmpty()); // Owner can be empty and ignored
 
     if (assigneeOpt.isPresent() && assigneeOpt.equals(ownerOpt)) {
       throw new UnauthorizedException(CANNOT_SEARCH_AS_BOTH_ASSIGNEE_AND_OWNER_AT_THE_SAME_TIME);

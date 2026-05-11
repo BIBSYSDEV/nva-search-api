@@ -207,7 +207,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
     return parameters()
         .get(STATUS)
         .asSplitStream(COMMA)
-        .filter(s -> !NEW.toString().equals(s))
+        .filter(string -> !NEW.toString().equals(string))
         .toArray(String[]::new);
   }
 

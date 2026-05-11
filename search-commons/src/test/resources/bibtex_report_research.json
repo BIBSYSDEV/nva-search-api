@@ -1,0 +1,927 @@
+{
+  "id": "https://api.nva.unit.no/search/resources?instanceType=ReportResearch&aggregation=none&size=3&sort=modifiedDate%3Adesc%2Cidentifier&from=0",
+  "totalHits": 127049,
+  "hits": [
+    {
+      "identifier": "019dfd4c35f5-0ceb0ced-8bff-4bbb-9c9a-003dfce50746",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/7677.3.0.0",
+        "https://api.nva.unit.no/cristin/organization/7677.0.0.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "33019@7677.0.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/7677.0.0.0"
+      },
+      "type": "Publication",
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-05-06T13:07:34.110654784Z",
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/7677.0.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "pages": {
+              "illustrated": "false",
+              "pages": "24",
+              "type": "MonographPages"
+            },
+            "type": "ReportResearch"
+          },
+          "publicationContext": {
+            "isbnList": [
+              "9788217040064"
+            ],
+            "series": {
+              "identifier": "E95395EA-C7BF-440D-8C32-0C8775A0E4E7",
+              "year": "2026",
+              "name": "NIBIO Rapport",
+              "id": "https://api.nva.unit.no/publication-channels-v2/serial-publication/E95395EA-C7BF-440D-8C32-0C8775A0E4E7/2026",
+              "type": "Series",
+              "printIssn": "2464-1162",
+              "scientificValue": "Unassigned",
+              "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/nvakanal?pid=E95395EA-C7BF-440D-8C32-0C8775A0E4E7"
+            },
+            "publisher": {
+              "valid": "true",
+              "identifier": "F375664B-99EF-4290-8C19-4B48CB91F00D",
+              "year": "2026",
+              "name": "NIBIO",
+              "id": "https://api.nva.unit.no/publication-channels-v2/publisher/F375664B-99EF-4290-8C19-4B48CB91F00D/2026",
+              "type": "Publisher",
+              "scientificValue": "Unassigned",
+              "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/nvakanal?pid=F375664B-99EF-4290-8C19-4B48CB91F00D"
+            },
+            "type": "Report",
+            "seriesNumber": "12/77"
+          }
+        },
+        "contributorsCount": 3,
+        "mainTitle": "Overv\u00e5kings- og kartleggingsprogram for Xylella fastidiosa 2025",
+        "language": "http://lexvo.org/id/iso639-3/nob",
+        "abstract": "Xylella fastidiosa er en alvorlig planteskadegj\u00f8rer som kan for\u00e5rsake visnesyke hos en lang rekke vertplanter, blant annet Prunus-arter, l\u00f8vtr\u00e6r, prydplanter og gr\u00f8ntanleggsvekster. Bakterien koloniserer plantenes xylem og hemmer vanntransporten, noe som kan f\u00f8re til gulning, sviskader, visning og i alvorlige tilfeller planted\u00f8d.\nBakterien er aldri p\u00e5vist i Norge, men er etablert i flere europeiske land og skaper store problemer, blant annet i olivenplantinger i S\u00f8r-Italia. Den utbredte forekomsten i Europa gj\u00f8r at import av vertsplanter representerer en vedvarende risiko for introduksjon til Norge.\nNorge har tidligere gjennomf\u00f8rt kartlegginger i 2017, 2018 og 2022, og X. fastidiosa ble ikke p\u00e5vist i noen av disse unders\u00f8kelsene. I sesongen 2025 mottok og analyserte NIBIO 251 pr\u00f8ver fra minst 57 ulike vertsplanter med opprinnelse fra minst 10 land. Pr\u00f8vene ble samlet inn fra produksjonsmilj\u00f8er, omsetningsledd, botaniske hager, parker, skog og frukthager i fire geografiske regioner i Norge.\nBakterien ble heller ikke p\u00e5vist i 2025, og Norge regnes fortsatt som fritt for bakterien. Gitt den vedvarende risikoen knyttet til internasjonal plantehandel anses fortsatt overv\u00e5king som avgj\u00f8rende for \u00e5 oppdage en eventuell introduksjon p\u00e5 et tidlig tidspunkt.",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "\u00d6zg\u00fcn Candan Onarman Umu",
+              "orcId": "https://orcid.org/0000-0003-4060-7766",
+              "id": "https://api.nva.unit.no/cristin/person/555655",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/7677.0.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/7677.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/7677.3.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Divisjon for bioteknologi og plantehelse",
+                  "en": "Division of Biotechnology and Plant Health"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "2",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Inger-Lise Akselsen",
+              "id": "https://api.nva.unit.no/cristin/person/385613",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/7677.0.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/7677.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/7677.3.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Divisjon for bioteknologi og plantehelse",
+                  "en": "Division of Biotechnology and Plant Health"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "3",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Carl-Henrik Lensj\u00f8 Alvin",
+              "id": "https://api.nva.unit.no/cristin/person/875452",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/7677.0.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/7677.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/7677.3.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Divisjon for bioteknologi og plantehelse",
+                  "en": "Division of Biotechnology and Plant Health"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "\u00d6zg\u00fcn Candan Onarman Umu",
+              "orcId": "https://orcid.org/0000-0003-4060-7766",
+              "id": "https://api.nva.unit.no/cristin/person/555655",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/7677.0.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/7677.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/7677.3.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Divisjon for bioteknologi og plantehelse",
+                  "en": "Division of Biotechnology and Plant Health"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "2",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Inger-Lise Akselsen",
+              "id": "https://api.nva.unit.no/cristin/person/385613",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/7677.0.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/7677.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/7677.3.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Divisjon for bioteknologi og plantehelse",
+                  "en": "Division of Biotechnology and Plant Health"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "3",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Carl-Henrik Lensj\u00f8 Alvin",
+              "id": "https://api.nva.unit.no/cristin/person/875452",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/7677.0.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/7677.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/7677.3.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Divisjon for bioteknologi og plantehelse",
+                  "en": "Division of Biotechnology and Plant Health"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "month": "5",
+          "year": "2026",
+          "type": "PublicationDate",
+          "day": "6"
+        },
+        "tags": [
+          "Kartlegging",
+          "karanteneskadegj\u00f8rer",
+          "quarantine organism",
+          "Survey",
+          "Xylella fastidiosa"
+        ]
+      },
+      "createdDate": "2026-05-06T12:38:43.445474753Z",
+      "publicationContextUris": [
+        "https://api.nva.unit.no/publication-channels-v2/publisher/F375664B-99EF-4290-8C19-4B48CB91F00D/2026",
+        "https://api.nva.unit.no/publication-channels-v2/serial-publication/E95395EA-C7BF-440D-8C32-0C8775A0E4E7/2026"
+      ],
+      "childPublications": [],
+      "modifiedDate": "2026-05-06T13:07:33.031568792Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/5514359"
+        },
+        {
+          "sourceName": "nva@null",
+          "type": "CristinIdentifier",
+          "value": "10438328"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/77766640-6066-48ef-a32c-0ba7f32abee9",
+        "type": "Organization"
+      },
+      "filesStatus": "noFiles",
+      "id": "https://api.nva.unit.no/publication/019dfd4c35f5-0ceb0ced-8bff-4bbb-9c9a-003dfce50746",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2026-05-06T13:07:13.170955426Z",
+      "scientificIndex": {},
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/7677.0.0.0"
+                }
+              ],
+              "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/7677.0.0.0",
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/7677.3.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Divisjon for bioteknologi og plantehelse",
+                "en": "Division of Biotechnology and Plant Health"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/7677.0.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "\u00d6zg\u00fcn Candan Onarman Umu",
+              "orcId": "https://orcid.org/0000-0003-4060-7766",
+              "id": "https://api.nva.unit.no/cristin/person/555655",
+              "type": "Identity"
+            },
+            {
+              "verificationStatus": "Verified",
+              "name": "Carl-Henrik Lensj\u00f8 Alvin",
+              "id": "https://api.nva.unit.no/cristin/person/875452",
+              "type": "Identity"
+            },
+            {
+              "verificationStatus": "Verified",
+              "name": "Inger-Lise Akselsen",
+              "id": "https://api.nva.unit.no/cristin/person/385613",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nb": "Norsk institutt for bio\u00f8konomi",
+            "en": "Norwegian Institute of Bioeconomy Research"
+          }
+        }
+      ],
+      "doi": "https://doi.org/10.21350/3zt2-b261",
+      "status": "PUBLISHED"
+    },
+    {
+      "identifier": "019dfd40006f-e814daa5-7b55-45dd-a440-840b116bae26",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/7677.3.0.0",
+        "https://api.nva.unit.no/cristin/organization/7677.0.0.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "33019@7677.0.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/7677.0.0.0"
+      },
+      "type": "Publication",
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-05-06T12:29:36.049638656Z",
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/7677.0.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "pages": {
+              "illustrated": "false",
+              "pages": "24",
+              "type": "MonographPages"
+            },
+            "type": "ReportResearch"
+          },
+          "publicationContext": {
+            "isbnList": [
+              "9788217040088"
+            ],
+            "series": {
+              "identifier": "E95395EA-C7BF-440D-8C32-0C8775A0E4E7",
+              "year": "2026",
+              "name": "NIBIO Rapport",
+              "id": "https://api.nva.unit.no/publication-channels-v2/serial-publication/E95395EA-C7BF-440D-8C32-0C8775A0E4E7/2026",
+              "type": "Series",
+              "printIssn": "2464-1162",
+              "scientificValue": "Unassigned",
+              "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/nvakanal?pid=E95395EA-C7BF-440D-8C32-0C8775A0E4E7"
+            },
+            "publisher": {
+              "valid": "true",
+              "identifier": "F375664B-99EF-4290-8C19-4B48CB91F00D",
+              "year": "2026",
+              "name": "NIBIO",
+              "id": "https://api.nva.unit.no/publication-channels-v2/publisher/F375664B-99EF-4290-8C19-4B48CB91F00D/2026",
+              "type": "Publisher",
+              "scientificValue": "Unassigned",
+              "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/nvakanal?pid=F375664B-99EF-4290-8C19-4B48CB91F00D"
+            },
+            "type": "Report",
+            "seriesNumber": "12/79"
+          }
+        },
+        "contributorsCount": 3,
+        "mainTitle": "Overv\u00e5kings- og kartleggingsprogram - Skadegj\u00f8rere i potet 2025 Lys ringr\u00e5te og m\u00f8rk ringr\u00e5te",
+        "language": "http://lexvo.org/id/iso639-3/nob",
+        "abstract": "Lys ringr\u00e5te, for\u00e5rsaket av bakterien Clavibacter sepedonicus (Cms, tidligere Clavibacter michiganensis subsp. sepedonicus), er en alvorlig bakteriesykdom p\u00e5 potet som kan f\u00f8re til betydelige avlingstap ved kraftige angrep. Sykdommen har v\u00e6rt kjent i Norge siden 1964. I den siste kartleggingsperioden (2019\u20132025) har lys ringr\u00e5te blitt p\u00e5vist i et sv\u00e6rt begrenset antall pr\u00f8ver, hos produsenter av mat- og industripoteti mat- og industripotet.\nM\u00f8rk ringr\u00e5te er for\u00e5rsaket av bakterien Ralstonia solanacearum (Rs) som er en karanteneskadegj\u00f8rer og angriper potet og andre planter i s\u00f8tvierfamilien. Sykdommen f\u00f8rer til \u00f8deleggelse av plantens ledningsvev, noe som resulterer i visning av riset og utvikling av brun ringr\u00e5te i potetknollene. Selv om sykdommen forekommer i flere europeiske land, har den ikke blitt p\u00e5vist i Norge.\nI sesongen 2025 ble det mottatt 310 potetpr\u00f8ver til analyse. Det ble ikke p\u00e5vist verken lys ringr\u00e5te eller m\u00f8rk ringr\u00e5te i noen av pr\u00f8vene.\nResultatene fra 2025 viser at status for lys ringr\u00e5te i Norge i henhold til ISPM 8 fortsatt er: present, not widely distributed and under official control.\nResultatene fra 2025 bekrefter at status for m\u00f8rk ringr\u00e5te i Norge i henhold til ISPM 8 fortsatt er: absent, pest not recorded.",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "\u00d6zg\u00fcn Candan Onarman Umu",
+              "orcId": "https://orcid.org/0000-0003-4060-7766",
+              "id": "https://api.nva.unit.no/cristin/person/555655",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/7677.0.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/7677.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/7677.3.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Divisjon for bioteknologi og plantehelse",
+                  "en": "Division of Biotechnology and Plant Health"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "2",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Inger-Lise Akselsen",
+              "id": "https://api.nva.unit.no/cristin/person/385613",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/7677.0.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/7677.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/7677.3.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Divisjon for bioteknologi og plantehelse",
+                  "en": "Division of Biotechnology and Plant Health"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "3",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Carl-Henrik Lensj\u00f8 Alvin",
+              "id": "https://api.nva.unit.no/cristin/person/875452",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/7677.0.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/7677.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/7677.3.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Divisjon for bioteknologi og plantehelse",
+                  "en": "Division of Biotechnology and Plant Health"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "\u00d6zg\u00fcn Candan Onarman Umu",
+              "orcId": "https://orcid.org/0000-0003-4060-7766",
+              "id": "https://api.nva.unit.no/cristin/person/555655",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/7677.0.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/7677.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/7677.3.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Divisjon for bioteknologi og plantehelse",
+                  "en": "Division of Biotechnology and Plant Health"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "2",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Inger-Lise Akselsen",
+              "id": "https://api.nva.unit.no/cristin/person/385613",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/7677.0.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/7677.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/7677.3.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Divisjon for bioteknologi og plantehelse",
+                  "en": "Division of Biotechnology and Plant Health"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "3",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Carl-Henrik Lensj\u00f8 Alvin",
+              "id": "https://api.nva.unit.no/cristin/person/875452",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/7677.0.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/7677.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/7677.3.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Divisjon for bioteknologi og plantehelse",
+                  "en": "Division of Biotechnology and Plant Health"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "month": "5",
+          "year": "2026",
+          "type": "PublicationDate",
+          "day": "6"
+        },
+        "tags": [
+          "potato brown rot",
+          "Clavibacter sepedonicus",
+          "Potato ring rot",
+          "m\u00f8rk ringr\u00e5te",
+          "Ralstonia solanacearum",
+          "Lys ringr\u00e5te"
+        ]
+      },
+      "createdDate": "2026-05-06T12:25:23.311506230Z",
+      "publicationContextUris": [
+        "https://api.nva.unit.no/publication-channels-v2/publisher/F375664B-99EF-4290-8C19-4B48CB91F00D/2026",
+        "https://api.nva.unit.no/publication-channels-v2/serial-publication/E95395EA-C7BF-440D-8C32-0C8775A0E4E7/2026"
+      ],
+      "childPublications": [],
+      "modifiedDate": "2026-05-06T12:29:35.029331738Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/5514320"
+        },
+        {
+          "sourceName": "nva@null",
+          "type": "CristinIdentifier",
+          "value": "10438320"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/77766640-6066-48ef-a32c-0ba7f32abee9",
+        "type": "Organization"
+      },
+      "filesStatus": "noFiles",
+      "id": "https://api.nva.unit.no/publication/019dfd40006f-e814daa5-7b55-45dd-a440-840b116bae26",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2026-05-06T12:29:05.743031821Z",
+      "scientificIndex": {},
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/7677.0.0.0"
+                }
+              ],
+              "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/7677.0.0.0",
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/7677.3.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Divisjon for bioteknologi og plantehelse",
+                "en": "Division of Biotechnology and Plant Health"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/7677.0.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "\u00d6zg\u00fcn Candan Onarman Umu",
+              "orcId": "https://orcid.org/0000-0003-4060-7766",
+              "id": "https://api.nva.unit.no/cristin/person/555655",
+              "type": "Identity"
+            },
+            {
+              "verificationStatus": "Verified",
+              "name": "Carl-Henrik Lensj\u00f8 Alvin",
+              "id": "https://api.nva.unit.no/cristin/person/875452",
+              "type": "Identity"
+            },
+            {
+              "verificationStatus": "Verified",
+              "name": "Inger-Lise Akselsen",
+              "id": "https://api.nva.unit.no/cristin/person/385613",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nb": "Norsk institutt for bio\u00f8konomi",
+            "en": "Norwegian Institute of Bioeconomy Research"
+          }
+        }
+      ],
+      "doi": "https://doi.org/10.21350/gprw-sf30",
+      "status": "PUBLISHED"
+    },
+    {
+      "identifier": "019df2f0e971-fe3e4601-7302-4487-a8de-414cf4c1cef7",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/185.27.0.0",
+        "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "18917@185.90.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+      },
+      "type": "Publication",
+      "associatedArtifacts": [
+        {
+          "identifier": "16859b59-760f-4cb9-801a-f46d19a9d246",
+          "license": {
+            "name": "COPYRIGHT-ACT",
+            "type": "License",
+            "value": "https://nva.sikt.no/license/copyright-act/1.0",
+            "labels": {
+              "nb": "Generelle bruksvilk\u00e5r",
+              "en": "General Terms of Use"
+            }
+          },
+          "rightsRetentionStrategy": {
+            "configuredType": "OverridableRightsRetentionStrategy",
+            "type": "NullRightsRetentionStrategy"
+          },
+          "uploadDetails": {
+            "type": "UserUploadDetails",
+            "uploadedDate": "2026-05-04T12:22:52.942271234Z",
+            "uploadedBy": "18917@185.90.0.0"
+          },
+          "size": "54604766",
+          "name": "RPT_\u00d8_Fredrikstad_Lindalenmasseuttak_Borgepukkverk_Borge2_230326.pdf",
+          "mimeType": "application/pdf",
+          "publishedDate": "2026-05-06T11:43:00.295948693Z",
+          "type": "OpenFile"
+        }
+      ],
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-05-06T11:43:01.158086057Z",
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "pages": {
+              "illustrated": "false",
+              "type": "MonographPages"
+            },
+            "type": "ReportResearch"
+          },
+          "publicationContext": {
+            "series": {
+              "identifier": "94EB44AA-6291-4F0B-95B0-B5B142A1A2E5",
+              "year": "2026",
+              "name": "Arkeologiske avhandlinger og rapporter",
+              "id": "https://api.nva.unit.no/publication-channels-v2/serial-publication/94EB44AA-6291-4F0B-95B0-B5B142A1A2E5/2026",
+              "type": "Series",
+              "scientificValue": "Unassigned",
+              "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/nvakanal?pid=94EB44AA-6291-4F0B-95B0-B5B142A1A2E5"
+            },
+            "publisher": {
+              "valid": "true",
+              "identifier": "79C2EB76-A581-4275-86C0-1B2E5CCD4DBA",
+              "year": "2026",
+              "name": "Kulturhistorisk museum, Universitetet i Oslo, Arkeologisk seksjon ",
+              "id": "https://api.nva.unit.no/publication-channels-v2/publisher/79C2EB76-A581-4275-86C0-1B2E5CCD4DBA/2026",
+              "type": "Publisher",
+              "scientificValue": "Unassigned",
+              "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/nvakanal?pid=79C2EB76-A581-4275-86C0-1B2E5CCD4DBA"
+            },
+            "type": "Report"
+          }
+        },
+        "contributorsCount": 1,
+        "mainTitle": "Borge 2. Lindalen masseuttak/Borge pukkverk. Boplass fra eldre steinalder og gravfunn fra yngre bronsealder/eldre jernalder. Ophus nordre, Fredrikstad, \u00d8stfold. Kulturhistorisk museum \u2013 arkeologisk unders\u00f8kelse Rapport 2026/7.",
+        "description": "Arkeologisk forvvaltningsunders\u00f8kelse p\u00e5 Borge i regi av Kulturhistorisk museum (KHM) i 2023.",
+        "language": "http://lexvo.org/id/iso639-3/nob",
+        "abstract": "Den arkeologiske unders\u00f8kelsen av id 144613 (Borge 2) ble iverksatt som f\u00f8lge av planlagt utvidelse av Lindalen masseuttak (Borge pukkverk), som ligger ved Borge i Fredrikstad kommune, ca. 7 kilometer nord for Fredrikstad by. Lindalen masseuttak er i kommunens arealdel avsatt til r\u00e5stoffutvinning, og det ble utarbeidet en reguleringsplan for utvidelse av masseuttaket i 2012. \u00d8stfold fylkeskommune foretok en registrering av omr\u00e5det i 2011 i forbindelse med planarbeidet (Berge og Bertheussen 2012). Borge 2 ble p\u00e5vist ved \u00e5tte positive pr\u00f8vestikk med til sammen 91 gjenstandsfunn av flint. Boplassens areal er avgrenset av negative pr\u00f8vestikk og topografi til ca. 1200 m2. Boplassen l\u00e5 i utmark og var tilsynelatende uber\u00f8rt av moderne inngrep, men de n\u00e6rliggende omgivelsene er sterkt forandret som f\u00f8lge av naturinngrep.\nUtgravningen ble utf\u00f8rt i tidsrommet 21.08-10.11.2023. Lokaliteten ble gravd ut etter konvensjonell metodikk for unders\u00f8kelse av steinalderboplasser i utmark ved Kulturhistorisk museum. Borge 2 ble f\u00f8rst maskinelt avtorvet ved gravemaskin etterfulgt av graving av pr\u00f8veruter og pr\u00f8vekvadranter over hele boplassflaten (trinn 1). Unders\u00f8kelsen fortsatte med graving av st\u00f8rre flater, hvor det ble \u00e5pnet tre utgravningsfelt (Felt 1-3) (trinn 2). Det ble ogs\u00e5 p\u00e5vist en rekke strukturer under gravingen, inkludert en steinlegning med beinfunn. Steinlegningen m\u00e5 ses i sammenheng med et p\u00e5vist gravfelt p\u00e5 Borge 1 som l\u00e5 150 meter vest for Borge 2. Unders\u00f8kelsen av Borge 2 ble noe nedskalert som f\u00f8lge av p\u00e5visningen av gravfeltet p\u00e5 Borge 1. Det ble likevel samlet inn 11 428 gjenstandsfunn som del av unders\u00f8kelsen. Samlet ble det gravd 164,25 m2 p\u00e5 Borge 2. Borge 2 ble avslutningsvis maskinelt avdekket med gravemaskin, som omfattet et omr\u00e5de 918 m2.\nUtgravningen av Borge 2 avdekket bosetning og aktivitet i flere ulike tidsperioder. Gjenstandsfunnene av steinr\u00e5stoff og h\u00f8yden over havet tilsier et strandbundet opphold i senmesolitikums fase 4 (ca. 4650-4000 f.Kr.). Funnmaterialet er omfattende og spredd utover hele boplassflaten som strekker seg fra 39-44 moh. Det ble \u00e5pnet to st\u00f8rre utgravningsfelt som vitner om omfattende knakkeaktivitet og redskapsproduksjon. En flott flintdolk og en flateretusjert pilspiss viser at det ogs\u00e5 har v\u00e6rt aktivitet p\u00e5 Borge 2 i senneolitikum (ca. 2350-1500 f.Kr.). Seks kokegroper fikk C14-dateringer til f\u00f8rromersk jernalder (500-1 f.Kr.). Kokegropene er antakelig samtidig med steinlegningen, selv om steinlegningen ikke er C14-datert.\nSteinlegningen og kokegropene har likheter i form, romlig plassering og datering med gravfeltet p\u00e5 Borge 1, og er antakelig et delfelt av gravfeltet i f\u00f8rromersk jernalder. En nedgravning ble datert til middelalder.",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Sverre Magnus Stubberud",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/185.27.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Kulturhistorisk museum",
+                  "en": "Museum of Cultural History"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Sverre Magnus Stubberud",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/185.27.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Kulturhistorisk museum",
+                  "en": "Museum of Cultural History"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "month": "5",
+          "year": "2026",
+          "type": "PublicationDate",
+          "day": "4"
+        },
+        "tags": [
+          "jernalder",
+          "steinalder",
+          "boplass",
+          "bronsealder",
+          "gravfunn",
+          "\u00f8stfold",
+          "arkeologi",
+          "KHM"
+        ]
+      },
+      "createdDate": "2026-05-04T12:22:47.921896349Z",
+      "publicationContextUris": [
+        "https://api.nva.unit.no/publication-channels-v2/publisher/79C2EB76-A581-4275-86C0-1B2E5CCD4DBA/2026",
+        "https://api.nva.unit.no/publication-channels-v2/serial-publication/94EB44AA-6291-4F0B-95B0-B5B142A1A2E5/2026"
+      ],
+      "childPublications": [],
+      "modifiedDate": "2026-05-06T11:42:54.175443188Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/5513501"
+        },
+        {
+          "sourceName": "nva@null",
+          "type": "CristinIdentifier",
+          "value": "10437505"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/a4aaa430-c26a-43ba-bbdf-8d102f814559",
+        "type": "Organization"
+      },
+      "filesStatus": "hasPublicFiles",
+      "id": "https://api.nva.unit.no/publication/019df2f0e971-fe3e4601-7302-4487-a8de-414cf4c1cef7",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2026-05-04T12:30:29.194675485Z",
+      "scientificIndex": {},
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+                }
+              ],
+              "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/185.27.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Kulturhistorisk museum",
+                "en": "Museum of Cultural History"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+          "type": "Organization",
+          "labels": {
+            "nb": "Universitetet i Oslo",
+            "en": "University of Oslo"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    }
+  ],
+  "nextResults": "https://api.nva.unit.no/search/resources?instanceType=ReportResearch&aggregation=none&size=3&sort=modifiedDate%3Adesc%2Cidentifier&from=3",
+  "nextSearchAfterResults": "https://api.nva.unit.no/search/resources?instanceType=ReportResearch&aggregation=none&size=3&sort=modifiedDate%3Adesc%2Cidentifier&search_after=1778067774175%2C019df2f0e971-fe3e4601-7302-4487-a8de-414cf4c1cef7",
+  "@context": "https://bibsysdev.github.io/src/search/paginated-search-result.json"
+}
