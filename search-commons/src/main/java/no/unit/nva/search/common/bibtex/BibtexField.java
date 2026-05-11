@@ -11,13 +11,15 @@ public record BibtexField(String key, String value) {
       Pattern.compile(
           "\\\\\\(.*?\\\\\\)"
               + // \(...\) inline LaTeX
-              "|\\\\\\[.*?\\\\\\]"
+              "|\\\\\\[.*?\\\\]"
               + // \[...\] display LaTeX
               "|\\$\\$.*?\\$\\$"
               + // $$...$$ display LaTeX
               "|\\$[^$]+\\$"
               + // $...$ inline LaTeX
-              "|<math[\\s>]", // MathML
+              "|<math[^>]*>.*?</math>"
+              + // full MathML element
+              "|<math[\\s>]", // dangling MathML opening tag
           Pattern.DOTALL);
 
   @Override
@@ -39,11 +41,21 @@ public record BibtexField(String key, String value) {
     return MATH_OR_ML.matcher(s).find();
   }
 
-  private static String sanitize(String s) {
-    if (containsLatexOrMathML(s)) {
-      return s;
+  private static String sanitize(String text) {
+    var matcher = MATH_OR_ML.matcher(text);
+    var result = new StringBuilder();
+    var cursor = 0;
+    while (matcher.find()) {
+      result.append(escape(text.substring(cursor, matcher.start())));
+      result.append(matcher.group());
+      cursor = matcher.end();
     }
-    return s.replace("\\", "\\\\") // must be first!
+    result.append(escape(text.substring(cursor)));
+    return result.toString();
+  }
+
+  private static String escape(String text) {
+    return text.replace("\\", "\\\\") // must be first!
         .replace("%", "\\%")
         .replace("#", "\\#")
         .replace("&", "\\&")
