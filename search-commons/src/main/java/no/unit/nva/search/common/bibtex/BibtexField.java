@@ -46,8 +46,7 @@ public record BibtexField(String key, String value) {
     var result = new StringBuilder();
     var cursor = 0;
     while (matcher.find()) {
-      result.append(escape(text.substring(cursor, matcher.start())));
-      result.append(matcher.group());
+      result.append(escape(text.substring(cursor, matcher.start()))).append(matcher.group());
       cursor = matcher.end();
     }
     result.append(escape(text.substring(cursor)));
