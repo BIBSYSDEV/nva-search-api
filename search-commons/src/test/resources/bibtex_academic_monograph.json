@@ -1,0 +1,869 @@
+{
+  "id": "https://api.nva.unit.no/search/resources?instanceType=AcademicMonograph&aggregation=none&size=3&sort=modifiedDate%3Adesc%2Cidentifier&from=0",
+  "totalHits": 11209,
+  "hits": [
+    {
+      "identifier": "019df73c7610-8c85cd9d-bae0-49ea-8847-114c762ff7d0",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/185.14.0.0",
+        "https://api.nva.unit.no/cristin/organization/184.11.0.0",
+        "https://api.nva.unit.no/cristin/organization/184.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/184.11.22.0",
+        "https://api.nva.unit.no/cristin/organization/185.14.32.0",
+        "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "24773@20754.0.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/20754.0.0.0"
+      },
+      "type": "Publication",
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-05-05T08:23:52.022305381Z",
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+        "https://api.nva.unit.no/cristin/organization/184.0.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "type": "AcademicMonograph"
+          },
+          "publicationContext": {
+            "isbnList": [
+              "9781032431253",
+              "9781040492697"
+            ],
+            "publisher": {
+              "valid": "true",
+              "identifier": "FAE3940D-29AB-45F5-9190-6242B3BB7596",
+              "year": "2026",
+              "name": "Routledge",
+              "id": "https://api.nva.unit.no/publication-channels-v2/publisher/FAE3940D-29AB-45F5-9190-6242B3BB7596/2026",
+              "type": "Publisher",
+              "scientificValue": "LevelTwo",
+              "isbnPrefix": "978-90-5702,978-90-265,978-1-907322,978-1-906540,978-1-874719,978-1-870905,978-1-85996,978-1-85941,978-1-84872,978-1-84407,978-1-84392,978-1-84169,978-1-58391,978-1-4128,978-1-4106,978-1-032,978-0-9627232,978-0-906348,978-0-902879,978-0-901286,978-0-88163,978-0-8247,978-0-8240,978-0-8133,978-0-7890,978-0-7146,978-0-419,978-0-4158,978-0-415,978-0-3673,978-0-367,978-0-340,978-0-291",
+              "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/forlag?pid=FAE3940D-29AB-45F5-9190-6242B3BB7596"
+            },
+            "type": "Book"
+          },
+          "doi": "https://doi.org/10.4324/9781003367505"
+        },
+        "contributorsCount": 1,
+        "mainTitle": "Death and Funeral Practices in Norway",
+        "language": "http://lexvo.org/id/iso639-3/eng",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Tove Ingebj\u00f8rg Fjell",
+              "additionalIdentifiers": [
+                {
+                  "id": "_:b4",
+                  "sourceName": "scopus-auid",
+                  "type": "AdditionalIdentifier",
+                  "value": "6506818051"
+                }
+              ],
+              "id": "https://api.nva.unit.no/cristin/person/49464",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "true",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/185.14.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/185.14.32.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for kultur, religion, Asia- og Midt\u00f8stenstudier",
+                  "en": "Department of Culture, Religion, Asian and Middle Eastern Studies"
+                }
+              },
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/184.11.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/184.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/184.11.22.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for arkeologi, historie, kultur- og religionsvitenskap",
+                  "en": "Department of Archaeology, History, Cultural studies and Religion"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Tove Ingebj\u00f8rg Fjell",
+              "additionalIdentifiers": [
+                {
+                  "id": "_:b4",
+                  "sourceName": "scopus-auid",
+                  "type": "AdditionalIdentifier",
+                  "value": "6506818051"
+                }
+              ],
+              "id": "https://api.nva.unit.no/cristin/person/49464",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "true",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/185.14.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/185.14.32.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for kultur, religion, Asia- og Midt\u00f8stenstudier",
+                  "en": "Department of Culture, Religion, Asian and Middle Eastern Studies"
+                }
+              },
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/184.11.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/184.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/184.11.22.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for arkeologi, historie, kultur- og religionsvitenskap",
+                  "en": "Department of Archaeology, History, Cultural studies and Religion"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "month": "4",
+          "year": "2026",
+          "type": "PublicationDate",
+          "day": "9"
+        }
+      },
+      "createdDate": "2026-05-05T08:23:47.984428820Z",
+      "publicationContextUris": [
+        "https://api.nva.unit.no/publication-channels-v2/publisher/FAE3940D-29AB-45F5-9190-6242B3BB7596/2026"
+      ],
+      "childPublications": [],
+      "modifiedDate": "2026-05-05T08:23:51.069083208Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/5513739"
+        },
+        {
+          "sourceName": "scopus@null",
+          "type": "ScopusIdentifier",
+          "value": "2-s2.0-105035953384"
+        },
+        {
+          "sourceName": "nva@null",
+          "type": "CristinIdentifier",
+          "value": "10437781"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/22139870-8d31-4df9-bc45-14eb68287c4a",
+        "type": "Organization"
+      },
+      "filesStatus": "noFiles",
+      "id": "https://api.nva.unit.no/publication/019df73c7610-8c85cd9d-bae0-49ea-8847-114c762ff7d0",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2026-05-05T08:23:47.984428820Z",
+      "scientificIndex": {},
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/184.0.0.0"
+                }
+              ],
+              "hasPart": [
+                {
+                  "partOf": [
+                    {
+                      "id": "https://api.nva.unit.no/cristin/organization/184.11.0.0"
+                    }
+                  ],
+                  "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/184.0.0.0",
+                  "countryCode": "NO",
+                  "id": "https://api.nva.unit.no/cristin/organization/184.11.22.0",
+                  "type": "Organization",
+                  "labels": {
+                    "nb": "Institutt for arkeologi, historie, kultur- og religionsvitenskap",
+                    "en": "Department of Archaeology, History, Cultural studies and Religion"
+                  }
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/184.11.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Det humanistiske fakultet",
+                "en": "Faculty of Humanities"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/184.0.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Tove Ingebj\u00f8rg Fjell",
+              "additionalIdentifiers": [
+                {
+                  "id": "_:b4",
+                  "sourceName": "scopus-auid",
+                  "type": "AdditionalIdentifier",
+                  "value": "6506818051"
+                }
+              ],
+              "id": "https://api.nva.unit.no/cristin/person/49464",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nb": "Universitetet i Bergen",
+            "en": "University of Bergen"
+          }
+        },
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+                }
+              ],
+              "hasPart": [
+                {
+                  "partOf": [
+                    {
+                      "id": "https://api.nva.unit.no/cristin/organization/185.14.0.0"
+                    }
+                  ],
+                  "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+                  "countryCode": "NO",
+                  "id": "https://api.nva.unit.no/cristin/organization/185.14.32.0",
+                  "type": "Organization",
+                  "labels": {
+                    "nb": "Institutt for kultur, religion, Asia- og Midt\u00f8stenstudier",
+                    "en": "Department of Culture, Religion, Asian and Middle Eastern Studies"
+                  }
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/185.14.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Det humanistiske fakultet",
+                "en": "Faculty of Humanities"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Tove Ingebj\u00f8rg Fjell",
+              "additionalIdentifiers": [
+                {
+                  "id": "_:b4",
+                  "sourceName": "scopus-auid",
+                  "type": "AdditionalIdentifier",
+                  "value": "6506818051"
+                }
+              ],
+              "id": "https://api.nva.unit.no/cristin/person/49464",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nb": "Universitetet i Oslo",
+            "en": "University of Oslo"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    },
+    {
+      "identifier": "019a0bcd763f-848d9a91-6267-453d-b11d-12e56548982b",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/12320049.0.0.0"
+      ],
+      "projects": [
+        {
+          "name": "DEChriM - Deconstructing Early Christian Metanarratives: Fourth-Century Egyptian Christianity in the Light of Material Evidence",
+          "id": "https://api.nva.unit.no/cristin/project/2531882",
+          "type": "ResearchProject"
+        }
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "700744@190.0.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/190.0.0.0"
+      },
+      "type": "Publication",
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-05-04T08:29:45.009148724Z",
+      "fundings": [
+        {
+          "identifier": "819368 \u2015 ERC-2018-COG",
+          "source": {
+            "identifier": "ERC",
+            "id": "https://api.nva.unit.no/cristin/funding-sources/ERC",
+            "type": "FundingSource",
+            "labels": {
+              "nn": "ERC-European Research Council",
+              "nb": "ERC-European Research Council",
+              "en": "ERC-European Research Council"
+            }
+          },
+          "type": "UnconfirmedFunding",
+          "labels": {
+            "nn": "ERC-European Research Council",
+            "nb": "ERC-European Research Council",
+            "en": "ERC-European Research Council"
+          }
+        }
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "pages": {
+              "illustrated": "false",
+              "pages": "301",
+              "type": "MonographPages"
+            },
+            "type": "AcademicMonograph"
+          },
+          "publicationContext": {
+            "isbnList": [
+              "9788867193684"
+            ],
+            "series": {
+              "identifier": "9CCE30AC-9C32-419D-AC50-F63C4B5F1F1B",
+              "year": "2026",
+              "name": "Serie Egittologica",
+              "id": "https://api.nva.unit.no/publication-channels-v2/serial-publication/9CCE30AC-9C32-419D-AC50-F63C4B5F1F1B/2026",
+              "type": "Series",
+              "scientificValue": "Unassigned",
+              "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/nvakanal?pid=9CCE30AC-9C32-419D-AC50-F63C4B5F1F1B"
+            },
+            "publisher": {
+              "valid": "true",
+              "identifier": "2F4A7DDB-AB4D-4180-9F48-E66FA7973789",
+              "year": "2026",
+              "name": "UniorPress",
+              "id": "https://api.nva.unit.no/publication-channels-v2/publisher/2F4A7DDB-AB4D-4180-9F48-E66FA7973789/2026",
+              "type": "Publisher",
+              "scientificValue": "LevelZero",
+              "isbnPrefix": "978-88-6719",
+              "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/forlag?pid=2F4A7DDB-AB4D-4180-9F48-E66FA7973789"
+            },
+            "type": "Book",
+            "seriesNumber": "6"
+          },
+          "doi": "https://doi.org/10.6093/978-88-6719-368-4"
+        },
+        "contributorsCount": 2,
+        "mainTitle": "Ancient Egypt : New Technology",
+        "language": "http://lexvo.org/id/iso639-3/eng",
+        "abstract": "The volume presents a selection of papers of the International Conference Ancient Egypt \u2013 New Technology hosted for its second edition by the Department of Asia, Africa and Mediterranean of the University of Naples L'Orientale, 5\u20137 July 2023. The volume highlights the growing integration of digital technologies within Egyptology. Methods such as laser scanning, photogrammetry, 3D modelling, and non-invasive imaging have significantly enhanced the documentation, analysis, and preservation of archaeological data and artefacts.The contributions reflect the interdisciplinary nature of this field, bringing together scholars from Egyptology, archaeology, anthropology, conservation, and digital heritage studies. Alongside innovative approaches, the volume also considers established diagnostic techniques, such as X-rays and CT scans, as essential tools for research.Overall, the volume underscores the importance of collaboration between the humanities and technological disciplines, offering an overview of current methodologies and future directions in the study and dissemination of the ancient Egyptian past.",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Editor"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Stefania Mainieri",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "institutionId": "https://api.nva.unit.no/cristin/organization/12320049.0.0.0",
+                "countryCode": "IT",
+                "id": "https://api.nva.unit.no/cristin/organization/12320049.0.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Universit\u00e0 di Napoli L'Orientale",
+                  "en": "The University of Naples \u201cL\u2019Orientale\u201d"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "2",
+            "role": {
+              "type": "Editor"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Rosanna Pirelli",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "institutionId": "https://api.nva.unit.no/cristin/organization/12320049.0.0.0",
+                "countryCode": "IT",
+                "id": "https://api.nva.unit.no/cristin/organization/12320049.0.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Universit\u00e0 di Napoli L'Orientale",
+                  "en": "The University of Naples \u201cL\u2019Orientale\u201d"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Editor"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Stefania Mainieri",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "institutionId": "https://api.nva.unit.no/cristin/organization/12320049.0.0.0",
+                "countryCode": "IT",
+                "id": "https://api.nva.unit.no/cristin/organization/12320049.0.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Universit\u00e0 di Napoli L'Orientale",
+                  "en": "The University of Naples \u201cL\u2019Orientale\u201d"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "2",
+            "role": {
+              "type": "Editor"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Rosanna Pirelli",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "institutionId": "https://api.nva.unit.no/cristin/organization/12320049.0.0.0",
+                "countryCode": "IT",
+                "id": "https://api.nva.unit.no/cristin/organization/12320049.0.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Universit\u00e0 di Napoli L'Orientale",
+                  "en": "The University of Naples \u201cL\u2019Orientale\u201d"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "year": "2026",
+          "type": "PublicationDate"
+        },
+        "npiSubjectHeading": "1003",
+        "tags": [
+          "Egypt",
+          "Archaeology",
+          "Digital humanities"
+        ]
+      },
+      "createdDate": "2025-10-22T12:03:25.887432562Z",
+      "publicationContextUris": [
+        "https://api.nva.unit.no/publication-channels-v2/publisher/2F4A7DDB-AB4D-4180-9F48-E66FA7973789/2026",
+        "https://api.nva.unit.no/publication-channels-v2/serial-publication/9CCE30AC-9C32-419D-AC50-F63C4B5F1F1B/2026"
+      ],
+      "childPublications": [
+        "019a0bd2c642-bab99b9d-b313-4232-a4cf-0e3e016fec8b"
+      ],
+      "modifiedDate": "2026-05-04T08:27:12.446542628Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/5274121"
+        },
+        {
+          "sourceName": "nva@null",
+          "type": "CristinIdentifier",
+          "value": "10276212"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/31665824-ee77-48e8-b508-a0cdbaeca0f4",
+        "type": "Organization"
+      },
+      "filesStatus": "noFiles",
+      "id": "https://api.nva.unit.no/publication/019a0bcd763f-848d9a91-6267-453d-b11d-12e56548982b",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2025-10-22T12:08:53.120760461Z",
+      "scientificIndex": {},
+      "topLevelOrganizations": [
+        {
+          "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/12320049.0.0.0",
+          "countryCode": "IT",
+          "id": "https://api.nva.unit.no/cristin/organization/12320049.0.0.0",
+          "type": "Organization",
+          "labels": {
+            "nb": "Universit\u00e0 di Napoli L'Orientale",
+            "en": "The University of Naples \u201cL\u2019Orientale\u201d"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    },
+    {
+      "identifier": "0198cc43f69c-5ec91c3f-10d5-4ed7-add4-edce1753467e",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/54400000.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/16000001.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/211.5.0.0",
+        "https://api.nva.unit.no/cristin/organization/211.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/15900000.0.0.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "him@211.0.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/211.0.0.0"
+      },
+      "type": "Publication",
+      "associatedArtifacts": [
+        {
+          "id": "https://testcdn.kluwerlawonline.com/EncyclopediaChapter/IEL+Sports+Law/SPORT20250002",
+          "type": "AssociatedLink",
+          "relation": "mention"
+        }
+      ],
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-04-29T11:36:33.870670987Z",
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/211.0.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "pages": {
+              "illustrated": "false",
+              "pages": "166",
+              "type": "MonographPages"
+            },
+            "type": "AcademicMonograph"
+          },
+          "publicationContext": {
+            "isbnList": [
+              "9789041117540"
+            ],
+            "publisher": {
+              "valid": "true",
+              "identifier": "EC65D0AC-3D4B-48A4-8BF4-F6C816F88AC3",
+              "year": "2025",
+              "name": "Wolters Kluwer",
+              "id": "https://api.nva.unit.no/publication-channels-v2/publisher/EC65D0AC-3D4B-48A4-8BF4-F6C816F88AC3/2025",
+              "type": "Publisher",
+              "scientificValue": "LevelOne",
+              "isbnPrefix": "978-0-8342,978-0-8080,978-0-7355",
+              "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/forlag?pid=EC65D0AC-3D4B-48A4-8BF4-F6C816F88AC3"
+            },
+            "type": "Book",
+            "revision": "Unrevised"
+          }
+        },
+        "contributorsCount": 1,
+        "mainTitle": "Sports law Montenegro",
+        "language": "http://lexvo.org/id/iso639-3/eng",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Marko Begovic",
+              "id": "https://api.nva.unit.no/cristin/person/1869484",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "institutionId": "https://api.nva.unit.no/cristin/organization/54400000.0.0.0",
+                "countryCode": "SA",
+                "id": "https://api.nva.unit.no/cristin/organization/54400000.0.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Saudi-Arabia",
+                  "en": "Saudi Arabia"
+                }
+              },
+              {
+                "institutionId": "https://api.nva.unit.no/cristin/organization/16000001.0.0.0",
+                "countryCode": "ME",
+                "id": "https://api.nva.unit.no/cristin/organization/16000001.0.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "University of Montenegro",
+                  "en": "University of Montenegro"
+                }
+              },
+              {
+                "institutionId": "https://api.nva.unit.no/cristin/organization/15900000.0.0.0",
+                "countryCode": "RS",
+                "id": "https://api.nva.unit.no/cristin/organization/15900000.0.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Serbia",
+                  "en": "Serbia"
+                }
+              },
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/211.0.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/211.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/211.5.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Avdeling for \u00f8konomi og samfunnsvitenskap",
+                  "en": "Faculty of Business Administration and Social Sciences"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Marko Begovic",
+              "id": "https://api.nva.unit.no/cristin/person/1869484",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "institutionId": "https://api.nva.unit.no/cristin/organization/54400000.0.0.0",
+                "countryCode": "SA",
+                "id": "https://api.nva.unit.no/cristin/organization/54400000.0.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Saudi-Arabia",
+                  "en": "Saudi Arabia"
+                }
+              },
+              {
+                "institutionId": "https://api.nva.unit.no/cristin/organization/16000001.0.0.0",
+                "countryCode": "ME",
+                "id": "https://api.nva.unit.no/cristin/organization/16000001.0.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "University of Montenegro",
+                  "en": "University of Montenegro"
+                }
+              },
+              {
+                "institutionId": "https://api.nva.unit.no/cristin/organization/15900000.0.0.0",
+                "countryCode": "RS",
+                "id": "https://api.nva.unit.no/cristin/organization/15900000.0.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Serbia",
+                  "en": "Serbia"
+                }
+              },
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/211.0.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/211.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/211.5.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Avdeling for \u00f8konomi og samfunnsvitenskap",
+                  "en": "Faculty of Business Administration and Social Sciences"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "year": "2025",
+          "type": "PublicationDate"
+        },
+        "npiSubjectHeading": "1028"
+      },
+      "createdDate": "2025-08-21T10:54:22.876996346Z",
+      "publicationContextUris": [
+        "https://api.nva.unit.no/publication-channels-v2/publisher/EC65D0AC-3D4B-48A4-8BF4-F6C816F88AC3/2025"
+      ],
+      "childPublications": [],
+      "modifiedDate": "2026-04-29T11:36:25.171843757Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "cristin@him",
+          "type": "CristinIdentifier",
+          "value": "2359807"
+        },
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/4366810"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/22139870-8d31-4df9-bc45-14eb68287c4a",
+        "type": "Organization"
+      },
+      "filesStatus": "noFiles",
+      "id": "https://api.nva.unit.no/publication/0198cc43f69c-5ec91c3f-10d5-4ed7-add4-edce1753467e",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2025-08-21T10:54:22.876996346Z",
+      "scientificIndex": {
+        "year": "2025",
+        "type": "ScientificIndex",
+        "status": "Reported"
+      },
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/211.0.0.0"
+                }
+              ],
+              "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/211.0.0.0",
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/211.5.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Avdeling for \u00f8konomi og samfunnsvitenskap",
+                "en": "Faculty of Business Administration and Social Sciences"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/211.0.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Marko Begovic",
+              "id": "https://api.nva.unit.no/cristin/person/1869484",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nb": "H\u00f8gskolen i Molde - Vitenskapelig h\u00f8gskole i logistikk",
+            "en": "Molde University College - Specialized University in Logistics"
+          }
+        },
+        {
+          "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/54400000.0.0.0",
+          "countryCode": "SA",
+          "id": "https://api.nva.unit.no/cristin/organization/54400000.0.0.0",
+          "type": "Organization",
+          "labels": {
+            "nb": "Saudi-Arabia",
+            "en": "Saudi Arabia"
+          }
+        },
+        {
+          "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/15900000.0.0.0",
+          "countryCode": "RS",
+          "id": "https://api.nva.unit.no/cristin/organization/15900000.0.0.0",
+          "type": "Organization",
+          "labels": {
+            "nb": "Serbia",
+            "en": "Serbia"
+          }
+        },
+        {
+          "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/16000001.0.0.0",
+          "countryCode": "ME",
+          "id": "https://api.nva.unit.no/cristin/organization/16000001.0.0.0",
+          "type": "Organization",
+          "labels": {
+            "nb": "University of Montenegro",
+            "en": "University of Montenegro"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    }
+  ],
+  "nextResults": "https://api.nva.unit.no/search/resources?instanceType=AcademicMonograph&aggregation=none&size=3&sort=modifiedDate%3Adesc%2Cidentifier&from=3",
+  "nextSearchAfterResults": "https://api.nva.unit.no/search/resources?instanceType=AcademicMonograph&aggregation=none&size=3&sort=modifiedDate%3Adesc%2Cidentifier&search_after=1777462585171%2C0198cc43f69c-5ec91c3f-10d5-4ed7-add4-edce1753467e",
+  "@context": "https://bibsysdev.github.io/src/search/paginated-search-result.json"
+}

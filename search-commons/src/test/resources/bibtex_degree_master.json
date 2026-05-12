@@ -1,0 +1,753 @@
+{
+  "id": "https://api.nva.unit.no/search/resources?instanceType=DegreeMaster&aggregation=none&size=3&sort=modifiedDate%3Adesc%2Cidentifier&from=0",
+  "totalHits": 223772,
+  "hits": [
+    {
+      "identifier": "019c95a86772-4adf4b58-6e4d-4c20-82f3-e9d5dc63b422",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/185.17.5.0",
+        "https://api.nva.unit.no/cristin/organization/185.17.0.0",
+        "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "uio@185.90.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+      },
+      "type": "Publication",
+      "associatedArtifacts": [
+        {
+          "identifier": "98277372-58b8-4e3b-867d-bdd766a254c4",
+          "license": {
+            "name": "COPYRIGHT-ACT",
+            "type": "License",
+            "value": "https://nva.sikt.no/license/copyright-act/1.0",
+            "labels": {
+              "nb": "Generelle bruksvilk\u00e5r",
+              "en": "General Terms of Use"
+            }
+          },
+          "rightsRetentionStrategy": {
+            "configuredType": "Unknown",
+            "type": "NullRightsRetentionStrategy"
+          },
+          "uploadDetails": {
+            "archive": "UIO",
+            "type": "ImportUploadDetails",
+            "uploadedDate": "2026-02-25T16:36:06.989932957Z"
+          },
+          "size": "1082652",
+          "name": "Working-Through-Affects--Hovedoppgave---Anne-Myge-Gulsrud-og-Rakel-Bj-rnstad-Haug.pdf",
+          "mimeType": "application/pdf",
+          "publishedDate": "2026-02-25T16:36:07.243451937Z",
+          "type": "OpenFile"
+        },
+        {
+          "identifier": "1f98ef02-ca7d-4f8d-8570-fb9344e054f3",
+          "rightsRetentionStrategy": {
+            "configuredType": "Unknown",
+            "type": "NullRightsRetentionStrategy"
+          },
+          "uploadDetails": {
+            "archive": "UIO",
+            "type": "ImportUploadDetails",
+            "uploadedDate": "2026-02-25T16:36:06.989953066Z"
+          },
+          "size": "7152",
+          "name": "dublin_core.xml",
+          "mimeType": "application/xml",
+          "type": "HiddenFile"
+        }
+      ],
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-05-06T14:18:54.043499494Z",
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "pages": {
+              "illustrated": "false",
+              "type": "MonographPages"
+            },
+            "type": "DegreeMaster",
+            "submittedDate": {
+              "year": "2023",
+              "type": "PublicationDate"
+            }
+          },
+          "publicationContext": {
+            "series": {
+              "type": "UnconfirmedSeries"
+            },
+            "publisher": {
+              "valid": "true",
+              "identifier": "A04A15C5-1B21-46BB-BC1D-AA4EF9B6DEB9",
+              "year": "2023",
+              "name": "Universitetet i Oslo",
+              "id": "https://api.nva.unit.no/publication-channels-v2/publisher/A04A15C5-1B21-46BB-BC1D-AA4EF9B6DEB9/2023",
+              "type": "Publisher",
+              "scientificValue": "LevelZero",
+              "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/forlag?pid=A04A15C5-1B21-46BB-BC1D-AA4EF9B6DEB9"
+            },
+            "type": "Degree"
+          }
+        },
+        "contributorsCount": 1,
+        "mainTitle": "Working Through Affects: First Validation of the Affect Integration Inventory Short Form (AII-SF-27), and Exploration of the Affect Integration Construct in an Occupational Setting and Beyond",
+        "language": "http://lexvo.org/id/iso639-3/eng",
+        "abstract": "Objective: The present study is a validation of the English language version of the Affect Integration Inventory short form with 27-items (AII-SF-27). Assessments of external and nomological net validity include variables with an established association to the affect integration construct (interpersonal problems and personality disorder criteria). Additionally, the study examines previously unexplored associations between work-related variables and AII-SF-27 scales, with an aim of assessing the utility of the affect integration construct in an occupational context. Method: This study used archival data from a non-clinical, British sample (N=398) who completed a test battery of self-report instruments. We conducted analyses of reliability, assessment of internal structure by confirmatory factor analyses, and evaluation of external, convergent, discriminant, and nomological net validity by examining associations to interpersonal problems, personality disorder criteria, work engagement, leader-member exchange, work-related stress, and burnout. Results: Reliability analyses yielded generally high internal consistency for the AII-SF-27. CFAs showed that a pre-hypothesized bifactorial structure provided the best fit, which is consistent with the conceptualization of the affect integration concept. Associations to external variables were generally in line with our expectations, supporting the external and construct validity of the AII-SF-27. Conclusion: The present study supports the reliability and validity of the AII-SF-27, showing satisfactory and theoretically sound internal structure and associations with external criteria. Furthermore, our findings support the utility of AII-SF-27 within numerous different contexts, including the occupational. We encourage future research to further examine this potential.",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "name": "Anne Myge Gulsrud",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/185.17.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/185.17.5.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Psykologisk institutt",
+                  "en": "Department of Psychology"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "name": "Anne Myge Gulsrud",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/185.17.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/185.17.5.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Psykologisk institutt",
+                  "en": "Department of Psychology"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "year": "2023",
+          "type": "PublicationDate"
+        },
+        "tags": [
+          "AII-SF-27",
+          "Work-related stress",
+          "Worklife",
+          "AII",
+          "Work engagement",
+          "Interpersonal problems",
+          "Affect integration",
+          "LMX",
+          "Burnout",
+          "Personality disorder criteria"
+        ]
+      },
+      "createdDate": "2026-02-25T16:36:07.666959673Z",
+      "publicationContextUris": [
+        "https://api.nva.unit.no/publication-channels-v2/publisher/A04A15C5-1B21-46BB-BC1D-AA4EF9B6DEB9/2023"
+      ],
+      "childPublications": [],
+      "modifiedDate": "2026-05-06T14:18:52.877942289Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "brage@uio",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/10852/102796"
+        },
+        {
+          "sourceName": "nva@null",
+          "type": "CristinIdentifier",
+          "value": "10400992"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/a4aaa430-c26a-43ba-bbdf-8d102f814559",
+        "type": "Organization"
+      },
+      "filesStatus": "hasPublicFiles",
+      "id": "https://api.nva.unit.no/publication/019c95a86772-4adf4b58-6e4d-4c20-82f3-e9d5dc63b422",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2026-02-25T16:36:07.666959673Z",
+      "scientificIndex": {},
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+                }
+              ],
+              "hasPart": [
+                {
+                  "partOf": [
+                    {
+                      "id": "https://api.nva.unit.no/cristin/organization/185.17.0.0"
+                    }
+                  ],
+                  "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+                  "countryCode": "NO",
+                  "id": "https://api.nva.unit.no/cristin/organization/185.17.5.0",
+                  "type": "Organization",
+                  "labels": {
+                    "nb": "Psykologisk institutt",
+                    "en": "Department of Psychology"
+                  }
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/185.17.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Det samfunnsvitenskapelige fakultet",
+                "en": "Faculty of Social Sciences"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+          "type": "Organization",
+          "labels": {
+            "nb": "Universitetet i Oslo",
+            "en": "University of Oslo"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    },
+    {
+      "identifier": "019c95a97f1e-3830a082-6d8c-431e-9935-63029c0e4891",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/185.17.5.0",
+        "https://api.nva.unit.no/cristin/organization/185.17.0.0",
+        "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "uio@185.90.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+      },
+      "type": "Publication",
+      "associatedArtifacts": [
+        {
+          "identifier": "58044e39-b282-450e-b5d8-a63fffe16ba9",
+          "license": {
+            "name": "COPYRIGHT-ACT",
+            "type": "License",
+            "value": "https://nva.sikt.no/license/copyright-act/1.0",
+            "labels": {
+              "nb": "Generelle bruksvilk\u00e5r",
+              "en": "General Terms of Use"
+            }
+          },
+          "rightsRetentionStrategy": {
+            "configuredType": "Unknown",
+            "type": "NullRightsRetentionStrategy"
+          },
+          "uploadDetails": {
+            "archive": "UIO",
+            "type": "ImportUploadDetails",
+            "uploadedDate": "2026-02-25T16:37:18.642769990Z"
+          },
+          "size": "1082652",
+          "name": "Working-Through-Affects--Hovedoppgave---Anne-Myge-Gulsrud-og-Rakel-Bj-rnstad-Haug.pdf",
+          "mimeType": "application/pdf",
+          "publishedDate": "2026-02-25T16:37:18.905506729Z",
+          "type": "OpenFile"
+        },
+        {
+          "identifier": "80edb5e3-0a1d-487a-a0cb-5622f6796a99",
+          "rightsRetentionStrategy": {
+            "configuredType": "Unknown",
+            "type": "NullRightsRetentionStrategy"
+          },
+          "uploadDetails": {
+            "archive": "UIO",
+            "type": "ImportUploadDetails",
+            "uploadedDate": "2026-02-25T16:37:18.642790554Z"
+          },
+          "size": "7164",
+          "name": "dublin_core.xml",
+          "mimeType": "application/xml",
+          "type": "HiddenFile"
+        }
+      ],
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-05-06T14:18:30.666254682Z",
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "pages": {
+              "illustrated": "false",
+              "type": "MonographPages"
+            },
+            "type": "DegreeMaster",
+            "submittedDate": {
+              "year": "2023",
+              "type": "PublicationDate"
+            }
+          },
+          "publicationContext": {
+            "series": {
+              "type": "UnconfirmedSeries"
+            },
+            "publisher": {
+              "valid": "true",
+              "identifier": "A04A15C5-1B21-46BB-BC1D-AA4EF9B6DEB9",
+              "year": "2023",
+              "name": "Universitetet i Oslo",
+              "id": "https://api.nva.unit.no/publication-channels-v2/publisher/A04A15C5-1B21-46BB-BC1D-AA4EF9B6DEB9/2023",
+              "type": "Publisher",
+              "scientificValue": "LevelZero",
+              "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/forlag?pid=A04A15C5-1B21-46BB-BC1D-AA4EF9B6DEB9"
+            },
+            "type": "Degree"
+          }
+        },
+        "contributorsCount": 1,
+        "mainTitle": "Working Through Affects: First Validation of the Affect Integration Inventory Short Form (AII-SF-27), and Exploration of the Affect Integration Construct in an Occupational Setting and Beyond",
+        "language": "http://lexvo.org/id/iso639-3/eng",
+        "abstract": "Objective: The present study is a validation of the English language version of the Affect Integration Inventory short form with 27-items (AII-SF-27). Assessments of external and nomological net validity include variables with an established association to the affect integration construct (interpersonal problems and personality disorder criteria). Additionally, the study examines previously unexplored associations between work-related variables and AII-SF-27 scales, with an aim of assessing the utility of the affect integration construct in an occupational context. Method: This study used archival data from a non-clinical, British sample (N=398) who completed a test battery of self-report instruments. We conducted analyses of reliability, assessment of internal structure by confirmatory factor analyses, and evaluation of external, convergent, discriminant, and nomological net validity by examining associations to interpersonal problems, personality disorder criteria, work engagement, leader-member exchange, work-related stress, and burnout. Results: Reliability analyses yielded generally high internal consistency for the AII-SF-27. CFAs showed that a pre-hypothesized bifactorial structure provided the best fit, which is consistent with the conceptualization of the affect integration concept. Associations to external variables were generally in line with our expectations, supporting the external and construct validity of the AII-SF-27. Conclusion: The present study supports the reliability and validity of the AII-SF-27, showing satisfactory and theoretically sound internal structure and associations with external criteria. Furthermore, our findings support the utility of AII-SF-27 within numerous different contexts, including the occupational. We encourage future research to further examine this potential.",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "name": "Rakel Bj\u00f8rnstad Haug",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/185.17.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/185.17.5.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Psykologisk institutt",
+                  "en": "Department of Psychology"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "name": "Rakel Bj\u00f8rnstad Haug",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/185.17.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/185.17.5.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Psykologisk institutt",
+                  "en": "Department of Psychology"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "year": "2023",
+          "type": "PublicationDate"
+        },
+        "tags": [
+          "Worklife",
+          "Personality disorder criteria",
+          "Interpersonal problems",
+          "Work engagement",
+          "Work-related stress",
+          "LMX",
+          "Affect integration",
+          "AII",
+          "AII-SF-27",
+          "Burnout"
+        ]
+      },
+      "createdDate": "2026-02-25T16:37:19.262680042Z",
+      "publicationContextUris": [
+        "https://api.nva.unit.no/publication-channels-v2/publisher/A04A15C5-1B21-46BB-BC1D-AA4EF9B6DEB9/2023"
+      ],
+      "childPublications": [],
+      "modifiedDate": "2026-05-06T14:18:29.545417941Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "nva@null",
+          "type": "CristinIdentifier",
+          "value": "10401044"
+        },
+        {
+          "sourceName": "brage@uio",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/10852/102826"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/a4aaa430-c26a-43ba-bbdf-8d102f814559",
+        "type": "Organization"
+      },
+      "filesStatus": "hasPublicFiles",
+      "id": "https://api.nva.unit.no/publication/019c95a97f1e-3830a082-6d8c-431e-9935-63029c0e4891",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2026-02-25T16:37:19.262680042Z",
+      "scientificIndex": {},
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+                }
+              ],
+              "hasPart": [
+                {
+                  "partOf": [
+                    {
+                      "id": "https://api.nva.unit.no/cristin/organization/185.17.0.0"
+                    }
+                  ],
+                  "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+                  "countryCode": "NO",
+                  "id": "https://api.nva.unit.no/cristin/organization/185.17.5.0",
+                  "type": "Organization",
+                  "labels": {
+                    "nb": "Psykologisk institutt",
+                    "en": "Department of Psychology"
+                  }
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/185.17.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Det samfunnsvitenskapelige fakultet",
+                "en": "Faculty of Social Sciences"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+          "type": "Organization",
+          "labels": {
+            "nb": "Universitetet i Oslo",
+            "en": "University of Oslo"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    },
+    {
+      "identifier": "019c95aee4a7-0700e727-417f-4313-bdc9-fd6d6d76984f",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/185.17.0.0",
+        "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+        "https://api.nva.unit.no/cristin/organization/185.17.5.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "uio@185.90.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+      },
+      "type": "Publication",
+      "associatedArtifacts": [
+        {
+          "identifier": "372692ba-0be5-408e-b032-293463b4fa9e",
+          "license": {
+            "name": "COPYRIGHT-ACT",
+            "type": "License",
+            "value": "https://nva.sikt.no/license/copyright-act/1.0",
+            "labels": {
+              "nb": "Generelle bruksvilk\u00e5r",
+              "en": "General Terms of Use"
+            }
+          },
+          "rightsRetentionStrategy": {
+            "configuredType": "Unknown",
+            "type": "NullRightsRetentionStrategy"
+          },
+          "uploadDetails": {
+            "archive": "UIO",
+            "type": "ImportUploadDetails",
+            "uploadedDate": "2026-02-25T16:43:12.301172350Z"
+          },
+          "size": "1789347",
+          "name": "Flateb----Sanden--Measuring-Individual-Differences-in-Defensive-and-Offensive-Violent-Behavioral-Intentions-on-Behalf-of-One-s-Group.pdf",
+          "mimeType": "application/pdf",
+          "publishedDate": "2026-02-25T16:43:12.565596605Z",
+          "type": "OpenFile"
+        },
+        {
+          "identifier": "13520211-8674-47f6-85a0-beb65c1431ed",
+          "rightsRetentionStrategy": {
+            "configuredType": "Unknown",
+            "type": "NullRightsRetentionStrategy"
+          },
+          "uploadDetails": {
+            "archive": "UIO",
+            "type": "ImportUploadDetails",
+            "uploadedDate": "2026-02-25T16:43:12.301192696Z"
+          },
+          "size": "3280",
+          "name": "dublin_core.xml",
+          "mimeType": "application/xml",
+          "type": "HiddenFile"
+        }
+      ],
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-05-06T14:18:05.293114371Z",
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "pages": {
+              "illustrated": "false",
+              "type": "MonographPages"
+            },
+            "type": "DegreeMaster",
+            "submittedDate": {
+              "year": "2024",
+              "type": "PublicationDate"
+            }
+          },
+          "publicationContext": {
+            "series": {
+              "type": "UnconfirmedSeries"
+            },
+            "publisher": {
+              "valid": "true",
+              "identifier": "A04A15C5-1B21-46BB-BC1D-AA4EF9B6DEB9",
+              "year": "2024",
+              "name": "Universitetet i Oslo",
+              "id": "https://api.nva.unit.no/publication-channels-v2/publisher/A04A15C5-1B21-46BB-BC1D-AA4EF9B6DEB9/2024",
+              "type": "Publisher",
+              "scientificValue": "LevelZero",
+              "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/forlag?pid=A04A15C5-1B21-46BB-BC1D-AA4EF9B6DEB9"
+            },
+            "type": "Degree"
+          }
+        },
+        "contributorsCount": 1,
+        "mainTitle": "Measuring Individual Differences in Defensive and Offensive Violent Behavioral Intentions on Behalf of One\u2019s Group",
+        "language": "http://lexvo.org/id/iso639-3/eng",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "name": "Markus Sanden",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/185.17.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/185.17.5.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Psykologisk institutt",
+                  "en": "Department of Psychology"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "name": "Markus Sanden",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/185.17.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/185.17.5.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Psykologisk institutt",
+                  "en": "Department of Psychology"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "year": "2024",
+          "type": "PublicationDate"
+        },
+        "tags": [
+          "cross-cultural scale validation",
+          "Violent extremism",
+          "individual differences",
+          "violent behavioral intentions",
+          "scale development"
+        ]
+      },
+      "createdDate": "2026-02-25T16:43:12.935815100Z",
+      "publicationContextUris": [
+        "https://api.nva.unit.no/publication-channels-v2/publisher/A04A15C5-1B21-46BB-BC1D-AA4EF9B6DEB9/2024"
+      ],
+      "childPublications": [],
+      "modifiedDate": "2026-05-06T14:18:04.366924021Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "nva@null",
+          "type": "CristinIdentifier",
+          "value": "10401260"
+        },
+        {
+          "sourceName": "brage@uio",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/10852/111535"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/a4aaa430-c26a-43ba-bbdf-8d102f814559",
+        "type": "Organization"
+      },
+      "filesStatus": "hasPublicFiles",
+      "id": "https://api.nva.unit.no/publication/019c95aee4a7-0700e727-417f-4313-bdc9-fd6d6d76984f",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2026-02-25T16:43:12.935815100Z",
+      "scientificIndex": {},
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+                }
+              ],
+              "hasPart": [
+                {
+                  "partOf": [
+                    {
+                      "id": "https://api.nva.unit.no/cristin/organization/185.17.0.0"
+                    }
+                  ],
+                  "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+                  "countryCode": "NO",
+                  "id": "https://api.nva.unit.no/cristin/organization/185.17.5.0",
+                  "type": "Organization",
+                  "labels": {
+                    "nb": "Psykologisk institutt",
+                    "en": "Department of Psychology"
+                  }
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/185.17.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Det samfunnsvitenskapelige fakultet",
+                "en": "Faculty of Social Sciences"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+          "type": "Organization",
+          "labels": {
+            "nb": "Universitetet i Oslo",
+            "en": "University of Oslo"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    }
+  ],
+  "nextResults": "https://api.nva.unit.no/search/resources?instanceType=DegreeMaster&aggregation=none&size=3&sort=modifiedDate%3Adesc%2Cidentifier&from=3",
+  "nextSearchAfterResults": "https://api.nva.unit.no/search/resources?instanceType=DegreeMaster&aggregation=none&size=3&sort=modifiedDate%3Adesc%2Cidentifier&search_after=1778077084366%2C019c95aee4a7-0700e727-417f-4313-bdc9-fd6d6d76984f",
+  "@context": "https://bibsysdev.github.io/src/search/paginated-search-result.json"
+}

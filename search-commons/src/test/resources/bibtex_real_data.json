@@ -1,0 +1,3506 @@
+{
+  "id": "https://api.nva.unit.no/search/resources?searchAll=anthology&aggregation=none&size=10&sort=modifiedDate%3Adesc%2Cidentifier&from=0",
+  "totalHits": 186609,
+  "hits": [
+    {
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+        "https://api.nva.unit.no/cristin/organization/185.12.0.0",
+        "https://api.nva.unit.no/cristin/organization/185.12.2.0"
+      ],
+      "projects": [
+        {
+          "name": "EURNOR - Research Centre on the European Dimension of Norwegian Law",
+          "id": "https://api.nva.unit.no/cristin/project/2748291",
+          "type": "ResearchProject"
+        }
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "13493@185.90.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+      },
+      "type": "Publication",
+      "associatedArtifacts": [
+        {
+          "identifier": "3be91436-b82d-43e0-91e4-a97bbb2da411",
+          "license": {
+            "name": "COPYRIGHT-ACT",
+            "type": "License",
+            "value": "https://nva.sikt.no/license/copyright-act/1.0",
+            "labels": {
+              "nb": "Generelle bruksvilkår",
+              "en": "General Terms of Use"
+            }
+          },
+          "rightsRetentionStrategy": {
+            "configuredType": "OverridableRightsRetentionStrategy",
+            "type": "NullRightsRetentionStrategy"
+          },
+          "uploadDetails": {
+            "type": "UserUploadDetails",
+            "uploadedDate": "2026-04-19T15:40:15.842763352Z",
+            "uploadedBy": "13493@185.90.0.0"
+          },
+          "size": "74283",
+          "publisherVersion": "AcceptedVersion",
+          "name": "Hjelmeng Markedsetterforskning 220425.docx",
+          "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "publishedDate": "2026-05-06T13:52:46.151408171Z",
+          "type": "OpenFile"
+        }
+      ],
+      "fundings": [
+        {
+          "identifier": "341262",
+          "source": {
+            "identifier": "NFR",
+            "id": "https://api.nva.unit.no/cristin/funding-sources/NFR",
+            "type": "FundingSource",
+            "labels": {
+              "nb": "Norges forskningsråd",
+              "en": "Research Council of Norway (RCN)"
+            }
+          },
+          "type": "UnconfirmedFunding",
+          "labels": {
+            "nb": "Norges forskningsråd",
+            "en": "Research Council of Norway (RCN)"
+          }
+        }
+      ],
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "pages": {
+              "end": "230",
+              "type": "Range",
+              "begin": "210"
+            },
+            "type": "AcademicChapter"
+          },
+          "publicationContext": {
+            "entityDescription": {
+              "reference": {
+                "type": "Reference",
+                "publicationInstance": {
+                  "type": "BookAnthology"
+                },
+                "publicationContext": {
+                  "isbnList": [
+                    "9788215075297"
+                  ],
+                  "series": {
+                    "type": "UnconfirmedSeries"
+                  },
+                  "publisher": {
+                    "valid": "true",
+                    "identifier": "DA831BBC-DD1C-4E06-ACA0-48DE8046FB26",
+                    "year": "2025",
+                    "name": "Universitetsforlaget",
+                    "id": "https://api.nva.unit.no/publication-channels-v2/publisher/DA831BBC-DD1C-4E06-ACA0-48DE8046FB26/2025",
+                    "type": "Publisher",
+                    "scientificValue": "LevelOne",
+                    "isbnPrefix": "978-82-15",
+                    "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/forlag?pid=DA831BBC-DD1C-4E06-ACA0-48DE8046FB26"
+                  },
+                  "type": "Book"
+                }
+              },
+              "mainTitle": "Rettsvitenskap og samfunnsengasjement: Festskrift til Hans Petter Graver",
+              "contributors": [
+                {
+                  "identity": {
+                    "name": "Finn Arnesen",
+                    "id": "https://api.nva.unit.no/cristin/person/24655",
+                    "type": "Identity"
+                  },
+                  "type": "Contributor"
+                },
+                {
+                  "identity": {
+                    "name": "Kjersti Lohne",
+                    "id": "https://api.nva.unit.no/cristin/person/18658",
+                    "type": "Identity"
+                  },
+                  "type": "Contributor"
+                },
+                {
+                  "identity": {
+                    "name": "Dag Michalsen",
+                    "id": "https://api.nva.unit.no/cristin/person/2876",
+                    "type": "Identity"
+                  },
+                  "type": "Contributor"
+                },
+                {
+                  "identity": {
+                    "name": "Inger Johanne Sand",
+                    "id": "https://api.nva.unit.no/cristin/person/22232",
+                    "type": "Identity"
+                  },
+                  "type": "Contributor"
+                }
+              ],
+              "type": "EntityDescription",
+              "publicationDate": {
+                "year": "2025",
+                "type": "PublicationDate"
+              }
+            },
+            "id": "https://api.nva.unit.no/publication/019aa0d1aabe-ffeecbe0-24e7-4a1d-9291-cc8b63f86e57",
+            "type": "Anthology"
+          }
+        },
+        "contributorsCount": 1,
+        "mainTitle": "Markedsetterforskning - en nyorientering av konkurranseretten?",
+        "language": "http://lexvo.org/id/iso639-3/nob",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Erling Johan Hjelmeng",
+              "id": "https://api.nva.unit.no/cristin/person/13493",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/185.12.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/185.12.2.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for privatrett",
+                  "en": "Department of Private Law"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Erling Johan Hjelmeng",
+              "id": "https://api.nva.unit.no/cristin/person/13493",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/185.12.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/185.12.2.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for privatrett",
+                  "en": "Department of Private Law"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "month": "11",
+          "year": "2025",
+          "type": "PublicationDate",
+          "day": "25"
+        },
+        "npiSubjectHeading": "1028"
+      },
+      "publicationContextUris": [],
+      "additionalIdentifiers": [
+        {
+          "sourceName": "nva@null",
+          "type": "CristinIdentifier",
+          "value": "10432330"
+        },
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/5508296"
+        }
+      ],
+      "filesStatus": "hasPublicFiles",
+      "id": "https://api.nva.unit.no/publication/019da65e261a-ccb10ebb-5e8b-4bc1-a9ac-32f71ba85fdb",
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+                }
+              ],
+              "hasPart": [
+                {
+                  "partOf": [
+                    {
+                      "id": "https://api.nva.unit.no/cristin/organization/185.12.0.0"
+                    }
+                  ],
+                  "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+                  "countryCode": "NO",
+                  "id": "https://api.nva.unit.no/cristin/organization/185.12.2.0",
+                  "type": "Organization",
+                  "labels": {
+                    "nb": "Institutt for privatrett",
+                    "en": "Department of Private Law"
+                  }
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/185.12.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Det juridiske fakultet",
+                "en": "Faculty of Law"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Erling Johan Hjelmeng",
+              "id": "https://api.nva.unit.no/cristin/person/13493",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nb": "Universitetet i Oslo",
+            "en": "University of Oslo"
+          }
+        }
+      ],
+      "identifier": "019da65e261a-ccb10ebb-5e8b-4bc1-a9ac-32f71ba85fdb",
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-05-06T13:52:47.257091682Z",
+      "createdDate": "2026-04-19T15:31:21.239072270Z",
+      "childPublications": [],
+      "modifiedDate": "2026-05-06T13:52:37.067584415Z",
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/a4aaa430-c26a-43ba-bbdf-8d102f814559",
+        "type": "Organization"
+      },
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2026-04-19T15:41:42.083307462Z",
+      "scientificIndex": {
+
+      },
+      "status": "PUBLISHED"
+    },
+    {
+      "identifier": "019dfd4f9801-3b6d9562-d5e6-4770-b855-ad958a53b45c",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/222.58.4.0",
+        "https://api.nva.unit.no/cristin/organization/222.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/222.58.0.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "933838@222.0.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/222.0.0.0"
+      },
+      "type": "Publication",
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-05-06T12:54:32.760195866Z",
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/222.0.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "pages": {
+              "end": "372",
+              "type": "Range",
+              "begin": "370"
+            },
+            "type": "AcademicChapter"
+          },
+          "publicationContext": {
+            "entityDescription": {
+              "reference": {
+                "type": "Reference",
+                "publicationInstance": {
+                  "type": "BookAnthology"
+                },
+                "publicationContext": {
+                  "isbnList": [
+                    "9784886864352"
+                  ],
+                  "series": {
+                    "identifier": "B6C65F6C-8B79-4FAA-8003-BDE44DE5C489",
+                    "year": "2023",
+                    "name": "International Solid-State Sensors, Actuators and Microsystems Conference",
+                    "id": "https://api.nva.unit.no/publication-channels-v2/serial-publication/B6C65F6C-8B79-4FAA-8003-BDE44DE5C489/2023",
+                    "type": [
+                      "Series",
+                      "Journal"
+                    ],
+                    "onlineIssn": "2167-0021",
+                    "printIssn": "2167-0013",
+                    "scientificValue": "LevelZero",
+                    "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/tidsskrift?pid=B6C65F6C-8B79-4FAA-8003-BDE44DE5C489"
+                  },
+                  "publisher": {
+                    "valid": "true",
+                    "identifier": "11615D7E-8C0C-4748-9F26-784E436F80A3",
+                    "year": "2023",
+                    "name": "IEEE (Institute of Electrical and Electronics Engineers)",
+                    "id": "https://api.nva.unit.no/publication-channels-v2/publisher/11615D7E-8C0C-4748-9F26-784E436F80A3/2023",
+                    "type": "Publisher",
+                    "scientificValue": "LevelOne",
+                    "isbnPrefix": "979-8-3503,979-8-3315,978-3-90714,978-1-7281,978-1-6654,978-1-61284,978-1-5386,978-1-5090,978-1-4799,978-1-4673,978-0-8186,978-0-7803,978-0-7695",
+                    "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/forlag?pid=11615D7E-8C0C-4748-9F26-784E436F80A3"
+                  },
+                  "type": "Book"
+                }
+              },
+              "mainTitle": "2023 22nd International Conference on Solid-State Sensors, Actuators and Microsystems (Transducers)",
+              "contributors": [
+                {
+                  "identity": {
+                    "name": "IEEE",
+                    "type": "Identity"
+                  },
+                  "type": "Contributor"
+                }
+              ],
+              "type": "EntityDescription",
+              "publicationDate": {
+                "year": "2023",
+                "type": "PublicationDate"
+              }
+            },
+            "id": "https://api.nva.unit.no/publication/019dfd49ad37-9846b4bf-e3be-4981-80f2-b421848359ea",
+            "type": "Anthology"
+          }
+        },
+        "contributorsCount": 9,
+        "mainTitle": "Dual-Frequency Aluminum Scandium Nitride Piezoelectric Microphones with Wide Bandwidth, Large Dynamic Range, and High Sensitivity for Wind Tunnel Testing",
+        "language": "http://lexvo.org/id/iso639-3/eng",
+        "abstract": "A dual-frequency piezoelectric micro-electro-mechanical system (MEMS) microphone based on highly doped aluminum scandium nitride (AlSc30%N) thin films have been developed for wind tunnel testing with strict requirements of wide bandwidth, large dynamic range, and high sensitivity. Compared to the MEMS sample based on lead zirconate titanate (PZT), the new AlSc30%N MEMS sample has much higher sensitivity and requires no DC bias. The preliminary aeroacoustic tests, conducted on the BACCHUS test bench of Airbus, show that the sensitivity and signal-to-noise ratio (SNR) is 3.2 mV/Pa and 60.2 dB, and the upper limits of frequency range and dynamic range \u003E55 kHz and \u003E147 dB SPL. The overall performance is better than the state of art microphones for aeroacoustic measurements.",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Yanfen Zhai",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "type": "Contributor"
+          },
+          {
+            "sequence": "2",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Anh Tuan Nguyen Thai",
+              "orcId": "https://orcid.org/0009-0004-5393-8227",
+              "id": "https://api.nva.unit.no/cristin/person/331227",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/222.58.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/222.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/222.58.4.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for mikrosystemer",
+                  "en": "Department of Microsystems"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "3",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Lokesh Kumar Reddy Onteru",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "type": "Contributor"
+          },
+          {
+            "sequence": "4",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Claire Bourquard",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "type": "Contributor"
+          },
+          {
+            "sequence": "5",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Annalisa De-Pastina",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "type": "Contributor"
+          },
+          {
+            "sequence": "6",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Alexander Shatalov",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "type": "Contributor"
+          },
+          {
+            "sequence": "7",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Nikolai Andrianov",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "type": "Contributor"
+          },
+          {
+            "sequence": "8",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Xuyuan Chen",
+              "id": "https://api.nva.unit.no/cristin/person/34535",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/222.0.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/222.0.0.0",
+                "hasPart": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/222.58.4.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/222.58.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Fakultet for teknologi, naturvitenskap og maritime fag",
+                  "en": "Faculty of Technology, Natural Sciences and Maritime Sciences"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "9",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Lixiang Wu",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Yanfen Zhai",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "type": "Contributor"
+          },
+          {
+            "sequence": "2",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Anh Tuan Nguyen Thai",
+              "orcId": "https://orcid.org/0009-0004-5393-8227",
+              "id": "https://api.nva.unit.no/cristin/person/331227",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/222.58.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/222.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/222.58.4.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for mikrosystemer",
+                  "en": "Department of Microsystems"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "3",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Lokesh Kumar Reddy Onteru",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "type": "Contributor"
+          },
+          {
+            "sequence": "4",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Claire Bourquard",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "type": "Contributor"
+          },
+          {
+            "sequence": "5",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Annalisa De-Pastina",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "type": "Contributor"
+          },
+          {
+            "sequence": "6",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Alexander Shatalov",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "type": "Contributor"
+          },
+          {
+            "sequence": "7",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Nikolai Andrianov",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "type": "Contributor"
+          },
+          {
+            "sequence": "8",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Xuyuan Chen",
+              "id": "https://api.nva.unit.no/cristin/person/34535",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/222.0.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/222.0.0.0",
+                "hasPart": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/222.58.4.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/222.58.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Fakultet for teknologi, naturvitenskap og maritime fag",
+                  "en": "Faculty of Technology, Natural Sciences and Maritime Sciences"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "9",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Lixiang Wu",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "year": "2023",
+          "type": "PublicationDate"
+        },
+        "npiSubjectHeading": "1057"
+      },
+      "createdDate": "2026-05-06T12:42:25.153794785Z",
+      "publicationContextUris": [],
+      "childPublications": [],
+      "modifiedDate": "2026-05-06T12:54:31.052447066Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "nva@null",
+          "type": "CristinIdentifier",
+          "value": "10438333"
+        },
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/5514336"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/72a4dc34-ff98-4d66-a663-7f2eb005555b",
+        "type": "Organization"
+      },
+      "filesStatus": "noFiles",
+      "id": "https://api.nva.unit.no/publication/019dfd4f9801-3b6d9562-d5e6-4770-b855-ad958a53b45c",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2026-05-06T12:46:57.321661493Z",
+      "scientificIndex": {
+
+      },
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/222.0.0.0"
+                }
+              ],
+              "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/222.0.0.0",
+              "hasPart": [
+                {
+                  "partOf": [
+                    {
+                      "id": "https://api.nva.unit.no/cristin/organization/222.58.0.0"
+                    }
+                  ],
+                  "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/222.0.0.0",
+                  "countryCode": "NO",
+                  "id": "https://api.nva.unit.no/cristin/organization/222.58.4.0",
+                  "type": "Organization",
+                  "labels": {
+                    "nb": "Institutt for mikrosystemer",
+                    "en": "Department of Microsystems"
+                  }
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/222.58.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Fakultet for teknologi, naturvitenskap og maritime fag",
+                "en": "Faculty of Technology, Natural Sciences and Maritime Sciences"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/222.0.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Xuyuan Chen",
+              "id": "https://api.nva.unit.no/cristin/person/34535",
+              "type": "Identity"
+            },
+            {
+              "verificationStatus": "Verified",
+              "name": "Anh Tuan Nguyen Thai",
+              "orcId": "https://orcid.org/0009-0004-5393-8227",
+              "id": "https://api.nva.unit.no/cristin/person/331227",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nn": "Universitetet i Søraust-Noreg",
+            "nb": "Universitetet i Sørøst-Norge",
+            "en": "University of South-Eastern Norway"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    },
+    {
+      "identifier": "019dc45ce589-4a9b05e8-60eb-4a0c-9af3-6f44de8de9cf",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/185.12.2.0",
+        "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+        "https://api.nva.unit.no/cristin/organization/185.12.0.0",
+        "https://api.nva.unit.no/cristin/organization/10300010.0.0.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "5056@185.90.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+      },
+      "type": "Publication",
+      "associatedArtifacts": [
+        {
+          "identifier": "e2962c0f-e795-404b-994f-f0efdca737e5",
+          "license": {
+            "name": "COPYRIGHT-ACT",
+            "type": "License",
+            "value": "https://nva.sikt.no/license/copyright-act/1.0",
+            "labels": {
+              "nb": "Generelle bruksvilkår",
+              "en": "General Terms of Use"
+            }
+          },
+          "rightsRetentionStrategy": {
+            "configuredType": "OverridableRightsRetentionStrategy",
+            "type": "NullRightsRetentionStrategy"
+          },
+          "uploadDetails": {
+            "type": "UserUploadDetails",
+            "uploadedDate": "2026-04-25T11:34:07.629487473Z",
+            "uploadedBy": "5056@185.90.0.0"
+          },
+          "size": "340508",
+          "publisherVersion": "PublishedVersion",
+          "name": "Sjafjell Mahonen Reimagining Corporate Purpose 2026.pdf",
+          "mimeType": "application/pdf",
+          "type": "RejectedFile"
+        }
+      ],
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-05-06T12:42:52.704425185Z",
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "pages": {
+              "end": "189",
+              "type": "Range",
+              "begin": "169"
+            },
+            "type": "AcademicChapter"
+          },
+          "publicationContext": {
+            "entityDescription": {
+              "reference": {
+                "type": "Reference",
+                "publicationInstance": {
+                  "type": "BookAnthology"
+                },
+                "publicationContext": {
+                  "isbnList": [
+                    "9781035313860"
+                  ],
+                  "series": {
+                    "type": "UnconfirmedSeries"
+                  },
+                  "publisher": {
+                    "valid": "true",
+                    "identifier": "E7A0A577-496D-4838-AF57-942A313A2D2A",
+                    "year": "2026",
+                    "name": "Edward Elgar Publishing",
+                    "id": "https://api.nva.unit.no/publication-channels-v2/publisher/E7A0A577-496D-4838-AF57-942A313A2D2A/2026",
+                    "type": "Publisher",
+                    "scientificValue": "LevelTwo",
+                    "isbnPrefix": "978-1-84844,978-1-84064,978-1-80037",
+                    "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/forlag?pid=E7A0A577-496D-4838-AF57-942A313A2D2A"
+                  },
+                  "type": "Book"
+                }
+              },
+              "mainTitle": "A Research Agenda for Law, Finance and the Environment",
+              "contributors": [
+                {
+                  "identity": {
+                    "name": "Megan Bowman",
+                    "type": "Identity"
+                  },
+                  "type": "Contributor"
+                },
+                {
+                  "identity": {
+                    "name": "Laura Mai",
+                    "type": "Identity"
+                  },
+                  "type": "Contributor"
+                }
+              ],
+              "type": "EntityDescription",
+              "publicationDate": {
+                "year": "2026",
+                "type": "PublicationDate"
+              }
+            },
+            "id": "https://api.nva.unit.no/publication/019dc4606bd3-9a70ad8f-83d0-4ed3-a355-80b07c2617a3",
+            "type": "Anthology"
+          },
+          "doi": "https://doi.org/10.4337/9781035313877.00016"
+        },
+        "contributorsCount": 2,
+        "metadataSource": "http://dx.doi.org/10.2139/ssrn.5255480",
+        "mainTitle": "Reimagining Corporate Purpose for a Safe and Just World",
+        "language": "http://lexvo.org/id/iso639-3/eng",
+        "abstract": "After decades of a rather instrumental and narrow focus on business, with the dominant view identifying the corporation with its shareholders, we are seeing a reawakening of the debate on corporate purpose. However, the debate remains constrained by the Anglo-American shareholder vs stakeholder dichotomy.\n\nIn our approach to corporate purpose, we draw on over a decade of multi-jurisdictional comparative corporate law analyses. We posit that companies as ‘creatures of national law’ cannot be understood through an analysis that does not engage with the rich variety of corporate law approaches and corporate law theories. Further, in our research aiming to contribute to sustainability, we undertake interdisciplinary analyses, drawing on legal theory, law and economics, and sustainability science and research. That gives us a basis for reimagining corporate purpose for a safe and just world, in a way that transcends limiting dichotomies and national differences.",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Beate Sjåfjell",
+              "orcId": "https://orcid.org/0000-0002-5645-0225",
+              "id": "https://api.nva.unit.no/cristin/person/5056",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/185.12.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/185.12.2.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for privatrett",
+                  "en": "Department of Private Law"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "2",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Jukka Tapio Mähönen",
+              "id": "https://api.nva.unit.no/cristin/person/725996",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "institutionId": "https://api.nva.unit.no/cristin/organization/10300010.0.0.0",
+                "countryCode": "FI",
+                "id": "https://api.nva.unit.no/cristin/organization/10300010.0.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Helsingin yliopisto / Helsingfors universitet",
+                  "en": "University of Helsinki"
+                }
+              },
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/185.12.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/185.12.2.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for privatrett",
+                  "en": "Department of Private Law"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Beate Sjåfjell",
+              "orcId": "https://orcid.org/0000-0002-5645-0225",
+              "id": "https://api.nva.unit.no/cristin/person/5056",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/185.12.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/185.12.2.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for privatrett",
+                  "en": "Department of Private Law"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "2",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Jukka Tapio Mähönen",
+              "id": "https://api.nva.unit.no/cristin/person/725996",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "institutionId": "https://api.nva.unit.no/cristin/organization/10300010.0.0.0",
+                "countryCode": "FI",
+                "id": "https://api.nva.unit.no/cristin/organization/10300010.0.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Helsingin yliopisto / Helsingfors universitet",
+                  "en": "University of Helsinki"
+                }
+              },
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/185.12.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/185.12.2.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for privatrett",
+                  "en": "Department of Private Law"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "year": "2026",
+          "type": "PublicationDate"
+        },
+        "npiSubjectHeading": "1028",
+        "tags": [
+          "Corporate sustainability",
+          "European Union",
+          "Company law",
+          "European Union; Comparative law; Company law; Legal theory; Corporate boards; Corporate sustainability",
+          "Comparative law",
+          "Legal theory",
+          "Corporate boards"
+        ]
+      },
+      "createdDate": "2026-04-25T11:18:35.657149555Z",
+      "publicationContextUris": [],
+      "childPublications": [],
+      "modifiedDate": "2026-05-06T12:41:02.574570291Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/5510503"
+        },
+        {
+          "sourceName": "nva@null",
+          "type": "CristinIdentifier",
+          "value": "10434504"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/a4aaa430-c26a-43ba-bbdf-8d102f814559",
+        "type": "Organization"
+      },
+      "filesStatus": "noFiles",
+      "id": "https://api.nva.unit.no/publication/019dc45ce589-4a9b05e8-60eb-4a0c-9af3-6f44de8de9cf",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2026-04-25T11:35:23.343477597Z",
+      "scientificIndex": {
+
+      },
+      "topLevelOrganizations": [
+        {
+          "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/10300010.0.0.0",
+          "countryCode": "FI",
+          "id": "https://api.nva.unit.no/cristin/organization/10300010.0.0.0",
+          "type": "Organization",
+          "labels": {
+            "nb": "Helsingin yliopisto / Helsingfors universitet",
+            "en": "University of Helsinki"
+          }
+        },
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+                }
+              ],
+              "hasPart": [
+                {
+                  "partOf": [
+                    {
+                      "id": "https://api.nva.unit.no/cristin/organization/185.12.0.0"
+                    }
+                  ],
+                  "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+                  "countryCode": "NO",
+                  "id": "https://api.nva.unit.no/cristin/organization/185.12.2.0",
+                  "type": "Organization",
+                  "labels": {
+                    "nb": "Institutt for privatrett",
+                    "en": "Department of Private Law"
+                  }
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/185.12.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Det juridiske fakultet",
+                "en": "Faculty of Law"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Jukka Tapio Mähönen",
+              "id": "https://api.nva.unit.no/cristin/person/725996",
+              "type": "Identity"
+            },
+            {
+              "verificationStatus": "Verified",
+              "name": "Beate Sjåfjell",
+              "orcId": "https://orcid.org/0000-0002-5645-0225",
+              "id": "https://api.nva.unit.no/cristin/person/5056",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nb": "Universitetet i Oslo",
+            "en": "University of Oslo"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    },
+    {
+      "identifier": "019c17ecd2f1-ffcff41c-9ece-48e4-81ba-f924b57a913c",
+      "projects": [
+        {
+          "name": "Staying on Track - gjennomføring av videregående opplæring for elever på yrkesfag",
+          "id": "https://api.nva.unit.no/cristin/project/685343",
+          "type": "ResearchProject"
+        }
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "884669@215.0.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/215.0.0.0"
+      },
+      "type": "Publication",
+      "associatedArtifacts": [
+        {
+          "identifier": "edfb5691-a707-4b13-b09a-a133e2f34513",
+          "rightsRetentionStrategy": {
+            "configuredType": "OverridableRightsRetentionStrategy",
+            "type": "NullRightsRetentionStrategy"
+          },
+          "uploadDetails": {
+            "type": "UserUploadDetails",
+            "uploadedDate": "2026-05-06T12:40:44.315926875Z",
+            "uploadedBy": "884669@215.0.0.0"
+          },
+          "size": "127163",
+          "publisherVersion": "PublishedVersion",
+          "name": "Solberg_2026_We Go as Far as We Can Without Losing Sleep Over It.pdf",
+          "mimeType": "application/pdf",
+          "type": "PendingOpenFile"
+        }
+      ],
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-05-06T12:40:54.330236525Z",
+      "fundings": [
+        {
+          "source": {
+            "identifier": "EI",
+            "id": "https://api.nva.unit.no/cristin/funding-sources/EI",
+            "type": "FundingSource",
+            "labels": {
+              "nb": "Egen institusjon",
+              "en": "Own institution"
+            }
+          },
+          "type": "UnconfirmedFunding",
+          "labels": {
+            "nb": "Egen institusjon",
+            "en": "Own institution"
+          }
+        }
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "pages": {
+              "end": "46",
+              "type": "Range",
+              "begin": "32"
+            },
+            "type": "AcademicChapter"
+          },
+          "publicationContext": {
+            "entityDescription": {
+              "reference": {
+                "type": "Reference",
+                "publicationInstance": {
+                  "type": "BookAnthology"
+                },
+                "publicationContext": {
+                  "isbnList": [
+                    "9781003589938"
+                  ],
+                  "series": {
+                    "type": "UnconfirmedSeries"
+                  },
+                  "publisher": {
+                    "valid": "true",
+                    "identifier": "FAE3940D-29AB-45F5-9190-6242B3BB7596",
+                    "year": "2026",
+                    "name": "Routledge",
+                    "id": "https://api.nva.unit.no/publication-channels-v2/publisher/FAE3940D-29AB-45F5-9190-6242B3BB7596/2026",
+                    "type": "Publisher",
+                    "scientificValue": "LevelTwo",
+                    "isbnPrefix": "978-90-5702,978-90-265,978-1-907322,978-1-906540,978-1-874719,978-1-870905,978-1-85996,978-1-85941,978-1-84872,978-1-84407,978-1-84392,978-1-84169,978-1-58391,978-1-4128,978-1-4106,978-1-032,978-0-9627232,978-0-906348,978-0-902879,978-0-901286,978-0-88163,978-0-8247,978-0-8240,978-0-8133,978-0-7890,978-0-7146,978-0-419,978-0-4158,978-0-415,978-0-3673,978-0-367,978-0-340,978-0-291",
+                    "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/forlag?pid=FAE3940D-29AB-45F5-9190-6242B3BB7596"
+                  },
+                  "type": "Book"
+                }
+              },
+              "mainTitle": "A Nordic Perspective on Teacher Well-being in Educational Contexts",
+              "contributors": [
+                {
+                  "identity": {
+                    "name": "Minna Maunula",
+                    "type": "Identity"
+                  },
+                  "type": "Contributor"
+                },
+                {
+                  "identity": {
+                    "name": "Heidi Katarina Harju-Luukkainen",
+                    "id": "https://api.nva.unit.no/cristin/person/1048347",
+                    "type": "Identity"
+                  },
+                  "type": "Contributor"
+                },
+                {
+                  "identity": {
+                    "name": "Hege Knudsmoen",
+                    "id": "https://api.nva.unit.no/cristin/person/12755",
+                    "type": "Identity"
+                  },
+                  "type": "Contributor"
+                },
+                {
+                  "identity": {
+                    "name": "Ann-Cathrin Faldet",
+                    "id": "https://api.nva.unit.no/cristin/person/10680",
+                    "type": "Identity"
+                  },
+                  "type": "Contributor"
+                }
+              ],
+              "type": "EntityDescription",
+              "publicationDate": {
+                "month": "3",
+                "year": "2026",
+                "type": "PublicationDate",
+                "day": "13"
+              }
+            },
+            "id": "https://api.nva.unit.no/publication/019c17f4ce58-534f462f-b7ff-487a-83e9-365b77a0141f",
+            "type": "Anthology"
+          },
+          "doi": "https://doi.org/10.4324/9781003589938-4"
+        },
+        "contributorsCount": 2,
+        "metadataSource": "https://doi.org/10.4324/9781003589938-4",
+        "mainTitle": "'We Go as Far as We Can Without Losing Sleep Over It': Self-Care Among Vocational Teachers in Schools in Disadvantaged Areas",
+        "language": "http://lexvo.org/id/iso639-3/eng",
+        "abstract": "ABSTRACT\nIn the face of rising teacher attrition and burnout in the Nordic countries, it is essential to explore and implement strategies for teacher well-being and self-care to maintain a committed teacher workforce. This article explores self-care strategies employed by vocational teachers in schools located in disadvantaged areas of Oslo. These teachers navigate the tension between providing close support to a socially disadvantaged and vulnerable group of students while also taking care of their own well-being. The study was guided by the following research question: What strategies for self-care do vocational teachers in schools in disadvantaged areas use to maintain their own well-being? We draw on individual in-depth interviews with eight vocational teachers who, in the eyes of their students, succeed in building relationships with their students. The findings suggest that teachers utilise three main strategies: maintaining a sense of clarity in their role as teachers, sharing responsibilities and experiencing joy and pride in their work. The study highlights the importance of teachers’ self-reflection combined with social support. Additionally, it underscores the necessity of incorporating self-care into teacher education, emphasising that schools must actively promote teacher well-being through resources and supportive school cultures.",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "nameType": "Personal",
+              "verificationStatus": "Verified",
+              "name": "Stine Solberg",
+              "orcId": "https://orcid.org/0000-0002-4684-0684",
+              "id": "https://api.nva.unit.no/cristin/person/511877",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "type": "Contributor"
+          },
+          {
+            "sequence": "2",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "nameType": "Personal",
+              "verificationStatus": "Verified",
+              "name": "Evi Schmid",
+              "orcId": "https://orcid.org/0000-0003-0364-8390",
+              "id": "https://api.nva.unit.no/cristin/person/884669",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "nameType": "Personal",
+              "verificationStatus": "Verified",
+              "name": "Stine Solberg",
+              "orcId": "https://orcid.org/0000-0002-4684-0684",
+              "id": "https://api.nva.unit.no/cristin/person/511877",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "type": "Contributor"
+          },
+          {
+            "sequence": "2",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "nameType": "Personal",
+              "verificationStatus": "Verified",
+              "name": "Evi Schmid",
+              "orcId": "https://orcid.org/0000-0003-0364-8390",
+              "id": "https://api.nva.unit.no/cristin/person/884669",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "month": "3",
+          "year": "2026",
+          "type": "PublicationDate",
+          "day": "13"
+        },
+        "npiSubjectHeading": "1027"
+      },
+      "createdDate": "2026-02-01T06:38:42.417867322Z",
+      "publicationContextUris": [],
+      "childPublications": [],
+      "modifiedDate": "2026-05-06T12:40:53.199069497Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "nva@null",
+          "type": "CristinIdentifier",
+          "value": "10335861"
+        },
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/5359874"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/60f650d1-43ae-453c-ae1a-d131f0500487",
+        "type": "Organization"
+      },
+      "filesStatus": "noFiles",
+      "id": "https://api.nva.unit.no/publication/019c17ecd2f1-ffcff41c-9ece-48e4-81ba-f924b57a913c",
+      "pendingOpenFileCount": "1",
+      "publishedDate": "2026-02-01T06:53:21.737760568Z",
+      "scientificIndex": {
+
+      },
+      "status": "PUBLISHED"
+    },
+    {
+      "identifier": "0199b940a86a-735e7aac-c8c1-441f-a955-034464fd0049",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/185.14.9.0",
+        "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+        "https://api.nva.unit.no/cristin/organization/185.14.0.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "973010@185.90.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+      },
+      "type": "Publication",
+      "associatedArtifacts": [
+        {
+          "id": "https://www.taylorfrancis.com/chapters/edit/10.4324/9781003431862-7/moderated-war-ukraine-jessica-yarin-robinson",
+          "type": "AssociatedLink"
+        },
+        {
+          "identifier": "f6f15011-4184-492c-976b-e2d6466ce49e",
+          "license": {
+            "name": "COPYRIGHT-ACT",
+            "type": "License",
+            "value": "https://nva.sikt.no/license/copyright-act/1.0",
+            "labels": {
+              "nb": "Generelle bruksvilkår",
+              "en": "General Terms of Use"
+            }
+          },
+          "rightsRetentionStrategy": {
+            "configuredType": "OverridableRightsRetentionStrategy",
+            "type": "NullRightsRetentionStrategy"
+          },
+          "uploadDetails": {
+            "type": "UserUploadDetails",
+            "uploadedDate": "2026-05-04T11:10:02.959865361Z",
+            "uploadedBy": "973010@185.90.0.0"
+          },
+          "size": "1201946",
+          "publisherVersion": "AcceptedVersion",
+          "name": "Robinson_ModeratedWar_final manuscript.pdf",
+          "mimeType": "application/pdf",
+          "publishedDate": "2026-05-06T12:27:21.500659544Z",
+          "type": "OpenFile"
+        }
+      ],
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-05-06T12:27:23.447899162Z",
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "pages": {
+              "end": "97",
+              "type": "Range",
+              "begin": "76"
+            },
+            "type": "AcademicChapter"
+          },
+          "publicationContext": {
+            "entityDescription": {
+              "reference": {
+                "type": "Reference",
+                "publicationInstance": {
+                  "type": "BookAnthology"
+                },
+                "publicationContext": {
+                  "isbnList": [
+                    "9781003431862"
+                  ],
+                  "series": {
+                    "type": "UnconfirmedSeries"
+                  },
+                  "publisher": {
+                    "valid": "true",
+                    "identifier": "A1F493D9-66C5-42D8-8A8C-B68A43C29A39",
+                    "year": "2025",
+                    "name": "Taylor & Francis",
+                    "id": "https://api.nva.unit.no/publication-channels-v2/publisher/A1F493D9-66C5-42D8-8A8C-B68A43C29A39/2025",
+                    "type": "Publisher",
+                    "scientificValue": "LevelOne",
+                    "isbnPrefix": "978-0-415,978-0-203",
+                    "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/forlag?pid=A1F493D9-66C5-42D8-8A8C-B68A43C29A39"
+                  },
+                  "type": "Book",
+                  "revision": "Unrevised"
+                }
+              },
+              "mainTitle": "Media, Dissidence and the War in Ukraine | Tabe Bergman, Jesse Owen He",
+              "contributors": [
+                {
+                  "identity": {
+                    "name": "Tabe Bergman",
+                    "type": "Identity"
+                  },
+                  "type": "Contributor"
+                },
+                {
+                  "identity": {
+                    "id": "https://api.nva.unit.no/cristin/person/973010"
+                  },
+                  "type": "Contributor"
+                },
+                {
+                  "identity": {
+                    "name": "Jesse Owen Hearns-Branaman",
+                    "type": "Identity"
+                  },
+                  "type": "Contributor"
+                }
+              ],
+              "type": "EntityDescription",
+              "publicationDate": {
+                "year": "2025",
+                "type": "PublicationDate"
+              }
+            },
+            "id": "https://api.nva.unit.no/publication/0199b9381e35-31508ae3-4f74-4ad3-ac64-a42a0b48d87a",
+            "type": "Anthology"
+          },
+          "doi": "https://doi.org/10.4324/9781003431862-7"
+        },
+        "contributorsCount": 1,
+        "metadataSource": "https://www.taylorfrancis.com/chapters/edit/10.4324/9781003431862-7/moderated-war-ukraine-jessica-yarin-robinson",
+        "mainTitle": "The moderated war in Ukraine: Twitter, Elon Musk, and the role of private platforms in war coverage",
+        "language": "http://lexvo.org/id/iso639-3/eng",
+        "abstract": "This chapter investigates the impact of media ownership on the dissemination of war information, using the Russia-Ukraine conflict and Twitter as a case study. Bridging literatures on media ownership and war journalism, the chapter argues that social media platforms introduce a new paradigm of wartime censorship. Utilizing real-time data capture, tweets from the 1,000 most visible accounts during the conflict were analysed at three checkpoints surrounding Twitter’s change of ownership. Findings indicate that Elon Musk’s acquisition overall sustained pre-existing practices of account suspension among these influential accounts but also introduced nuanced shifts in content moderation, including unexpected means of content restriction discovered during data analysis. It is argued that these changes challenge traditional distinctions between editorial decision-making and censorship. The chapter extends existing frameworks of war and media by incorporating social media platforms as key influencers in war narratives and provides empirical insights into the effects of ownership change on war information.",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Jessica Yarin Robinson",
+              "id": "https://api.nva.unit.no/cristin/person/973010",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/185.14.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/185.14.9.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for medier og kommunikasjon",
+                  "en": "Department of Media and Communication"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Jessica Yarin Robinson",
+              "id": "https://api.nva.unit.no/cristin/person/973010",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/185.14.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/185.14.9.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for medier og kommunikasjon",
+                  "en": "Department of Media and Communication"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "year": "2025",
+          "type": "PublicationDate"
+        },
+        "npiSubjectHeading": "1016",
+        "tags": [
+          "Elon Musk",
+          "content moderation",
+          "Ukraine",
+          "war",
+          "ownership",
+          "Twitter",
+          "X",
+          "social media",
+          "politics"
+        ]
+      },
+      "createdDate": "2025-10-06T11:20:46.442651570Z",
+      "publicationContextUris": [],
+      "childPublications": [],
+      "modifiedDate": "2026-05-06T12:27:18.412545815Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/3218075"
+        },
+        {
+          "sourceName": "nva@null",
+          "type": "CristinIdentifier",
+          "value": "10267941"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/a4aaa430-c26a-43ba-bbdf-8d102f814559",
+        "type": "Organization"
+      },
+      "filesStatus": "hasPublicFiles",
+      "id": "https://api.nva.unit.no/publication/0199b940a86a-735e7aac-c8c1-441f-a955-034464fd0049",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2025-10-06T11:28:39.729284245Z",
+      "scientificIndex": {
+        "year": "2025",
+        "type": "ScientificIndex",
+        "status": "Reported"
+      },
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+                }
+              ],
+              "hasPart": [
+                {
+                  "partOf": [
+                    {
+                      "id": "https://api.nva.unit.no/cristin/organization/185.14.0.0"
+                    }
+                  ],
+                  "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+                  "countryCode": "NO",
+                  "id": "https://api.nva.unit.no/cristin/organization/185.14.9.0",
+                  "type": "Organization",
+                  "labels": {
+                    "nb": "Institutt for medier og kommunikasjon",
+                    "en": "Department of Media and Communication"
+                  }
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/185.14.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Det humanistiske fakultet",
+                "en": "Faculty of Humanities"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Jessica Yarin Robinson",
+              "id": "https://api.nva.unit.no/cristin/person/973010",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nb": "Universitetet i Oslo",
+            "en": "University of Oslo"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    },
+    {
+      "identifier": "019dfd354861-4d700e42-31e8-490b-91f0-4a1298107214",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/222.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/222.59.7.0",
+        "https://api.nva.unit.no/cristin/organization/5931.5.0.0",
+        "https://api.nva.unit.no/cristin/organization/222.59.0.0",
+        "https://api.nva.unit.no/cristin/organization/5931.0.0.0"
+      ],
+      "projects": [
+        {
+          "name": "Lokalhistoriekunnskap",
+          "id": "https://api.nva.unit.no/cristin/project/2767126",
+          "type": "ResearchProject"
+        }
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "15927@222.0.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/222.0.0.0"
+      },
+      "type": "Publication",
+      "associatedArtifacts": [
+        {
+          "id": "https://lokalhistoriewiki.no/wiki/Clara_Ambj%C3%B8rnsen_(1856-1920)",
+          "type": "AssociatedLink"
+        }
+      ],
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-05-06T12:19:59.571083568Z",
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/222.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/5931.0.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "pages": {
+              "type": "Range"
+            },
+            "type": "EncyclopediaChapter"
+          },
+          "publicationContext": {
+            "entityDescription": {
+              "reference": {
+                "type": "Reference",
+                "publicationInstance": {
+                  "type": "Encyclopedia"
+                },
+                "publicationContext": {
+                  "series": {
+                    "type": "UnconfirmedSeries"
+                  },
+                  "publisher": {
+                    "valid": "true",
+                    "identifier": "D76AD96E-7313-4917-92AF-DD2FAFBDF843",
+                    "year": "2026",
+                    "name": "Lokalhistorie",
+                    "id": "https://api.nva.unit.no/publication-channels-v2/publisher/D76AD96E-7313-4917-92AF-DD2FAFBDF843/2026",
+                    "type": "Publisher",
+                    "scientificValue": "Unassigned",
+                    "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/nvakanal?pid=D76AD96E-7313-4917-92AF-DD2FAFBDF843"
+                  },
+                  "type": "Book"
+                }
+              },
+              "mainTitle": "Lokalhistoriewiki.no",
+              "contributors": [
+                {
+                  "identity": {
+                    "name": "Norsk lokalhistorisk institutt",
+                    "type": "Identity"
+                  },
+                  "type": "Contributor"
+                }
+              ],
+              "type": "EntityDescription",
+              "publicationDate": {
+                "year": "2026",
+                "type": "PublicationDate"
+              }
+            },
+            "id": "https://api.nva.unit.no/publication/019dcdc381de-49544595-43d8-4a8d-ab27-27c56dd2b2c1",
+            "type": "Anthology"
+          }
+        },
+        "contributorsCount": 2,
+        "metadataSource": "https://lokalhistoriewiki.no/wiki/Clara_Ambj%C3%B8rnsen_(1856-1920)",
+        "mainTitle": "Clara Ambjørnsen (1856-1920) – lokalhistoriewiki.no",
+        "description": "\n",
+        "language": "http://lexvo.org/id/iso639-3/nob",
+        "abstract": "Clara Ambjørnsen ble født i Christiania 28. september 1856 og døde i samme by 15. januar 1920. Clara er kjent som dyktig lærerinne, ivrig fotograf og kunstmaler. Clara var datter av Kjøpmann Carl Ludvig Ambjørnsen (f.1827) og Hulda Christine Ambjørnsen (f. Fougner i 1839). Hun var søster av Lærerinde Anna Christina Christine Blixenkrone Fle Chrestene Jacobine Castberg Ambjørnsen (1854-1943), Anna Ambjørnsen (f.1854), Døvstummelærerinde Jacobine Marga Christine Menga Jakobine Ambjørnsen (f.1862), Hans Eduard Caspary Ambjørnsen (f.1863), Hulda Christine Ambjørnsen (f.1868), Jørgen Aarøe Ambjørnsen (f.1871) og Overrettssagfører Carl Aksel Ludvig Ambjørnsen Hagen Ambjörnsen (f.1878). Hun bodde sine første år i Josephinesgade 3 i Christiania og flyttet til Uranienborgveien 3 i samme by 1885. Hun bodde på denne siste adressen resten av sitt liv. Clara arbeidet som lærer hele sitt liv, var ivrig fotograf og dyktig maler. Den 6. november 1874 sendte Kjøpmand William Schmidt et registrert telegram til kurator for Clara Ambjørnsen. Det er dokumentasjon på hennes kunstneriske produksjon og gjelder trolig hennes malerier.\n\nHun arbeidet som lærer frem til september 1919. På hennes siste kjente timeplan fra september 1919, limt inn i lokket på hennes pennal, står det at hun i den måneden alene underviste i geografi, tabellregning, norsk stil, skriving, historie, salmeforklaring, naturhistorie, håndarbeid, regning, tysk, lesing, bibelhistorie, geografisk kartlegging, tegning og tysk stil. Hun gikk bort under fire måneder senere i januar 1920. Pennalet på bildet inneholder alt fra pennesplittholdere i bakelitt, pennesplitter (spiss og bred) grifler til bruk på skifertavle, blyanter, viskelær, voks, fargeblyanter, malerpensler og en lærerindefløyte til å kalle inn elevene fra friminutt. Det er tydelig at Clara Ambjørnsen var en måteholden dame som brukte sine skriveredskaper til de knapt kunne holdes.",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Kjartan Skogly Kversøy",
+              "orcId": "https://orcid.org/0000-0002-5315-0032",
+              "id": "https://api.nva.unit.no/cristin/person/15927",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/222.59.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/222.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/222.59.7.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for pedagogikk",
+                  "en": "Department of Educational Science"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "2",
+            "role": {
+              "type": "Editor"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Lokalhistoriewiki.no",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/5931.0.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/5931.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/5931.5.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Norsk lokalhistorisk institutt"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Kjartan Skogly Kversøy",
+              "orcId": "https://orcid.org/0000-0002-5315-0032",
+              "id": "https://api.nva.unit.no/cristin/person/15927",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/222.59.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/222.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/222.59.7.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for pedagogikk",
+                  "en": "Department of Educational Science"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "2",
+            "role": {
+              "type": "Editor"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Lokalhistoriewiki.no",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/5931.0.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/5931.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/5931.5.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Norsk lokalhistorisk institutt"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "month": "8",
+          "year": "2024",
+          "type": "PublicationDate",
+          "day": "14"
+        },
+        "tags": [
+          "pennal",
+          "pennesplittholder",
+          "Hulde Christine Ambjørnsen",
+          "Carl Ludvig Ambjørnsen",
+          "fargeblyanter",
+          "Clara Ambjørnsen",
+          "bakelitt",
+          "lærer"
+        ]
+      },
+      "createdDate": "2026-05-06T12:13:40.832990164Z",
+      "publicationContextUris": [],
+      "childPublications": [],
+      "modifiedDate": "2026-05-06T12:19:58.266594447Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/5514317"
+        },
+        {
+          "sourceName": "nva@null",
+          "type": "CristinIdentifier",
+          "value": "10438315"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/72a4dc34-ff98-4d66-a663-7f2eb005555b",
+        "type": "Organization"
+      },
+      "filesStatus": "noFiles",
+      "id": "https://api.nva.unit.no/publication/019dfd354861-4d700e42-31e8-490b-91f0-4a1298107214",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2026-05-06T12:19:30.587918786Z",
+      "scientificIndex": {
+
+      },
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/222.0.0.0"
+                }
+              ],
+              "hasPart": [
+                {
+                  "partOf": [
+                    {
+                      "id": "https://api.nva.unit.no/cristin/organization/222.59.0.0"
+                    }
+                  ],
+                  "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/222.0.0.0",
+                  "countryCode": "NO",
+                  "id": "https://api.nva.unit.no/cristin/organization/222.59.7.0",
+                  "type": "Organization",
+                  "labels": {
+                    "nb": "Institutt for pedagogikk",
+                    "en": "Department of Educational Science"
+                  }
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/222.59.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Fakultet for humaniora, idretts- og utdanningsvitenskap",
+                "en": "Faculty of Humanities, Sports and Educational Science"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/222.0.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Kjartan Skogly Kversøy",
+              "orcId": "https://orcid.org/0000-0002-5315-0032",
+              "id": "https://api.nva.unit.no/cristin/person/15927",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nn": "Universitetet i Søraust-Noreg",
+            "nb": "Universitetet i Sørøst-Norge",
+            "en": "University of South-Eastern Norway"
+          }
+        },
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/5931.0.0.0"
+                }
+              ],
+              "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/5931.0.0.0",
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/5931.5.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Norsk lokalhistorisk institutt"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/5931.0.0.0",
+          "type": "Organization",
+          "labels": {
+            "nb": "Nasjonalbiblioteket",
+            "en": "The National Library of Norway"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    },
+    {
+      "identifier": "0198cc7bcf71-3aef59f8-a72d-43df-9e94-00b3b7c4944c",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/186.26.22.0",
+        "https://api.nva.unit.no/cristin/organization/186.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/186.26.22.29",
+        "https://api.nva.unit.no/cristin/organization/186.10.0.0",
+        "https://api.nva.unit.no/cristin/organization/186.26.0.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "uito@186.0.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/186.0.0.0"
+      },
+      "handle": "https://hdl.handle.net/10037/36158",
+      "type": "Publication",
+      "associatedArtifacts": [
+        {
+          "identifier": "9f7e3a14-e923-49f2-9e7c-afcb8d9a1754",
+          "license": {
+            "name": "COPYRIGHT-ACT",
+            "type": "License",
+            "value": "https://nva.sikt.no/license/copyright-act/1.0",
+            "labels": {
+              "nb": "Generelle bruksvilkår",
+              "en": "General Terms of Use"
+            }
+          },
+          "rightsRetentionStrategy": {
+            "configuredType": "RightsRetentionStrategy",
+            "type": "NullRightsRetentionStrategy"
+          },
+          "uploadDetails": {
+            "type": "UserUploadDetails",
+            "uploadedDate": "2026-05-05T08:24:42.767494844Z",
+            "uploadedBy": "1263531@186.0.0.0"
+          },
+          "size": "30543562",
+          "publisherVersion": "PublishedVersion",
+          "name": "holokauszt80_beliv20241124PRINT_342oldal.pdf",
+          "mimeType": "application/pdf",
+          "publishedDate": "2026-05-06T12:11:17.908018198Z",
+          "type": "OpenFile"
+        },
+        {
+          "identifier": "586a71e2-261c-4519-8228-bac7ee22cb20",
+          "rightsRetentionStrategy": {
+            "configuredType": "Unknown",
+            "type": "NullRightsRetentionStrategy"
+          },
+          "uploadDetails": {
+            "archive": "UIT",
+            "type": "ImportUploadDetails",
+            "uploadedDate": "2025-08-29T04:03:44.338484638Z"
+          },
+          "size": "6284",
+          "name": "dublin_core.xml",
+          "mimeType": "application/xml",
+          "type": "HiddenFile"
+        },
+        {
+          "identifier": "579b3cd6-473c-46e9-90d1-99302b68f77e",
+          "license": {
+            "name": "COPYRIGHT-ACT",
+            "type": "License",
+            "value": "https://nva.sikt.no/license/copyright-act/1.0",
+            "labels": {
+              "nb": "Generelle bruksvilkår",
+              "en": "General Terms of Use"
+            }
+          },
+          "rightsRetentionStrategy": {
+            "configuredType": "RightsRetentionStrategy",
+            "type": "NullRightsRetentionStrategy"
+          },
+          "uploadDetails": {
+            "archive": "UIT",
+            "type": "ImportUploadDetails",
+            "uploadedDate": "2025-08-29T04:03:44.338416068Z"
+          },
+          "size": "460398",
+          "publisherVersion": "AcceptedVersion",
+          "name": "article.pdf",
+          "mimeType": "application/pdf",
+          "publishedDate": "2025-10-06T08:39:11.249546633Z",
+          "type": "OpenFile",
+          "legalNote": "Copyright 2024 The Author(s)"
+        }
+      ],
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-05-06T12:11:18.784443812Z",
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/186.0.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "pages": {
+              "end": "336",
+              "type": "Range",
+              "begin": "309"
+            },
+            "type": "AcademicChapter"
+          },
+          "publicationContext": {
+            "entityDescription": {
+              "reference": {
+                "type": "Reference",
+                "publicationInstance": {
+                  "type": "BookAnthology"
+                },
+                "publicationContext": {
+                  "isbnList": [
+                    "9786155494154"
+                  ],
+                  "publisher": {
+                    "valid": "true",
+                    "name": "Országos Rabbiképző - Zsidó Egyetem",
+                    "type": "UnconfirmedPublisher"
+                  },
+                  "type": "Book",
+                  "revision": "Unrevised"
+                }
+              },
+              "mainTitle": "A holokauszt Magyarországon nyolcvan év múltán. Új kutatási irányok",
+              "contributors": [
+                {
+                  "identity": {
+                    "name": "Borbála Klacsmann",
+                    "type": "Identity"
+                  },
+                  "type": "Contributor"
+                },
+                {
+                  "identity": {
+                    "name": "Dóra Pataricza",
+                    "type": "Identity"
+                  },
+                  "type": "Contributor"
+                },
+                {
+                  "identity": {
+                    "name": "Péter Buchmüller",
+                    "type": "Identity"
+                  },
+                  "type": "Contributor"
+                }
+              ],
+              "type": "EntityDescription",
+              "publicationDate": {
+                "year": "2024",
+                "type": "PublicationDate"
+              }
+            },
+            "id": "https://api.nva.unit.no/publication/0198cc7bf576-83c15aed-1e9d-4f6a-875c-8aa433b54aae",
+            "type": "Anthology"
+          },
+          "doi": "https://or-zse.hu/wp-content/uploads/2026/02/Holokauszt80_13_BohusK.pdf"
+        },
+        "contributorsCount": 1,
+        "mainTitle": "Hétköznapi hősiesség, antifasiszta harc, kollektív embermentés - Raoul Wallenberg budapesti alkalmazottai korai emlékezetében",
+        "language": "http://lexvo.org/id/iso639-3/hun",
+        "abstract": "Everyday heroism, antifascist struggle, collective rescue: Raoul Wallenberg in the early memory of his Budapest employees",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Kata Bohus",
+              "id": "https://api.nva.unit.no/cristin/person/1263531",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/186.26.22.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/186.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/186.26.22.29",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Seksjon for forskning og innovasjon"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Kata Bohus",
+              "id": "https://api.nva.unit.no/cristin/person/1263531",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/186.26.22.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/186.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/186.26.22.29",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Seksjon for forskning og innovasjon"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "year": "2024",
+          "type": "PublicationDate"
+        },
+        "npiSubjectHeading": "1168"
+      },
+      "createdDate": "2025-08-21T11:55:22.865236731Z",
+      "publicationContextUris": [],
+      "childPublications": [],
+      "modifiedDate": "2026-05-06T12:10:59.085212765Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "brage@uit",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/10037/36158"
+        },
+        {
+          "sourceName": "cristin@uito",
+          "type": "CristinIdentifier",
+          "value": "2331744"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/22139870-8d31-4df9-bc45-14eb68287c4a",
+        "type": "Organization"
+      },
+      "filesStatus": "hasPublicFiles",
+      "id": "https://api.nva.unit.no/publication/0198cc7bcf71-3aef59f8-a72d-43df-9e94-00b3b7c4944c",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2025-08-21T11:55:22.865236731Z",
+      "scientificIndex": {
+
+      },
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/186.0.0.0"
+                }
+              ],
+              "hasPart": [
+                {
+                  "partOf": [
+                    {
+                      "id": "https://api.nva.unit.no/cristin/organization/186.10.0.0"
+                    }
+                  ],
+                  "hasPart": [
+                    {
+                      "partOf": [
+                        {
+                          "id": "https://api.nva.unit.no/cristin/organization/186.26.0.0"
+                        }
+                      ],
+                      "hasPart": [
+                        {
+                          "partOf": [
+                            {
+                              "id": "https://api.nva.unit.no/cristin/organization/186.26.22.0"
+                            }
+                          ],
+                          "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/186.0.0.0",
+                          "countryCode": "NO",
+                          "id": "https://api.nva.unit.no/cristin/organization/186.26.22.29",
+                          "type": "Organization",
+                          "labels": {
+                            "nb": "Seksjon for forskning og innovasjon"
+                          }
+                        }
+                      ],
+                      "countryCode": "NO",
+                      "id": "https://api.nva.unit.no/cristin/organization/186.26.22.0",
+                      "type": "Organization",
+                      "labels": {
+                        "nb": "Avdeling for forskning, utdanning og formidling",
+                        "en": "Research, Education and Communication Division"
+                      }
+                    }
+                  ],
+                  "countryCode": "NO",
+                  "id": "https://api.nva.unit.no/cristin/organization/186.26.0.0",
+                  "type": "Organization",
+                  "labels": {
+                    "nb": "Fellesadministrasjonen",
+                    "en": "University Academic Services"
+                  }
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/186.10.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Universitetet i Tromsø - Norges arktiske universitet"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/186.0.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Kata Bohus",
+              "id": "https://api.nva.unit.no/cristin/person/1263531",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nb": "Universitetet i Tromsø - Norges arktiske universitet",
+            "en": "UiT The Arctic University of Norway"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    },
+    {
+      "identifier": "019dfd1ddae3-d9913a4b-d6d7-4467-9537-c32b46507866",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/201.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/201.18.0.0",
+        "https://api.nva.unit.no/cristin/organization/201.18.8.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "635644@201.0.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/201.0.0.0"
+      },
+      "type": "Publication",
+      "associatedArtifacts": [
+        {
+          "type": "NullAssociatedArtifact"
+        }
+      ],
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-05-06T11:54:30.734609453Z",
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/201.0.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "pages": {
+              "end": "336",
+              "type": "Range",
+              "begin": "325"
+            },
+            "type": "NonFictionChapter"
+          },
+          "publicationContext": {
+            "entityDescription": {
+              "reference": {
+                "type": "Reference",
+                "publicationInstance": {
+                  "type": "NonFictionMonograph"
+                },
+                "publicationContext": {
+                  "isbnList": [
+                    "9788245036770"
+                  ],
+                  "series": {
+                    "type": "UnconfirmedSeries"
+                  },
+                  "publisher": {
+                    "valid": "true",
+                    "identifier": "D0CC505A-1A53-4AA1-B6C9-D886FE2E6351",
+                    "year": "2024",
+                    "name": "Fagbokforlaget",
+                    "id": "https://api.nva.unit.no/publication-channels-v2/publisher/D0CC505A-1A53-4AA1-B6C9-D886FE2E6351/2024",
+                    "type": "Publisher",
+                    "scientificValue": "LevelOne",
+                    "isbnPrefix": "978-82-450",
+                    "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/forlag?pid=D0CC505A-1A53-4AA1-B6C9-D886FE2E6351"
+                  },
+                  "type": "Book"
+                }
+              },
+              "mainTitle": "Håndbok i foreldreveiledning - Fagbokforlaget.no",
+              "contributors": [
+                {
+                  "identity": {
+                    "name": "Øyvind Kvello",
+                    "id": "https://api.nva.unit.no/cristin/person/41453",
+                    "type": "Identity"
+                  },
+                  "type": "Contributor"
+                },
+                {
+                  "identity": {
+                    "name": "Lennart Lorås",
+                    "id": "https://api.nva.unit.no/cristin/person/742741",
+                    "type": "Identity"
+                  },
+                  "type": "Contributor"
+                }
+              ],
+              "type": "EntityDescription",
+              "publicationDate": {
+                "year": "2024",
+                "type": "PublicationDate"
+              }
+            },
+            "id": "https://api.nva.unit.no/publication/019349ad3bc2-142f7be1-68a2-42da-92fe-446172be99cb",
+            "type": "Anthology"
+          }
+        },
+        "contributorsCount": 2,
+        "mainTitle": "Traumebevisst omsorg for fosterforeldre (TBO-F)",
+        "language": "http://lexvo.org/id/iso639-3/nob",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Torstein Garcia de Presno",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "type": "Contributor"
+          },
+          {
+            "sequence": "2",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Heine Steinkopf",
+              "orcId": "https://orcid.org/0000-0002-3329-3204",
+              "id": "https://api.nva.unit.no/cristin/person/635644",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/201.18.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/201.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/201.18.8.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for psykologi",
+                  "en": "Department of psychology"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Torstein Garcia de Presno",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "type": "Contributor"
+          },
+          {
+            "sequence": "2",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Heine Steinkopf",
+              "orcId": "https://orcid.org/0000-0002-3329-3204",
+              "id": "https://api.nva.unit.no/cristin/person/635644",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/201.18.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/201.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/201.18.8.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for psykologi",
+                  "en": "Department of psychology"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "year": "2024",
+          "type": "PublicationDate"
+        }
+      },
+      "createdDate": "2026-05-06T11:48:05.475920699Z",
+      "publicationContextUris": [],
+      "childPublications": [],
+      "modifiedDate": "2026-05-06T11:54:29.777758396Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/5514302"
+        },
+        {
+          "sourceName": "nva@null",
+          "type": "CristinIdentifier",
+          "value": "10438300"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/c6444456-672e-47eb-b823-7e24cf5d28a8",
+        "type": "Organization"
+      },
+      "filesStatus": "noFiles",
+      "id": "https://api.nva.unit.no/publication/019dfd1ddae3-d9913a4b-d6d7-4467-9537-c32b46507866",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2026-05-06T11:54:28.979999373Z",
+      "scientificIndex": {
+
+      },
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/201.0.0.0"
+                }
+              ],
+              "hasPart": [
+                {
+                  "partOf": [
+                    {
+                      "id": "https://api.nva.unit.no/cristin/organization/201.18.0.0"
+                    }
+                  ],
+                  "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/201.0.0.0",
+                  "countryCode": "NO",
+                  "id": "https://api.nva.unit.no/cristin/organization/201.18.8.0",
+                  "type": "Organization",
+                  "labels": {
+                    "nb": "Institutt for psykologi",
+                    "en": "Department of psychology"
+                  }
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/201.18.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Fakultet for helse- og idrettsvitenskap",
+                "en": "Faculty of Health and Sport Sciences"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/201.0.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Heine Steinkopf",
+              "orcId": "https://orcid.org/0000-0002-3329-3204",
+              "id": "https://api.nva.unit.no/cristin/person/635644",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nb": "Universitetet i Agder",
+            "en": "University of Agder"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    },
+    {
+      "identifier": "0198cc6e9406-12e65d5f-9141-4790-a1fa-96f6861c3071",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/186.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/186.10.0.0",
+        "https://api.nva.unit.no/cristin/organization/186.41.0.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "uito@186.0.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/186.0.0.0"
+      },
+      "type": "Publication",
+      "associatedArtifacts": [
+        {
+          "identifier": "038e6b13-0f02-41fa-8684-7ee0a43634c7",
+          "license": {
+            "name": "CC-BY",
+            "type": "License",
+            "value": "https://creativecommons.org/licenses/by/4.0/",
+            "labels": {
+              "nb": "Creative Commons - Navngivelse",
+              "en": "Creative Commons - Attribution"
+            }
+          },
+          "rightsRetentionStrategy": {
+            "configuredType": "RightsRetentionStrategy",
+            "type": "NullRightsRetentionStrategy"
+          },
+          "uploadDetails": {
+            "type": "UserUploadDetails",
+            "uploadedDate": "2026-05-05T17:52:33.750003659Z",
+            "uploadedBy": "56142@186.0.0.0"
+          },
+          "size": "849388",
+          "publisherVersion": "AcceptedVersion",
+          "name": "Čehporis - Tore Hunds reinskinnskrage 2024 D Storm.pdf",
+          "mimeType": "application/pdf",
+          "publishedDate": "2026-05-06T11:51:42.641962016Z",
+          "type": "OpenFile"
+        }
+      ],
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-05-06T11:51:43.571425887Z",
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/186.0.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "pages": {
+              "end": "77",
+              "type": "Range",
+              "begin": "53"
+            },
+            "type": "PopularScienceChapter"
+          },
+          "publicationContext": {
+            "entityDescription": {
+              "reference": {
+                "type": "Reference",
+                "publicationInstance": {
+                  "type": "BookAnthology"
+                },
+                "publicationContext": {
+                  "isbnList": [
+                    "9788269398601"
+                  ],
+                  "publisher": {
+                    "valid": "true",
+                    "name": "Várdobáiki samisk senter, Evenskjer",
+                    "type": "UnconfirmedPublisher"
+                  },
+                  "type": "Book",
+                  "revision": "Revised"
+                }
+              },
+              "mainTitle": "Oainnus Nr. 5 Čeporis maste lea fápmu. Árra gáskaáigi duojit ja máhttaárbevierut. En Čeporis med makt. Duodji og samiske kunnskapstradisjoner i tidlig middelalder.",
+              "contributors": [
+                {
+                  "identity": {
+                    "name": "Janicken Elisabeth Olsen",
+                    "id": "https://api.nva.unit.no/cristin/person/57317",
+                    "type": "Identity"
+                  },
+                  "type": "Contributor"
+                },
+                {
+                  "identity": {
+                    "name": "Tone Elvebakk",
+                    "type": "Identity"
+                  },
+                  "type": "Contributor"
+                }
+              ],
+              "type": "EntityDescription",
+              "publicationDate": {
+                "year": "2025",
+                "type": "PublicationDate"
+              }
+            },
+            "id": "https://api.nva.unit.no/publication/0198cc51ac0b-d56e7b5c-9eb4-428b-a242-982afa014eff",
+            "type": "Anthology"
+          },
+          "doi": "https://www.vardobaiki.no/nettbutikk/produkt/oainnus-cehporis-lea-fapmu-arra-gaskaaiggi-duojit-ja-mahttoarbevierut-en-cehporis-med-makt-duodji-og-samiske-kunnskapstradisjoner-i-tidlig-middelalder/"
+        },
+        "contributorsCount": 1,
+        "mainTitle": "Čehporis - Tore Hunds reinskinnskrage - Endring i religiøst perspektiv - Religiøs situasjon, duodji og kilder",
+        "language": "http://lexvo.org/id/iso639-3/nob",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Dikka Storm",
+              "id": "https://api.nva.unit.no/cristin/person/56142",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/186.10.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/186.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/186.41.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Norges arktiske universitetsmuseum og akademi for kunstfag",
+                  "en": "The Arctic University Museum of Norway and Academy of Fine Arts"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Dikka Storm",
+              "id": "https://api.nva.unit.no/cristin/person/56142",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/186.10.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/186.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/186.41.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Norges arktiske universitetsmuseum og akademi for kunstfag",
+                  "en": "The Arctic University Museum of Norway and Academy of Fine Arts"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "year": "2025",
+          "type": "PublicationDate"
+        },
+        "npiSubjectHeading": "1026",
+        "tags": [
+          "Sami cultural and social science",
+          "Reinskinnskrage",
+          "Čehporis",
+          "Samisk kultur og samfunnsfag",
+          "Collar of reindeerskin"
+        ]
+      },
+      "createdDate": "2025-08-21T11:40:55.686452508Z",
+      "publicationContextUris": [],
+      "childPublications": [],
+      "modifiedDate": "2026-05-06T11:51:37.191812554Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/4855976"
+        },
+        {
+          "sourceName": "cristin@uito",
+          "type": "CristinIdentifier",
+          "value": "2378332"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/22139870-8d31-4df9-bc45-14eb68287c4a",
+        "type": "Organization"
+      },
+      "filesStatus": "hasPublicFiles",
+      "id": "https://api.nva.unit.no/publication/0198cc6e9406-12e65d5f-9141-4790-a1fa-96f6861c3071",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2025-08-21T11:40:55.686452508Z",
+      "scientificIndex": {
+
+      },
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/186.0.0.0"
+                }
+              ],
+              "hasPart": [
+                {
+                  "partOf": [
+                    {
+                      "id": "https://api.nva.unit.no/cristin/organization/186.10.0.0"
+                    }
+                  ],
+                  "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/186.0.0.0",
+                  "countryCode": "NO",
+                  "id": "https://api.nva.unit.no/cristin/organization/186.41.0.0",
+                  "type": "Organization",
+                  "labels": {
+                    "nb": "Norges arktiske universitetsmuseum og akademi for kunstfag",
+                    "en": "The Arctic University Museum of Norway and Academy of Fine Arts"
+                  }
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/186.10.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Universitetet i Tromsø - Norges arktiske universitet"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/186.0.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Dikka Storm",
+              "id": "https://api.nva.unit.no/cristin/person/56142",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nb": "Universitetet i Tromsø - Norges arktiske universitet",
+            "en": "UiT The Arctic University of Norway"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    },
+    {
+      "identifier": "019b98713770-0c1121ae-749e-4ab3-9618-2b61deeee974",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/194.63.0.0",
+        "https://api.nva.unit.no/cristin/organization/13700074.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/194.63.15.0",
+        "https://api.nva.unit.no/cristin/organization/13707408.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/194.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/11700556.0.0.0"
+      ],
+      "projects": [
+        {
+          "name": "Fourier Methods and Multiplicative Analysis",
+          "id": "https://api.nva.unit.no/cristin/project/2754215",
+          "type": "ResearchProject"
+        }
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "12080@194.0.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/194.0.0.0"
+      },
+      "type": "Publication",
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-05-06T11:38:30.674599045Z",
+      "fundings": [
+        {
+          "identifier": "334466",
+          "source": {
+            "identifier": "NFR",
+            "id": "https://api.nva.unit.no/cristin/funding-sources/NFR",
+            "type": "FundingSource",
+            "labels": {
+              "nb": "Norges forskningsråd",
+              "en": "Research Council of Norway (RCN)"
+            }
+          },
+          "type": "UnconfirmedFunding",
+          "labels": {
+            "nb": "Norges forskningsråd",
+            "en": "Research Council of Norway (RCN)"
+          }
+        }
+      ],
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/194.0.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "pages": {
+              "end": "78",
+              "type": "Range",
+              "begin": "77"
+            },
+            "type": "AcademicChapter"
+          },
+          "publicationContext": {
+            "entityDescription": {
+              "reference": {
+                "type": "Reference",
+                "publicationInstance": {
+                  "type": "BookAnthology"
+                },
+                "publicationContext": {
+                  "isbnList": [
+                    "9783031955518"
+                  ],
+                  "series": {
+                    "type": "UnconfirmedSeries"
+                  },
+                  "publisher": {
+                    "valid": "true",
+                    "identifier": "AD8FEF33-C155-4915-A7BF-A1BE33DDAC4D",
+                    "year": "2026",
+                    "name": "Springer",
+                    "id": "https://api.nva.unit.no/publication-channels-v2/publisher/AD8FEF33-C155-4915-A7BF-A1BE33DDAC4D/2026",
+                    "type": "Publisher",
+                    "scientificValue": "LevelOne",
+                    "isbnPrefix": "978-94-007,978-3-64236,978-3-319,978-1-85233,978-1-4471,978-1-4419,978-0-7923,978-0-387",
+                    "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/forlag?pid=AD8FEF33-C155-4915-A7BF-A1BE33DDAC4D"
+                  },
+                  "type": "Book"
+                }
+              },
+              "mainTitle": "Recent Advances in Approximation and Potential Theory",
+              "contributors": [
+                {
+                  "identity": {
+                    "name": "Dmitriy Bilyk",
+                    "type": "Identity"
+                  },
+                  "type": "Contributor"
+                },
+                {
+                  "identity": {
+                    "name": "Emil Iacob",
+                    "type": "Identity"
+                  },
+                  "type": "Contributor"
+                },
+                {
+                  "identity": {
+                    "name": " Andrei Martinez-Finkelshtein",
+                    "type": "Identity"
+                  },
+                  "type": "Contributor"
+                },
+                {
+                  "identity": {
+                    "name": "Alexander M. Stokolos",
+                    "type": "Identity"
+                  },
+                  "type": "Contributor"
+                }
+              ],
+              "type": "EntityDescription",
+              "publicationDate": {
+                "year": "2026",
+                "type": "PublicationDate"
+              }
+            },
+            "id": "https://api.nva.unit.no/publication/019dfd0f057c-22a24327-d875-47b3-8165-ef3c5bac57b5",
+            "type": "Anthology"
+          },
+          "doi": "https://doi.org/10.1007/978-3-031-95551-8_4"
+        },
+        "contributorsCount": 4,
+        "metadataSource": "https://link.springer.com/book/10.1007/978-3-031-95551-8",
+        "mainTitle": "The Hörmander--Bernhardsson Extremal Function: A Preliminary Study",
+        "language": "http://lexvo.org/id/iso639-3/eng",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Andrii Bondarenko",
+              "id": "https://api.nva.unit.no/cristin/person/645048",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/194.63.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/194.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/194.63.15.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for matematiske fag",
+                  "en": "Department of Mathematical Sciences"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "2",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Joaquim Ortega-Cerdà",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "institutionId": "https://api.nva.unit.no/cristin/organization/13707408.0.0.0",
+                "countryCode": "ES",
+                "id": "https://api.nva.unit.no/cristin/organization/13707408.0.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Centre de Recerca Matemàtica"
+                }
+              },
+              {
+                "institutionId": "https://api.nva.unit.no/cristin/organization/13700074.0.0.0",
+                "countryCode": "ES",
+                "id": "https://api.nva.unit.no/cristin/organization/13700074.0.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Universitat de Barcelona",
+                  "en": "University of Barcelona"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "3",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Danylo Radchenko",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "institutionId": "https://api.nva.unit.no/cristin/organization/11700556.0.0.0",
+                "countryCode": "FR",
+                "id": "https://api.nva.unit.no/cristin/organization/11700556.0.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Université de Lille",
+                  "en": "University of Lille"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "4",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Kristian Seip",
+              "id": "https://api.nva.unit.no/cristin/person/12080",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/194.63.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/194.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/194.63.15.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for matematiske fag",
+                  "en": "Department of Mathematical Sciences"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Andrii Bondarenko",
+              "id": "https://api.nva.unit.no/cristin/person/645048",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/194.63.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/194.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/194.63.15.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for matematiske fag",
+                  "en": "Department of Mathematical Sciences"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "2",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Joaquim Ortega-Cerdà",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "institutionId": "https://api.nva.unit.no/cristin/organization/13707408.0.0.0",
+                "countryCode": "ES",
+                "id": "https://api.nva.unit.no/cristin/organization/13707408.0.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Centre de Recerca Matemàtica"
+                }
+              },
+              {
+                "institutionId": "https://api.nva.unit.no/cristin/organization/13700074.0.0.0",
+                "countryCode": "ES",
+                "id": "https://api.nva.unit.no/cristin/organization/13700074.0.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Universitat de Barcelona",
+                  "en": "University of Barcelona"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "3",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Danylo Radchenko",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "institutionId": "https://api.nva.unit.no/cristin/organization/11700556.0.0.0",
+                "countryCode": "FR",
+                "id": "https://api.nva.unit.no/cristin/organization/11700556.0.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Université de Lille",
+                  "en": "University of Lille"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "4",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Kristian Seip",
+              "id": "https://api.nva.unit.no/cristin/person/12080",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/194.63.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/194.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/194.63.15.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for matematiske fag",
+                  "en": "Department of Mathematical Sciences"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "year": "2026",
+          "type": "PublicationDate"
+        },
+        "npiSubjectHeading": "1041"
+      },
+      "createdDate": "2026-01-07T12:31:55.248681321Z",
+      "publicationContextUris": [],
+      "childPublications": [],
+      "modifiedDate": "2026-05-06T11:38:29.341172691Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "nva@null",
+          "type": "CristinIdentifier",
+          "value": "10309852"
+        },
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/5339432"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/7509c2b8-dcaf-463e-a041-88dd89435f59",
+        "type": "Organization"
+      },
+      "filesStatus": "noFiles",
+      "id": "https://api.nva.unit.no/publication/019b98713770-0c1121ae-749e-4ab3-9618-2b61deeee974",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2026-01-07T12:53:48.852936030Z",
+      "scientificIndex": {
+
+      },
+      "topLevelOrganizations": [
+        {
+          "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/13707408.0.0.0",
+          "countryCode": "ES",
+          "id": "https://api.nva.unit.no/cristin/organization/13707408.0.0.0",
+          "type": "Organization",
+          "labels": {
+            "nb": "Centre de Recerca Matemàtica"
+          }
+        },
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/194.0.0.0"
+                }
+              ],
+              "hasPart": [
+                {
+                  "partOf": [
+                    {
+                      "id": "https://api.nva.unit.no/cristin/organization/194.63.0.0"
+                    }
+                  ],
+                  "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/194.0.0.0",
+                  "countryCode": "NO",
+                  "id": "https://api.nva.unit.no/cristin/organization/194.63.15.0",
+                  "type": "Organization",
+                  "labels": {
+                    "nb": "Institutt for matematiske fag",
+                    "en": "Department of Mathematical Sciences"
+                  }
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/194.63.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Fakultet for informasjonsteknologi og elektroteknikk",
+                "en": "Faculty of Information Technology and Electrical Engineering"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/194.0.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Andrii Bondarenko",
+              "id": "https://api.nva.unit.no/cristin/person/645048",
+              "type": "Identity"
+            },
+            {
+              "verificationStatus": "Verified",
+              "name": "Kristian Seip",
+              "id": "https://api.nva.unit.no/cristin/person/12080",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nn": "Noregs teknisk-naturvitskaplege universitet",
+            "nb": "Norges teknisk-naturvitenskapelige universitet",
+            "en": "Norwegian University of Science and Technology"
+          }
+        },
+        {
+          "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/11700556.0.0.0",
+          "countryCode": "FR",
+          "id": "https://api.nva.unit.no/cristin/organization/11700556.0.0.0",
+          "type": "Organization",
+          "labels": {
+            "nb": "Université de Lille",
+            "en": "University of Lille"
+          }
+        },
+        {
+          "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/13700074.0.0.0",
+          "countryCode": "ES",
+          "id": "https://api.nva.unit.no/cristin/organization/13700074.0.0.0",
+          "type": "Organization",
+          "labels": {
+            "nb": "Universitat de Barcelona",
+            "en": "University of Barcelona"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    }
+  ],
+  "nextResults": "https://api.nva.unit.no/search/resources?searchAll=anthology&aggregation=none&size=10&sort=modifiedDate%3Adesc%2Cidentifier&from=10",
+  "nextSearchAfterResults": "https://api.nva.unit.no/search/resources?searchAll=anthology&aggregation=none&size=10&sort=modifiedDate%3Adesc%2Cidentifier&search_after=1778067509341%2C019b98713770-0c1121ae-749e-4ab3-9618-2b61deeee974",
+  "@context": "https://bibsysdev.github.io/src/search/paginated-search-result.json"
+}

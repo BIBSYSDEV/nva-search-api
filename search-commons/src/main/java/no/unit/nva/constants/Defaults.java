@@ -28,8 +28,14 @@ public final class Defaults {
   public static final URI PAGINATED_SEARCH_RESULT_CONTEXT =
       URI.create("https://bibsysdev.github.io/src/search/paginated-search-result.json");
 
+  public static final MediaType BIBTEX_UTF_8 = MediaType.parse("text/x-bibtex; charset=utf-8");
+
   public static final List<MediaType> DEFAULT_RESPONSE_MEDIA_TYPES =
       List.of(MediaType.JSON_UTF_8, MediaTypes.APPLICATION_JSON_LD, MediaType.CSV_UTF_8);
+
+  public static final List<MediaType> RESOURCE_RESPONSE_MEDIA_TYPES =
+      List.of(
+          MediaType.JSON_UTF_8, MediaTypes.APPLICATION_JSON_LD, MediaType.CSV_UTF_8, BIBTEX_UTF_8);
 
   public static final int ZERO_RESULTS_AGGREGATION_ONLY = 0;
   public static final String DEFAULT_SHARD_ID = "0";

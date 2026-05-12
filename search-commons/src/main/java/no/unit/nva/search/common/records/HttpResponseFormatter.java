@@ -1,6 +1,7 @@
 package no.unit.nva.search.common.records;
 
 import static java.util.Objects.nonNull;
+import static no.unit.nva.constants.Defaults.BIBTEX_UTF_8;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.search.common.constant.Functions.hasContent;
 import static nva.commons.apigateway.MediaType.CSV_UTF_8;
@@ -16,6 +17,7 @@ import java.util.stream.Stream;
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.AggregationFormat;
 import no.unit.nva.search.common.QueryKeys;
+import no.unit.nva.search.common.bibtex.ResourceBibTexTransformer;
 import no.unit.nva.search.common.csv.ResourceCsvTransformer;
 import no.unit.nva.search.common.enums.ParameterKey;
 import nva.commons.apigateway.MediaType;
@@ -106,6 +108,10 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
     return ResourceCsvTransformer.transform(response.getSearchHits());
   }
 
+  public String toBibTexText() {
+    return ResourceBibTexTransformer.transform(response.getSearchHits());
+  }
+
   private Map<String, String> getRequestParameter() {
     return queryKeys.asMap();
   }
@@ -126,6 +132,12 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
 
   @Override
   public String toString() {
-    return CSV_UTF_8.matches(this.mediaType) ? toCsvText() : toPagedResponse().toJsonString();
+    if (CSV_UTF_8.matches(this.mediaType)) {
+      return toCsvText();
+    }
+    if (BIBTEX_UTF_8.matches(this.mediaType)) {
+      return toBibTexText();
+    }
+    return toPagedResponse().toJsonString();
   }
 }
