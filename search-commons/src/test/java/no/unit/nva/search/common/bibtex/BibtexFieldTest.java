@@ -142,15 +142,15 @@ class BibtexFieldTest {
   }
 
   @ParameterizedTest(name = "{0}")
-  @MethodSource("specialCharsInLatexValues")
-  void shouldEscapeSpecialCharEvenWhenValueContainsLatex(String value, String specialChar) {
+  @MethodSource("specialCharsInMathValues")
+  void shouldEscapeSpecialCharEvenWhenValueContainsMath(String value, String specialChar) {
     var output = new BibtexField("title", value).toString();
     assertFalse(
         output.replace("\\" + specialChar, "").contains(specialChar),
         "expected '%s' to be escaped in: %s".formatted(specialChar, value));
   }
 
-  static Stream<Arguments> specialCharsInLatexValues() {
+  static Stream<Arguments> specialCharsInMathValues() {
     return Stream.of(
         Arguments.of(
             Named.of(
@@ -168,6 +168,41 @@ class BibtexFieldTest {
                 "unescaped hash is BibTeX's string concatenation operator and breaks downstream"
                     + " tooling",
                 "Section #3 of \\(\\sqrt{s}\\)"),
+            "#"),
+        Arguments.of(
+            Named.of(
+                "percent outside MathML element must still be escaped",
+                "100% off <math><mi>x</mi></math>"),
+            "%"),
+        Arguments.of(
+            Named.of(
+                "ampersand outside MathML element must still be escaped",
+                "R&D notes <math><msup><mi>E</mi><mn>2</mn></msup></math>"),
+            "&"),
+        Arguments.of(
+            Named.of(
+                "hash outside MathML element with xmlns attribute must still be escaped",
+                "Section #3 <math xmlns='http://www.w3.org/1998/Math/MathML'><mi>y</mi></math>"),
             "#"));
+  }
+
+  @Test
+  void shouldEscapeStrayBraceWhenValueContainsMathML() {
+    var value = "Unmatched {brace next to <math><mi>x</mi></math>";
+    var output = new BibtexField("title", value).toString();
+    var stripped = output.replace("\\{", "").replace("\\}", "");
+    var opens = stripped.chars().filter(character -> character == '{').count();
+    var closes = stripped.chars().filter(character -> character == '}').count();
+    assertEquals(opens, closes, "unbalanced braces will break BibTeX parsing of the entry");
+  }
+
+  @Test
+  void preservesMathMLElementVerbatimWhenSurroundedByEscapableText() {
+    var mathMl = "<math><msup><mi>E</mi><mn>2</mn></msup></math>";
+    var value = "100% off & #1 special " + mathMl + " trailing & text";
+    var output = new BibtexField("title", value).toString();
+    assertTrue(
+        output.contains(mathMl),
+        "MathML element must be preserved verbatim, got: %s".formatted(output));
   }
 }
