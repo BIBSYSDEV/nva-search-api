@@ -205,4 +205,14 @@ class BibtexFieldTest {
         output.contains(mathMl),
         "MathML element must be preserved verbatim, got: %s".formatted(output));
   }
+
+  @Test
+  void preservesMathMLElementVerbatimWhenAttributeContainsEscapableChar() {
+    var mathMl = "<math style=\"font-size:120%\"><mi>x</mi></math>";
+    var output = new BibtexField("title", mathMl).toString();
+    assertTrue(
+        output.contains(mathMl),
+        "MathML element with %% in attribute must be preserved verbatim, got: %s"
+            .formatted(output));
+  }
 }
