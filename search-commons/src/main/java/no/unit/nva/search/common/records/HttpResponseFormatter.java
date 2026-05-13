@@ -37,7 +37,8 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
   private static final String HEADER_X_TOTAL_COUNT = "X-Total-Count";
   private static final String HEADER_ACCESS_CONTROL_EXPOSE_HEADERS =
       "Access-Control-Expose-Headers";
-  private static final String EXPOSED_PAGINATION_HEADERS = "Link, X-Total-Count";
+  private static final String EXPOSED_PAGINATION_HEADERS =
+      String.join(", ", HEADER_LINK, HEADER_X_TOTAL_COUNT);
   private static final String REL_FIRST = "first";
   private static final String REL_PREV = "prev";
   private static final String REL_NEXT = "next";

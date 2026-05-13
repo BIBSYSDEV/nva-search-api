@@ -123,28 +123,28 @@ class HttpResponseFormatterPaginationHeadersTest {
   void shouldPointLastAtFinalPageOffset() {
     var headers = formatterFor(BIBTEX_UTF_8, 0, 10, 95).paginationHeaders();
 
-    assertThat(headers.get(LINK), containsString("from=90"));
+    assertThat(headers.get(LINK), containsString("from=90&size=10>; rel=\"last\""));
   }
 
   @Test
   void shouldPointPrevAtPreviousPageOffset() {
     var headers = formatterFor(BIBTEX_UTF_8, 30, 10, 100).paginationHeaders();
 
-    assertThat(headers.get(LINK), containsString("from=20"));
+    assertThat(headers.get(LINK), containsString("from=20&size=10>; rel=\"prev\""));
   }
 
   @Test
   void shouldPointNextAtNextPageOffset() {
     var headers = formatterFor(BIBTEX_UTF_8, 30, 10, 100).paginationHeaders();
 
-    assertThat(headers.get(LINK), containsString("from=40"));
+    assertThat(headers.get(LINK), containsString("from=40&size=10>; rel=\"next\""));
   }
 
   @Test
   void shouldClampPrevAtZeroWhenOffsetSmallerThanSize() {
     var headers = formatterFor(BIBTEX_UTF_8, 5, 10, 100).paginationHeaders();
 
-    assertThat(headers.get(LINK), containsString("from=0"));
+    assertThat(headers.get(LINK), containsString("from=0&size=10>; rel=\"prev\""));
   }
 
   @Test
