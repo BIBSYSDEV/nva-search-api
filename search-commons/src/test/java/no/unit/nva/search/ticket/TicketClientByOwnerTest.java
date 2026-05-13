@@ -114,7 +114,7 @@ class TicketClientByOwnerTest {
     var identifier = SortableIdentifier.next();
     if (expectedForUser) {
       EXPECTED_HITS_PER_USERNAME
-          .computeIfAbsent(username, s -> new HashSet<>())
+          .computeIfAbsent(username, string -> new HashSet<>())
           .add(identifier.toString());
     }
     return new IndexDocument(

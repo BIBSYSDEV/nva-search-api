@@ -1,0 +1,2398 @@
+{
+  "id": "https://api.nva.unit.no/search/resources?searchAll=journalarticle&aggregation=none&size=10&sort=modifiedDate%3Adesc%2Cidentifier&from=0",
+  "totalHits": 9,
+  "hits": [
+    {
+      "identifier": "019aee198848-b0cfa604-a73b-44ad-8c6c-fe646d56a9ec",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/184.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/184.16.0.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "51640@184.0.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/184.0.0.0"
+      },
+      "type": "Publication",
+      "associatedArtifacts": [
+        {
+          "id": "https://kluwerlawonline.com/JournalArticle/European+Business+Law+Review/36.5/EULR2025047",
+          "type": "AssociatedLink"
+        },
+        {
+          "identifier": "d6b89476-fb22-45ea-b732-a6a1b553c98a",
+          "license": {
+            "name": "CC-BY",
+            "type": "License",
+            "value": "https://creativecommons.org/licenses/by/4.0/",
+            "labels": {
+              "nb": "Creative Commons - Navngivelse",
+              "en": "Creative Commons - Attribution"
+            }
+          },
+          "rightsRetentionStrategy": {
+            "configuredType": "RightsRetentionStrategy",
+            "type": "CustomerRightsRetentionStrategy"
+          },
+          "uploadDetails": {
+            "type": "UserUploadDetails",
+            "uploadedDate": "2026-03-20T13:05:38.153096701Z",
+            "uploadedBy": "51008@184.0.0.0"
+          },
+          "size": "518905",
+          "publisherVersion": "AcceptedVersion",
+          "name": "PSR and GDPR_MalgorzataCyndecka_23.01.25.pdf",
+          "mimeType": "application/pdf",
+          "publishedDate": "2026-04-16T12:41:37.715018841Z",
+          "type": "OpenFile"
+        }
+      ],
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-04-24T11:10:28.746863156Z",
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/184.0.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "volume": "36",
+            "pages": {
+              "end": "714",
+              "type": "Range",
+              "begin": "695"
+            },
+            "issue": "5",
+            "type": "AcademicArticle"
+          },
+          "publicationContext": {
+            "identifier": "B0ED7F61-B9A3-4567-AD57-5B6B3C007672",
+            "year": "2025",
+            "name": "European Business Law Review",
+            "id": "https://api.nva.unit.no/publication-channels-v2/serial-publication/B0ED7F61-B9A3-4567-AD57-5B6B3C007672/2025",
+            "type": "Journal",
+            "onlineIssn": "1875-841X",
+            "printIssn": "0959-6941",
+            "scientificValue": "LevelTwo",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/tidsskrift?pid=B0ED7F61-B9A3-4567-AD57-5B6B3C007672"
+          },
+          "doi": "https://doi.org/10.54648/eulr2025047"
+        },
+        "contributorsCount": 1,
+        "metadataSource": "https://kluwerlawonline.com/JournalArticle/European+Business+Law+Review/36.5/EULR2025047",
+        "mainTitle": "The EU’s Proposal for a Payment Services Regulation Seen through the Lens of the General Data Protection Regulation – the Problem of Processing of Special Categories of Personal Data",
+        "language": "http://lexvo.org/id/iso639-3/eng",
+        "abstract": "The provision of payment services, which are currently regulated by the second Payment Services Directive, requires processing of personal data, including special categories of personal data such as data concerning health, political beliefs or sexual orientation. While any such processing must comply with the EU’s General Data Protection Regulation, there have been identified inconsistencies between the Directive and the Regulation. One of them concerns a legal basis for the processing of special categories of personal data. The European Commission’s proposal for a Payment Services Regulation of 2023 aims to provide such a legal basis. Yet, the relevant provision is criticised for not meeting the requirements of the principle of proportionality. This contribution examines the processing of special categories of personal data under the second Payment Services Directive and the proposal for a Payment Services Regulation while it draws attention to an emerging challenge of the widening scope of the notion of special categories of personal data.",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Malgorzata Agnieszka Cyndecka",
+              "id": "https://api.nva.unit.no/cristin/person/51640",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/184.0.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/184.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/184.16.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Det juridiske fakultet",
+                  "en": "Faculty of Law"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Malgorzata Agnieszka Cyndecka",
+              "id": "https://api.nva.unit.no/cristin/person/51640",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/184.0.0.0"
+                  }
+                ],
+                "institutionId": "https://api.nva.unit.no/cristin/organization/184.0.0.0",
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/184.16.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Det juridiske fakultet",
+                  "en": "Faculty of Law"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "year": "2025",
+          "type": "PublicationDate"
+        },
+        "tags": [
+          "special categories of personal data",
+          "Payment Services Regulation Proposal",
+          "data protection",
+          "Second Payment Services Directive",
+          "substantial public interest",
+          "GDPR",
+          "PSD2",
+          "General Data Protection Regulation"
+        ]
+      },
+      "createdDate": "2025-12-05T10:40:42.056879086Z",
+      "publicationContextUris": [
+        "https://api.nva.unit.no/publication-channels-v2/serial-publication/B0ED7F61-B9A3-4567-AD57-5B6B3C007672/2025"
+      ],
+      "childPublications": [],
+      "modifiedDate": "2026-04-16T12:41:21.923839375Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/5327242"
+        },
+        {
+          "sourceName": "nva@null",
+          "type": "CristinIdentifier",
+          "value": "10295130"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/03d45f83-fb40-44ac-89bc-e8a425866dbc",
+        "type": "Organization"
+      },
+      "filesStatus": "hasPublicFiles",
+      "id": "https://api.nva.unit.no/publication/019aee198848-b0cfa604-a73b-44ad-8c6c-fe646d56a9ec",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2025-12-05T10:43:20.866853295Z",
+      "scientificIndex": {
+        "year": "2025",
+        "type": "ScientificIndex",
+        "status": "Reported"
+      },
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/184.0.0.0"
+                }
+              ],
+              "affiliationInstitutionId": "https://api.nva.unit.no/cristin/organization/184.0.0.0",
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/184.16.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Det juridiske fakultet",
+                "en": "Faculty of Law"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/184.0.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Malgorzata Agnieszka Cyndecka",
+              "id": "https://api.nva.unit.no/cristin/person/51640",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nb": "Universitetet i Bergen",
+            "en": "University of Bergen"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    },
+    {
+      "identifier": "0198cc4beaac-4540aa56-5021-4251-aaa5-83492e8c071a",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/209.6.0.0",
+        "https://api.nva.unit.no/cristin/organization/7471.12.0.0",
+        "https://api.nva.unit.no/cristin/organization/209.6.4.0",
+        "https://api.nva.unit.no/cristin/organization/7471.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/209.0.0.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "nupi@7471.0.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/7471.0.0.0"
+      },
+      "type": "Publication",
+      "associatedArtifacts": [
+        {
+          "id": "https://kluwerlawonline.com/journalarticle/European+Foreign+Affairs+Review/26.3/EERR2021029",
+          "type": "AssociatedLink",
+          "relation": "sameAs"
+        }
+      ],
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-02-14T17:10:35.875327964Z",
+      "fundings": [
+        {
+          "identifier": "287131",
+          "id": "https://api.nva.unit.no/verified-funding/nfr/287131",
+          "source": {
+            "identifier": "NFR",
+            "id": "https://api.nva.unit.no/cristin/funding-sources/NFR",
+            "type": "FundingSource",
+            "labels": {
+              "nb": "Norges forskningsråd",
+              "en": "Research Council of Norway (RCN)"
+            }
+          },
+          "type": "ConfirmedFunding"
+        }
+      ],
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/7471.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/209.0.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "volume": "26",
+            "pages": {
+              "end": "126",
+              "type": "Range",
+              "begin": "111"
+            },
+            "issue": "Special Issue",
+            "type": "AcademicArticle"
+          },
+          "publicationContext": {
+            "identifier": "1B9CF214-FDF0-416F-9917-0C1646BBD1A1",
+            "year": "2021",
+            "name": "European Foreign Affairs Review",
+            "id": "https://api.nva.unit.no/publication-channels-v2/serial-publication/1B9CF214-FDF0-416F-9917-0C1646BBD1A1/2021",
+            "type": "Journal",
+            "onlineIssn": "1875-8223",
+            "printIssn": "1384-6299",
+            "scientificValue": "LevelOne",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/tidsskrift?pid=1B9CF214-FDF0-416F-9917-0C1646BBD1A1"
+          },
+          "doi": "https://doi.org/10.54648/EERR2021029"
+        },
+        "contributorsCount": 1,
+        "mainTitle": "Differentiated Defence Integration Under French Leadership",
+        "language": "http://lexvo.org/id/iso639-3/eng",
+        "abstract": "Studies dealing with EU security and defence policy tend to focus exclusively on what is formally included in the Union’s Common Security and Defence Policy (CSDP). Other initiatives taken outside this framework are frequently seen potentially undermining the development of EU defence – even when the intention is to strengthen defence capacity. This has been the case with the various initiatives taken within or closely linked to the North Atlantic Treaty Organization (NATO), as well as the recent French approach involving the European Intervention Initiative (EI2). An alternative perspective is to see these as integrated parts of a more flexible and differentiated European security framework where all these initiatives combined contribute to strengthening European defence capacity. Building on the argument presented in the introduction to this Special Issue, this article argues that France, as a leader in promoting ‘l’Europe de la défense’, has been instrumental in promoting this differentiated approach to European defence integration, especially under the Macron presidency.",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Pernille Rieker",
+              "id": "https://api.nva.unit.no/cristin/person/390683",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/7471.0.0.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/7471.12.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Sikkerhet og forsvar",
+                  "en": "Security and Defence"
+                }
+              },
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/209.6.0.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/209.6.4.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for organisasjon, ledelse, styring",
+                  "en": "Department of Organisation, Leadership and Management"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Pernille Rieker",
+              "id": "https://api.nva.unit.no/cristin/person/390683",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/7471.0.0.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/7471.12.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Sikkerhet og forsvar",
+                  "en": "Security and Defence"
+                }
+              },
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/209.6.0.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/209.6.4.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for organisasjon, ledelse, styring",
+                  "en": "Department of Organisation, Leadership and Management"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "year": "2021",
+          "type": "PublicationDate"
+        },
+        "tags": [
+          "Sikkerhetspolitikk",
+          "NATO",
+          "Forsvar",
+          "Europa",
+          "Europe",
+          "Defence",
+          "Security policies"
+        ]
+      },
+      "createdDate": "2025-08-21T11:03:04.108523077Z",
+      "publicationContextUris": [
+        "https://api.nva.unit.no/publication-channels-v2/serial-publication/1B9CF214-FDF0-416F-9917-0C1646BBD1A1/2021"
+      ],
+      "childPublications": [],
+      "modifiedDate": "2025-10-14T01:27:19.786118781Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "cristin@nupi",
+          "type": "CristinIdentifier",
+          "value": "1925740"
+        },
+        {
+          "sourceName": "cristin@nupi",
+          "type": "ScopusIdentifier",
+          "value": "2-s2.0-85129790786"
+        },
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/4982489"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/22139870-8d31-4df9-bc45-14eb68287c4a",
+        "type": "Organization"
+      },
+      "filesStatus": "noFiles",
+      "id": "https://api.nva.unit.no/publication/0198cc4beaac-4540aa56-5021-4251-aaa5-83492e8c071a",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2025-08-21T11:03:04.108523077Z",
+      "scientificIndex": {
+        "year": "2021",
+        "type": "ScientificIndex",
+        "status": "Reported"
+      },
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/209.0.0.0"
+                }
+              ],
+              "hasPart": [
+                {
+                  "partOf": [
+                    {
+                      "id": "https://api.nva.unit.no/cristin/organization/209.6.0.0"
+                    }
+                  ],
+                  "countryCode": "NO",
+                  "id": "https://api.nva.unit.no/cristin/organization/209.6.4.0",
+                  "type": "Organization",
+                  "labels": {
+                    "nb": "Institutt for organisasjon, ledelse, styring",
+                    "en": "Department of Organisation, Leadership and Management"
+                  }
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/209.6.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Handelshøgskolen Innlandet - Fakultet for økonomi og samfunnsvitenskap",
+                "en": "Inland School of Business and Social Sciences"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/209.0.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Pernille Rieker",
+              "id": "https://api.nva.unit.no/cristin/person/390683",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nb": "Universitetet i Innlandet",
+            "en": "University of Inland Norway"
+          }
+        },
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/7471.0.0.0"
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/7471.12.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Sikkerhet og forsvar",
+                "en": "Security and Defence"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/7471.0.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Pernille Rieker",
+              "id": "https://api.nva.unit.no/cristin/person/390683",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nn": "Norsk Utanrikspolitisk Institutt",
+            "nb": "Norsk Utenrikspolitisk Institutt",
+            "en": "Norwegian Institute of International Affairs"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    },
+    {
+      "identifier": "0198cc61ce47-1d64778d-6131-4571-91cf-d18638fccca0",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+        "https://api.nva.unit.no/cristin/organization/185.12.4.0",
+        "https://api.nva.unit.no/cristin/organization/185.12.0.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "uio@185.90.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+      },
+      "type": "Publication",
+      "associatedArtifacts": [
+        {
+          "id": "https://kluwerlawonline.com/journalarticle/European+Energy+and+Environmental+Law+Review/30.2/EELR2021004",
+          "type": "AssociatedLink",
+          "relation": "sameAs"
+        }
+      ],
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-02-14T17:49:41.616867982Z",
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "volume": "30",
+            "pages": {
+              "end": "41",
+              "type": "Range",
+              "begin": "24"
+            },
+            "issue": "2",
+            "type": "AcademicArticle"
+          },
+          "publicationContext": {
+            "identifier": "7818933A-720A-491F-B105-8A073D2B14B1",
+            "year": "2021",
+            "name": "European Energy and Environmental Law Review",
+            "id": "https://api.nva.unit.no/publication-channels-v2/serial-publication/7818933A-720A-491F-B105-8A073D2B14B1/2021",
+            "type": "Journal",
+            "onlineIssn": "2589-0387",
+            "printIssn": "1879-3886",
+            "scientificValue": "LevelOne",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/tidsskrift?pid=7818933A-720A-491F-B105-8A073D2B14B1"
+          }
+        },
+        "contributorsCount": 2,
+        "mainTitle": "De-risking the hydrogen-ccs value chain through law",
+        "language": "http://lexvo.org/id/iso639-3/eng",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Catherine Banet",
+              "id": "https://api.nva.unit.no/cristin/person/4310",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/185.12.0.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/185.12.4.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Nordisk institutt for sjørett",
+                  "en": "Scandinavian Institute of Maritime Law"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "2",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Alice O'Brien",
+              "id": "https://api.nva.unit.no/cristin/person/1058505",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/185.12.0.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/185.12.4.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Nordisk institutt for sjørett",
+                  "en": "Scandinavian Institute of Maritime Law"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Catherine Banet",
+              "id": "https://api.nva.unit.no/cristin/person/4310",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/185.12.0.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/185.12.4.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Nordisk institutt for sjørett",
+                  "en": "Scandinavian Institute of Maritime Law"
+                }
+              }
+            ],
+            "type": "Contributor"
+          },
+          {
+            "sequence": "2",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Alice O'Brien",
+              "id": "https://api.nva.unit.no/cristin/person/1058505",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/185.12.0.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/185.12.4.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Nordisk institutt for sjørett",
+                  "en": "Scandinavian Institute of Maritime Law"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "year": "2021",
+          "type": "PublicationDate"
+        }
+      },
+      "createdDate": "2025-08-21T11:26:58.631951470Z",
+      "publicationContextUris": [
+        "https://api.nva.unit.no/publication-channels-v2/serial-publication/7818933A-720A-491F-B105-8A073D2B14B1/2021"
+      ],
+      "childPublications": [],
+      "modifiedDate": "2025-10-14T01:18:56.274216902Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "cristin@uio",
+          "type": "ScopusIdentifier",
+          "value": "2-s2.0-85108519317"
+        },
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/4973036"
+        },
+        {
+          "sourceName": "cristin@uio",
+          "type": "CristinIdentifier",
+          "value": "2006699"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/22139870-8d31-4df9-bc45-14eb68287c4a",
+        "type": "Organization"
+      },
+      "filesStatus": "noFiles",
+      "id": "https://api.nva.unit.no/publication/0198cc61ce47-1d64778d-6131-4571-91cf-d18638fccca0",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2025-08-21T11:26:58.631951470Z",
+      "scientificIndex": {
+        "year": "2021",
+        "type": "ScientificIndex",
+        "status": "Reported"
+      },
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/185.90.0.0"
+                }
+              ],
+              "hasPart": [
+                {
+                  "partOf": [
+                    {
+                      "id": "https://api.nva.unit.no/cristin/organization/185.12.0.0"
+                    }
+                  ],
+                  "countryCode": "NO",
+                  "id": "https://api.nva.unit.no/cristin/organization/185.12.4.0",
+                  "type": "Organization",
+                  "labels": {
+                    "nb": "Nordisk institutt for sjørett",
+                    "en": "Scandinavian Institute of Maritime Law"
+                  }
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/185.12.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Det juridiske fakultet",
+                "en": "Faculty of Law"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/185.90.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Catherine Banet",
+              "id": "https://api.nva.unit.no/cristin/person/4310",
+              "type": "Identity"
+            },
+            {
+              "verificationStatus": "Verified",
+              "name": "Alice O'Brien",
+              "id": "https://api.nva.unit.no/cristin/person/1058505",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nb": "Universitetet i Oslo",
+            "en": "University of Oslo"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    },
+    {
+      "identifier": "0198cc5355ea-c75623cb-bae4-4f58-b27e-632d2f41fbf2",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/194.62.75.0",
+        "https://api.nva.unit.no/cristin/organization/194.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/194.62.0.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "ntnu@194.0.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/194.0.0.0"
+      },
+      "type": "Publication",
+      "associatedArtifacts": [
+        {
+          "id": "https://kluwerlawonline.com/journalarticle/European+Foreign+Affairs+Review/10.1/EERR2005002",
+          "type": "AssociatedLink",
+          "relation": "dataset"
+        }
+      ],
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-02-14T14:32:20.228492441Z",
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/194.0.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "volume": "10",
+            "pages": {
+              "end": "38",
+              "type": "Range",
+              "begin": "17"
+            },
+            "issue": "1",
+            "type": "AcademicArticle"
+          },
+          "publicationContext": {
+            "identifier": "1B9CF214-FDF0-416F-9917-0C1646BBD1A1",
+            "year": "2005",
+            "name": "European Foreign Affairs Review",
+            "id": "https://api.nva.unit.no/publication-channels-v2/serial-publication/1B9CF214-FDF0-416F-9917-0C1646BBD1A1/2005",
+            "type": "Journal",
+            "onlineIssn": "1875-8223",
+            "printIssn": "1384-6299",
+            "scientificValue": "LevelOne",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/tidsskrift?pid=1B9CF214-FDF0-416F-9917-0C1646BBD1A1"
+          }
+        },
+        "contributorsCount": 2,
+        "mainTitle": "From EMP to ENP: What’s at Stake with the European Neighbourhood Policy towards the Southern Mediterranean?",
+        "language": "http://lexvo.org/id/iso639-3/eng",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Raffaella Del Sarto",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "type": "Contributor"
+          },
+          {
+            "sequence": "2",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Tobias Schumacher",
+              "id": "https://api.nva.unit.no/cristin/person/1353362",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/194.62.0.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/194.62.75.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for historiske og klassiske studier",
+                  "en": "Department of Historical and Classical Studies"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "NotVerified",
+              "name": "Raffaella Del Sarto",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "type": "Contributor"
+          },
+          {
+            "sequence": "2",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Tobias Schumacher",
+              "id": "https://api.nva.unit.no/cristin/person/1353362",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/194.62.0.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/194.62.75.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for historiske og klassiske studier",
+                  "en": "Department of Historical and Classical Studies"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "year": "2005",
+          "type": "PublicationDate"
+        },
+        "tags": [
+          "The European Union",
+          "EU foreign policy",
+          "EU utenrikspolitikk",
+          "European External Relations",
+          "Den europeiske Unionen"
+        ]
+      },
+      "createdDate": "2025-08-21T11:11:10.314855256Z",
+      "publicationContextUris": [
+        "https://api.nva.unit.no/publication-channels-v2/serial-publication/1B9CF214-FDF0-416F-9917-0C1646BBD1A1/2005"
+      ],
+      "childPublications": [],
+      "modifiedDate": "2025-10-13T11:47:33.856989672Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/4142732"
+        },
+        {
+          "sourceName": "cristin@ntnu",
+          "type": "CristinIdentifier",
+          "value": "1999705"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/22139870-8d31-4df9-bc45-14eb68287c4a",
+        "type": "Organization"
+      },
+      "filesStatus": "noFiles",
+      "id": "https://api.nva.unit.no/publication/0198cc5355ea-c75623cb-bae4-4f58-b27e-632d2f41fbf2",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2025-08-21T11:11:10.314855256Z",
+      "scientificIndex": {
+
+      },
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/194.0.0.0"
+                }
+              ],
+              "hasPart": [
+                {
+                  "partOf": [
+                    {
+                      "id": "https://api.nva.unit.no/cristin/organization/194.62.0.0"
+                    }
+                  ],
+                  "countryCode": "NO",
+                  "id": "https://api.nva.unit.no/cristin/organization/194.62.75.0",
+                  "type": "Organization",
+                  "labels": {
+                    "nb": "Institutt for historiske og klassiske studier",
+                    "en": "Department of Historical and Classical Studies"
+                  }
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/194.62.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Det humanistiske fakultet",
+                "en": "Faculty of Humanities"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/194.0.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Tobias Schumacher",
+              "id": "https://api.nva.unit.no/cristin/person/1353362",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nn": "Noregs teknisk-naturvitskaplege universitet",
+            "nb": "Norges teknisk-naturvitenskapelige universitet",
+            "en": "Norwegian University of Science and Technology"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    },
+    {
+      "identifier": "0198cc491c05-6c2c4ad7-0e93-4c9a-a674-3c580b3731d3",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/7471.12.0.0",
+        "https://api.nva.unit.no/cristin/organization/209.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/209.6.0.0",
+        "https://api.nva.unit.no/cristin/organization/209.6.4.0",
+        "https://api.nva.unit.no/cristin/organization/7471.0.0.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "nupi@7471.0.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/7471.0.0.0"
+      },
+      "type": "Publication",
+      "associatedArtifacts": [
+        {
+          "id": "https://kluwerlawonline.com/JournalArticle/European+Foreign+Affairs+Review/26.Special/EERR2021023",
+          "type": "AssociatedLink",
+          "relation": "sameAs"
+        }
+      ],
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-02-14T14:41:33.179818605Z",
+      "fundings": [
+        {
+          "identifier": "287131",
+          "id": "https://api.nva.unit.no/verified-funding/nfr/287131",
+          "source": {
+            "identifier": "NFR",
+            "id": "https://api.nva.unit.no/cristin/funding-sources/NFR",
+            "type": "FundingSource",
+            "labels": {
+              "nb": "Norges forskningsråd",
+              "en": "Research Council of Norway (RCN)"
+            }
+          },
+          "type": "ConfirmedFunding"
+        }
+      ],
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/209.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/7471.0.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "volume": "26",
+            "pages": {
+              "end": "14",
+              "type": "Range",
+              "begin": "1"
+            },
+            "issue": "Special Issue",
+            "type": "AcademicArticle"
+          },
+          "publicationContext": {
+            "identifier": "1B9CF214-FDF0-416F-9917-0C1646BBD1A1",
+            "year": "2021",
+            "name": "European Foreign Affairs Review",
+            "id": "https://api.nva.unit.no/publication-channels-v2/serial-publication/1B9CF214-FDF0-416F-9917-0C1646BBD1A1/2021",
+            "type": "Journal",
+            "onlineIssn": "1875-8223",
+            "printIssn": "1384-6299",
+            "scientificValue": "LevelOne",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/tidsskrift?pid=1B9CF214-FDF0-416F-9917-0C1646BBD1A1"
+          },
+          "doi": "https://doi.org/10.54648/EERR2021023"
+        },
+        "contributorsCount": 1,
+        "mainTitle": "Differentiated Integration and Europe’s Global Role: A Conceptual Framework",
+        "language": "http://lexvo.org/id/iso639-3/eng",
+        "abstract": "In a time of global challenges, rising geopolitical tensions and a weakening of the traditional trans-Atlantic security community, we can expect pressures for Europe to play a more important role in the world. Various initiatives have been taken to strengthen the role of the European Union (EU), but there are also tendencies towards a more complex European governance\r\nstructure in the making, characterized by a combination of both EU and non-EU (but still European) initiatives. This introductory article presents a framework for studying a European role\r\nthat includes initiatives taken within and outside the EU framework, but closely interlinked,\r\nindicating that the concept of differentiated integration (DI) may help to clarify Europe’s role in a\r\nchanging and volatile global context.",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Pernille Rieker",
+              "id": "https://api.nva.unit.no/cristin/person/390683",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/7471.0.0.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/7471.12.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Sikkerhet og forsvar",
+                  "en": "Security and Defence"
+                }
+              },
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/209.6.0.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/209.6.4.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for organisasjon, ledelse, styring",
+                  "en": "Department of Organisation, Leadership and Management"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Pernille Rieker",
+              "id": "https://api.nva.unit.no/cristin/person/390683",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/7471.0.0.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/7471.12.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Sikkerhet og forsvar",
+                  "en": "Security and Defence"
+                }
+              },
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/209.6.0.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/209.6.4.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for organisasjon, ledelse, styring",
+                  "en": "Department of Organisation, Leadership and Management"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "year": "2021",
+          "type": "PublicationDate"
+        },
+        "tags": [
+          "Security policies",
+          "Foreign policy",
+          "Den europeiske Unionen",
+          "Europe",
+          "Utenrikspolitikk",
+          "Europa",
+          "The European Union",
+          "Sikkerhetspolitikk"
+        ]
+      },
+      "createdDate": "2025-08-21T11:00:00.133358588Z",
+      "publicationContextUris": [
+        "https://api.nva.unit.no/publication-channels-v2/serial-publication/1B9CF214-FDF0-416F-9917-0C1646BBD1A1/2021"
+      ],
+      "childPublications": [],
+      "modifiedDate": "2025-10-13T11:14:23.693440032Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "cristin@nupi",
+          "type": "CristinIdentifier",
+          "value": "1925736"
+        },
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/4084320"
+        },
+        {
+          "sourceName": "cristin@nupi",
+          "type": "ScopusIdentifier",
+          "value": "2-s2.0-85129649783"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/22139870-8d31-4df9-bc45-14eb68287c4a",
+        "type": "Organization"
+      },
+      "filesStatus": "noFiles",
+      "id": "https://api.nva.unit.no/publication/0198cc491c05-6c2c4ad7-0e93-4c9a-a674-3c580b3731d3",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2025-08-21T11:00:00.133358588Z",
+      "scientificIndex": {
+        "year": "2021",
+        "type": "ScientificIndex",
+        "status": "Reported"
+      },
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/209.0.0.0"
+                }
+              ],
+              "hasPart": [
+                {
+                  "partOf": [
+                    {
+                      "id": "https://api.nva.unit.no/cristin/organization/209.6.0.0"
+                    }
+                  ],
+                  "countryCode": "NO",
+                  "id": "https://api.nva.unit.no/cristin/organization/209.6.4.0",
+                  "type": "Organization",
+                  "labels": {
+                    "nb": "Institutt for organisasjon, ledelse, styring",
+                    "en": "Department of Organisation, Leadership and Management"
+                  }
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/209.6.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Handelshøgskolen Innlandet - Fakultet for økonomi og samfunnsvitenskap",
+                "en": "Inland School of Business and Social Sciences"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/209.0.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Pernille Rieker",
+              "id": "https://api.nva.unit.no/cristin/person/390683",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nb": "Universitetet i Innlandet",
+            "en": "University of Inland Norway"
+          }
+        },
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/7471.0.0.0"
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/7471.12.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Sikkerhet og forsvar",
+                "en": "Security and Defence"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/7471.0.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Pernille Rieker",
+              "id": "https://api.nva.unit.no/cristin/person/390683",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nn": "Norsk Utanrikspolitisk Institutt",
+            "nb": "Norsk Utenrikspolitisk Institutt",
+            "en": "Norwegian Institute of International Affairs"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    },
+    {
+      "identifier": "0198cc76baf8-955c67f2-eb92-4f8c-8311-9621fbf4f224",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/7471.18.0.0",
+        "https://api.nva.unit.no/cristin/organization/7471.0.0.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "nupi@7471.0.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/7471.0.0.0"
+      },
+      "type": "Publication",
+      "associatedArtifacts": [
+        {
+          "id": "https://kluwerlawonline.com/journalarticle/European+Foreign+Affairs+Review/26.3/EERR2021024",
+          "type": "AssociatedLink",
+          "relation": "dataset"
+        }
+      ],
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-02-14T12:30:44.621396415Z",
+      "fundings": [
+        {
+          "identifier": "287131",
+          "id": "https://api.nva.unit.no/verified-funding/nfr/287131",
+          "source": {
+            "identifier": "NFR",
+            "id": "https://api.nva.unit.no/cristin/funding-sources/NFR",
+            "type": "FundingSource",
+            "labels": {
+              "nb": "Norges forskningsråd",
+              "en": "Research Council of Norway (RCN)"
+            }
+          },
+          "type": "ConfirmedFunding"
+        }
+      ],
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/7471.0.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "volume": "26",
+            "pages": {
+              "end": "30",
+              "type": "Range",
+              "begin": "15"
+            },
+            "issue": "3",
+            "type": "AcademicArticle"
+          },
+          "publicationContext": {
+            "identifier": "1B9CF214-FDF0-416F-9917-0C1646BBD1A1",
+            "year": "2021",
+            "name": "European Foreign Affairs Review",
+            "id": "https://api.nva.unit.no/publication-channels-v2/serial-publication/1B9CF214-FDF0-416F-9917-0C1646BBD1A1/2021",
+            "type": "Journal",
+            "onlineIssn": "1875-8223",
+            "printIssn": "1384-6299",
+            "scientificValue": "LevelOne",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/tidsskrift?pid=1B9CF214-FDF0-416F-9917-0C1646BBD1A1"
+          },
+          "doi": "https://doi.org/10.54648/EERR2021024"
+        },
+        "contributorsCount": 1,
+        "mainTitle": "The Politics of Competence in Global Health: The European Commission’s Global Response to the COVID-19 Pandemic",
+        "language": "http://lexvo.org/id/iso639-3/eng",
+        "abstract": "What was the European Commission’s (EC) global response to the COVID-19 pandemic and how did it use the crisis to claim competence in the area of global health? This article explores the EC’s global coronavirus response. In so doing, it suggests studying the crisis response in terms of how the EC struggled to be recognized as a competent player in the international community of states and institutions. In particular, the article shows how the EC utilized the crisis unleashed by the pandemic to engage in geopolitical positioning in relation to World Health Organization (WHO) funding and the vaccine race, and by using its financial clout to struggle for mastery as a global health actor. The article responds to the challenge of understanding differentiation in the broader field of European foreign, security and defence policies. By treating informal practices by the EC on the world stage in and of themselves, the article shows how the constant struggle for competence plays into the politics of European integration and considers its potential for being instantiated in formal transfers of competence in the area of global health. (This article is an output of the EUFLEX project, which has been funded by the Research Council of Norway (project number 287131).\r\n\r\n\r\n",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Øyvind  Svendsen",
+              "id": "https://api.nva.unit.no/cristin/person/740872",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/7471.0.0.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/7471.18.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Global orden og diplomati",
+                  "en": "Global Order and Diplomacy"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Øyvind  Svendsen",
+              "id": "https://api.nva.unit.no/cristin/person/740872",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/7471.0.0.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/7471.18.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Global orden og diplomati",
+                  "en": "Global Order and Diplomacy"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "year": "2021",
+          "type": "PublicationDate"
+        },
+        "tags": [
+          "Foreign policy",
+          "Utenrikspolitikk"
+        ]
+      },
+      "createdDate": "2025-08-21T11:49:49.944071649Z",
+      "publicationContextUris": [
+        "https://api.nva.unit.no/publication-channels-v2/serial-publication/1B9CF214-FDF0-416F-9917-0C1646BBD1A1/2021"
+      ],
+      "childPublications": [],
+      "modifiedDate": "2025-10-11T11:02:54.211580498Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "nva@sikt",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/3317360"
+        },
+        {
+          "sourceName": "cristin@nupi",
+          "type": "ScopusIdentifier",
+          "value": "2-s2.0-85129872093"
+        },
+        {
+          "sourceName": "cristin@nupi",
+          "type": "CristinIdentifier",
+          "value": "1940481"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/22139870-8d31-4df9-bc45-14eb68287c4a",
+        "type": "Organization"
+      },
+      "filesStatus": "noFiles",
+      "id": "https://api.nva.unit.no/publication/0198cc76baf8-955c67f2-eb92-4f8c-8311-9621fbf4f224",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2025-08-21T11:49:49.944071649Z",
+      "scientificIndex": {
+        "year": "2021",
+        "type": "ScientificIndex",
+        "status": "Reported"
+      },
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/7471.0.0.0"
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/7471.18.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Global orden og diplomati",
+                "en": "Global Order and Diplomacy"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/7471.0.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Øyvind  Svendsen",
+              "id": "https://api.nva.unit.no/cristin/person/740872",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nn": "Norsk Utanrikspolitisk Institutt",
+            "nb": "Norsk Utenrikspolitisk Institutt",
+            "en": "Norwegian Institute of International Affairs"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    },
+    {
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/158.12.0.0",
+        "https://api.nva.unit.no/cristin/organization/158.0.0.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "bi@158.0.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/158.0.0.0"
+      },
+      "type": "Publication",
+      "associatedArtifacts": [
+        {
+          "identifier": "cc9659dd-c584-4702-aab8-3750de57b8da",
+          "license": {
+            "name": "COPYRIGHT-ACT",
+            "type": "License",
+            "value": "https://nva.sikt.no/license/copyright-act/1.0",
+            "labels": {
+              "nb": "Generelle bruksvilkår",
+              "en": "General Terms of Use"
+            }
+          },
+          "rightsRetentionStrategy": {
+            "configuredType": "Unknown",
+            "type": "NullRightsRetentionStrategy"
+          },
+          "uploadDetails": {
+            "archive": "BI",
+            "type": "ImportUploadDetails",
+            "uploadedDate": "2025-09-03T11:25:13.625635457Z"
+          },
+          "size": "452169",
+          "publisherVersion": "AcceptedVersion",
+          "name": "The+Important+Role+of+Emergence+in+Private+Law_+Post-print+ERPL+31%282023%29.pdf",
+          "mimeType": "application/pdf",
+          "publishedDate": "2025-09-03T11:25:13.883591715Z",
+          "type": "OpenFile"
+        },
+        {
+          "id": "https://kluwerlawonline.com/journalarticle/European+Review+of+Private+Law/31.4/ERPL2023034",
+          "type": "AssociatedLink",
+          "relation": "sameAs"
+        },
+        {
+          "identifier": "a25b67f3-813e-44db-9dee-ed73cd7def06",
+          "rightsRetentionStrategy": {
+            "configuredType": "Unknown",
+            "type": "NullRightsRetentionStrategy"
+          },
+          "uploadDetails": {
+            "archive": "BI",
+            "type": "ImportUploadDetails",
+            "uploadedDate": "2025-09-03T11:25:13.625652523Z"
+          },
+          "size": "9264",
+          "name": "dublin_core.xml",
+          "mimeType": "application/xml",
+          "type": "HiddenFile"
+        }
+      ],
+      "fundings": [
+        {
+          "identifier": "309599",
+          "id": "https://api.nva.unit.no/verified-funding/nfr/309599",
+          "source": {
+            "identifier": "NFR",
+            "id": "https://api.nva.unit.no/cristin/funding-sources/NFR",
+            "type": "FundingSource",
+            "labels": {
+              "nb": "Norges forskningsråd",
+              "en": "Research Council of Norway (RCN)"
+            }
+          },
+          "type": "ConfirmedFunding"
+        }
+      ],
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/158.0.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "volume": "31",
+            "pages": {
+              "end": "822",
+              "type": "Range",
+              "begin": "779"
+            },
+            "issue": "4",
+            "type": "AcademicArticle"
+          },
+          "publicationContext": {
+            "identifier": "52414274-4F00-4A2C-8D19-4A864A4A3D20",
+            "year": "2023",
+            "name": "European Review of Private Law",
+            "id": "https://api.nva.unit.no/publication-channels-v2/serial-publication/52414274-4F00-4A2C-8D19-4A864A4A3D20/2023",
+            "type": "Journal",
+            "onlineIssn": "1875-8371",
+            "printIssn": "0928-9801",
+            "scientificValue": "LevelTwo",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/tidsskrift?pid=52414274-4F00-4A2C-8D19-4A864A4A3D20"
+          }
+        },
+        "contributorsCount": 1,
+        "mainTitle": "The Important Role of Emergence in Conceptualizing the Challenges of New Technologies to Private Law",
+        "language": "http://lexvo.org/id/iso639-3/eng",
+        "abstract": "Consider the following legal quandaries: a victim of a wrongdoing without a perpetrator, a work of art without an author, or the possibility that the sum of legally compliant behaviors give rise to non-compliance. Welcome to the world of emergence in law. \r\n\r\nThe concept of emergent properties is central to systems thinking. It is commonly expressed as “the whole is more than the sum of its parts” where the “whole” represents the “emergent property.” This concept helps us understand how complexity emerges and allows systems engineers to look beyond the properties of individual components of a system and understand the system as a complex whole. In practice, this way of thinking militates against two kinds of fallacies: the fallacy of composition and the fallacy of division. The former occurs when one wrongfully attributes the properties of the component parts to the system as a whole whereas the latter arises when one wrongfully attributes the properties of the system as a whole to component parts. \r\n\r\nI argue that emergence provides an overarching framework to explain the challenges that technological developments associated with big data, artificial intelligence (AI) and robotics pose for different domains of private law, including privacy, data protection, IP, and tort laws. By creating new objects, possibilities for new action and new relationships, changes associated with the above technologies encourage the formation of emergent properties, which in turn pose attribution challenges for these legal domains. Two attribution challenges are particularly noteworthy. If we fail to address them properly, they may lead to the fallacies of composition and/or division. \r\n\r\nFurther, emergence may help explain some of the regulatory responses and suggestions provoked by changes associated with the above technologies. For example, emergence and the desire to avoid the fallacy of division can explain suggestions to grant AI systems some form of legal (electronic) personhood and thereby bestow legal responsibility or entitlement on them. Thus, one way the law might usefully adapt during times of technological change would be by taking emergence seriously. This includes recognizing the possibility that the sum of fully complaint behaviours may create behaviour that is not compliant or not in the spirit of the law. Taking emergence seriously would also include being open to the prospect of a harm or legal entitlement existing without a perpetrator or a rightholder and finding new ways to address this prospect.\r\n",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Samson Yoseph Esayas",
+              "id": "https://api.nva.unit.no/cristin/person/435573",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/158.0.0.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/158.12.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for rettsvitenskap og styring",
+                  "en": "Department of Law and Governance"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Samson Yoseph Esayas",
+              "id": "https://api.nva.unit.no/cristin/person/435573",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/158.0.0.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/158.12.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for rettsvitenskap og styring",
+                  "en": "Department of Law and Governance"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "year": "2023",
+          "type": "PublicationDate"
+        }
+      },
+      "publicationContextUris": [
+        "https://api.nva.unit.no/publication-channels-v2/serial-publication/52414274-4F00-4A2C-8D19-4A864A4A3D20/2023"
+      ],
+      "additionalIdentifiers": [
+        {
+          "sourceName": "brage@bi",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/3165462"
+        },
+        {
+          "sourceName": "cristin@bi",
+          "type": "CristinIdentifier",
+          "value": "2094869"
+        },
+        {
+          "sourceName": "cristin@bi",
+          "type": "ScopusIdentifier",
+          "value": "2-s2.0-85193572120"
+        }
+      ],
+      "filesStatus": "hasPublicFiles",
+      "id": "https://api.nva.unit.no/publication/0198cc93001e-827ed9a1-3632-40fc-b06b-23cd13ea948b",
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/158.0.0.0"
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/158.12.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Institutt for rettsvitenskap og styring",
+                "en": "Department of Law and Governance"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/158.0.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Samson Yoseph Esayas",
+              "id": "https://api.nva.unit.no/cristin/person/435573",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nb": "Handelshøyskolen BI",
+            "en": "BI Norwegian Business School"
+          }
+        }
+      ],
+      "identifier": "0198cc93001e-827ed9a1-3632-40fc-b06b-23cd13ea948b",
+      "handle": "https://hdl.handle.net/11250/3165462",
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-02-14T14:05:29.656600298Z",
+      "createdDate": "2025-08-21T12:20:42.654023350Z",
+      "childPublications": [],
+      "modifiedDate": "2025-09-03T11:25:14.113450061Z",
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/22139870-8d31-4df9-bc45-14eb68287c4a",
+        "type": "Organization"
+      },
+      "pendingOpenFileCount": "0",
+      "publicationNotes": [
+        {
+          "note": "Mottatt art. 2.11.",
+          "type": "PublicationNote"
+        }
+      ],
+      "publishedDate": "2025-08-21T12:20:42.654023350Z",
+      "scientificIndex": {
+        "year": "2023",
+        "type": "ScientificIndex",
+        "status": "Reported"
+      },
+      "status": "PUBLISHED"
+    },
+    {
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/15200028.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/158.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/158.12.0.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "bi@158.0.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/158.0.0.0"
+      },
+      "type": "Publication",
+      "associatedArtifacts": [
+        {
+          "id": "https://kluwerlawonline.com/journalarticle/European+Foreign+Affairs+Review/26.3/EERR2021030",
+          "type": "AssociatedLink",
+          "relation": "sameAs"
+        },
+        {
+          "identifier": "ca7652aa-995b-41fb-ba2a-12b596cf0ef9",
+          "rightsRetentionStrategy": {
+            "configuredType": "Unknown",
+            "type": "NullRightsRetentionStrategy"
+          },
+          "uploadDetails": {
+            "archive": "BI",
+            "type": "ImportUploadDetails",
+            "uploadedDate": "2025-09-03T10:50:23.324570300Z"
+          },
+          "size": "7080",
+          "name": "dublin_core.xml",
+          "mimeType": "application/xml",
+          "type": "HiddenFile"
+        },
+        {
+          "identifier": "74f3569c-96eb-46bd-a7b6-be0f337a389c",
+          "license": {
+            "name": "COPYRIGHT-ACT",
+            "type": "License",
+            "value": "https://nva.sikt.no/license/copyright-act/1.0",
+            "labels": {
+              "nb": "Generelle bruksvilkår",
+              "en": "General Terms of Use"
+            }
+          },
+          "rightsRetentionStrategy": {
+            "configuredType": "Unknown",
+            "type": "NullRightsRetentionStrategy"
+          },
+          "uploadDetails": {
+            "archive": "BI",
+            "type": "ImportUploadDetails",
+            "uploadedDate": "2025-09-03T10:50:23.324295923Z"
+          },
+          "size": "315108",
+          "publisherVersion": "AcceptedVersion",
+          "name": "Sitter_2021.pdf",
+          "mimeType": "application/pdf",
+          "publishedDate": "2025-09-03T10:50:23.530970669Z",
+          "type": "OpenFile"
+        }
+      ],
+      "fundings": [
+        {
+          "identifier": "EUFLEX, NFR PROSJEKT NR 287131",
+          "id": "https://api.nva.unit.no/verified-funding/nfr/EUFLEX,%20NFR%20PROSJEKT%20NR%20287131",
+          "source": {
+            "identifier": "NFR",
+            "id": "https://api.nva.unit.no/cristin/funding-sources/NFR",
+            "type": "FundingSource",
+            "labels": {
+              "nb": "Norges forskningsråd",
+              "en": "Research Council of Norway (RCN)"
+            }
+          },
+          "type": "ConfirmedFunding"
+        }
+      ],
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/158.0.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "volume": "26",
+            "pages": {
+              "end": "144",
+              "type": "Range",
+              "begin": "127"
+            },
+            "issue": "3",
+            "type": "AcademicArticle"
+          },
+          "publicationContext": {
+            "identifier": "1B9CF214-FDF0-416F-9917-0C1646BBD1A1",
+            "year": "2021",
+            "name": "European Foreign Affairs Review",
+            "id": "https://api.nva.unit.no/publication-channels-v2/serial-publication/1B9CF214-FDF0-416F-9917-0C1646BBD1A1/2021",
+            "type": "Journal",
+            "onlineIssn": "1875-8223",
+            "printIssn": "1384-6299",
+            "scientificValue": "LevelOne",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/tidsskrift?pid=1B9CF214-FDF0-416F-9917-0C1646BBD1A1"
+          },
+          "doi": "https://doi.org/10.54648/EERR2021030"
+        },
+        "contributorsCount": 1,
+        "mainTitle": "Defending the State: Nationalism, Geopolitics and Differentiated Integration in Visegrád Four Security Policy",
+        "language": "http://lexvo.org/id/iso639-3/eng",
+        "abstract": "During the second half of the 2010s the governments of Poland and Hungary took a sharp turn away from liberal democracy and the rule of law. As they slipped down the international democracy rankings, the European Union initiated its procedures under Article 7 to investigate possible breaches of its fundamental laws and values. However, the two governments sought to distinguish between their conflict with the European Commission over the rule of law on one hand and their commitment to collective security on the other. The central question in this article is whether they managed to do this, and to what extent democratic backsliding poses security challenges for the EU by weakening its actorness in the field of security, defence and foreign policy. A comparative assessment of Poland, Hungary, Slovakia, and the Czech Republic suggests that democratic backsliding does indeed have security implications for the EU, but that this is only one of several factors driving differentiated integration in the Visegrád Four in this field. Developments in the region are part of a wider EU trend of re-nationalization of security policy. Indeed, in the security field, vertical differentiated integration (in the sense of different mixes of supranational and intergovernmental regimes) is a key factor in mitigating the consequences of horizontal differentiation (different Member State policies).",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Nick Sitter",
+              "id": "https://api.nva.unit.no/cristin/person/325132",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "countryCode": "HU",
+                "id": "https://api.nva.unit.no/cristin/organization/15200028.0.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Közep-európai Egyetem",
+                  "en": "Central European University, Budapest"
+                }
+              },
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/158.0.0.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/158.12.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for rettsvitenskap og styring",
+                  "en": "Department of Law and Governance"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Nick Sitter",
+              "id": "https://api.nva.unit.no/cristin/person/325132",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "countryCode": "HU",
+                "id": "https://api.nva.unit.no/cristin/organization/15200028.0.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Közep-európai Egyetem",
+                  "en": "Central European University, Budapest"
+                }
+              },
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/158.0.0.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/158.12.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Institutt for rettsvitenskap og styring",
+                  "en": "Department of Law and Governance"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "year": "2021",
+          "type": "PublicationDate"
+        }
+      },
+      "publicationContextUris": [
+        "https://api.nva.unit.no/publication-channels-v2/serial-publication/1B9CF214-FDF0-416F-9917-0C1646BBD1A1/2021"
+      ],
+      "additionalIdentifiers": [
+        {
+          "sourceName": "brage@bi",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/2836961"
+        },
+        {
+          "sourceName": "cristin@bi",
+          "type": "CristinIdentifier",
+          "value": "1940944"
+        },
+        {
+          "sourceName": "cristin@bi",
+          "type": "ScopusIdentifier",
+          "value": "2-s2.0-85129688791"
+        }
+      ],
+      "filesStatus": "hasPublicFiles",
+      "id": "https://api.nva.unit.no/publication/0198cc6987b9-7a3a5a52-a6fa-4e42-b60b-99c83ece4e87",
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/158.0.0.0"
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/158.12.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Institutt for rettsvitenskap og styring",
+                "en": "Department of Law and Governance"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/158.0.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Nick Sitter",
+              "id": "https://api.nva.unit.no/cristin/person/325132",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nb": "Handelshøyskolen BI",
+            "en": "BI Norwegian Business School"
+          }
+        },
+        {
+          "countryCode": "HU",
+          "id": "https://api.nva.unit.no/cristin/organization/15200028.0.0.0",
+          "type": "Organization",
+          "labels": {
+            "nb": "Közep-európai Egyetem",
+            "en": "Central European University, Budapest"
+          }
+        }
+      ],
+      "identifier": "0198cc6987b9-7a3a5a52-a6fa-4e42-b60b-99c83ece4e87",
+      "handle": "https://hdl.handle.net/11250/2836961",
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-02-14T12:51:42.505612341Z",
+      "createdDate": "2025-08-21T11:35:24.857172069Z",
+      "childPublications": [],
+      "modifiedDate": "2025-09-03T10:50:23.771870930Z",
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/22139870-8d31-4df9-bc45-14eb68287c4a",
+        "type": "Organization"
+      },
+      "pendingOpenFileCount": "0",
+      "publicationNotes": [
+        {
+          "note": "nvi ok JV 020322",
+          "type": "PublicationNote"
+        }
+      ],
+      "publishedDate": "2025-08-21T11:35:24.857172069Z",
+      "scientificIndex": {
+        "year": "2021",
+        "type": "ScientificIndex",
+        "status": "Reported"
+      },
+      "status": "PUBLISHED"
+    },
+    {
+      "identifier": "0198cc71a2df-b7274710-bf51-4dca-82a1-8b3916aec0cb",
+      "contributorOrganizations": [
+        "https://api.nva.unit.no/cristin/organization/184.0.0.0",
+        "https://api.nva.unit.no/cristin/organization/184.16.0.0"
+      ],
+      "modelVersion": "0.23.3",
+      "resourceOwner": {
+        "owner": "uib@184.0.0.0",
+        "ownerAffiliation": "https://api.nva.unit.no/cristin/organization/184.0.0.0"
+      },
+      "handle": "https://hdl.handle.net/10037/21114",
+      "type": "Publication",
+      "associatedArtifacts": [
+        {
+          "identifier": "909657b7-0313-4406-a8f0-26a05c60b674",
+          "license": {
+            "name": "COPYRIGHT-ACT",
+            "type": "License",
+            "value": "https://nva.sikt.no/license/copyright-act/1.0",
+            "labels": {
+              "nb": "Generelle bruksvilkår",
+              "en": "General Terms of Use"
+            }
+          },
+          "rightsRetentionStrategy": {
+            "configuredType": "Unknown",
+            "type": "NullRightsRetentionStrategy"
+          },
+          "uploadDetails": {
+            "archive": "UIB",
+            "type": "ImportUploadDetails",
+            "uploadedDate": "2025-08-28T12:38:44.558308958Z"
+          },
+          "size": "127708",
+          "publisherVersion": "PublishedVersion",
+          "name": "ERPL_28_0309.pdf",
+          "mimeType": "application/pdf",
+          "publishedDate": "2025-08-28T12:38:44.746737618Z",
+          "type": "OpenFile",
+          "legalNote": "Copyright 2020 Wolters Kluwer"
+        },
+        {
+          "identifier": "2b5beb8b-fc6b-4f15-80f8-37794d68049a",
+          "rightsRetentionStrategy": {
+            "configuredType": "Unknown",
+            "type": "NullRightsRetentionStrategy"
+          },
+          "uploadDetails": {
+            "archive": "UIT",
+            "type": "ImportUploadDetails",
+            "uploadedDate": "2025-08-29T08:31:44.039500075Z"
+          },
+          "size": "7702",
+          "name": "dublin_core.xml",
+          "mimeType": "application/xml",
+          "type": "HiddenFile"
+        },
+        {
+          "id": "https://kluwerlawonline.com/journalarticle/European+Review+of+Private+Law/28.3/ERPL2020032",
+          "type": "AssociatedLink",
+          "relation": "dataset"
+        },
+        {
+          "identifier": "30a692e2-b355-4ce6-9e8e-32014cda692f",
+          "rightsRetentionStrategy": {
+            "configuredType": "Unknown",
+            "type": "NullRightsRetentionStrategy"
+          },
+          "uploadDetails": {
+            "archive": "UIB",
+            "type": "ImportUploadDetails",
+            "uploadedDate": "2025-08-28T12:38:44.558322398Z"
+          },
+          "size": "4624",
+          "name": "dublin_core.xml",
+          "mimeType": "application/xml",
+          "type": "HiddenFile"
+        }
+      ],
+      "@context": "https://api.nva.unit.no/publication/context",
+      "indexDocumentCreatedAt": "2026-02-14T13:07:50.678583147Z",
+      "curatingInstitutions": [
+        "https://api.nva.unit.no/cristin/organization/184.0.0.0"
+      ],
+      "entityDescription": {
+        "reference": {
+          "type": "Reference",
+          "publicationInstance": {
+            "volume": "28",
+            "pages": {
+              "end": "553",
+              "type": "Range",
+              "begin": "543"
+            },
+            "issue": "3",
+            "type": "AcademicArticle"
+          },
+          "publicationContext": {
+            "identifier": "52414274-4F00-4A2C-8D19-4A864A4A3D20",
+            "year": "2020",
+            "name": "European Review of Private Law",
+            "id": "https://api.nva.unit.no/publication-channels-v2/serial-publication/52414274-4F00-4A2C-8D19-4A864A4A3D20/2020",
+            "type": "Journal",
+            "onlineIssn": "1875-8371",
+            "printIssn": "0928-9801",
+            "scientificValue": "LevelTwo",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/info/tidsskrift?pid=52414274-4F00-4A2C-8D19-4A864A4A3D20"
+          }
+        },
+        "contributorsCount": 1,
+        "mainTitle": "The Norwegian Application of the Contracts Act Section 36",
+        "description": "Published version available at \u003Ca href=https://kluwerlawonline.com/journalarticle/European+Review+of+Private+Law/28.3/ERPL2020032\u003Ehttps://kluwerlawonline.com/journalarticle/European+Review+of+Private+Law/28.3/ERPL2020032\u003C/a\u003E",
+        "language": "http://lexvo.org/id/iso639-3/eng",
+        "abstract": "The article presents the general clause in the Norwegian Contracts Act section 36. The background and the purpose are explained, and the article provides an overview over the relevant case law, which indicates that the general clause serves different functions in the Norwegian contract law.\r\n\r\n\r\n",
+        "contributors": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Hilde Hauge",
+              "id": "https://api.nva.unit.no/cristin/person/52873",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/184.0.0.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/184.16.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Det juridiske fakultet",
+                  "en": "Faculty of Law"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "contributorsPreview": [
+          {
+            "sequence": "1",
+            "role": {
+              "type": "Creator"
+            },
+            "identity": {
+              "verificationStatus": "Verified",
+              "name": "Hilde Hauge",
+              "id": "https://api.nva.unit.no/cristin/person/52873",
+              "type": "Identity"
+            },
+            "correspondingAuthor": "false",
+            "affiliations": [
+              {
+                "partOf": [
+                  {
+                    "id": "https://api.nva.unit.no/cristin/organization/184.0.0.0"
+                  }
+                ],
+                "countryCode": "NO",
+                "id": "https://api.nva.unit.no/cristin/organization/184.16.0.0",
+                "type": "Organization",
+                "labels": {
+                  "nb": "Det juridiske fakultet",
+                  "en": "Faculty of Law"
+                }
+              }
+            ],
+            "type": "Contributor"
+          }
+        ],
+        "type": "EntityDescription",
+        "publicationDate": {
+          "year": "2020",
+          "type": "PublicationDate"
+        },
+        "tags": [
+          "VDP::Social science: 200::Law: 340",
+          "VDP::Samfunnsvitenskap: 200::Rettsvitenskap: 340"
+        ]
+      },
+      "createdDate": "2025-08-21T11:44:16.095555349Z",
+      "publicationContextUris": [
+        "https://api.nva.unit.no/publication-channels-v2/serial-publication/52414274-4F00-4A2C-8D19-4A864A4A3D20/2020"
+      ],
+      "childPublications": [],
+      "modifiedDate": "2025-08-29T08:31:45.462366477Z",
+      "additionalIdentifiers": [
+        {
+          "sourceName": "cristin@uib",
+          "type": "CristinIdentifier",
+          "value": "1869611"
+        },
+        {
+          "sourceName": "brage@uit",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/10037/21114"
+        },
+        {
+          "sourceName": "brage@bora",
+          "type": "HandleIdentifier",
+          "value": "https://hdl.handle.net/11250/2756343"
+        }
+      ],
+      "publisher": {
+        "id": "https://api.nva.unit.no/customer/22139870-8d31-4df9-bc45-14eb68287c4a",
+        "type": "Organization"
+      },
+      "filesStatus": "hasPublicFiles",
+      "id": "https://api.nva.unit.no/publication/0198cc71a2df-b7274710-bf51-4dca-82a1-8b3916aec0cb",
+      "pendingOpenFileCount": "0",
+      "publishedDate": "2025-08-21T11:44:16.095555349Z",
+      "scientificIndex": {
+        "year": "2020",
+        "type": "ScientificIndex",
+        "status": "Reported"
+      },
+      "topLevelOrganizations": [
+        {
+          "hasPart": [
+            {
+              "partOf": [
+                {
+                  "id": "https://api.nva.unit.no/cristin/organization/184.0.0.0"
+                }
+              ],
+              "countryCode": "NO",
+              "id": "https://api.nva.unit.no/cristin/organization/184.16.0.0",
+              "type": "Organization",
+              "labels": {
+                "nb": "Det juridiske fakultet",
+                "en": "Faculty of Law"
+              }
+            }
+          ],
+          "countryCode": "NO",
+          "id": "https://api.nva.unit.no/cristin/organization/184.0.0.0",
+          "type": "Organization",
+          "contributorCristinIds": [
+            {
+              "verificationStatus": "Verified",
+              "name": "Hilde Hauge",
+              "id": "https://api.nva.unit.no/cristin/person/52873",
+              "type": "Identity"
+            }
+          ],
+          "labels": {
+            "nb": "Universitetet i Bergen",
+            "en": "University of Bergen"
+          }
+        }
+      ],
+      "status": "PUBLISHED"
+    }
+  ],
+  "@context": "https://bibsysdev.github.io/src/search/paginated-search-result.json"
+}

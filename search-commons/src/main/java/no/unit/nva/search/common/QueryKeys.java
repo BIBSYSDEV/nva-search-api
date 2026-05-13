@@ -55,7 +55,7 @@ public class QueryKeys<K extends Enum<K> & ParameterKey<K>> {
     var results = new LinkedHashMap<String, String>();
     Stream.of(search.entrySet(), page.entrySet())
         .flatMap(Set::stream)
-        .sorted(Comparator.comparingInt(o -> o.getKey().ordinal()))
+        .sorted(Comparator.comparingInt(entry -> entry.getKey().ordinal()))
         .forEach(entry -> results.put(toApiKey(entry), toApiValue(entry)));
     return results;
   }

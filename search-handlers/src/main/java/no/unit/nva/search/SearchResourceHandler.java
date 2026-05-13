@@ -1,6 +1,6 @@
 package no.unit.nva.search;
 
-import static no.unit.nva.constants.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
+import static no.unit.nva.constants.Defaults.RESOURCE_RESPONSE_MEDIA_TYPES;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
 import static no.unit.nva.search.resource.Constants.V_2024_12_01_SIMPLER_MODEL;
@@ -53,7 +53,7 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
 
   @Override
   protected List<MediaType> listSupportedMediaTypes() {
-    return DEFAULT_RESPONSE_MEDIA_TYPES;
+    return RESOURCE_RESPONSE_MEDIA_TYPES;
   }
 
   @Override

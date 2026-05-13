@@ -92,7 +92,7 @@ class IndexingClientTest {
         IntStream.range(
                 0, SET_OF_RESOURCES_THAT_DO_NOT_FIT_EXACTLY_IN_THE_BULK_SIZE_OF_A_BULK_REQUEST)
             .boxed()
-            .map(i -> randomJson())
+            .map(ignored -> randomJson())
             .map(this::toIndexDocument)
             .toList();
     List<BulkResponse> provokeExecution =
