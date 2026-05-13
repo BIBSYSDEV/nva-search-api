@@ -4,7 +4,6 @@ import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import java.io.StringWriter;
-import javax.xml.stream.XMLStreamException;
 import org.openarchives.oai.pmh.v2.OAIPMHtype;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,16 +21,15 @@ public class JaxbXmlSerializer implements XmlSerializer {
   public String serialize(JAXBElement<OAIPMHtype> objectToSerialize) {
     try {
       return marshal(objectToSerialize);
-    } catch (JAXBException | XMLStreamException e) {
+    } catch (JAXBException e) {
       LOGGER.error("Failed to serialize object to xml!", e);
       throw new XmlSerializationException("Invalid xml content or streaming issue encountered!", e);
     }
   }
 
-  private String marshal(final JAXBElement<OAIPMHtype> objectToSerialize)
-      throws JAXBException, XMLStreamException {
+  private String marshal(final JAXBElement<OAIPMHtype> objectToSerialize) throws JAXBException {
     var writer = new StringWriter();
-    marshaller.marshal(objectToSerialize, writer);
+    marshaller.marshal(objectToSerialize, new XmlCharFilteringWriter(writer));
     return writer.toString();
   }
 }

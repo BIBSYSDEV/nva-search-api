@@ -27,6 +27,4 @@ This class will go through every key provided and build OpensearchQuery for each
 
 input -> POST request
 output -> Http response body
-This class handles the HTTP request to OpenSearch, including 
-
-
+This class handles the HTTP request to OpenSearch, including

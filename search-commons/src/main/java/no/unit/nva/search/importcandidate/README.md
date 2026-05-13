@@ -141,7 +141,6 @@
   "doi": "https://doi.org/10.1117/1.OE.60.3.036102",
   "totalContributors": 4
 }
-
 ```
 
 </details>
@@ -193,24 +192,24 @@ Accept: application/json
 
 ### QueryKind descriptions
 
-* number
-  * Integer
-* date
-  * DateTimeFormat -> <code> yyyy | yyyy-MM-dd | yyyy-MM-ddTHH:mm:ssZ | yyyy-MM-ddTHH:mm:ss.SSSZ</code>
-* keyword
-  * Only hit on complete field
-* fuzzy_keyword
-  * will hit on partial field, boost hits on complete field
-* text
-  * hits on any partial match in field(s), boosts on exact match and phrases
-* free_text
-  * Search through whole document
-* custom
+- number
+  - Integer
+- date
+  - DateTimeFormat -> <code> yyyy | yyyy-MM-dd | yyyy-MM-ddTHH:mm:ssZ | yyyy-MM-ddTHH:mm:ss.SSSZ</code>
+- keyword
+  - Only hit on complete field
+- fuzzy_keyword
+  - will hit on partial field, boost hits on complete field
+- text
+  - hits on any partial match in field(s), boosts on exact match and phrases
+- free_text
+  - Search through whole document
+- custom
 
 ### Key details
 
 | key_name                   | keyName                  | queryKind    | scope                    | paths                                                                                                                                                                                                                                                                            |
-|----------------------------|--------------------------|--------------|--------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| -------------------------- | ------------------------ | ------------ | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | additional_identifiers     | additionalIdentifiers    | fuzzyKeyword | any_of                   | additionalIdentifiers.value                                                                                                                                                                                                                                                      |
 | additional_identifiers_not | additionalIdentifiersNot | keyword      | not_all_of               | additionalIdentifiers.value.keyword                                                                                                                                                                                                                                              |
 | category                   | category                 | fuzzyKeyword | any_of                   | publicationInstance.type                                                                                                                                                                                                                                                         |
@@ -246,6 +245,7 @@ Accept: application/json
 | search_all                 | searchAll                | freeText     | all_of                   | q                                                                                                                                                                                                                                                                                |
 
 [!NOTE]
+
 > <p>Valid SortKeys </p>
 >
 > ```

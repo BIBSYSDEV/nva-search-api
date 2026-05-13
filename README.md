@@ -15,34 +15,34 @@ Every search key applied are joined with <code>AND</code> between them, making t
 added to the search.
 
 - **keyName**
-    - Usually a [keyword search](https://opensearch.org/docs/2.13/field-types/supported-field-types/keyword/), see
-      Parameter README for details.
-    - Supports search for several keywords, separated by comma.
-        - Depending on underlying structure require, either ALL or ONE OR MORE to hit, see Parameter README for details.
+  - Usually a [keyword search](https://opensearch.org/docs/2.13/field-types/supported-field-types/keyword/), see
+    Parameter README for details.
+  - Supports search for several keywords, separated by comma.
+    - Depending on underlying structure require, either ALL or ONE OR MORE to hit, see Parameter README for details.
 - **keyName + not**
-    - Should always return the inverse selection of just KeyName
+  - Should always return the inverse selection of just KeyName
 - **keyName + should**
-    - Usually a [text search](https://opensearch.org/docs/2.13/field-types/supported-field-types/text/), see Parameter
-      README for details.
-    - Supports search for several text phrases, separated by comma.
-        - Usually ONE OR MORE to hit, see Parameter README for details.
+  - Usually a [text search](https://opensearch.org/docs/2.13/field-types/supported-field-types/text/), see Parameter
+    README for details.
+  - Supports search for several text phrases, separated by comma.
+    - Usually ONE OR MORE to hit, see Parameter README for details.
 
 ### QueryKind
 
-* number
-    * Integer
-* date
-    * DateTimeFormat -> <code> yyyy | yyyy-MM-dd | yyyy-MM-ddTHH:mm:ssZ | yyyy-MM-ddTHH:mm:ss.SSSZ</code>
-* keyword
-    * Only hit on complete field
-* fuzzy_keyword
-    * will hit on partial field, boost hits on complete field
-* text
-    * hits on any partial match in field(s), boosts on exact match and phrases
-* free_text
-    * Search through whole document
-* custom
-    * some keys have more complex search algorithms
+- number
+  - Integer
+- date
+  - DateTimeFormat -> <code> yyyy | yyyy-MM-dd | yyyy-MM-ddTHH:mm:ssZ | yyyy-MM-ddTHH:mm:ss.SSSZ</code>
+- keyword
+  - Only hit on complete field
+- fuzzy_keyword
+  - will hit on partial field, boost hits on complete field
+- text
+  - hits on any partial match in field(s), boosts on exact match and phrases
+- free_text
+  - Search through whole document
+- custom
+  - some keys have more complex search algorithms
 
 ### Free text search
 
@@ -51,7 +51,7 @@ searching for several phrases, comma separated. All phrases have to match.
 It is possible to specify which fields to search through, but its use is limited and not recommended to use.
 
 | key_name       | keyName       | queryKind                     | scope                                   |
-|----------------|---------------|-------------------------------|-----------------------------------------|
+| -------------- | ------------- | ----------------------------- | --------------------------------------- |
 | search_all     | searchAll     | text with ranking             | all_items across document               |
 | query          | query         | text with ranking             | all_items across document               |
 | fields         | fields        | list of search keys           | user, tags, title                       |
@@ -65,7 +65,7 @@ Every endpoint have the same syntax and functionality in regard to sorting, pagi
 Each endpoint have their own list of valid sortKeys, see README for each endpoint for details.
 
 | key_name     | keyName     | queryKind    | example                                       |
-|--------------|-------------|--------------|-----------------------------------------------|
+| ------------ | ----------- | ------------ | --------------------------------------------- |
 | aggregation  | aggregation | Enum         | all, none                                     |
 | page         | page        | number       | 0 to 10000/size                               |
 | from         | from        | number       | 0 to 10000-size                               |
@@ -89,7 +89,7 @@ The reason we support that many different sort formatting, is due to legacy syst
     sort=created_date desc                      //use '+' or URL-encode
 
     sort=createdDate                            //default sort order : desc
-    
+
     orderBy=created_date:asc,modifiedDate:desc
 
     orderBy=createdDate:asc,modified_date:desc
@@ -131,7 +131,6 @@ aggregation name + key value .
 ```
 
 </details>
-
 
 ## EndPoints
 
@@ -252,6 +251,7 @@ Accept: application/json
   "@context": "https://bibsysdev.github.io/src/search/paginated-search-result.json"
 }
 ```
+
 </details>
 
 ---
@@ -259,24 +259,26 @@ Accept: application/json
 ## Useful links
 
 - API documentation
-    - [NVA git README](https://github.com/BIBSYSDEV/nva-api-documentation/blob/main/README.md)
-    - [NVA swagger (test)](https://swagger-ui.test.nva.aws.unit.no/#/NVA+Public+Search+API)
-    - [NVA swagger (production)](https://swagger-ui.nva.unit.no/#/NVA+Public+Search+API)
-    - READMES (Endpoint parameter documentation)
-        - [Resources](search-commons/src/main/java/no/unit/nva/search/resource/README.md)
-        - [Tickets](search-commons/src/main/java/no/unit/nva/search/ticket/README.md)
-        - [Import-candidates](search-commons/src/main/java/no/unit/nva/search/importcandidate/README.md)
+  - [NVA git README](https://github.com/BIBSYSDEV/nva-api-documentation/blob/main/README.md)
+  - [NVA swagger (test)](https://swagger-ui.test.nva.aws.unit.no/#/NVA+Public+Search+API)
+  - [NVA swagger (production)](https://swagger-ui.nva.unit.no/#/NVA+Public+Search+API)
+  - READMES (Endpoint parameter documentation)
+    - [Resources](search-commons/src/main/java/no/unit/nva/search/resource/README.md)
+    - [Tickets](search-commons/src/main/java/no/unit/nva/search/ticket/README.md)
+    - [Import-candidates](search-commons/src/main/java/no/unit/nva/search/importcandidate/README.md)
 - API Endpoints
-    - Test
-        - https://api.test.nva.aws.unit.no/search/resources
-        - https://api.test.nva.aws.unit.no/search/customer/resources
-        - https://api.test.nva.aws.unit.no/search/customer/tickets
-        - https://api.test.nva.aws.unit.no/search/import-candidates2
-    - Production
-        - https://api.nva.unit.no/search/resources
-        - https://api.nva.unit.no/search/customer/resources
-        - https://api.nva.unit.no/search/customer/tickets
+  - Test
+    - https://api.test.nva.aws.unit.no/search/resources
+    - https://api.test.nva.aws.unit.no/search/customer/resources
+    - https://api.test.nva.aws.unit.no/search/customer/tickets
+    - https://api.test.nva.aws.unit.no/search/import-candidates2
+  - Production
+    - https://api.nva.unit.no/search/resources
+    - https://api.nva.unit.no/search/customer/resources
+    - https://api.nva.unit.no/search/customer/tickets
 
 ---
-## Utility startpoints and flows ###
+
+## Utility startpoints and flows
+
 ![](utilities_flow.png)

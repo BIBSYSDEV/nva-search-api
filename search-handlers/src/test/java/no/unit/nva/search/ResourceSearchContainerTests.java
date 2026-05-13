@@ -2,6 +2,7 @@ package no.unit.nva.search;
 
 import static no.unit.nva.constants.IndexMappingsAndSettings.RESOURCE_MAPPINGS;
 import static no.unit.nva.constants.IndexMappingsAndSettings.RESOURCE_SETTINGS;
+import static no.unit.nva.indexing.testutils.Constants.OPEN_SEARCH_IMAGE;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
@@ -52,7 +53,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 class ResourceSearchContainerTests {
 
-  private static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.11.0";
   private static final OpenSearchContainer<?> container =
       new OpenSearchContainer<>(OPEN_SEARCH_IMAGE);
   private static final String INDEX_NAME = "resources";
