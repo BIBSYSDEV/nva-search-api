@@ -583,7 +583,7 @@ class OaiPmhHandlerTest {
             "https://api.unittests.nva.aws.unit.no/publication/019527b84693-a86c1cae-24da-4c9d-9bff-e097fd9be2f1",
             "https://api.unittests.nva.aws.unit.no/publication/019527b845e4-182ebbf0-9481-4a98-aad2-76b617cc1b0c");
 
-    runListRecordsTest(method, null, null, null, null, null, null, 3, expectedIdentifiers, true);
+    runListRecordsTest(method, null, null, null, null, null, null, 3, expectedIdentifiers, false);
   }
 
   @ParameterizedTest
@@ -598,7 +598,7 @@ class OaiPmhHandlerTest {
             "https://api.unittests.nva.aws.unit.no/publication/019527b845e4-182ebbf0-9481-4a98-aad2-76b617cc1b0c");
 
     runListRecordsTest(
-        method, null, fromDate, untilDate, null, null, null, 3, expectedIdentifiers, true);
+        method, null, fromDate, untilDate, null, null, null, 3, expectedIdentifiers, false);
   }
 
   @ParameterizedTest
@@ -622,7 +622,7 @@ class OaiPmhHandlerTest {
         null,
         3,
         expectedIdentifiers,
-        true);
+        false);
   }
 
   @ParameterizedTest
@@ -656,12 +656,12 @@ class OaiPmhHandlerTest {
         resumptionToken,
         3,
         expectedIdentifiers,
-        true);
+        false);
   }
 
   @ParameterizedTest
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
-  void shouldNotReturnResumptionTokenOnLastPage(String method) throws Exception {
+  void shouldReturnEmptyResumptionTokenOnLastPage(String method) throws Exception {
     var fromDate = "2016-01-01";
     var untilDate = "2017-01-01";
     var cursor = "2016-01-07T05:48:31.123456789Z";
@@ -690,7 +690,7 @@ class OaiPmhHandlerTest {
         resumptionToken,
         2,
         expectedIdentifiers,
-        false);
+        true);
   }
 
   @Test
@@ -1279,7 +1279,7 @@ class OaiPmhHandlerTest {
       final String resumptionToken,
       final int expectedRecordCount,
       final List<String> expectedIdentifiers,
-      final boolean expectResumptionToken)
+      final boolean isLastPage)
       throws Exception {
 
     var matcher = buildMatcher(cursor, from, until, setChild);
@@ -1314,8 +1314,10 @@ class OaiPmhHandlerTest {
     var identifiers = extractRecordIdentifiers(recordNodes);
     assertThat(identifiers, containsInAnyOrder(expectedIdentifiers.toArray()));
 
-    if (expectResumptionToken) {
-      assertResumptionTokenHasCompleteRecordSize(xpathEngine, response);
+    assertResumptionTokenHasCompleteRecordSize(xpathEngine, response);
+    if (isLastPage) {
+      assertResumptionTokenValueIsEmpty(xpathEngine, response);
+    } else {
       var resumptionTokenValue =
           xpathEngine
               .selectNodes("/oai:OAI-PMH/oai:ListRecords/oai:resumptionToken", response)
@@ -1332,8 +1334,6 @@ class OaiPmhHandlerTest {
           "Expects cursor in token to be 1 ms ahead of the last record in page",
           token.cursor(),
           is(equalTo(expectedCursorInToken)));
-    } else {
-      assertNoResumptionToken(xpathEngine, response);
     }
   }
 
@@ -1386,11 +1386,13 @@ class OaiPmhHandlerTest {
     assertThat(completeListSize, is(equalTo("8")));
   }
 
-  private void assertNoResumptionToken(XPathEngine xPathEngine, Source response) {
+  private void assertResumptionTokenValueIsEmpty(XPathEngine xPathEngine, Source response) {
     var resumptionTokenNodes =
         xPathEngine.selectNodes("/oai:OAI-PMH/oai:ListRecords/oai:resumptionToken", response);
 
-    assertThat(resumptionTokenNodes, is(emptyIterable()));
+    assertThat(resumptionTokenNodes, iterableWithSize(1));
+    var resumptionTokenNode = resumptionTokenNodes.iterator().next();
+    assertThat(resumptionTokenNode.getTextContent(), is(equalTo("")));
   }
 
   private Source performListRecordsOperation(
