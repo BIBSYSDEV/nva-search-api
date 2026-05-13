@@ -6,8 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class BibtexFieldTest {
@@ -86,39 +91,37 @@ class BibtexFieldTest {
 
   // --- sanitize via toString ---
 
-  @Test
-  void sanitizesPercentInPlainText() {
-    assertEquals(
-        "  note = {99\\% confidence}", new BibtexField("note", "99% confidence").toString());
+  @ParameterizedTest(name = "{0} -> {1}")
+  @CsvSource(
+      delimiter = '|',
+      textBlock =
+          """
+          99% confidence | 99\\% confidence
+          issue #42      | issue \\#42
+          R&D department | R\\&D department
+          """)
+  void sanitizesSpecialCharInPlainText(String input, String expected) {
+    assertEquals("  note = {%s}".formatted(expected), new BibtexField("note", input).toString());
   }
 
-  @Test
-  void sanitizesHashInPlainText() {
-    assertEquals("  note = {issue \\#42}", new BibtexField("note", "issue #42").toString());
-  }
-
-  @Test
-  void sanitizesAmpersandInPlainText() {
-    assertEquals(
-        "  note = {R\\&D department}", new BibtexField("note", "R&D department").toString());
-  }
-
-  @Test
-  void doesNotSanitizeBackslashDelimitedLatex() {
-    var value = "Collisions at \\(\\sqrt{s_{NN}}\\) = 2.76 TeV";
+  @ParameterizedTest(name = "preserves {0}")
+  @MethodSource("mathContentExamples")
+  void preservesMathContentVerbatim(String value) {
     assertEquals("  title = {%s}".formatted(value), new BibtexField("title", value).toString());
   }
 
-  @Test
-  void doesNotSanitizeDollarDelimitedLatex() {
-    var value = "Searches for the SM Higgs boson at LEP with $\\sqrt{s}\\leq 202$ GeV";
-    assertEquals("  title = {%s}".formatted(value), new BibtexField("title", value).toString());
-  }
-
-  @Test
-  void doesNotSanitizeMathML() {
-    var value = "Energy <math><msup><mi>E</mi><mn>2</mn></msup></math> formula";
-    assertEquals("  title = {%s}".formatted(value), new BibtexField("title", value).toString());
+  static Stream<Arguments> mathContentExamples() {
+    return Stream.of(
+        Arguments.of(
+            Named.of("\\(...\\) inline LaTeX", "Collisions at \\(\\sqrt{s_{NN}}\\) = 2.76 TeV")),
+        Arguments.of(
+            Named.of(
+                "$...$ inline LaTeX",
+                "Searches for the SM Higgs boson at LEP with $\\sqrt{s}\\leq 202$ GeV")),
+        Arguments.of(
+            Named.of(
+                "<math> element",
+                "Energy <math><msup><mi>E</mi><mn>2</mn></msup></math> formula")));
   }
 
   @Test
@@ -126,5 +129,90 @@ class BibtexFieldTest {
     var value = "100% {braces} #hashtag \\backslash";
     var expected = "  title = {100\\% \\{braces\\} \\#hashtag \\\\backslash}";
     assertEquals(expected, new BibtexField("title", value).toString());
+  }
+
+  @Test
+  void shouldProduceBalancedBracesWhenValueContainsLatexAndStrayBrace() {
+    var value = "Unmatched {brace in \\(x^2\\)";
+    var output = new BibtexField("title", value).toString();
+    var stripped = output.replace("\\{", "").replace("\\}", "");
+    var opens = stripped.chars().filter(character -> character == '{').count();
+    var closes = stripped.chars().filter(character -> character == '}').count();
+    assertEquals(opens, closes, "unbalanced braces will break BibTeX parsing of the entry");
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("specialCharsInMathValues")
+  void shouldEscapeSpecialCharEvenWhenValueContainsMath(String value, String specialChar) {
+    var output = new BibtexField("title", value).toString();
+    assertFalse(
+        output.replace("\\" + specialChar, "").contains(specialChar),
+        "expected '%s' to be escaped in: %s".formatted(specialChar, value));
+  }
+
+  static Stream<Arguments> specialCharsInMathValues() {
+    return Stream.of(
+        Arguments.of(
+            Named.of(
+                "unescaped percent is treated as a line comment when LaTeX renders the"
+                    + " bibliography",
+                "100% off in \\(x^2\\)"),
+            "%"),
+        Arguments.of(
+            Named.of(
+                "unescaped ampersand triggers misplaced alignment tab in LaTeX rendering",
+                "R&D notes for \\(\\alpha\\)"),
+            "&"),
+        Arguments.of(
+            Named.of(
+                "unescaped hash is BibTeX's string concatenation operator and breaks downstream"
+                    + " tooling",
+                "Section #3 of \\(\\sqrt{s}\\)"),
+            "#"),
+        Arguments.of(
+            Named.of(
+                "percent outside MathML element must still be escaped",
+                "100% off <math><mi>x</mi></math>"),
+            "%"),
+        Arguments.of(
+            Named.of(
+                "ampersand outside MathML element must still be escaped",
+                "R&D notes <math><msup><mi>E</mi><mn>2</mn></msup></math>"),
+            "&"),
+        Arguments.of(
+            Named.of(
+                "hash outside MathML element with xmlns attribute must still be escaped",
+                "Section #3 <math xmlns='http://www.w3.org/1998/Math/MathML'><mi>y</mi></math>"),
+            "#"));
+  }
+
+  @Test
+  void shouldEscapeStrayBraceWhenValueContainsMathML() {
+    var value = "Unmatched {brace next to <math><mi>x</mi></math>";
+    var output = new BibtexField("title", value).toString();
+    var stripped = output.replace("\\{", "").replace("\\}", "");
+    var opens = stripped.chars().filter(character -> character == '{').count();
+    var closes = stripped.chars().filter(character -> character == '}').count();
+    assertEquals(opens, closes, "unbalanced braces will break BibTeX parsing of the entry");
+  }
+
+  @Test
+  void preservesMathMLElementVerbatimWhenSurroundedByEscapableText() {
+    var mathMl = "<math><msup><mi>E</mi><mn>2</mn></msup></math>";
+    var value = "100% off & #1 special " + mathMl + " trailing & text";
+    var output = new BibtexField("title", value).toString();
+    assertTrue(
+        output.contains(mathMl),
+        "MathML element must be preserved verbatim, got: %s".formatted(output));
+  }
+
+  @Test
+  void preservesMathMLElementVerbatimWhenAttributeContainsEscapableChar() {
+    var mathMl = "<math style=\"font-size:120%\"><mi>x</mi></math>";
+    var output = new BibtexField("title", mathMl).toString();
+    assertTrue(
+        output.contains(mathMl),
+        "MathML element with %% in attribute must be preserved verbatim, got: %s"
+            .formatted(output));
   }
 }
