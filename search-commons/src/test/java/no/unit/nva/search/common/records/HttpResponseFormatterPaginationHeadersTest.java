@@ -12,6 +12,7 @@ import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.not;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 import no.unit.nva.search.common.records.SwsResponse.HitsInfo;
 import no.unit.nva.search.common.records.SwsResponse.HitsInfo.TotalInfo;
@@ -24,6 +25,8 @@ class HttpResponseFormatterPaginationHeadersTest {
   private static final URI SOURCE = URI.create("https://api.example.com/search/resources");
   private static final String LINK = "Link";
   private static final String X_TOTAL_COUNT = "X-Total-Count";
+  private static final String ACCESS_CONTROL_EXPOSE_HEADERS = "Access-Control-Expose-Headers";
+  private static final String EXPECTED_EXPOSED_HEADERS = "Link, X-Total-Count";
 
   @Test
   void shouldReturnEmptyHeadersWhenMediaTypeIsJson() {
@@ -37,6 +40,27 @@ class HttpResponseFormatterPaginationHeadersTest {
     var headers = formatterFor(MediaTypes.APPLICATION_JSON_LD, 0, 10, 100).paginationHeaders();
 
     assertThat(headers, anEmptyMap());
+  }
+
+  @Test
+  void shouldEmitExposeHeadersForCsv() {
+    var headers = formatterFor(CSV_UTF_8, 0, 10, 100).paginationHeaders();
+
+    assertThat(headers, hasEntry(ACCESS_CONTROL_EXPOSE_HEADERS, EXPECTED_EXPOSED_HEADERS));
+  }
+
+  @Test
+  void shouldEmitExposeHeadersForBibtex() {
+    var headers = formatterFor(BIBTEX_UTF_8, 0, 10, 100).paginationHeaders();
+
+    assertThat(headers, hasEntry(ACCESS_CONTROL_EXPOSE_HEADERS, EXPECTED_EXPOSED_HEADERS));
+  }
+
+  @Test
+  void shouldEmitExposeHeadersEvenWhenSinglePage() {
+    var headers = formatterFor(BIBTEX_UTF_8, 0, 100, 25).paginationHeaders();
+
+    assertThat(headers, hasEntry(ACCESS_CONTROL_EXPOSE_HEADERS, EXPECTED_EXPOSED_HEADERS));
   }
 
   @Test
@@ -172,7 +196,7 @@ class HttpResponseFormatterPaginationHeadersTest {
 
   private static HttpResponseFormatter<?> formatterFor(
       MediaType mediaType, int offset, int size, int totalHits) {
-    var hitsInfo = new HitsInfo(new TotalInfo(totalHits, "eq"), 0.0, java.util.List.of());
+    var hitsInfo = new HitsInfo(new TotalInfo(totalHits, "eq"), 0.0, List.of());
     var swsResponse = new SwsResponse(0, false, null, hitsInfo, null, null);
     return new HttpResponseFormatter<>(
         swsResponse, mediaType, SOURCE, offset, size, Map.of(), null);

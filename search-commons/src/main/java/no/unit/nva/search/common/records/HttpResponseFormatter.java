@@ -14,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.constants.Words;
@@ -34,6 +35,9 @@ import nva.commons.apigateway.MediaType;
 public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
   private static final String HEADER_LINK = "Link";
   private static final String HEADER_X_TOTAL_COUNT = "X-Total-Count";
+  private static final String HEADER_ACCESS_CONTROL_EXPOSE_HEADERS =
+      "Access-Control-Expose-Headers";
+  private static final String EXPOSED_PAGINATION_HEADERS = "Link, X-Total-Count";
   private static final String REL_FIRST = "first";
   private static final String REL_PREV = "prev";
   private static final String REL_NEXT = "next";
@@ -130,10 +134,8 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
     var total = response.getTotalSize();
     var headers = new LinkedHashMap<String, String>();
     headers.put(HEADER_X_TOTAL_COUNT, String.valueOf(total));
-    var linkValue = buildLinkHeaderValue(total);
-    if (hasContent(linkValue)) {
-      headers.put(HEADER_LINK, linkValue);
-    }
+    headers.put(HEADER_ACCESS_CONTROL_EXPOSE_HEADERS, EXPOSED_PAGINATION_HEADERS);
+    buildLinkHeaderValue(total).ifPresent(value -> headers.put(HEADER_LINK, value));
     return headers;
   }
 
@@ -141,9 +143,9 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
     return nonNull(mediaType) && (CSV_UTF_8.matches(mediaType) || BIBTEX_UTF_8.matches(mediaType));
   }
 
-  private String buildLinkHeaderValue(int total) {
+  private Optional<String> buildLinkHeaderValue(int total) {
     if (!isPaginatable(total)) {
-      return "";
+      return Optional.empty();
     }
     var current = nonNull(offset) ? offset : 0;
     var links = new ArrayList<String>();
@@ -155,7 +157,7 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
       links.add(formatLink(uriWithFrom(current + size), REL_NEXT));
     }
     links.add(formatLink(uriWithFrom(lastPageOffset(total)), REL_LAST));
-    return String.join(LINK_HEADER_SEPARATOR, links);
+    return Optional.of(String.join(LINK_HEADER_SEPARATOR, links));
   }
 
   private boolean isPaginatable(int total) {
@@ -167,7 +169,7 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
   }
 
   private URI uriWithFrom(int newFrom) {
-    var params = nonNull(queryKeys) ? queryKeys.asMap() : new LinkedHashMap<String, String>();
+    var params = getRequestParameter();
     params.put(Words.FROM, String.valueOf(newFrom));
     params.put(Words.SIZE, String.valueOf(size));
     return fromUri(source).addQueryParameters(params).getUri();
@@ -178,7 +180,7 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
   }
 
   private Map<String, String> getRequestParameter() {
-    return queryKeys.asMap();
+    return nonNull(queryKeys) ? queryKeys.asMap() : new LinkedHashMap<>();
   }
 
   private URI nextResultsBySortKey(Map<String, String> requestParameter, URI gatewayUri) {

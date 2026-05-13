@@ -24,7 +24,6 @@ Globals:
       AllowMethods: "'PUT, GET,OPTIONS,DELETE,POST'"
       AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
       AllowOrigin: "'*'"
-      ExposeHeaders: "'Link,X-Total-Count'"
 
 Parameters:
   CognitoUri:
