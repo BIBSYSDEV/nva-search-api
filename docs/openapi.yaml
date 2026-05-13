@@ -65,10 +65,18 @@ paths:
       responses:
         "200":
           description: "OK"
+          headers:
+            Link:
+              $ref: "#/components/headers/LinkHeader"
+            X-Total-Count:
+              $ref: "#/components/headers/XTotalCountHeader"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/PagedImportCandidateSearchResponse"
+            text/csv:
+              schema:
+                type: string
         "400":
           description: Bad Request
           content:
@@ -148,10 +156,18 @@ paths:
       responses:
         "200":
           description: "OK"
+          headers:
+            Link:
+              $ref: "#/components/headers/LinkHeader"
+            X-Total-Count:
+              $ref: "#/components/headers/XTotalCountHeader"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/TicketSearchResponse"
+            text/csv:
+              schema:
+                type: string
         "400":
           description: Bad Request
           content:
@@ -303,10 +319,21 @@ paths:
       responses:
         "200":
           description: "OK"
+          headers:
+            Link:
+              $ref: "#/components/headers/LinkHeader"
+            X-Total-Count:
+              $ref: "#/components/headers/XTotalCountHeader"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/PagedPublicationFullSearchResponse"
+            text/csv:
+              schema:
+                type: string
+            text/x-bibtex:
+              schema:
+                type: string
         "400":
           description: Bad Request
           content:
@@ -627,10 +654,21 @@ paths:
       responses:
         "200":
           description: "OK"
+          headers:
+            Link:
+              $ref: "#/components/headers/LinkHeader"
+            X-Total-Count:
+              $ref: "#/components/headers/XTotalCountHeader"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/PagedPublicationSearchResponse"
+            text/csv:
+              schema:
+                type: string
+            text/x-bibtex:
+              schema:
+                type: string
         "400":
           description: Bad Request
           content:
@@ -802,6 +840,19 @@ paths:
                 $ref: "#/components/schemas/Problem"
 
 components:
+  headers:
+    LinkHeader:
+      description: |
+        RFC 8288 pagination links with rel=first/prev/next/last.
+        Present on text/csv and text/x-bibtex responses when the result spans multiple pages.
+      schema:
+        type: string
+    XTotalCountHeader:
+      description: |
+        Total number of matching results.
+        Present on text/csv and text/x-bibtex responses.
+      schema:
+        type: integer
   parameters:
     abstractParam:
       name: abstract

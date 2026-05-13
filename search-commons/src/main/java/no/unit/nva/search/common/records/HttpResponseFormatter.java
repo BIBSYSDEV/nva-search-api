@@ -6,6 +6,7 @@ import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.search.common.constant.Functions.hasContent;
 import static nva.commons.apigateway.MediaType.CSV_UTF_8;
 import static nva.commons.core.paths.UriWrapper.fromUri;
+import static org.apache.hc.core5.http.HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URI;
@@ -35,8 +36,6 @@ import nva.commons.apigateway.MediaType;
 public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
   private static final String HEADER_LINK = "Link";
   private static final String HEADER_X_TOTAL_COUNT = "X-Total-Count";
-  private static final String HEADER_ACCESS_CONTROL_EXPOSE_HEADERS =
-      "Access-Control-Expose-Headers";
   private static final String EXPOSED_PAGINATION_HEADERS =
       String.join(", ", HEADER_LINK, HEADER_X_TOTAL_COUNT);
   private static final String REL_FIRST = "first";
@@ -135,7 +134,7 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
     var total = response.getTotalSize();
     var headers = new LinkedHashMap<String, String>();
     headers.put(HEADER_X_TOTAL_COUNT, String.valueOf(total));
-    headers.put(HEADER_ACCESS_CONTROL_EXPOSE_HEADERS, EXPOSED_PAGINATION_HEADERS);
+    headers.put(ACCESS_CONTROL_EXPOSE_HEADERS, EXPOSED_PAGINATION_HEADERS);
     buildLinkHeaderValue(total).ifPresent(value -> headers.put(HEADER_LINK, value));
     return headers;
   }
