@@ -63,18 +63,22 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
       throws BadRequestException, UnauthorizedException {
     var version = ContentTypeUtils.extractVersionFromRequestInfo(requestInfo);
 
-    return ResourceSearchQuery.builder()
-        .fromRequestInfo(requestInfo)
-        .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
-        .withAlwaysExcludedFields(getExcludedFields(version))
-        .validate()
-        .build()
-        .withFilter()
-        .customerCurationInstitutions(requestInfo)
-        .apply()
-        .doSearch(opensearchClient, Words.RESOURCES)
-        .withMutators(getMutator(version))
-        .toString();
+    var formatter =
+        ResourceSearchQuery.builder()
+            .fromRequestInfo(requestInfo)
+            .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
+            .withAlwaysExcludedFields(getExcludedFields(version))
+            .validate()
+            .build()
+            .withFilter()
+            .customerCurationInstitutions(requestInfo)
+            .apply()
+            .doSearch(opensearchClient, Words.RESOURCES)
+            .withMutators(getMutator(version));
+
+    addAdditionalHeaders(formatter::paginationHeaders);
+
+    return formatter.toString();
   }
 
   @Override

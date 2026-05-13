@@ -55,14 +55,18 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
   protected String processInput(Void input, RequestInfo requestInfo, Context context)
       throws BadRequestException, UnauthorizedException {
 
-    return TicketSearchQuery.builder()
-        .fromRequestInfo(requestInfo)
-        .withRequiredParameters(FROM, SIZE, AGGREGATION)
-        .build()
-        .withFilter()
-        .fromRequestInfo(requestInfo)
-        .doSearch(opensearchClient, Words.TICKETS)
-        .toString();
+    var formatter =
+        TicketSearchQuery.builder()
+            .fromRequestInfo(requestInfo)
+            .withRequiredParameters(FROM, SIZE, AGGREGATION)
+            .build()
+            .withFilter()
+            .fromRequestInfo(requestInfo)
+            .doSearch(opensearchClient, Words.TICKETS);
+
+    addAdditionalHeaders(formatter::paginationHeaders);
+
+    return formatter.toString();
   }
 
   @Override
