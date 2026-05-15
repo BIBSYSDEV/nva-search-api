@@ -129,6 +129,7 @@ public final class Words {
   public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS = "SearchInfrastructureCredentials";
   public static final String SERIES = "series";
   public static final String SERIES_AS_TYPE = "Series";
+  public static final String SIZE = "size";
   public static final String SLASH = "/";
   public static final String SORT_LAST = "_last";
   public static final String SOURCE = "source";

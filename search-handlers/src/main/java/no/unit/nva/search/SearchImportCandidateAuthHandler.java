@@ -44,13 +44,17 @@ public class SearchImportCandidateAuthHandler extends ApiGatewayHandler<Void, St
   @Override
   protected String processInput(Void input, RequestInfo requestInfo, Context context)
       throws BadRequestException {
-    return ImportCandidateSearchQuery.builder()
-        .fromRequestInfo(requestInfo)
-        .withRequiredParameters(FROM, SIZE, AGGREGATION)
-        .validate()
-        .build()
-        .doSearch(opensearchClient, Words.IMPORT_CANDIDATES_INDEX)
-        .toString();
+    var formatter =
+        ImportCandidateSearchQuery.builder()
+            .fromRequestInfo(requestInfo)
+            .withRequiredParameters(FROM, SIZE, AGGREGATION)
+            .validate()
+            .build()
+            .doSearch(opensearchClient, Words.IMPORT_CANDIDATES_INDEX);
+
+    addAdditionalHeaders(formatter::paginationHeaders);
+
+    return formatter.toString();
   }
 
   @Override
