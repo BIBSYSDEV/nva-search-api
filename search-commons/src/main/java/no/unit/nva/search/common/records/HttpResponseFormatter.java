@@ -6,12 +6,16 @@ import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.search.common.constant.Functions.hasContent;
 import static nva.commons.apigateway.MediaType.CSV_UTF_8;
 import static nva.commons.core.paths.UriWrapper.fromUri;
+import static org.apache.hc.core5.http.HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.constants.Words;
@@ -30,6 +34,17 @@ import nva.commons.apigateway.MediaType;
  *     define the parameters that can be used in the query.
  */
 public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
+  private static final String HEADER_LINK = "Link";
+  private static final String HEADER_X_TOTAL_COUNT = "X-Total-Count";
+  private static final String EXPOSED_PAGINATION_HEADERS =
+      String.join(", ", HEADER_LINK, HEADER_X_TOTAL_COUNT);
+  private static final String REL_FIRST = "first";
+  private static final String REL_PREV = "prev";
+  private static final String REL_NEXT = "next";
+  private static final String REL_LAST = "last";
+  private static final String LINK_VALUE_FORMAT = "<%s>; rel=\"%s\"";
+  private static final String LINK_HEADER_SEPARATOR = ", ";
+
   private final SwsResponse response;
   private final MediaType mediaType;
   private final URI source;
@@ -112,8 +127,60 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
     return ResourceBibTexTransformer.transform(response.getSearchHits());
   }
 
+  public Map<String, String> paginationHeaders() {
+    if (!isPlainTextMediaType()) {
+      return Map.of();
+    }
+    var total = response.getTotalSize();
+    var headers = new LinkedHashMap<String, String>();
+    headers.put(HEADER_X_TOTAL_COUNT, String.valueOf(total));
+    headers.put(ACCESS_CONTROL_EXPOSE_HEADERS, EXPOSED_PAGINATION_HEADERS);
+    buildLinkHeaderValue(total).ifPresent(value -> headers.put(HEADER_LINK, value));
+    return headers;
+  }
+
+  private boolean isPlainTextMediaType() {
+    return nonNull(mediaType) && (CSV_UTF_8.matches(mediaType) || BIBTEX_UTF_8.matches(mediaType));
+  }
+
+  private Optional<String> buildLinkHeaderValue(int total) {
+    if (!isPaginatable(total)) {
+      return Optional.empty();
+    }
+    var current = nonNull(offset) ? offset : 0;
+    var links = new ArrayList<String>();
+    links.add(formatLink(uriWithFrom(0), REL_FIRST));
+    if (current > 0) {
+      links.add(formatLink(uriWithFrom(Math.max(0, current - size)), REL_PREV));
+    }
+    if (current + size < total) {
+      links.add(formatLink(uriWithFrom(current + size), REL_NEXT));
+    }
+    links.add(formatLink(uriWithFrom(lastPageOffset(total)), REL_LAST));
+    return Optional.of(String.join(LINK_HEADER_SEPARATOR, links));
+  }
+
+  private boolean isPaginatable(int total) {
+    return total > 0 && nonNull(size) && size > 0 && total > size;
+  }
+
+  private int lastPageOffset(int total) {
+    return (total - 1) / size * size;
+  }
+
+  private URI uriWithFrom(int newFrom) {
+    var params = getRequestParameter();
+    params.put(Words.FROM, String.valueOf(newFrom));
+    params.put(Words.SIZE, String.valueOf(size));
+    return fromUri(source).addQueryParameters(params).getUri();
+  }
+
+  private static String formatLink(URI uri, String rel) {
+    return LINK_VALUE_FORMAT.formatted(uri, rel);
+  }
+
   private Map<String, String> getRequestParameter() {
-    return queryKeys.asMap();
+    return nonNull(queryKeys) ? queryKeys.asMap() : new LinkedHashMap<>();
   }
 
   private URI nextResultsBySortKey(Map<String, String> requestParameter, URI gatewayUri) {

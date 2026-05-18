@@ -9,6 +9,9 @@ import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -19,13 +22,16 @@ import static org.mockito.Mockito.when;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.records.SwsResponse;
@@ -96,6 +102,23 @@ class SearchResourceAuthHandlerTest {
   }
 
   @Test
+  void shouldEmitPaginationHeadersWhenRequestingBibtex() throws IOException {
+    prepareRestHighLevelClientOkResponse();
+
+    handler.handleRequest(
+        getBibtexInputStreamWithAccessRight(
+            randomUri(), randomUri(), AccessRight.MANAGE_RESOURCES_ALL),
+        outputStream,
+        contextMock);
+
+    var headers = rawHeaders(outputStream);
+    assertThat(headers, hasEntry("X-Total-Count", "2"));
+    assertThat(headers, hasEntry("Access-Control-Expose-Headers", "Link, X-Total-Count"));
+    assertThat(headers, hasKey("Link"));
+    assertThat(headers.get("Link"), containsString("rel=\"first\""));
+  }
+
+  @Test
   void shouldReturnUnauthorizedWhenUserIsMissingAccessRight() throws IOException {
     prepareRestHighLevelClientOkResponse();
 
@@ -128,6 +151,29 @@ class SearchResourceAuthHandlerTest {
         .withAccessRights(currentCustomer, accessRight)
         .withHeaders(Map.of("Authorization", "Bearer " + randomString()))
         .build();
+  }
+
+  private InputStream getBibtexInputStreamWithAccessRight(
+      URI currentCustomer, URI topLevelCristinOrgId, AccessRight accessRight)
+      throws JsonProcessingException {
+    return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
+        .withMultiValueQueryParameters(Map.of("size", List.of("1")))
+        .withRequestContext(getRequestContext())
+        .withUserName(randomString())
+        .withCurrentCustomer(currentCustomer)
+        .withTopLevelCristinOrgId(topLevelCristinOrgId)
+        .withAccessRights(currentCustomer, accessRight)
+        .withHeaders(Map.of(ACCEPT, "text/x-bibtex", "Authorization", "Bearer " + randomString()))
+        .build();
+  }
+
+  @SuppressWarnings("unchecked")
+  private static Map<String, String> rawHeaders(ByteArrayOutputStream outputStream)
+      throws IOException {
+    var typeRef = new TypeReference<Map<String, Object>>() {};
+    var response =
+        objectMapperWithEmpty.readValue(outputStream.toString(StandardCharsets.UTF_8), typeRef);
+    return (Map<String, String>) response.get("headers");
   }
 
   private ObjectNode getRequestContext() {

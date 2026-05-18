@@ -12,6 +12,7 @@ import static no.unit.nva.search.resource.ResourceParameter.SORT;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import java.net.HttpURLConnection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import no.unit.nva.constants.Words;
@@ -71,20 +72,29 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
         requestInfo.getQueryParameters());
     var version = ContentTypeUtils.extractVersionFromRequestInfo(requestInfo);
 
-    addAdditionalHeaders(() -> Map.of(HttpHeaders.VARY, HttpHeaders.ACCEPT));
+    var formatter =
+        ResourceSearchQuery.builder()
+            .fromRequestInfo(requestInfo)
+            .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
+            .withAlwaysIncludedFields(getIncludedFields(version))
+            .validate()
+            .build()
+            .withFilter()
+            .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+            .apply()
+            .doSearch(opensearchClient, Words.RESOURCES)
+            .withMutators(getMutator(version));
 
-    return ResourceSearchQuery.builder()
-        .fromRequestInfo(requestInfo)
-        .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
-        .withAlwaysIncludedFields(getIncludedFields(version))
-        .validate()
-        .build()
-        .withFilter()
-        .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
-        .apply()
-        .doSearch(opensearchClient, Words.RESOURCES)
-        .withMutators(getMutator(version))
-        .toString();
+    addAdditionalHeaders(() -> responseHeaders(formatter.paginationHeaders()));
+
+    return formatter.toString();
+  }
+
+  private Map<String, String> responseHeaders(Map<String, String> paginationHeaders) {
+    var headers = new LinkedHashMap<String, String>();
+    headers.put(HttpHeaders.VARY, HttpHeaders.ACCEPT);
+    headers.putAll(paginationHeaders);
+    return headers;
   }
 
   private List<String> getIncludedFields(String version) {

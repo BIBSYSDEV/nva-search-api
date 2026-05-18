@@ -100,18 +100,14 @@ public class ListRecordsRequestHandler implements OaiPmhRequestHandler<ListRecor
     var listRecords = objectFactory.createListRecordsType();
     listRecords.getRecord().addAll(records);
 
-    var pageSize = records.size();
-    if (shouldAddResumptionToken(pageSize)) {
-      var resumptionTokenType =
-          generateResumptionToken(request, cursorValue, totalSize, objectFactory);
-      listRecords.setResumptionToken(resumptionTokenType);
-    }
+    var isLastPage = records.size() < batchSize;
+    var nextResumptionToken =
+        isLastPage
+            ? createEmptyResumptionToken(totalSize, objectFactory)
+            : createNewResumptionToken(request, cursorValue, totalSize, objectFactory);
+    listRecords.setResumptionToken(nextResumptionToken);
 
     return listRecords;
-  }
-
-  private boolean shouldAddResumptionToken(int totalSize) {
-    return totalSize >= batchSize;
   }
 
   private PagedResponse doFollowUpSearch(ResumptionToken resumptionToken) {
@@ -136,7 +132,14 @@ public class ListRecordsRequestHandler implements OaiPmhRequestHandler<ListRecor
     oaiPmhType.getRequest().setMetadataPrefix(request.getMetadataPrefix().getPrefix());
   }
 
-  private ResumptionTokenType generateResumptionToken(
+  private static ResumptionTokenType createEmptyResumptionToken(
+      int totalSize, ObjectFactory objectFactory) {
+    var resumptionTokenType = objectFactory.createResumptionTokenType();
+    resumptionTokenType.setCompleteListSize(BigInteger.valueOf(totalSize));
+    return resumptionTokenType;
+  }
+
+  private static ResumptionTokenType createNewResumptionToken(
       ListRecordsRequest originalRequest,
       String cursor,
       int totalSize,
