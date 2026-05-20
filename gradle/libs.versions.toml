@@ -1,11 +1,11 @@
 [versions]
-glassfishJaxbRuntime = { strictly = '4.0.5' }
+glassfishJaxbRuntime = { strictly = '4.0.8' }
 jakartaXmlBindApi = { strictly = '4.0.5' }
 log4j = { strictly = '2.25.3' }
-opensearch-rest = { strictly = '3.4.0' }
-opensearch-server = { strictly = '3.5.0' }
-typesafe = { strictly = '1.4.3' }
-xmlUnit = { strictly = '2.10.3' }
+opensearch-rest = { strictly = '3.6.0' }
+opensearch-server = { strictly = '3.6.0' }
+typesafe = { strictly = '1.4.8' }
+xmlUnit = { strictly = '2.11.0' }
 
 [libraries]
 glassfish-jaxb-runtime = { group = 'org.glassfish.jaxb', name = 'jaxb-runtime', version.ref = 'glassfishJaxbRuntime' }
