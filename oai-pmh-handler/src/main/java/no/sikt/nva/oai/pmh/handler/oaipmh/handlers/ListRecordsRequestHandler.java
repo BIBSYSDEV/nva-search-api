@@ -5,7 +5,6 @@ import static no.sikt.nva.oai.pmh.handler.oaipmh.OaiPmhUtils.baseResponse;
 
 import jakarta.xml.bind.JAXBElement;
 import java.math.BigInteger;
-import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -26,6 +25,7 @@ import org.openarchives.oai.pmh.v2.VerbType;
 public class ListRecordsRequestHandler implements OaiPmhRequestHandler<ListRecordsRequest> {
 
   private static final int RESUMPTION_TOKEN_TTL_HOURS = 24;
+  private static final String SEARCH_AFTER_SEPARATOR = ",";
 
   private final ResourceRepository repository;
   private final RecordTransformer recordTransformer;
@@ -45,34 +45,25 @@ public class ListRecordsRequestHandler implements OaiPmhRequestHandler<ListRecor
 
     var oaiResponse = createBaseResponse(request, objectFactory);
     var searchResult = performSearch(request);
-    var modifiedDateOfLastHit = extractModifiedDateOfLastHit(searchResult);
-    var cursorValue =
-        modifiedDateOfLastHit
-            .map(Instant::parse)
-            .map(ListRecordsRequestHandler::nextNano)
-            .map(Instant::toString)
-            .orElse(null);
+    var searchAfterValue = extractSearchAfterFromLastHit(searchResult).orElse(null);
     var records = recordTransformer.transform(searchResult.hits());
     var listRecords =
         createListRecordsResponse(
-            records, cursorValue, searchResult.totalSize(), request, objectFactory);
+            records, searchAfterValue, searchResult.totalSize(), request, objectFactory);
 
     oaiResponse.getValue().setListRecords(listRecords);
     return oaiResponse;
   }
 
-  private static Instant nextNano(Instant instant) {
-    return instant.plusNanos(1);
-  }
-
-  private Optional<String> extractModifiedDateOfLastHit(PagedResponse pagedResponse) {
+  private Optional<String> extractSearchAfterFromLastHit(PagedResponse pagedResponse) {
     if (pagedResponse.hits().isEmpty()) {
       return Optional.empty();
     }
 
     var lastHit = pagedResponse.hits().getLast();
     var modifiedDate = lastHit.recordMetadata().modifiedDate();
-    return Optional.of(modifiedDate);
+    var identifier = lastHit.identifier();
+    return Optional.of(modifiedDate + SEARCH_AFTER_SEPARATOR + identifier);
   }
 
   private PagedResponse performSearch(ListRecordsRequest request) {
@@ -92,7 +83,7 @@ public class ListRecordsRequestHandler implements OaiPmhRequestHandler<ListRecor
 
   private ListRecordsType createListRecordsResponse(
       List<RecordType> records,
-      String cursorValue,
+      String searchAfterValue,
       int totalSize,
       ListRecordsRequest request,
       ObjectFactory objectFactory) {
@@ -104,7 +95,7 @@ public class ListRecordsRequestHandler implements OaiPmhRequestHandler<ListRecor
     var nextResumptionToken =
         isLastPage
             ? createEmptyResumptionToken(totalSize, objectFactory)
-            : createNewResumptionToken(request, cursorValue, totalSize, objectFactory);
+            : createNewResumptionToken(request, searchAfterValue, totalSize, objectFactory);
     listRecords.setResumptionToken(nextResumptionToken);
 
     return listRecords;
@@ -113,7 +104,7 @@ public class ListRecordsRequestHandler implements OaiPmhRequestHandler<ListRecor
   private PagedResponse doFollowUpSearch(ResumptionToken resumptionToken) {
     var pagedResponse =
         repository.fetchNextPage(
-            resumptionToken.cursor(),
+            resumptionToken.searchAfter(),
             resumptionToken.originalRequest().getUntil(),
             resumptionToken.originalRequest().getSetSpec(),
             batchSize);
@@ -141,7 +132,7 @@ public class ListRecordsRequestHandler implements OaiPmhRequestHandler<ListRecor
 
   private static ResumptionTokenType createNewResumptionToken(
       ListRecordsRequest originalRequest,
-      String cursor,
+      String searchAfter,
       int totalSize,
       ObjectFactory objectFactory) {
     var inTenMinutes =
@@ -150,7 +141,7 @@ public class ListRecordsRequestHandler implements OaiPmhRequestHandler<ListRecor
                 GregorianCalendar.from(ZonedDateTime.now().plusHours(RESUMPTION_TOKEN_TTL_HOURS)));
 
     var resumptionTokenType = objectFactory.createResumptionTokenType();
-    var newResumptionToken = new ResumptionToken(originalRequest, cursor, totalSize);
+    var newResumptionToken = new ResumptionToken(originalRequest, searchAfter, totalSize);
     resumptionTokenType.setValue(newResumptionToken.getValue());
     resumptionTokenType.setExpirationDate(inTenMinutes);
     resumptionTokenType.setCompleteListSize(BigInteger.valueOf(totalSize));

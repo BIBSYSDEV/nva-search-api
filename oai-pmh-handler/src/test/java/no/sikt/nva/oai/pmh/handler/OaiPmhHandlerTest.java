@@ -631,7 +631,7 @@ class OaiPmhHandlerTest {
     var fromDate = "2016-01-01";
     var untilDate = "2017-01-01";
     var metadataPrefix = MetadataPrefix.OAI_DC;
-    var cursor = "2016-01-04T05:48:31.123456789Z";
+    var cursor = "2016-01-04T05:48:31.123456789Z,019527b8460a-deadbeef-0000-4000-8000-000000000003";
     var listRecordsRequest =
         new ListRecordsRequest(
             OaiPmhDateTime.from(fromDate),
@@ -664,7 +664,7 @@ class OaiPmhHandlerTest {
   void shouldReturnEmptyResumptionTokenOnLastPage(String method) throws Exception {
     var fromDate = "2016-01-01";
     var untilDate = "2017-01-01";
-    var cursor = "2016-01-07T05:48:31.123456789Z";
+    var cursor = "2016-01-07T05:48:31.123456789Z,019527b8460a-deadbeef-0000-4000-8000-000000000007";
     var metadataPrefix = MetadataPrefix.OAI_DC;
     var listRecordsRequest =
         new ListRecordsRequest(
@@ -691,6 +691,30 @@ class OaiPmhHandlerTest {
         2,
         expectedIdentifiers,
         true);
+  }
+
+  // NP-51203 backward compatibility: tokens issued by the previous deployment used
+  // cursor=<modifiedDate>; the new lambda accepts them by mapping into the searchAfter
+  // shape with an empty identifier component. Old-format tokens stop being issued after
+  // the upgrade; this only matters for in-flight harvests at the deploy boundary.
+
+  /**
+   * @deprecated: Remove on
+   */
+  @Test
+  @Deprecated(forRemoval = true, since="2026-05-13")
+  void shouldAcceptLegacyCursorTokenAsSearchAfter() {
+    var legacyEncoded =
+        java.net.URLEncoder.encode(
+            "metadataPrefix=oai_dc&from=2016-01-01&until=2017-01-01"
+                + "&cursor=2016-01-03T08:55:42.820948673Z&totalSize=8",
+            java.nio.charset.StandardCharsets.UTF_8);
+
+    var token = ResumptionToken.from(legacyEncoded).orElseThrow();
+
+    assertThat(token.searchAfter(), is(equalTo("2016-01-03T08:55:42.820948673Z,")));
+    assertThat(token.totalSize(), is(equalTo(8)));
+    assertThat(token.originalRequest().getMetadataPrefix().getPrefix(), is(equalTo("oai_dc")));
   }
 
   @Test
@@ -1328,12 +1352,15 @@ class OaiPmhHandlerTest {
       var token = ResumptionToken.from(resumptionTokenValue).orElseThrow();
       assertThat(
           token.originalRequest().getMetadataPrefix().getPrefix(), is(equalTo(metadataPrefix)));
-      var expectedCursorInToken =
-          nonNull(cursor) ? "2016-01-06T08:55:42.820948673Z" : "2016-01-03T08:55:42.820948673Z";
+      var expectedSearchAfter =
+          nonNull(cursor)
+              ? "2016-01-06T08:55:42.820948672Z,019527b845e4-182ebbf0-9481-4a98-aad2-76b617cc1b0d"
+              : "2016-01-03T08:55:42.820948672Z,019527b845e4-182ebbf0-9481-4a98-aad2-76b617cc1b0c";
       assertThat(
-          "Expects cursor in token to be 1 ms ahead of the last record in page",
-          token.cursor(),
-          is(equalTo(expectedCursorInToken)));
+          "Expects searchAfter in token to be (modifiedDate, identifier) of the last record on the"
+              + " page",
+          token.searchAfter(),
+          is(equalTo(expectedSearchAfter)));
     }
   }
 
@@ -1348,17 +1375,19 @@ class OaiPmhHandlerTest {
   }
 
   private ResourceSearchQueryMatcher buildMatcher(
-      String cursor, String from, String until, String setChild) {
+      String searchAfter, String from, String until, String setChild) {
     var builder =
         new ResourceSearchQueryMatcher.Builder()
-            .withPageParameter(ResourceParameter.FROM, "0")
             .withPageParameter(ResourceParameter.SIZE, "3")
             .withPageParameter(ResourceParameter.SORT, "modifiedDate:asc,identifier")
             .withSearchParameter(ResourceParameter.AGGREGATION, Words.NONE);
-    if (nonNull(cursor)) {
-      builder.withSearchParameter(ResourceParameter.MODIFIED_SINCE, cursor);
-    } else if (nonNull(from)) {
-      builder.withSearchParameter(ResourceParameter.MODIFIED_SINCE, from + "T00:00:00Z");
+    if (nonNull(searchAfter)) {
+      builder.withPageParameter(ResourceParameter.SEARCH_AFTER, searchAfter);
+    } else {
+      builder.withPageParameter(ResourceParameter.FROM, "0");
+      if (nonNull(from)) {
+        builder.withSearchParameter(ResourceParameter.MODIFIED_SINCE, from + "T00:00:00Z");
+      }
     }
     if (nonNull(until)) {
       builder.withSearchParameter(ResourceParameter.MODIFIED_BEFORE, until + "T00:00:00Z");

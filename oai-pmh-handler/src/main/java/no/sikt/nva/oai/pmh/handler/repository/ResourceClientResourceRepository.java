@@ -33,8 +33,13 @@ public class ResourceClientResourceRepository implements ResourceRepository {
       LoggerFactory.getLogger(ResourceClientResourceRepository.class);
   private static final String ASCENDING = "asc";
   private static final String COLON = ":";
-  private static final String MODIFIED_DATE_ASCENDING =
-      ResourceSort.MODIFIED_DATE.asCamelCase() + COLON + ASCENDING;
+  private static final String COMMA = ",";
+  private static final String SORT_KEYS =
+      ResourceSort.MODIFIED_DATE.asCamelCase()
+          + COLON
+          + ASCENDING
+          + COMMA
+          + ResourceSort.IDENTIFIER.asCamelCase();
   private static final String INSTANCE_TYPE_AGGREGATION_NAME = "type";
   private static final String LANGUAGE_ENGLISH = "en";
 
@@ -47,14 +52,14 @@ public class ResourceClientResourceRepository implements ResourceRepository {
   @Override
   public PagedResponse fetchInitialPage(
       final OaiPmhDateTime from, final OaiPmhDateTime until, final SetSpec setSpec, int pageSize) {
-    var query = buildPageQuery(from.orElse(null), until, setSpec, pageSize);
+    var query = buildInitialPageQuery(from.orElse(null), until, setSpec, pageSize);
     return doQuery(query);
   }
 
   @Override
   public PagedResponse fetchNextPage(
-      String from, OaiPmhDateTime until, SetSpec setSpec, int pageSize) {
-    var query = buildPageQuery(from, until, setSpec, pageSize);
+      String searchAfter, OaiPmhDateTime until, SetSpec setSpec, int pageSize) {
+    var query = buildFollowUpPageQuery(searchAfter, until, setSpec, pageSize);
     return doQuery(query);
   }
 
@@ -103,6 +108,7 @@ public class ResourceClientResourceRepository implements ResourceRepository {
 
   private ResourceSearchQuery buildFetchResourceByIdentifierQuery(String identifier) {
     var builder = buildQueryWithMandatoryParameters(1);
+    builder.withParameter(ResourceParameter.FROM, ZERO);
     applyIdentifierParameter(builder, identifier);
     return applyFilterAndBuild(builder);
   }
@@ -155,21 +161,32 @@ public class ResourceClientResourceRepository implements ResourceRepository {
     return setSpec.root() == SetRoot.INSTITUTION && setSpec.children().length > 0;
   }
 
-  private static ResourceSearchQuery buildPageQuery(
+  private static ResourceSearchQuery buildInitialPageQuery(
       final String from, final OaiPmhDateTime until, final SetSpec setSpec, final int batchSize) {
     var queryBuilder = buildQueryWithMandatoryParameters(batchSize);
-    applyOptionalParameters(from, until, setSpec, queryBuilder);
-    return applyFilterAndBuild(queryBuilder);
-  }
-
-  private static void applyOptionalParameters(
-      String from,
-      OaiPmhDateTime until,
-      SetSpec setSpec,
-      ParameterValidator<ResourceParameter, ResourceSearchQuery> queryBuilder) {
+    queryBuilder.withParameter(ResourceParameter.FROM, ZERO);
     Optional.ofNullable(from)
         .ifPresent(
             fromValue -> queryBuilder.withParameter(ResourceParameter.MODIFIED_SINCE, fromValue));
+    applyUntilAndSetSpec(until, setSpec, queryBuilder);
+    return applyFilterAndBuild(queryBuilder);
+  }
+
+  private static ResourceSearchQuery buildFollowUpPageQuery(
+      final String searchAfter,
+      final OaiPmhDateTime until,
+      final SetSpec setSpec,
+      final int batchSize) {
+    var queryBuilder = buildQueryWithMandatoryParameters(batchSize);
+    queryBuilder.withParameter(ResourceParameter.SEARCH_AFTER, searchAfter);
+    applyUntilAndSetSpec(until, setSpec, queryBuilder);
+    return applyFilterAndBuild(queryBuilder);
+  }
+
+  private static void applyUntilAndSetSpec(
+      OaiPmhDateTime until,
+      SetSpec setSpec,
+      ParameterValidator<ResourceParameter, ResourceSearchQuery> queryBuilder) {
     until.ifPresent(
         untilValue -> queryBuilder.withParameter(ResourceParameter.MODIFIED_BEFORE, untilValue));
     setSpec.ifPresent(
@@ -187,9 +204,8 @@ public class ResourceClientResourceRepository implements ResourceRepository {
       buildQueryWithMandatoryParameters(int batchSize) {
     return ResourceSearchQuery.builder()
         .withParameter(ResourceParameter.AGGREGATION, Words.NONE)
-        .withParameter(ResourceParameter.FROM, ZERO)
         .withParameter(ResourceParameter.SIZE, Integer.toString(batchSize))
-        .withParameter(ResourceParameter.SORT, MODIFIED_DATE_ASCENDING);
+        .withParameter(ResourceParameter.SORT, SORT_KEYS);
   }
 
   private static ResourceSearchQuery applyFilterAndBuild(

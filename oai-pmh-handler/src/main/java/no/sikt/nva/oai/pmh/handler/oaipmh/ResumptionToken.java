@@ -9,15 +9,18 @@ import java.util.stream.Collectors;
 import no.sikt.nva.oai.pmh.handler.oaipmh.request.ListRecordsRequest;
 import nva.commons.core.StringUtils;
 
-public record ResumptionToken(ListRecordsRequest originalRequest, String cursor, int totalSize) {
+public record ResumptionToken(
+    ListRecordsRequest originalRequest, String searchAfter, int totalSize) {
   private static final String EQUALS = "=";
   private static final String FROM = "from";
   private static final String UNTIL = "until";
   private static final String SET = "set";
   private static final String METADATA_PREFIX = "metadataPrefix";
-  private static final String CURSOR = "cursor";
+  private static final String SEARCH_AFTER = "searchAfter";
+  private static final String LEGACY_CURSOR = "cursor";
   private static final String TOTAL_SIZE = "totalSize";
   private static final String AMPERSAND = "&";
+  private static final String COMMA = ",";
 
   public String getValue() {
     var unencodedValueBuilder = new StringBuilder(128);
@@ -54,9 +57,9 @@ public record ResumptionToken(ListRecordsRequest originalRequest, String cursor,
 
     unencodedValueBuilder
         .append(AMPERSAND)
-        .append(CURSOR)
+        .append(SEARCH_AFTER)
         .append(EQUALS)
-        .append(cursor)
+        .append(searchAfter)
         .append(AMPERSAND)
         .append(TOTAL_SIZE)
         .append(EQUALS)
@@ -74,14 +77,14 @@ public record ResumptionToken(ListRecordsRequest originalRequest, String cursor,
 
     var values =
         Arrays.stream(parts)
-            .map(part -> part.split(EQUALS))
+            .map(part -> part.split(EQUALS, 2))
             .collect(Collectors.toMap(part -> part[0], part -> part[1]));
 
     var metadataPrefix = values.get(METADATA_PREFIX);
     var from = values.get(FROM);
     var until = values.get(UNTIL);
     var set = values.get(SET);
-    var cursor = values.get(CURSOR);
+    var searchAfter = values.getOrDefault(SEARCH_AFTER, migrateLegacyCursor(values.get(LEGACY_CURSOR)));
     var totalSize = values.get(TOTAL_SIZE);
 
     var originalRequest =
@@ -90,6 +93,17 @@ public record ResumptionToken(ListRecordsRequest originalRequest, String cursor,
             OaiPmhDateTime.from(until),
             SetSpec.from(set),
             MetadataPrefix.fromPrefix(metadataPrefix));
-    return Optional.of(new ResumptionToken(originalRequest, cursor, Integer.parseInt(totalSize)));
+    return Optional.of(
+        new ResumptionToken(originalRequest, searchAfter, Integer.parseInt(totalSize)));
+  }
+
+  // Backward-compatibility: tokens issued before NP-51203 use cursor=<modifiedDate>
+  // (lastModifiedDate + 1 ns) instead of searchAfter=<modifiedDate>,<identifier>.
+  // Map them into the new tuple shape with an empty identifier so a harvest in
+  // flight at deploy time continues without restarting. The first page after the
+  // upgrade may include up to one batch of duplicates at the boundary; that mirrors
+  // the legacy behaviour and is far cheaper than forcing a fresh harvest.
+  private static String migrateLegacyCursor(String legacyCursor) {
+    return legacyCursor == null ? null : legacyCursor + COMMA;
   }
 }

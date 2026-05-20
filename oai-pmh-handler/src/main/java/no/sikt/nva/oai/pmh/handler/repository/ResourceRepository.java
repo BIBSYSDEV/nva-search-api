@@ -10,7 +10,8 @@ public interface ResourceRepository {
   PagedResponse fetchInitialPage(
       OaiPmhDateTime from, OaiPmhDateTime until, SetSpec setSpec, int pageSize);
 
-  PagedResponse fetchNextPage(String from, OaiPmhDateTime until, SetSpec setSpec, int pageSize);
+  PagedResponse fetchNextPage(
+      String searchAfter, OaiPmhDateTime until, SetSpec setSpec, int pageSize);
 
   Sets fetchSetsFromAggregations();
 
