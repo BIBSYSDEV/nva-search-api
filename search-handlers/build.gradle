@@ -12,6 +12,7 @@ dependencies {
     implementation nvaCatalog.opensearch.java
     implementation nvaCatalog.zalando
     implementation nvaLibs.apigateway
+    implementation nvaLibs.apigateway.s3
     implementation nvaLibs.auth
     implementation nvaLibs.core
     implementation nvaLibs.json
