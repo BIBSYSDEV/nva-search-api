@@ -3,7 +3,6 @@ package no.unit.nva.search.common;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.constants.Words.PLUS;
 import static no.unit.nva.constants.Words.SPACE;
-import static no.unit.nva.search.common.constant.Functions.decodeUTF;
 
 import java.util.Comparator;
 import java.util.HashSet;
@@ -13,7 +12,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 import no.unit.nva.search.common.enums.ParameterKey;
-import no.unit.nva.search.common.enums.ValueEncoding;
 
 /**
  * This class operates on the queryKeys that a request provides.
@@ -88,11 +86,10 @@ public class QueryKeys<K extends Enum<K> & ParameterKey<K>> {
    */
   public void set(K key, String value) {
     if (nonNull(value)) {
-      var decodedValue = key.valueEncoding() == ValueEncoding.NONE ? value : decodeUTF(value);
       if (isPagingValue(key)) {
-        page.put(key, decodedValue);
+        page.put(key, value);
       } else {
-        search.put(key, decodedValue);
+        search.put(key, value);
       }
     }
   }

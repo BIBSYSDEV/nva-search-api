@@ -35,6 +35,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
+import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -278,6 +279,26 @@ class ResourceSearchQueryTest {
     var sort = query.sort().toString();
     assertTrue(sort.contains(sortField));
     assertTrue(sort.endsWith(IDENTIFIER));
+  }
+
+  @Test
+  void shouldNotFailIfMultiValueParameterIsNull() {
+    var parameters = Map.of("title", Collections.singletonList((String) null));
+
+    var queryBuilder =
+        ResourceSearchQuery.builder()
+            .fromMultiValueParameters(parameters)
+            .withRequiredParameters(FROM, SIZE);
+    assertDoesNotThrow(queryBuilder::build);
+  }
+
+  @Test
+  void shouldRejectMalformedUrlEncodedValueAsBadRequest() {
+    var queryBuilder =
+        ResourceSearchQuery.builder()
+            .fromTestParameterMap(Map.of("modifiedBefore", "%"))
+            .withRequiredParameters(FROM, SIZE);
+    assertThrows(BadRequestException.class, queryBuilder::validate);
   }
 
   @Test
