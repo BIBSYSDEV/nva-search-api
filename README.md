@@ -282,3 +282,5 @@ Accept: application/json
 ## Utility startpoints and flows
 
 ![](utilities_flow.png)
+
+## Trigger CI
