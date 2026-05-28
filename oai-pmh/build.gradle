@@ -1,14 +1,16 @@
 plugins {
-    id("com.github.bjornvester.xjc") version "1.9.0"
+    id 'nva.search.service.java-conventions'
+    alias(libs.plugins.xjc)
 }
 
 xjc {
     useJakarta = true
     markGenerated = true
     defaultPackage.set('org.openarchives.oai.pmh.v2')
+    addCompilationDependencies = false
 }
 
-// effectively skip all tests and verifications for this module
-tasks.named("check").configure {
-    dependsOn = []
+dependencies {
+    api(libs.jakarta.xml.bind.api)
+    compileOnly(libs.jakarta.annotation.api)
 }

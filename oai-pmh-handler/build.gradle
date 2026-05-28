@@ -3,23 +3,40 @@ plugins {
 }
 
 dependencies {
-    implementation libs.glassfish.jaxb.runtime
-    implementation libs.jakarta.xml.bind.api
-    implementation nvaCatalog.aws.lambda.core
-    implementation nvaCatalog.bundles.jackson
-    implementation nvaCatalog.bundles.jena
-    implementation nvaCatalog.bundles.logging
-    implementation nvaCatalog.guava
-    implementation nvaLibs.apigateway
-    implementation nvaLibs.core
-    implementation nvaLibs.json
-    implementation project(':oai-pmh')
-    implementation project(':search-commons')
-    testImplementation libs.xml.unit.core
-    testImplementation libs.xml.unit.matchers
-    testImplementation nvaCatalog.bundles.testing.testcontainers
-    testImplementation nvaLibs.identifiers
-    testImplementation project(':search-testing')
+    api(libs.glassfish.jaxb.runtime)
+    api(libs.jakarta.xml.bind.api)
+    api(nvaCatalog.aws.lambda.core)
+    api(nvaLibs.apigateway)
+    api(nvaLibs.core)
+    api(project(':oai-pmh'))
+    api(project(':search-commons'))
+    implementation(nvaCatalog.jackson.databind)
+    implementation(nvaCatalog.log4j.core)
+    implementation(nvaCatalog.slf4j.api)
+    implementation(nvaLibs.json)
+    runtimeOnly(nvaCatalog.jackson.core)
+    runtimeOnly(nvaCatalog.jackson.dataformat.xml)
+    runtimeOnly(nvaCatalog.jackson.datatype.jdk8)
+    runtimeOnly(nvaCatalog.jackson.datatype.jsr310)
+    runtimeOnly(nvaCatalog.jackson.datatype.problem)
+    runtimeOnly(nvaCatalog.jackson.module.parameter.names)
+    runtimeOnly(nvaCatalog.jena.arq)
+    runtimeOnly(nvaCatalog.jena.core)
+    runtimeOnly(nvaCatalog.log4j.api)
+    runtimeOnly(nvaCatalog.log4j.slf4j.impl)
+    testImplementation(libs.xml.unit.core)
+    testImplementation(nvaCatalog.hamcrest)
+    testImplementation(nvaCatalog.jackson.core)
+    testImplementation(nvaCatalog.junit.jupiter.api)
+    testImplementation(nvaCatalog.junit.jupiter.params)
+    testImplementation(nvaCatalog.mockito.core)
+    testImplementation(nvaLibs.identifiers)
+    testImplementation(nvaLibs.logutils)
+    testImplementation(nvaLibs.testutils)
+    testImplementation(project(':search-testing'))
+    testRuntimeOnly(nvaCatalog.junit.jupiter.engine)
+    testRuntimeOnly(nvaCatalog.junit.platform.launcher)
+    testRuntimeOnly(nvaCatalog.testcontainers)
 }
 
 test {

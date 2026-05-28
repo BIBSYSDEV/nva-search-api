@@ -1,30 +1,52 @@
 plugins {
     id 'nva.search.service.java-conventions'
 }
+
 dependencies {
-    implementation libs.bundles.opensearch
-    implementation nvaCatalog.aws.sdk2.s3 //TODO: Temporary until refactor to commons
-    implementation nvaCatalog.aws.sdk2.urlconnection //TODO: Temporary until refactor to commons
-    implementation nvaCatalog.bundles.jackson
-    implementation nvaCatalog.bundles.logging
-    implementation nvaCatalog.com.auth0.jwt
-    implementation nvaCatalog.guava
-    implementation nvaCatalog.opensearch.java
-    implementation nvaCatalog.zalando
-    implementation nvaLibs.apigateway
-    implementation nvaLibs.apigateway.s3
-    implementation nvaLibs.auth
-    implementation nvaLibs.core
-    implementation nvaLibs.json
-    implementation nvaLibs.s3 //TODO: Temporary until refactor to commons
-    implementation project(':search-commons')
-    testImplementation libs.opensearch.rest.highlevel.client
-    testImplementation nvaCatalog.bundles.logging
-    testImplementation nvaCatalog.bundles.testing.testcontainers
-    testImplementation nvaCatalog.httpclient5
-    testImplementation nvaLibs.identifiers
-    testImplementation project(':search-commons')
-    testImplementation project(':search-testing')
+    api(nvaCatalog.aws.lambda.core)
+    api(nvaCatalog.aws.sdk2.s3)
+    api(nvaLibs.apigateway)
+    api(nvaLibs.apigateway.s3)
+    api(nvaLibs.core)
+    api(project(':search-commons'))
+    implementation(nvaCatalog.httpcore5)
+    implementation(nvaCatalog.log4j.core)
+    implementation(nvaCatalog.slf4j.api)
+    runtimeOnly(libs.opensearch)
+    runtimeOnly(libs.opensearch.core)
+    runtimeOnly(libs.opensearch.x.content)
+    runtimeOnly(nvaCatalog.aws.sdk2.urlconnection)
+    runtimeOnly(nvaCatalog.jackson.core)
+    runtimeOnly(nvaCatalog.jackson.databind)
+    runtimeOnly(nvaCatalog.jackson.dataformat.xml)
+    runtimeOnly(nvaCatalog.jackson.datatype.jdk8)
+    runtimeOnly(nvaCatalog.jackson.datatype.jsr310)
+    runtimeOnly(nvaCatalog.jackson.datatype.problem)
+    runtimeOnly(nvaCatalog.jackson.module.parameter.names)
+    runtimeOnly(nvaCatalog.log4j.api)
+    runtimeOnly(nvaCatalog.log4j.slf4j.impl)
+    testImplementation(nvaCatalog.assertj.core)
+    testImplementation(nvaCatalog.com.auth0.jwt)
+    testImplementation(nvaCatalog.commons.lang)
+    testImplementation(nvaCatalog.hamcrest)
+    testImplementation(nvaCatalog.httpclient5)
+    testImplementation(nvaCatalog.jackson.core)
+    testImplementation(nvaCatalog.jackson.databind)
+    testImplementation(nvaCatalog.junit.jupiter.api)
+    testImplementation(nvaCatalog.junit.jupiter.params)
+    testImplementation(nvaCatalog.mockito.core)
+    testImplementation(nvaCatalog.opensearch.rest.client)
+    testImplementation(nvaCatalog.testcontainers)
+    testImplementation(nvaCatalog.testcontainers.junit)
+    testImplementation(nvaCatalog.testcontainers.opensearch)
+    testImplementation(nvaLibs.auth)
+    testImplementation(nvaLibs.identifiers)
+    testImplementation(nvaLibs.json)
+    testImplementation(nvaLibs.logutils)
+    testImplementation(nvaLibs.testutils)
+    testImplementation(project(':search-testing'))
+    testRuntimeOnly(nvaCatalog.junit.jupiter.engine)
+    testRuntimeOnly(nvaCatalog.junit.platform.launcher)
 }
 
 test {

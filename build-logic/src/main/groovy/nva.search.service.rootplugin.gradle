@@ -3,6 +3,9 @@ plugins {
 }
 
 nva {
+    dependencyAnalysis {
+        enforced = true
+    }
     jacoco {
         minMethodCoverage = 0.940
         minClassCoverage = 0.986

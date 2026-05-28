@@ -1,20 +1,37 @@
 plugins {
     id 'nva.search.service.java-conventions'
 }
+
 dependencies {
-    implementation nvaCatalog.aws.lambda.events
-    implementation nvaCatalog.aws.sdk2.s3
-    implementation nvaCatalog.aws.sdk2.sqs
-    implementation nvaCatalog.bundles.jackson
-    implementation nvaCatalog.bundles.logging
-    implementation nvaLibs.core
-    implementation nvaLibs.eventhandlers
-    implementation nvaLibs.json
-    implementation nvaLibs.s3
-    implementation project(':search-commons')
-    testImplementation nvaLibs.identifiers
-    testImplementation nvaLibs.testutils
-    testImplementation project(':search-testing')
+    api(nvaCatalog.aws.lambda.core)
+    api(nvaCatalog.aws.lambda.events)
+    api(nvaCatalog.aws.sdk2.s3)
+    api(nvaLibs.core)
+    api(project(':search-commons'))
+    implementation(nvaCatalog.jackson.core)
+    implementation(nvaCatalog.jackson.databind)
+    implementation(nvaCatalog.log4j.core)
+    implementation(nvaCatalog.slf4j.api)
+    implementation(nvaLibs.eventhandlers)
+    implementation(nvaLibs.json)
+    implementation(nvaLibs.s3)
+    runtimeOnly(nvaCatalog.jackson.dataformat.xml)
+    runtimeOnly(nvaCatalog.jackson.datatype.jdk8)
+    runtimeOnly(nvaCatalog.jackson.datatype.jsr310)
+    runtimeOnly(nvaCatalog.jackson.datatype.problem)
+    runtimeOnly(nvaCatalog.jackson.module.parameter.names)
+    runtimeOnly(nvaCatalog.log4j.api)
+    runtimeOnly(nvaCatalog.log4j.slf4j.impl)
+    testImplementation(nvaCatalog.hamcrest)
+    testImplementation(nvaCatalog.junit.jupiter.api)
+    testImplementation(nvaCatalog.junit.jupiter.params)
+    testImplementation(nvaCatalog.mockito.core)
+    testImplementation(nvaLibs.identifiers)
+    testImplementation(nvaLibs.testutils)
+    testImplementation(nvaLibs.testutils)
+    testImplementation(project(':search-testing'))
+    testRuntimeOnly(nvaCatalog.junit.jupiter.engine)
+    testRuntimeOnly(nvaCatalog.junit.platform.launcher)
 }
 
 test {

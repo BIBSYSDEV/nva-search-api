@@ -3,18 +3,16 @@ plugins {
 }
 
 nva {
+    generatedCode = ['org/openarchives/oai/pmh/**']
+    errorprone {
+        allErrorsAsWarnings = true // TODO: Fix reported issues and set to false
+    }
     pmd {
         rulesetFile = rootProject.file('config/pmd/ruleset.xml')
     }
 }
 
 dependencies {
-    testImplementation nvaCatalog.bundles.testing.junit
-    testImplementation nvaCatalog.bundles.testing.mockito
-    testImplementation nvaCatalog.bundles.testing.hamcrest
-    testImplementation nvaCatalog.javers
-    testImplementation nvaCatalog.assertj.core
-    testImplementation libs.log4j.test
-    testImplementation nvaLibs.testutils
-    testImplementation nvaLibs.logutils
+    implementation(platform(nvaCatalog.aws.sdk2.bom))
+    testImplementation(platform(nvaCatalog.junit.bom))
 }
