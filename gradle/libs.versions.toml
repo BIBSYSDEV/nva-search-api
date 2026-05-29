@@ -1,14 +1,14 @@
 [versions]
 commonsCollections4 = { strictly = '4.5.0' }
-commonsText = { strictly = '1.14.0' }
-glassfishJaxbRuntime = { strictly = '4.0.8' }
-jakartaAnnotationApi = { strictly = '2.1.1' }
+commonsText = { strictly = '1.15.0' }
+glassfishJaxbRuntime = { strictly = '4.0.9' }
+jakartaAnnotationApi = { strictly = '3.0.0' }
 jakartaXmlBindApi = { strictly = '4.0.5' }
-jodaTime = { strictly = '2.12.7' }
+jodaTime = { strictly = '2.14.2' }
 lucene = { strictly = '10.4.0' }
 opensearch-server = { strictly = '3.6.0' }
 typesafe = { strictly = '1.4.8' }
-xjc = { strictly = '1.9.0' }
+xjc = { strictly = '1.9.1' }
 xmlUnit = { strictly = '2.11.0' }
 
 [libraries]
