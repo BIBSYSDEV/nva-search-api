@@ -17,7 +17,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
-import nva.commons.logutils.LogUtils;
+import nva.commons.logutils.LogRecorder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -62,14 +62,12 @@ class UserSettingsClientTest {
         .when(httpClient.send(any(HttpRequest.class), eq(BodyHandlers.ofString())))
         .thenReturn(response);
 
-    var logger = LogUtils.getTestingAppenderForRootLogger();
+    var logRecorder = LogRecorder.forRoot(UserSettingsClientTest.class);
     var promotedPublications = userSettingsClient.fetchPromotedPublications(contributorId);
 
+    var expectedMessage = "Failed to fetch user settings for contributor " + contributorId;
     assertTrue(
-        logger
-            .getMessages()
-            .contains(
-                String.format("Failed to fetch user settings for contributor %s", contributorId)));
+        logRecorder.messages().stream().anyMatch(message -> message.contains(expectedMessage)));
     assertTrue(promotedPublications.isEmpty());
   }
 

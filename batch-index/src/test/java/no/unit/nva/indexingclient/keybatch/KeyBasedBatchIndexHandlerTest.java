@@ -3,8 +3,6 @@ package no.unit.nva.indexingclient.keybatch;
 import static java.util.UUID.randomUUID;
 import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.indexingclient.TestConstants.RESOURCE_INDEX_NAME;
-import static no.unit.nva.search.testing.LogAppender.getAppender;
-import static no.unit.nva.search.testing.LogAppender.logToString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.attempt.Try.attempt;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -43,8 +41,7 @@ import nva.commons.core.SingletonCollector;
 import nva.commons.core.StringUtils;
 import nva.commons.core.ioutils.IoUtils;
 import nva.commons.core.paths.UnixPath;
-import org.apache.logging.log4j.core.test.appender.ListAppender;
-import org.junit.jupiter.api.BeforeAll;
+import nva.commons.logutils.LogRecorder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -63,7 +60,6 @@ class KeyBasedBatchIndexHandlerTest {
       IoUtils.stringFromResources(Path.of("publication.json"));
   private static final String INVALID_PUBLICATION =
       IoUtils.stringFromResources(Path.of("invalid_publication.json"));
-  private static ListAppender appender;
 
   private ByteArrayOutputStream outputStream;
   private S3Driver s3ResourcesDriver;
@@ -71,11 +67,7 @@ class KeyBasedBatchIndexHandlerTest {
   private FakeOpenSearchClient openSearchClient;
   private EventBridgeClient eventBridgeClient;
   private KeyBasedBatchIndexHandler handler;
-
-  @BeforeAll
-  public static void initClass() {
-    appender = getAppender(KeyBasedBatchIndexHandler.class);
-  }
+  private LogRecorder logRecorder;
 
   private static ArrayList<IndexDocument> getDocuments(
       List<IndexDocument> expectedDocuments, IndexDocument notExpectedDocument) {
@@ -89,7 +81,7 @@ class KeyBasedBatchIndexHandlerTest {
   }
 
   @BeforeEach
-  public void init() {
+  void init() {
     outputStream = new ByteArrayOutputStream();
     var s3ResourcesClient = new FakeS3Client();
     s3ResourcesDriver = new S3Driver(s3ResourcesClient, "resources");
@@ -100,6 +92,7 @@ class KeyBasedBatchIndexHandlerTest {
     handler =
         new KeyBasedBatchIndexHandler(
             openSearchClient, s3ResourcesClient, s3BatchesClient, eventBridgeClient);
+    logRecorder = LogRecorder.forClass(KeyBasedBatchIndexHandler.class);
   }
 
   @Test
@@ -236,8 +229,8 @@ class KeyBasedBatchIndexHandlerTest {
 
     var documentsFromIndex = openSearchClient.getIndexedDocuments();
 
-    assertThat(logToString(appender), containsString("has missing fields"));
-    assertThat(logToString(appender), containsString(field));
+    assertThat(logRecorder.messages(), hasItem(containsString("has missing fields")));
+    assertThat(logRecorder.messages(), hasItem(containsString(field)));
     assertThat(documentsFromIndex, containsInAnyOrder(expectedDocuments.toArray()));
     assertThat(documentsFromIndex, not(hasItem(notExpectedDocument)));
   }
@@ -266,7 +259,7 @@ class KeyBasedBatchIndexHandlerTest {
 
     failingHandler.handleRequest(eventStream(null), outputStream, mock(Context.class));
 
-    assertThat(logToString(appender), containsString("Bulk has failed: "));
+    assertThat(logRecorder.messages(), hasItem(containsString("Bulk has failed: ")));
   }
 
   private InputStream eventStream(String startMarker) throws JsonProcessingException {

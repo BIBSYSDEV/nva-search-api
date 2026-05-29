@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import no.unit.nva.indexingclient.IndexingClient;
 import nva.commons.core.ioutils.IoUtils;
-import nva.commons.logutils.LogUtils;
+import nva.commons.logutils.LogRecorder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -47,11 +47,12 @@ class DeleteIndicesHandlerTest {
 
   @Test
   void shouldLogWarningWhenIndexDeletionFails() throws IOException {
-    var appender = LogUtils.getTestingAppender(DeleteIndicesHandler.class);
+    var logRecorder = LogRecorder.forClass(DeleteIndicesHandler.class);
     var expectedMessage = clientThrowingExceptionWithMessage();
     handler.handleRequest(createRequest(List.of(RESOURCES)), output, context);
 
-    assertTrue(appender.getMessages().contains(expectedMessage));
+    assertTrue(
+        logRecorder.messages().stream().anyMatch(message -> message.contains(expectedMessage)));
   }
 
   @Test

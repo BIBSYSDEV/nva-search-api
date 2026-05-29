@@ -18,6 +18,7 @@ dependencies {
     implementation project(':search-commons')
     testImplementation nvaCatalog.bundles.logging
     testImplementation project(":search-testing")
+    testImplementation nvaLibs.logutils
 }
 
 test {
