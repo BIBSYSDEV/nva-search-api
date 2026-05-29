@@ -11,7 +11,6 @@ import static no.unit.nva.indexing.handlers.IndexName.TICKETS;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.attempt.Try.attempt;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,7 +29,7 @@ import java.util.Map;
 import no.unit.nva.constants.Words;
 import no.unit.nva.indexingclient.IndexingClient;
 import nva.commons.core.ioutils.IoUtils;
-import nva.commons.logutils.LogUtils;
+import nva.commons.logutils.LogRecorder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -60,11 +59,11 @@ class InitHandlerTest {
 
   @Test
   void shouldNotThrowExceptionIfIndicesClientDoesNotThrowException() throws IOException {
-    var appender = LogUtils.getTestingAppender(InitHandler.class);
+    var logRecorder = LogRecorder.forClass(InitHandler.class);
     doNothing().when(indexingClient).createIndex(any(String.class));
     initHandler.handleRequest(createRequest(List.of(RESOURCES)), output, context);
 
-    assertFalse(appender.getMessages().contains("error"));
+    assertTrue(logRecorder.messages().stream().noneMatch(message -> message.contains("error")));
   }
 
   @Test
@@ -80,13 +79,14 @@ class InitHandlerTest {
 
   @Test
   void shouldLogWarningWhenIndexingClientFailedToCreateIndex() throws IOException {
-    var appender = LogUtils.getTestingAppender(InitHandler.class);
+    var logRecorder = LogRecorder.forClass(InitHandler.class);
     var expectedMessage = randomString();
     when(indexingClient.createIndex(Mockito.anyString(), Mockito.anyMap(), Mockito.anyMap()))
         .thenThrow(new IOException(expectedMessage));
     initHandler.handleRequest(createRequest(List.of(RESOURCES)), output, context);
 
-    assertTrue(appender.getMessages().contains(expectedMessage));
+    assertTrue(
+        logRecorder.messages().stream().anyMatch(message -> message.contains(expectedMessage)));
   }
 
   @Test

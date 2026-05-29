@@ -1,12 +1,11 @@
 package no.unit.nva.indexing.handlers;
 
 import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
-import static no.unit.nva.search.testing.LogAppender.getAppender;
-import static no.unit.nva.search.testing.LogAppender.logToString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static nva.commons.core.attempt.Try.attempt;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItem;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -22,8 +21,7 @@ import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexing.testutils.FakeIndexingClient;
 import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
 import no.unit.nva.indexingclient.models.IndexDocument;
-import org.apache.logging.log4j.core.test.appender.ListAppender;
-import org.junit.jupiter.api.BeforeAll;
+import nva.commons.logutils.LogRecorder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -34,15 +32,9 @@ public class DeleteResourceFromIndexHandlerTest {
 
   public static final String SOMETHING_BAD_HAPPENED = "Something bad happened";
   private static final Context CONTEXT = Mockito.mock(Context.class);
-  private static ListAppender appender;
   private FakeIndexingClient indexingClient;
   private ByteArrayOutputStream output;
   private DeleteResourceFromIndexHandler handler;
-
-  @BeforeAll
-  public static void initClass() {
-    appender = getAppender(DeleteResourceFromIndexHandler.class);
-  }
 
   private static IndexDocument createSampleResource(SortableIdentifier identifierProvider) {
     String randomJson = randomJson();
@@ -65,11 +57,12 @@ public class DeleteResourceFromIndexHandlerTest {
       throws IOException {
     indexingClient = new FakeIndexingClientThrowingException();
     handler = new DeleteResourceFromIndexHandler(indexingClient);
+    var logRecorder = LogRecorder.forClass(DeleteResourceFromIndexHandler.class);
     try (var eventReference = createEventBridgeEvent(SortableIdentifier.next())) {
       assertThrows(
           RuntimeException.class, () -> handler.handleRequest(eventReference, output, CONTEXT));
     }
-    assertThat(logToString(appender), containsString(SOMETHING_BAD_HAPPENED));
+    assertThat(logRecorder.messages(), hasItem(containsString(SOMETHING_BAD_HAPPENED)));
   }
 
   @Test

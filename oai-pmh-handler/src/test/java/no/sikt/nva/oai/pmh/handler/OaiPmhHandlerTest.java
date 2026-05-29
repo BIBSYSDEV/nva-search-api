@@ -90,7 +90,7 @@ import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.Environment;
 import nva.commons.core.ioutils.IoUtils;
 import nva.commons.core.paths.UriWrapper;
-import nva.commons.logutils.LogUtils;
+import nva.commons.logutils.LogRecorder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -206,7 +206,7 @@ class OaiPmhHandlerTest {
   @Test
   void shouldReturnInternalServerErrorWithProperLoggingWhenXmlMarshallingFails()
       throws IOException {
-    final var appender = LogUtils.getTestingAppenderForRootLogger();
+    var logRecorder = LogRecorder.forRoot(OaiPmhHandlerTest.class);
 
     var inputStream = emptyRequest();
 
@@ -216,7 +216,7 @@ class OaiPmhHandlerTest {
         invokeHandler(environment, new JaxbXmlSerializer(marshaller), inputStream);
 
     assertThat(gatewayResponse.getStatusCode(), is(equalTo(HTTP_INTERNAL_ERROR)));
-    assertThat(appender.getMessages(), containsString("Ha ha!"));
+    assertThat(logRecorder.messages(), hasItem(containsString("Ha ha!")));
   }
 
   @Test
@@ -301,7 +301,7 @@ class OaiPmhHandlerTest {
   @ValueSource(strings = {GET_METHOD, POST_METHOD})
   void shouldReturnExpectedErrorAndLogWhenSearchFailsForListSets(String method)
       throws IOException, JAXBException {
-    final var appender = LogUtils.getTestingAppenderForRootLogger();
+    var logRecorder = LogRecorder.forRoot(OaiPmhHandlerTest.class);
 
     doThrow(new RuntimeException(EMPTY_STRING)).when(resourceClient).doSearch(any(), eq(RESOURCES));
 
@@ -310,8 +310,8 @@ class OaiPmhHandlerTest {
     invokeHandlerAndAssertHttpStatus(inputStream, HTTP_INTERNAL_ERROR);
 
     assertThat(
-        appender.getMessages(),
-        containsString("Failed to execute search for resources aggregations."));
+        logRecorder.messages(),
+        hasItem(containsString("Failed to execute search for resources aggregations.")));
   }
 
   @ParameterizedTest

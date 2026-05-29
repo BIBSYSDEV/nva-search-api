@@ -19,6 +19,8 @@ Globals:
         API_HOST: !Sub "api.${CustomDomain}"
         LARGE_API_RESPONSES_BUCKET: !Ref LargeApiResponsesBucketName
         COGNITO_AUTHORIZER_URLS: !Join [",", !Ref CognitoAuthorizerUrls]
+        LOG_LEVEL: "info"
+        LOG4J_CONFIGURATION_FILE: classpath:nva-log4j2.xml
   Api:
     Cors:
       AllowMethods: "'PUT, GET,OPTIONS,DELETE,POST'"

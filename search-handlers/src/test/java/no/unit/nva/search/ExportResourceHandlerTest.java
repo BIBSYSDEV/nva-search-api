@@ -7,6 +7,7 @@ import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -39,7 +40,7 @@ import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiIoException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
-import nva.commons.logutils.LogUtils;
+import nva.commons.logutils.LogRecorder;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -111,7 +112,7 @@ class ExportResourceHandlerTest {
               CompletableFuture.completedFuture(
                   new FakeHttpResponse(HttpURLConnection.HTTP_ENTITY_TOO_LARGE)));
 
-      var appender = LogUtils.getTestingAppenderForRootLogger();
+      var logRecorder = LogRecorder.forRoot(ExportResourceHandlerTest.class);
       handler =
           new ExportResourceHandler(
               resourceClient, mockedScrollClient, null, null, new Environment());
@@ -128,14 +129,14 @@ class ExportResourceHandlerTest {
       verify(httpClient, times(4)).sendAsync(any(), any());
 
       assertThat(
-          appender.getMessages(),
-          containsString(String.format(ENTITY_TO_LARGE_ERROR_FORMAT, 500, 250)));
+          logRecorder.messages(),
+          hasItem(containsString(String.format(ENTITY_TO_LARGE_ERROR_FORMAT, 500, 250))));
       assertThat(
-          appender.getMessages(),
-          containsString(String.format(ENTITY_TO_LARGE_ERROR_FORMAT, 250, 125)));
+          logRecorder.messages(),
+          hasItem(containsString(String.format(ENTITY_TO_LARGE_ERROR_FORMAT, 250, 125))));
       assertThat(
-          appender.getMessages(),
-          containsString(String.format(ENTITY_TO_LARGE_ERROR_FORMAT, 125, 62)));
+          logRecorder.messages(),
+          hasItem(containsString(String.format(ENTITY_TO_LARGE_ERROR_FORMAT, 125, 62))));
     }
   }
 

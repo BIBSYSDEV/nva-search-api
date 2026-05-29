@@ -2,8 +2,6 @@ package no.unit.nva.indexingclient;
 
 import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.indexingclient.Constants.NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE;
-import static no.unit.nva.search.testing.LogAppender.getAppender;
-import static no.unit.nva.search.testing.LogAppender.logToString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.attempt.Try.attempt;
@@ -37,31 +35,25 @@ import nva.commons.core.attempt.Try;
 import nva.commons.core.ioutils.IoUtils;
 import nva.commons.core.paths.UnixPath;
 import nva.commons.core.paths.UriWrapper;
-import org.apache.logging.log4j.core.test.appender.ListAppender;
-import org.junit.jupiter.api.BeforeAll;
+import nva.commons.logutils.LogRecorder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 @SuppressWarnings({"PMD.VariableDeclarationUsageDistance"})
-public class EventBasedBatchIndexerTest extends BatchIndexTest {
+class EventBasedBatchIndexerTest extends BatchIndexTest {
 
-  private static ListAppender appender;
   private EventBasedBatchIndexer indexer;
   private ByteArrayOutputStream outputStream;
   private FakeIndexingClient openSearchClient;
   private StubEventBridgeClient eventBridgeClient;
   private FakeS3Client s3Client;
   private S3Driver s3Driver;
-
-  @BeforeAll
-  public static void initClass() {
-    appender = getAppender(BatchIndexer.class);
-  }
+  private LogRecorder logRecorder;
 
   @BeforeEach
-  public void init() {
+  void init() {
     this.outputStream = new ByteArrayOutputStream();
     openSearchClient = mockOsClient();
     eventBridgeClient = new StubEventBridgeClient();
@@ -73,6 +65,7 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
             openSearchClient,
             eventBridgeClient,
             NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE);
+    logRecorder = LogRecorder.forClass(BatchIndexer.class);
   }
 
   @ParameterizedTest(
@@ -80,8 +73,8 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
           "should return all ids for published resources that failed to be indexed. "
               + "Input size:{0}")
   @ValueSource(ints = {1, 2, 5, 10, 100})
-  public void shouldReturnsAllIdsForPublishedResourcesThatFailedToBeIndexed(
-      int numberOfFilesPerEvent) throws JsonProcessingException {
+  void shouldReturnsAllIdsForPublishedResourcesThatFailedToBeIndexed(int numberOfFilesPerEvent)
+      throws JsonProcessingException {
 
     indexer =
         new EventBasedBatchIndexer(
@@ -101,7 +94,7 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
 
     expectedIdentifiesOfNonIndexedEntries.forEach(
         expectedIdentifier ->
-            assertThat(logToString(appender), containsString(expectedIdentifier)));
+            assertThat(logRecorder.messages(), hasItem(containsString(expectedIdentifier))));
   }
 
   @Test

@@ -1,24 +1,30 @@
 [versions]
-glassfishJaxbRuntime = { strictly = '4.0.8' }
+commonsCollections4 = { strictly = '4.5.0' }
+commonsText = { strictly = '1.15.0' }
+glassfishJaxbRuntime = { strictly = '4.0.9' }
+jakartaAnnotationApi = { strictly = '3.0.0' }
 jakartaXmlBindApi = { strictly = '4.0.5' }
-log4j = { strictly = '2.25.3' }
-opensearch-rest = { strictly = '3.6.0' }
+jodaTime = { strictly = '2.14.2' }
+lucene = { strictly = '10.4.0' }
 opensearch-server = { strictly = '3.6.0' }
 typesafe = { strictly = '1.4.8' }
+xjc = { strictly = '1.9.1' }
 xmlUnit = { strictly = '2.11.0' }
 
 [libraries]
+commons-collections4 = { group = 'org.apache.commons', name = 'commons-collections4', version.ref = 'commonsCollections4' }
+commons-text = { group = 'org.apache.commons', name = 'commons-text', version.ref = 'commonsText' }
 glassfish-jaxb-runtime = { group = 'org.glassfish.jaxb', name = 'jaxb-runtime', version.ref = 'glassfishJaxbRuntime' }
+jakarta-annotation-api = { group = 'jakarta.annotation', name = 'jakarta.annotation-api', version.ref = 'jakartaAnnotationApi' }
 jakarta-xml-bind-api = { group = 'jakarta.xml.bind', name = 'jakarta.xml.bind-api', version.ref = 'jakartaXmlBindApi' }
-log4j-test = { group = 'org.apache.logging.log4j', name = 'log4j-core-test', version.ref = 'log4j' }
+joda-time = { group = 'joda-time', name = 'joda-time', version.ref = 'jodaTime' }
+lucene-core = { group = 'org.apache.lucene', name = 'lucene-core', version.ref = 'lucene' }
+lucene-join = { group = 'org.apache.lucene', name = 'lucene-join', version.ref = 'lucene' }
 opensearch = { group = 'org.opensearch', name = 'opensearch', version.ref = 'opensearch-server' }
 opensearch-core = { group = 'org.opensearch', name = 'opensearch-core', version.ref = 'opensearch-server' }
-opensearch-rest-client = { group = 'org.opensearch.client', name = 'opensearch-rest-client', version.ref = 'opensearch-rest' }
-opensearch-rest-highlevel-client = { group = 'org.opensearch.client', name = 'opensearch-rest-high-level-client', version.ref = 'opensearch-rest' }
 opensearch-x-content = { group = 'org.opensearch', name = 'opensearch-x-content', version.ref = 'opensearch-server' }
 typesafe = { group = 'com.typesafe', name = 'config', version.ref = 'typesafe' }
 xml-unit-core = { group = 'org.xmlunit', name = 'xmlunit-core', version.ref = 'xmlUnit' }
-xml-unit-matchers = { group = 'org.xmlunit', name = 'xmlunit-matchers', version.ref = 'xmlUnit' }
 
-[bundles]
-opensearch = ['opensearch', 'opensearch-core', 'opensearch-rest-client', 'opensearch-x-content']
+[plugins]
+xjc = { id = 'com.github.bjornvester.xjc', version.ref = 'xjc' }

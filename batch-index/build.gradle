@@ -1,23 +1,48 @@
+plugins {
+    id 'nva.search.service.java-conventions'
+}
+
 dependencies {
-    implementation libs.bundles.opensearch
-    implementation libs.typesafe
-    implementation nvaCatalog.aws.ion
-    implementation nvaCatalog.aws.lambda.events
-    implementation nvaCatalog.aws.sdk2.eventbridge
-    implementation nvaCatalog.aws.sdk2.s3
-    implementation nvaCatalog.aws.sdk2.sqs
-    implementation nvaCatalog.aws.sdk2.urlconnection
-    implementation nvaCatalog.bundles.jackson
-    implementation nvaCatalog.guava
-    implementation nvaLibs.core
-    implementation nvaLibs.eventhandlers
-    implementation nvaLibs.identifiers
-    implementation nvaLibs.json
-    implementation nvaLibs.s3
-    implementation project(':indexing-handlers')
-    implementation project(':search-commons')
-    testImplementation nvaCatalog.bundles.logging
-    testImplementation project(":search-testing")
+    api(nvaCatalog.aws.lambda.core)
+    api(nvaCatalog.aws.sdk2.eventbridge)
+    api(nvaCatalog.aws.sdk2.s3)
+    api(nvaCatalog.jackson.annotations)
+    api(nvaCatalog.jackson.databind)
+    api(nvaLibs.eventhandlers)
+    api(nvaLibs.identifiers)
+    api(nvaLibs.json)
+    api(project(':search-commons'))
+    implementation(libs.opensearch)
+    implementation(libs.typesafe)
+    implementation(nvaCatalog.aws.sdk2.aws.core)
+    implementation(nvaCatalog.aws.sdk2.http.client)
+    implementation(nvaCatalog.aws.sdk2.regions)
+    implementation(nvaCatalog.aws.sdk2.sdk.core)
+    implementation(nvaCatalog.aws.sdk2.urlconnection)
+    implementation(nvaCatalog.slf4j.api)
+    implementation(nvaLibs.core)
+    implementation(nvaLibs.s3)
+    runtimeOnly(libs.opensearch.core)
+    runtimeOnly(libs.opensearch.x.content)
+    runtimeOnly(nvaCatalog.jackson.core)
+    runtimeOnly(nvaCatalog.jackson.dataformat.xml)
+    runtimeOnly(nvaCatalog.jackson.datatype.jdk8)
+    runtimeOnly(nvaCatalog.jackson.datatype.jsr310)
+    runtimeOnly(nvaCatalog.jackson.datatype.problem)
+    runtimeOnly(nvaCatalog.jackson.module.parameter.names)
+    runtimeOnly(nvaCatalog.log4j.api)
+    testImplementation(nvaCatalog.hamcrest)
+    testImplementation(nvaCatalog.jackson.core)
+    testImplementation(nvaCatalog.junit.jupiter.api)
+    testImplementation(nvaCatalog.junit.jupiter.params)
+    testImplementation(nvaCatalog.log4j.core)
+    testImplementation(nvaCatalog.mockito.core)
+    testImplementation(nvaLibs.logutils)
+    testImplementation(nvaLibs.testutils)
+    testImplementation(project(":search-testing"))
+    testRuntimeOnly(nvaCatalog.junit.jupiter.engine)
+    testRuntimeOnly(nvaCatalog.junit.platform.launcher)
+    testRuntimeOnly(nvaCatalog.log4j.slf4j.impl)
 }
 
 test {

@@ -1,7 +1,3 @@
 plugins{
     id 'nva.search.service.rootplugin'
 }
-
-subprojects{
-    apply plugin: 'nva.search.service.java-conventions'
-}

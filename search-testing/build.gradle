@@ -1,19 +1,31 @@
+plugins {
+    id 'nva.search.service.java-conventions'
+}
+
 dependencies {
-    implementation libs.bundles.opensearch
-    implementation libs.log4j.test
-    implementation nvaCatalog.assertj.core
-    implementation nvaCatalog.aws.sdk2.sqs
-    implementation nvaCatalog.bundles.jackson
-    implementation nvaCatalog.bundles.testing.hamcrest
-    implementation nvaCatalog.bundles.testing.junit
-    implementation nvaCatalog.bundles.testing.mockito
-    implementation nvaCatalog.com.auth0.jwt
-    implementation nvaCatalog.javers
-    implementation nvaCatalog.opencsv
-    implementation nvaLibs.core
-    implementation nvaLibs.json
-    implementation nvaLibs.logutils
-    implementation nvaLibs.testutils
-    implementation project(":search-commons")
-    implementation(nvaCatalog.bundles.testing.testcontainers)
+    api(libs.opensearch)
+    api(nvaCatalog.aws.sdk2.sqs)
+    api(nvaCatalog.jackson.databind)
+    api(nvaCatalog.mockito.core)
+    api(project(":search-commons"))
+    implementation(nvaCatalog.com.auth0.jwt)
+    implementation(nvaCatalog.jackson.core)
+    implementation(nvaCatalog.log4j.core)
+    implementation(nvaLibs.core)
+    implementation(nvaLibs.json)
+    runtimeOnly(libs.opensearch.core)
+    runtimeOnly(libs.opensearch.x.content)
+    runtimeOnly(nvaCatalog.jackson.dataformat.xml)
+    runtimeOnly(nvaCatalog.jackson.datatype.jdk8)
+    runtimeOnly(nvaCatalog.jackson.datatype.jsr310)
+    runtimeOnly(nvaCatalog.jackson.datatype.problem)
+    runtimeOnly(nvaCatalog.jackson.module.parameter.names)
+    runtimeOnly(nvaCatalog.junit.jupiter.engine)
+    runtimeOnly(nvaCatalog.junit.platform.launcher)
+    runtimeOnly(nvaCatalog.log4j.api)
+    runtimeOnly(nvaCatalog.testcontainers)
+    testRuntimeOnly(nvaCatalog.aws.sdk.s3)
+    testRuntimeOnly(nvaCatalog.datafaker)
+    testRuntimeOnly(nvaCatalog.junit.jupiter.engine)
+    testRuntimeOnly(nvaCatalog.junit.platform.launcher)
 }
