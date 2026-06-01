@@ -9,7 +9,7 @@ lucene = { strictly = '10.4.0' }
 opensearch-server = { strictly = '3.6.0' }
 typesafe = { strictly = '1.4.8' }
 xjc = { strictly = '1.9.1' }
-xmlUnit = { strictly = '2.11.0' }
+xmlUnit = { strictly = '2.12.0' }
 
 [libraries]
 commons-collections4 = { group = 'org.apache.commons', name = 'commons-collections4', version.ref = 'commonsCollections4' }
