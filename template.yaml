@@ -11,6 +11,9 @@ Globals:
     Runtime: java21
     Architectures:
       - arm64
+    SnapStart:
+      ApplyOn: PublishedVersions
+    AutoPublishAlias: live
     Environment:
       Variables:
         SEARCH_INFRASTRUCTURE_API_URI: !Ref SearchInfrastructureApiUri
@@ -79,14 +82,6 @@ Parameters:
     Type: String
     Default: "key-batches"
     Description: Name of bucket for key batches
-  MaxConcurrency:
-    Type: String
-    Description: Maximum capacity for provisioned concurrency
-    Default: "10"
-  MinConcurrency:
-    Type: String
-    Description: Minimum capacity for provisioned concurrency
-    Default: "1"
   Suffix:
     Type: String
     Default: ""
@@ -272,13 +267,10 @@ Resources:
       Description: Lambda for searching Tickets
       CodeUri: search-handlers
       Handler: no.unit.nva.search.SearchTicketAuthHandler::handleRequest
-      AutoPublishAlias: live
       DeploymentPreference:
         Enabled: true
         Role: !GetAtt CustomCodeDeployServiceRole.Arn
         Type: AllAtOnce
-      ProvisionedConcurrencyConfig:
-        ProvisionedConcurrentExecutions: 1
       Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
       Environment:
         Variables:
@@ -299,13 +291,10 @@ Resources:
       Description: Lambda for searching Resources
       CodeUri: search-handlers
       Handler: no.unit.nva.search.SearchResourceHandler::handleRequest
-      AutoPublishAlias: live
       DeploymentPreference:
         Enabled: true
         Role: !GetAtt CustomCodeDeployServiceRole.Arn
         Type: AllAtOnce
-      ProvisionedConcurrencyConfig:
-        ProvisionedConcurrentExecutions: 1
       Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
       Environment:
         Variables:
@@ -325,7 +314,6 @@ Resources:
       CodeUri: search-handlers
       Handler: no.unit.nva.search.ExportResourceHandler::handleRequest
       Timeout: 180
-      AutoPublishAlias: live
       DeploymentPreference:
         Enabled: true
         Role: !GetAtt CustomCodeDeployServiceRole.Arn
@@ -348,13 +336,10 @@ Resources:
       Description: Lambda for searching Resources
       CodeUri: search-handlers
       Handler: no.unit.nva.search.SearchResourceAuthHandler::handleRequest
-      AutoPublishAlias: live
       DeploymentPreference:
         Enabled: true
         Role: !GetAtt CustomCodeDeployServiceRole.Arn
         Type: AllAtOnce
-      ProvisionedConcurrencyConfig:
-        ProvisionedConcurrentExecutions: 1
       Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
       Environment:
         Variables:
@@ -393,13 +378,10 @@ Resources:
       Description: Lambda for searching Import Candidates
       CodeUri: search-handlers
       Handler: no.unit.nva.search.SearchImportCandidateAuthHandler::handleRequest
-      AutoPublishAlias: live
       DeploymentPreference:
         Enabled: true
         Role: !GetAtt CustomCodeDeployServiceRole.Arn
         Type: AllAtOnce
-      ProvisionedConcurrencyConfig:
-        ProvisionedConcurrentExecutions: 1
       Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
       Environment:
         Variables:
@@ -412,28 +394,6 @@ Resources:
             Path: /customer/import-candidates
             Method: get
             RestApiId: !Ref NvaSearchApi
-
-  SearchTicketsApiFunctionScalableTarget:
-    Type: AWS::ApplicationAutoScaling::ScalableTarget
-    Properties:
-      MaxCapacity: !Ref MaxConcurrency
-      MinCapacity: !Ref MinConcurrency
-      ResourceId: !Sub function:${SearchTicketsAuthorizedFunction}:live
-      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/lambda.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_LambdaConcurrency
-      ScalableDimension: lambda:function:ProvisionedConcurrency
-      ServiceNamespace: lambda
-    DependsOn: SearchTicketsAuthorizedFunctionAliaslive
-
-  SearchTicketsApiFunctionScalingPolicy:
-    Type: AWS::ApplicationAutoScaling::ScalingPolicy
-    Properties:
-      PolicyName: utilization
-      PolicyType: TargetTrackingScaling
-      ScalingTargetId: !Ref SearchTicketsApiFunctionScalableTarget
-      TargetTrackingScalingPolicyConfiguration:
-        TargetValue: 0.70
-        PredefinedMetricSpecification:
-          PredefinedMetricType: LambdaProvisionedConcurrencyUtilization
 
   NvaPublicationBasePathMapping:
     Type: AWS::ApiGateway::BasePathMapping
