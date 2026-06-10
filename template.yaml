@@ -247,30 +247,12 @@ Resources:
           Parameters:
             Location: ./docs/openapi.yaml
 
-  CustomCodeDeployServiceRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Action:
-              - sts:AssumeRole
-            Effect: Allow
-            Principal:
-              Service: [codedeploy.amazonaws.com]
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AWSCodeDeployRoleForLambda
-
   SearchTicketsAuthorizedFunction:
     Type: AWS::Serverless::Function
     Properties:
       Description: Lambda for searching Tickets
       CodeUri: search-handlers
       Handler: no.unit.nva.search.SearchTicketAuthHandler::handleRequest
-      DeploymentPreference:
-        Enabled: true
-        Role: !GetAtt CustomCodeDeployServiceRole.Arn
-        Type: AllAtOnce
       Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
       Environment:
         Variables:
@@ -291,10 +273,6 @@ Resources:
       Description: Lambda for searching Resources
       CodeUri: search-handlers
       Handler: no.unit.nva.search.SearchResourceHandler::handleRequest
-      DeploymentPreference:
-        Enabled: true
-        Role: !GetAtt CustomCodeDeployServiceRole.Arn
-        Type: AllAtOnce
       Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
       Environment:
         Variables:
@@ -314,10 +292,6 @@ Resources:
       CodeUri: search-handlers
       Handler: no.unit.nva.search.ExportResourceHandler::handleRequest
       Timeout: 180
-      DeploymentPreference:
-        Enabled: true
-        Role: !GetAtt CustomCodeDeployServiceRole.Arn
-        Type: AllAtOnce
       Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
       Environment:
         Variables:
@@ -336,10 +310,6 @@ Resources:
       Description: Lambda for searching Resources
       CodeUri: search-handlers
       Handler: no.unit.nva.search.SearchResourceAuthHandler::handleRequest
-      DeploymentPreference:
-        Enabled: true
-        Role: !GetAtt CustomCodeDeployServiceRole.Arn
-        Type: AllAtOnce
       Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
       Environment:
         Variables:
@@ -378,10 +348,6 @@ Resources:
       Description: Lambda for searching Import Candidates
       CodeUri: search-handlers
       Handler: no.unit.nva.search.SearchImportCandidateAuthHandler::handleRequest
-      DeploymentPreference:
-        Enabled: true
-        Role: !GetAtt CustomCodeDeployServiceRole.Arn
-        Type: AllAtOnce
       Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
       Environment:
         Variables:
