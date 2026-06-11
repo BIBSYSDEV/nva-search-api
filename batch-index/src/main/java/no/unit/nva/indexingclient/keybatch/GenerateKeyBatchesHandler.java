@@ -2,11 +2,8 @@ package no.unit.nva.indexingclient.keybatch;
 
 import static java.util.Objects.nonNull;
 import static java.util.UUID.randomUUID;
-import static no.unit.nva.constants.Defaults.ENVIRONMENT;
 import static no.unit.nva.constants.Words.RESOURCES;
-import static no.unit.nva.indexingclient.Constants.EVENT_BUS;
 import static no.unit.nva.indexingclient.Constants.MANDATORY_UNUSED_SUBTOPIC;
-import static no.unit.nva.indexingclient.Constants.TOPIC;
 import static no.unit.nva.indexingclient.Constants.defaultS3Client;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -16,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import no.unit.nva.events.handlers.EventHandler;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
+import no.unit.nva.indexingclient.Constants;
 import no.unit.nva.indexingclient.EventBasedBatchIndexer;
 import nva.commons.core.JacocoGenerated;
 import org.slf4j.Logger;
@@ -34,15 +32,16 @@ import software.amazon.awssdk.services.s3.model.S3Object;
 
 public class GenerateKeyBatchesHandler extends EventHandler<KeyBatchRequestEvent, Void> {
 
-  public static final String DEFAULT_BATCH_SIZE = "1000";
-  public static final String DELIMITER = "/";
-  public static final String DEFAULT_START_MARKER = null;
-  public static final String START_MARKER_MESSAGE = "Start marker: {}";
-  public static final String INPUT_BUCKET = ENVIRONMENT.readEnv("PERSISTED_RESOURCES_BUCKET");
-  public static final String OUTPUT_BUCKET = ENVIRONMENT.readEnv("KEY_BATCHES_BUCKET");
-  public static final int MAX_KEYS =
-      Integer.parseInt(ENVIRONMENT.readEnvOpt("BATCH_SIZE").orElse(DEFAULT_BATCH_SIZE));
-  private static final Logger logger = LoggerFactory.getLogger(GenerateKeyBatchesHandler.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(GenerateKeyBatchesHandler.class);
+  private static final int DEFAULT_BATCH_SIZE = 1000;
+  private static final Integer MAX_KEYS = Constants.BATCH_SIZE.orElse(DEFAULT_BATCH_SIZE);
+  private static final String DEFAULT_START_MARKER = null;
+  private static final String DELIMITER = "/";
+  private static final String EVENT_BUS = Constants.EVENT_BUS.orElseThrow();
+  private static final String INPUT_BUCKET = Constants.RESOURCES_BUCKET.orElseThrow();
+  private static final String OUTPUT_BUCKET = Constants.KEY_BATCHES_BUCKET.orElseThrow();
+  private static final String START_MARKER_MESSAGE = "Start marker: {}";
+  private static final String TOPIC = Constants.TOPIC.orElseThrow();
   private final S3Client inputClient;
   private final S3Client outputClient;
   private final EventBridgeClient eventBridgeClient;
@@ -118,13 +117,13 @@ public class GenerateKeyBatchesHandler extends EventHandler<KeyBatchRequestEvent
       Context context) {
     var startMarker = getStartMarker(input);
     var location = getLocation(input);
-    logger.debug(START_MARKER_MESSAGE, startMarker);
+    LOGGER.debug(START_MARKER_MESSAGE, startMarker);
     var response = inputClient.listObjectsV2(createRequest(startMarker, location));
     var keys = getKeys(response);
     writeObject(toKeyString(keys));
     var lastEvaluatedKey = getLastEvaluatedKey(keys);
     var eventsResponse = sendEvent(constructRequestEntry(lastEvaluatedKey, context, location));
-    logger.debug(eventsResponse.toString());
+    LOGGER.debug(eventsResponse.toString());
     return null;
   }
 

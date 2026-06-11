@@ -3,9 +3,7 @@ package no.unit.nva.indexingclient.keybatch;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.constants.Defaults.ENVIRONMENT;
 import static no.unit.nva.constants.Words.RESOURCES;
-import static no.unit.nva.indexingclient.Constants.EVENT_BUS;
 import static no.unit.nva.indexingclient.Constants.MANDATORY_UNUSED_SUBTOPIC;
-import static no.unit.nva.indexingclient.Constants.TOPIC;
 import static no.unit.nva.indexingclient.Constants.defaultS3Client;
 import static nva.commons.core.attempt.Try.attempt;
 
@@ -20,6 +18,7 @@ import java.util.stream.Stream;
 import no.unit.nva.events.handlers.EventHandler;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
 import no.unit.nva.indexingclient.AggregationsValidator;
+import no.unit.nva.indexingclient.Constants;
 import no.unit.nva.indexingclient.IndexingClient;
 import no.unit.nva.indexingclient.models.IndexDocument;
 import no.unit.nva.s3.S3Driver;
@@ -48,8 +47,10 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
       Integer.parseInt(ENVIRONMENT.readEnvOpt("MAX_PAYLOAD").orElse(DEFAULT_PAYLOAD));
   private static final String PROCESSING_BATCH_MESSAGE = "Processing batch: {}";
   private static final String BULK_HAS_FAILED_MESSAGE = "Bulk has failed: ";
-  private static final String RESOURCES_BUCKET = ENVIRONMENT.readEnv("PERSISTED_RESOURCES_BUCKET");
-  private static final String KEY_BATCHES_BUCKET = ENVIRONMENT.readEnv("KEY_BATCHES_BUCKET");
+  private static final String RESOURCES_BUCKET = Constants.RESOURCES_BUCKET.orElseThrow();
+  private static final String KEY_BATCHES_BUCKET = Constants.KEY_BATCHES_BUCKET.orElseThrow();
+  private static final String EVENT_BUS = Constants.EVENT_BUS.orElseThrow();
+  private static final String TOPIC = Constants.TOPIC.orElseThrow();
 
   private final IndexingClient indexingClient;
   private final S3Client s3ResourcesClient;

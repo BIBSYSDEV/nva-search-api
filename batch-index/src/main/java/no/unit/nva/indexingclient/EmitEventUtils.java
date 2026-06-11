@@ -1,6 +1,5 @@
 package no.unit.nva.indexingclient;
 
-import static no.unit.nva.indexingclient.Constants.BATCH_INDEX_EVENT_BUS_NAME;
 import static no.unit.nva.indexingclient.Constants.MANDATORY_UNUSED_SUBTOPIC;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -14,6 +13,9 @@ import software.amazon.awssdk.services.eventbridge.model.PutEventsRequestEntry;
 public final class EmitEventUtils {
 
   private static final Logger logger = LoggerFactory.getLogger(EmitEventUtils.class);
+
+  private static final String BATCH_INDEX_EVENT_BUS_NAME =
+      Constants.BATCH_INDEX_EVENT_BUS_NAME.orElseThrow();
 
   private EmitEventUtils() {}
 

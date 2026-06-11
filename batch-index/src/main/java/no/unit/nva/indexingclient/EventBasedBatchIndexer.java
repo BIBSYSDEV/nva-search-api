@@ -1,7 +1,5 @@
 package no.unit.nva.indexingclient;
 
-import static no.unit.nva.indexingclient.Constants.NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE;
-import static no.unit.nva.indexingclient.Constants.RECURSION_ENABLED;
 import static no.unit.nva.indexingclient.Constants.defaultEsClient;
 import static no.unit.nva.indexingclient.Constants.defaultEventBridgeClient;
 import static no.unit.nva.indexingclient.Constants.defaultS3Client;
@@ -25,6 +23,10 @@ public class EventBasedBatchIndexer
 
   private static final Logger logger = LoggerFactory.getLogger(EventBasedBatchIndexer.class);
 
+  private static final boolean RECURSION_ENABLED = Constants.RECURSION_ENABLED.orElseThrow();
+  private static final int NUMBER_OF_FILES_PER_EVENT =
+      Constants.NUMBER_OF_FILES_PER_EVENT.orElseThrow();
+
   private final S3Client s3Client;
   private final IndexingClient openSearchClient;
   private final EventBridgeClient eventBridgeClient;
@@ -36,7 +38,7 @@ public class EventBasedBatchIndexer
         defaultS3Client(),
         defaultEsClient(),
         defaultEventBridgeClient(),
-        NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE);
+        NUMBER_OF_FILES_PER_EVENT);
   }
 
   protected EventBasedBatchIndexer(
