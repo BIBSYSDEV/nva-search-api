@@ -1,7 +1,7 @@
 package no.unit.nva.indexingclient;
 
 import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
-import static no.unit.nva.indexingclient.Constants.NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE;
+import static no.unit.nva.indexingclient.Constants.NUMBER_OF_FILES_PER_EVENT;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.attempt.Try.attempt;
@@ -61,10 +61,7 @@ class EventBasedBatchIndexerTest extends BatchIndexTest {
     s3Driver = new S3Driver(s3Client, "ingoredBucket");
     indexer =
         new EventBasedBatchIndexer(
-            s3Client,
-            openSearchClient,
-            eventBridgeClient,
-            NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE);
+            s3Client, openSearchClient, eventBridgeClient, NUMBER_OF_FILES_PER_EVENT.orElseThrow());
     logRecorder = LogRecorder.forClass(BatchIndexer.class);
   }
 

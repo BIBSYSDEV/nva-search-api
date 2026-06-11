@@ -7,7 +7,6 @@ jakartaXmlBindApi = { strictly = '4.0.5' }
 jodaTime = { strictly = '2.14.2' }
 lucene = { strictly = '10.4.0' }
 opensearch-server = { strictly = '3.6.0' }
-typesafe = { strictly = '1.4.8' }
 xjc = { strictly = '1.9.1' }
 xmlUnit = { strictly = '2.12.0' }
 
@@ -23,7 +22,6 @@ lucene-join = { group = 'org.apache.lucene', name = 'lucene-join', version.ref =
 opensearch = { group = 'org.opensearch', name = 'opensearch', version.ref = 'opensearch-server' }
 opensearch-core = { group = 'org.opensearch', name = 'opensearch-core', version.ref = 'opensearch-server' }
 opensearch-x-content = { group = 'org.opensearch', name = 'opensearch-x-content', version.ref = 'opensearch-server' }
-typesafe = { group = 'com.typesafe', name = 'config', version.ref = 'typesafe' }
 xml-unit-core = { group = 'org.xmlunit', name = 'xmlunit-core', version.ref = 'xmlUnit' }
 
 [plugins]

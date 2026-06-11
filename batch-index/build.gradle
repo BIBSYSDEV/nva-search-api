@@ -13,7 +13,6 @@ dependencies {
     api(nvaLibs.json)
     api(project(':search-commons'))
     implementation(libs.opensearch)
-    implementation(libs.typesafe)
     implementation(nvaCatalog.aws.sdk2.aws.core)
     implementation(nvaCatalog.aws.sdk2.http.client)
     implementation(nvaCatalog.aws.sdk2.regions)
@@ -46,6 +45,8 @@ dependencies {
 }
 
 test {
+    environment "BATCH_INDEX_ENABLE_RECURSION", "true"
+    environment "BATCH_INDEX_EVENT_BUS_NAME", "someBatchIndexBus"
     environment "NUMBER_OF_FILES_PER_EVENT", "1"
     environment "PERSISTED_RESOURCES_PATH", "s3://somebucket/some/folder"
     environment "SEARCH_INFRASTRUCTURE_API_URI", "localhost"

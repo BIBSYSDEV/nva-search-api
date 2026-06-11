@@ -1,7 +1,6 @@
 package no.unit.nva.indexingclient;
 
 import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
-import static no.unit.nva.indexingclient.Constants.PERSISTED_RESOURCES_PATH;
 import static no.unit.nva.indexingclient.Constants.defaultEventBridgeClient;
 import static no.unit.nva.indexingclient.EmitEventUtils.emitEvent;
 
@@ -14,6 +13,9 @@ import nva.commons.core.JacocoGenerated;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 
 public class StartBatchIndexingHandler implements RequestStreamHandler {
+
+  private static final String PERSISTED_RESOURCES_PATH =
+      Constants.PERSISTED_RESOURCES_PATH.orElseThrow();
 
   private final EventBridgeClient eventBridgeClient;
 

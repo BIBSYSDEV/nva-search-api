@@ -543,6 +543,8 @@ Resources:
         Variables:
           ALLOWED_ORIGIN: !Ref AllowedOrigins
           BATCH_INDEX_EVENT_BUS_NAME: !GetAtt BatchIndexEventBus.Name
+          BATCH_INDEX_ENABLE_RECURSION: "true"
+          NUMBER_OF_FILES_PER_EVENT: "10"
 
   StartBatchIndexingButton:
     Type: AWS::Serverless::Function

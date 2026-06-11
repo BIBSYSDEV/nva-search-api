@@ -2,8 +2,7 @@ package no.unit.nva.indexingclient;
 
 import static no.unit.nva.constants.Defaults.ENVIRONMENT;
 
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
+import java.util.Optional;
 import nva.commons.core.JacocoGenerated;
 import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
 import software.amazon.awssdk.regions.Region;
@@ -12,27 +11,29 @@ import software.amazon.awssdk.services.s3.S3Client;
 
 public final class Constants {
 
+  public static final Optional<Boolean> RECURSION_ENABLED =
+      ENVIRONMENT.readEnvOpt("BATCH_INDEX_ENABLE_RECURSION").map(Boolean::parseBoolean);
+  public static final Optional<Integer> BATCH_SIZE =
+      ENVIRONMENT.readEnvOpt("BATCH_SIZE").map(Integer::parseInt);
+  public static final Optional<Integer> NUMBER_OF_FILES_PER_EVENT =
+      ENVIRONMENT.readEnvOpt("NUMBER_OF_FILES_PER_EVENT").map(Integer::parseInt);
+  public static final Optional<String> BATCH_INDEX_EVENT_BUS_NAME =
+      ENVIRONMENT.readEnvOpt("BATCH_INDEX_EVENT_BUS_NAME");
+  public static final Optional<String> EVENT_BUS = ENVIRONMENT.readEnvOpt("EVENT_BUS");
+  public static final Optional<String> RESOURCES_BUCKET =
+      ENVIRONMENT.readEnvOpt("PERSISTED_RESOURCES_BUCKET");
+  public static final Optional<String> KEY_BATCHES_BUCKET =
+      ENVIRONMENT.readEnvOpt("KEY_BATCHES_BUCKET");
+  public static final Optional<String> PERSISTED_RESOURCES_PATH =
+      ENVIRONMENT.readEnvOpt("PERSISTED_RESOURCES_PATH");
+  public static final Optional<String> TOPIC = ENVIRONMENT.readEnvOpt("TOPIC");
+  public static final String BATCH_INDEX_EVENT_TOPIC = "SearchService.Index.Batch";
   public static final String MANDATORY_UNUSED_SUBTOPIC = "DETAIL.WITH.TOPIC";
-  public static final String EVENT_BUS = ENVIRONMENT.readEnv("EVENT_BUS");
-  public static final String TOPIC = ENVIRONMENT.readEnv("TOPIC");
-  static final String BATCH_INDEX_EVENT_TOPIC = "SearchService.Index.Batch";
-  static final String S3_LOCATION_FIELD = "s3Location";
-  static final Config config = ConfigFactory.load();
-  static final String PERSISTED_RESOURCES_PATH = config.getString("batch.persistedResourcesPath");
-  static final String BATCH_INDEX_EVENT_BUS_NAME = config.getString("batch.index.eventbusname");
-  static final boolean RECURSION_ENABLED = config.getBoolean("batch.index.recursion");
-  private static final String AWS_REGION_ENV_VARIABLE = "AWS_REGION";
-  private static final int NUMBER_OF_FILES_PER_EVENT =
-      config.getInt("batch.index.number_of_files_per_event");
+  public static final String S3_LOCATION_FIELD = "s3Location";
+  private static final String AWS_REGION =
+      ENVIRONMENT.readEnvOpt("AWS_REGION").orElse(Region.EU_WEST_1.toString());
 
-  public static final int NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE =
-      ENVIRONMENT
-          .readEnvOpt("NUMBER_OF_FILES_PER_EVENT")
-          .map(Integer::parseInt)
-          .orElse(NUMBER_OF_FILES_PER_EVENT);
-
-  @JacocoGenerated
-  public Constants() {}
+  private Constants() {}
 
   @JacocoGenerated
   public static EventBridgeClient defaultEventBridgeClient() {
@@ -46,10 +47,8 @@ public final class Constants {
 
   @JacocoGenerated
   public static S3Client defaultS3Client() {
-    String awsRegion =
-        ENVIRONMENT.readEnvOpt(AWS_REGION_ENV_VARIABLE).orElse(Region.EU_WEST_1.toString());
     return S3Client.builder()
-        .region(Region.of(awsRegion))
+        .region(Region.of(AWS_REGION))
         .httpClient(UrlConnectionHttpClient.builder().build())
         .build();
   }
