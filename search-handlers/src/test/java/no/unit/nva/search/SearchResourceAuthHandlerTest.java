@@ -34,6 +34,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import no.unit.nva.constants.Words;
+import no.unit.nva.search.common.bibtex.ResourceBibTexTransformer;
 import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.testing.common.FakeGatewayResponse;
@@ -116,6 +117,22 @@ class SearchResourceAuthHandlerTest {
     assertThat(headers, hasEntry("Access-Control-Expose-Headers", "Link, X-Total-Count"));
     assertThat(headers, hasKey("Link"));
     assertThat(headers.get("Link"), containsString("rel=\"first\""));
+  }
+
+  @Test
+  void shouldRestrictSourceToBibtexFieldsWhenAcceptHeaderIsBibtex() throws IOException {
+    prepareRestHighLevelClientOkResponse();
+
+    handler.handleRequest(
+        getBibtexInputStreamWithAccessRight(
+            randomUri(), randomUri(), AccessRight.MANAGE_RESOURCES_ALL),
+        outputStream,
+        contextMock);
+
+    var openSearchRequestBody =
+        SearchResourceLegacyHandlerTest.capturedOpenSearchRequestBody(mockedSearchClient);
+    ResourceBibTexTransformer.getJsonFields()
+        .forEach(field -> assertThat(openSearchRequestBody, containsString("\"" + field + "\"")));
   }
 
   @Test
