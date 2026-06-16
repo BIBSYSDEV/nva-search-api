@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.constants.Words;
+import no.unit.nva.search.common.csv.ResourceCsvTransformer;
 import no.unit.nva.search.common.records.PagedSearch;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.paths.UriWrapper;
@@ -271,6 +272,20 @@ class ResourceSearchQueryTest {
     var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
 
     assertTrue(body.contains("entityDescription.contributors.identity.name"));
+  }
+
+  @Test
+  void shouldSlimSourceToCsvFieldsWhenMediaTypeIsCsv() throws BadRequestException {
+    var query =
+        ResourceSearchQuery.builder()
+            .fromTestQueryParameters(queryToMapEntries(URI.create("https://example.com/?size=3")))
+            .withRequiredParameters(FROM, SIZE)
+            .withMediaType(Words.TEXT_CSV)
+            .build();
+
+    var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
+
+    ResourceCsvTransformer.getJsonFields().forEach(field -> assertTrue(body.contains(field)));
   }
 
   @Test
