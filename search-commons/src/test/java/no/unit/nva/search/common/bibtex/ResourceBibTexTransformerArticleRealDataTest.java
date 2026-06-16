@@ -61,8 +61,8 @@ class ResourceBibTexTransformerArticleRealDataTest implements BibtexTransformerB
   }
 
   @Test
-  void shouldStripDoiPrefix() {
-    assertThat(bibtex, containsString("  doi = {10.54648/eulr2025047}"));
+  void shouldIncludeFullDoiUri() {
+    assertThat(bibtex, containsString("  doi = {https://doi.org/10.54648/eulr2025047}"));
   }
 
   @Test

@@ -65,7 +65,7 @@ class ResourceBibTexTransformerRealDataTest implements BibtexTransformerBase {
 
   @Test
   void shouldExtractDoiWhenPresent() {
-    assertThat(bibtex, containsString("  doi = {10.4337/9781035313877.00016}"));
+    assertThat(bibtex, containsString("  doi = {https://doi.org/10.4337/9781035313877.00016}"));
   }
 
   @Test
