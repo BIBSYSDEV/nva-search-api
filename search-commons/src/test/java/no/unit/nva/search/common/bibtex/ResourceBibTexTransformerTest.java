@@ -235,6 +235,36 @@ class ResourceBibTexTransformerTest {
   }
 
   @Test
+  void shouldReadAuthorsFromContributorsPreview() {
+    var doc = docWithInstanceType("AcademicArticle");
+    setContributors(doc, "Full Only");
+    setContributorsPreview(doc, "Preview One", "Preview Two");
+    setContributorsCount(doc, 2);
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  author = {Preview One and Preview Two}"));
+    assertThat(result, not(containsString("Full Only")));
+  }
+
+  @Test
+  void shouldAppendAndOthersWhenContributorsAreTruncated() {
+    var doc = docWithInstanceType("AcademicArticle");
+    setContributorsPreview(doc, "Alice Aaberg", "Bob Bakke");
+    setContributorsCount(doc, 3000);
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  author = {Alice Aaberg and Bob Bakke and others}"));
+  }
+
+  @Test
+  void shouldNotAppendAndOthersWhenPreviewContainsAllContributors() {
+    var doc = docWithInstanceType("AcademicArticle");
+    setContributorsPreview(doc, "Alice Aaberg", "Bob Bakke");
+    setContributorsCount(doc, 2);
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  author = {Alice Aaberg and Bob Bakke}"));
+    assertThat(result, not(containsString("others")));
+  }
+
+  @Test
   void shouldStripDoiResolverPrefix() {
     var doc = docWithInstanceType("AcademicArticle");
     setDoi(doc, "https://doi.org/10.1234/test");
@@ -672,6 +702,17 @@ class ResourceBibTexTransformerTest {
       var c = contributors.addObject();
       c.putObject("identity").put("name", name);
     }
+  }
+
+  private static void setContributorsPreview(ObjectNode doc, String... names) {
+    var preview = ((ObjectNode) doc.path("entityDescription")).putArray("contributorsPreview");
+    for (var name : names) {
+      preview.addObject().putObject("identity").put("name", name);
+    }
+  }
+
+  private static void setContributorsCount(ObjectNode doc, int count) {
+    ((ObjectNode) doc.path("entityDescription")).put("contributorsCount", count);
   }
 
   private static void setDoi(ObjectNode doc, String doi) {

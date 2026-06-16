@@ -115,7 +115,8 @@ public final class Constants {
           jsonPath(ENTITY_DESCRIPTION, MAIN_TITLE),
           jsonPath(ENTITY_DESCRIPTION, PUBLICATION_DATE),
           jsonPath(ENTITY_DESCRIPTION, TAGS),
-          jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, NAME),
+          jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, IDENTITY, NAME),
+          jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS_COUNT),
           jsonPath(ENTITY_DESCRIPTION, REFERENCE));
   public static final String IDENTIFIER_KEYWORD = jsonPath(IDENTIFIER, KEYWORD);
   public static final String FILES_STATUS_KEYWORD = jsonPath(FILES_STATUS, KEYWORD);

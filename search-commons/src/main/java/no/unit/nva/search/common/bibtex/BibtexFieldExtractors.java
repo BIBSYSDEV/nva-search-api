@@ -18,6 +18,8 @@ public final class BibtexFieldExtractors {
   static final String MONTH_POINTER = "/entityDescription/publicationDate/month";
   static final String TAGS_POINTER = "/entityDescription/tags";
   static final String CONTRIBUTORS_POINTER = "/entityDescription/contributors";
+  static final String CONTRIBUTORS_PREVIEW_POINTER = "/entityDescription/contributorsPreview";
+  static final String CONTRIBUTORS_COUNT_POINTER = "/entityDescription/contributorsCount";
   static final String IDENTITY_NAME_POINTER = "/identity/name";
   static final String DOI_POINTER = "/entityDescription/reference/doi";
   static final String NVA_DOI_POINTER = "/doi";
@@ -57,6 +59,7 @@ public final class BibtexFieldExtractors {
       "/entityDescription/reference/publicationInstance/manifestations";
 
   private static final String AND = " and ";
+  private static final String OTHERS = "others";
   private static final String INTERVAL = "--";
   private static final String EN_DASH = "–";
   private static final String DOI_URI_HOST_REGEX = "(?i)https?://doi\\.org/";
@@ -76,21 +79,34 @@ public final class BibtexFieldExtractors {
 
   public static BibtexFieldExtractor authors() {
     return doc -> {
-      var contributors = doc.at(CONTRIBUTORS_POINTER);
+      var contributors = contributorsNode(doc);
       if (contributors.isMissingNode() || !contributors.isArray()) {
         return Optional.empty();
       }
-      return StreamSupport.stream(contributors.spliterator(), false)
-          .flatMap(contributor -> extractText(contributor, IDENTITY_NAME_POINTER).stream())
-          .filter(not(String::isBlank))
-          .collect(
-              Collectors.collectingAndThen(
-                  Collectors.joining(AND),
-                  names ->
-                      names.isEmpty()
-                          ? Optional.empty()
-                          : Optional.of(new BibtexField("author", names))));
+      var names =
+          StreamSupport.stream(contributors.spliterator(), false)
+              .flatMap(contributor -> extractText(contributor, IDENTITY_NAME_POINTER).stream())
+              .filter(not(String::isBlank))
+              .toList();
+      if (names.isEmpty()) {
+        return Optional.empty();
+      }
+      var joinedNames = String.join(AND, names);
+      if (hasMoreContributorsThan(doc, contributors.size())) {
+        joinedNames = String.join(AND, joinedNames, OTHERS);
+      }
+      return Optional.of(new BibtexField("author", joinedNames));
     };
+  }
+
+  private static JsonNode contributorsNode(JsonNode doc) {
+    var preview = doc.at(CONTRIBUTORS_PREVIEW_POINTER);
+    return preview.isMissingNode() ? doc.at(CONTRIBUTORS_POINTER) : preview;
+  }
+
+  private static boolean hasMoreContributorsThan(JsonNode doc, int shownContributors) {
+    var contributorsCount = doc.at(CONTRIBUTORS_COUNT_POINTER);
+    return contributorsCount.isInt() && contributorsCount.asInt() > shownContributors;
   }
 
   public static BibtexFieldExtractor doi() {

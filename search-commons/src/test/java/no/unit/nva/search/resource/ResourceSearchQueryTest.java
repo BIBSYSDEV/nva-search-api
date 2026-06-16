@@ -270,7 +270,8 @@ class ResourceSearchQueryTest {
 
     var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
 
-    assertTrue(body.contains("entityDescription.contributors.identity.name"));
+    assertTrue(body.contains("entityDescription.contributorsPreview.identity.name"));
+    assertTrue(body.contains("entityDescription.contributorsCount"));
   }
 
   @Test
@@ -283,7 +284,7 @@ class ResourceSearchQueryTest {
 
     var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
 
-    assertFalse(body.contains("entityDescription.contributors.identity.name"));
+    assertFalse(body.contains("entityDescription.contributorsPreview.identity.name"));
   }
 
   @Test
