@@ -22,6 +22,7 @@ import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -256,6 +257,33 @@ class ResourceSearchQueryTest {
                 .withRequiredParameters(FROM, SIZE)
                 .build()
                 .openSearchUri(Words.RESOURCES));
+  }
+
+  @Test
+  void shouldSlimSourceToBibtexFieldsWhenMediaTypeIsBibtex() throws BadRequestException {
+    var query =
+        ResourceSearchQuery.builder()
+            .fromTestQueryParameters(queryToMapEntries(URI.create("https://example.com/?size=3")))
+            .withRequiredParameters(FROM, SIZE)
+            .withMediaType(Words.TEXT_X_BIBTEX)
+            .build();
+
+    var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
+
+    assertTrue(body.contains("entityDescription.contributors.identity.name"));
+  }
+
+  @Test
+  void shouldNotSlimSourceForDefaultMediaType() throws BadRequestException {
+    var query =
+        ResourceSearchQuery.builder()
+            .fromTestQueryParameters(queryToMapEntries(URI.create("https://example.com/?size=3")))
+            .withRequiredParameters(FROM, SIZE)
+            .build();
+
+    var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
+
+    assertFalse(body.contains("entityDescription.contributors.identity.name"));
   }
 
   @Test

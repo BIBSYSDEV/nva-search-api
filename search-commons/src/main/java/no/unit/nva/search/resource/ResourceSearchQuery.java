@@ -1,6 +1,8 @@
 package no.unit.nva.search.resource;
 
 import static java.lang.String.format;
+import static java.util.Objects.nonNull;
+import static no.unit.nva.constants.Defaults.BIBTEX_UTF_8;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.constants.Words.HTTPS;
@@ -8,6 +10,7 @@ import static no.unit.nva.constants.Words.IDENTIFIER;
 import static no.unit.nva.constants.Words.PI;
 import static no.unit.nva.constants.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.constants.Words.STATUS;
+import static no.unit.nva.search.resource.Constants.BIBTEX_INCLUDED_FIELDS;
 import static no.unit.nva.search.resource.Constants.CRISTIN_ORGANIZATION_PATH;
 import static no.unit.nva.search.resource.Constants.CRISTIN_PERSON_PATH;
 import static no.unit.nva.search.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
@@ -133,7 +136,13 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
   @Override
   protected String[] include() {
-    return getIncludedFields().toArray(String[]::new);
+    return isBibtexMediaType()
+        ? BIBTEX_INCLUDED_FIELDS.toArray(String[]::new)
+        : getIncludedFields().toArray(String[]::new);
+  }
+
+  private boolean isBibtexMediaType() {
+    return nonNull(getMediaType()) && BIBTEX_UTF_8.matches(getMediaType());
   }
 
   @Override
