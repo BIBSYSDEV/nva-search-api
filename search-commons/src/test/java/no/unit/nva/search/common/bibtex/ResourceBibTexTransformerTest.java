@@ -286,6 +286,24 @@ class ResourceBibTexTransformerTest {
   }
 
   @Test
+  void shouldIncludeNvaApiFieldFromId() {
+    var doc = docWithInstanceType("AcademicArticle");
+    setPath(doc, "id", "https://api.nva.unit.no/publication/abc-123");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  nva_api = {https://api.nva.unit.no/publication/abc-123}"));
+  }
+
+  @Test
+  void shouldIncludeBothUrlAndNvaApiWhenHandlePresent() {
+    var doc = docWithInstanceType("AcademicArticle");
+    setPath(doc, "id", "https://api.nva.unit.no/publication/abc-123");
+    setPath(doc, "handle", "https://hdl.handle.net/11250/9999999");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  url = {https://hdl.handle.net/11250/9999999}"));
+    assertThat(result, containsString("  nva_api = {https://api.nva.unit.no/publication/abc-123}"));
+  }
+
+  @Test
   void shouldExtractAbstract() {
     var doc = docWithInstanceType("AcademicArticle");
     ((com.fasterxml.jackson.databind.node.ObjectNode) doc.path("entityDescription"))
