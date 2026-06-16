@@ -1,5 +1,17 @@
 package no.unit.nva.search.common.bibtex;
 
+import static no.unit.nva.constants.Words.ABSTRACT;
+import static no.unit.nva.constants.Words.CONTRIBUTORS;
+import static no.unit.nva.constants.Words.DOI;
+import static no.unit.nva.constants.Words.ENTITY_DESCRIPTION;
+import static no.unit.nva.constants.Words.HANDLE;
+import static no.unit.nva.constants.Words.ID;
+import static no.unit.nva.constants.Words.IDENTITY;
+import static no.unit.nva.constants.Words.MAIN_TITLE;
+import static no.unit.nva.constants.Words.NAME;
+import static no.unit.nva.constants.Words.PUBLICATION_DATE;
+import static no.unit.nva.constants.Words.REFERENCE;
+import static no.unit.nva.constants.Words.TAGS;
 import static no.unit.nva.search.common.bibtex.BibtexConstants.ARTICLE;
 import static no.unit.nva.search.common.bibtex.BibtexConstants.BOOK;
 import static no.unit.nva.search.common.bibtex.BibtexConstants.INBOOK;
@@ -34,6 +46,7 @@ import static no.unit.nva.search.common.bibtex.BibtexFieldExtractors.pages;
 import static no.unit.nva.search.common.bibtex.BibtexFieldExtractors.pagesOrManifestationPages;
 import static no.unit.nva.search.common.bibtex.BibtexFieldExtractors.publisherOrManifestationPublisher;
 import static no.unit.nva.search.common.bibtex.BibtexFieldExtractors.text;
+import static no.unit.nva.search.common.constant.Functions.jsonPath;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URI;
@@ -104,6 +117,19 @@ public final class ResourceBibTexTransformer {
     return hits.stream()
         .map(ResourceBibTexTransformer::toEntry)
         .collect(Collectors.joining(ENTRY_SEPARATOR));
+  }
+
+  public static List<String> getBibTexFields() {
+    return List.of(
+        ID,
+        HANDLE,
+        DOI,
+        jsonPath(ENTITY_DESCRIPTION, ABSTRACT),
+        jsonPath(ENTITY_DESCRIPTION, MAIN_TITLE),
+        jsonPath(ENTITY_DESCRIPTION, PUBLICATION_DATE),
+        jsonPath(ENTITY_DESCRIPTION, TAGS),
+        jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, NAME),
+        jsonPath(ENTITY_DESCRIPTION, REFERENCE));
   }
 
   private static String toEntry(JsonNode doc) {

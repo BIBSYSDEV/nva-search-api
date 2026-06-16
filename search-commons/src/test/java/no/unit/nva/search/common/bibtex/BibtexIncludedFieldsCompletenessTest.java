@@ -1,10 +1,11 @@
 package no.unit.nva.search.common.bibtex;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search.resource.Constants.BIBTEX_INCLUDED_FIELDS;
+import static no.unit.nva.search.common.bibtex.ResourceBibTexTransformer.getBibTexFields;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -37,7 +38,7 @@ class BibtexIncludedFieldsCompletenessTest implements BibtexTransformerBase {
       throws IOException {
     var data = BibtexTransformerBase.loadAndTransform(Path.of(resourceFile));
     var filteredHits =
-        data.hits().stream().map(hit -> filterSource(hit, BIBTEX_INCLUDED_FIELDS)).toList();
+        data.hits().stream().map(hit -> filterSource(hit, getBibTexFields())).toList();
 
     var filteredBibtex = ResourceBibTexTransformer.transform(filteredHits);
 
@@ -53,28 +54,38 @@ class BibtexIncludedFieldsCompletenessTest implements BibtexTransformerBase {
   private static JsonNode filter(JsonNode node, PathNode pathTree) {
     JsonNode result;
     if (node.isArray()) {
-      var filteredArray = MAPPER.createArrayNode();
-      node.forEach(element -> filteredArray.add(filter(element, pathTree)));
-      result = filteredArray;
+      result = filterArray(node, pathTree);
     } else if (node.isObject()) {
-      var filteredObject = MAPPER.createObjectNode();
-      node.fields()
-          .forEachRemaining(
-              entry -> {
-                var child = pathTree.children.get(entry.getKey());
-                if (nonNull(child)) {
-                  if (child.children.isEmpty()) {
-                    filteredObject.set(entry.getKey(), entry.getValue());
-                  } else if (entry.getValue().isContainerNode()) {
-                    filteredObject.set(entry.getKey(), filter(entry.getValue(), child));
-                  }
-                }
-              });
-      result = filteredObject;
+      result = filterObject(node, pathTree);
     } else {
       result = node;
     }
     return result;
+  }
+
+  private static JsonNode filterArray(JsonNode node, PathNode pathTree) {
+    var filteredArray = MAPPER.createArrayNode();
+    node.forEach(element -> filteredArray.add(filter(element, pathTree)));
+    return filteredArray;
+  }
+
+  private static JsonNode filterObject(JsonNode node, PathNode pathTree) {
+    var filteredObject = MAPPER.createObjectNode();
+    node.fields().forEachRemaining(entry -> copyIncludedField(filteredObject, entry, pathTree));
+    return filteredObject;
+  }
+
+  private static void copyIncludedField(
+      ObjectNode target, Map.Entry<String, JsonNode> entry, PathNode pathTree) {
+    var child = pathTree.children.get(entry.getKey());
+    var isLeafInclude = nonNull(child) && child.children.isEmpty();
+    var isRecursiveInclude =
+        nonNull(child) && !child.children.isEmpty() && entry.getValue().isContainerNode();
+    if (isLeafInclude) {
+      target.set(entry.getKey(), entry.getValue());
+    } else if (isRecursiveInclude) {
+      target.set(entry.getKey(), filter(entry.getValue(), child));
+    }
   }
 
   private static final class PathNode {

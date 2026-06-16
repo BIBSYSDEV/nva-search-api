@@ -106,17 +106,6 @@ public final class Constants {
   public static final String CRISTIN_ORGANIZATION_PATH = "/cristin/organization/";
   public static final String CRISTIN_PERSON_PATH = "/cristin/person/";
   public static final List<String> GLOBAL_EXCLUDED_FIELDS = List.of("joinField");
-  public static final List<String> BIBTEX_INCLUDED_FIELDS =
-      List.of(
-          ID,
-          HANDLE,
-          DOI,
-          jsonPath(ENTITY_DESCRIPTION, ABSTRACT),
-          jsonPath(ENTITY_DESCRIPTION, MAIN_TITLE),
-          jsonPath(ENTITY_DESCRIPTION, PUBLICATION_DATE),
-          jsonPath(ENTITY_DESCRIPTION, TAGS),
-          jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, NAME),
-          jsonPath(ENTITY_DESCRIPTION, REFERENCE));
   public static final String IDENTIFIER_KEYWORD = jsonPath(IDENTIFIER, KEYWORD);
   public static final String FILES_STATUS_KEYWORD = jsonPath(FILES_STATUS, KEYWORD);
   public static final String ENTITY_CONTRIBUTORS = jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS);
