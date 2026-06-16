@@ -117,6 +117,9 @@ public final class ResourceBibTexTransformer {
     if (!url.isBlank()) {
       fields.add(new BibtexField("url", url));
     }
+    if (!id.isBlank()) {
+      fields.add(new BibtexField("nva_api", id));
+    }
     Stream.concat(
             UNIVERSAL_EXTRACTORS.stream(),
             TYPE_EXTRACTORS.getOrDefault(bibType, List.of()).stream())
