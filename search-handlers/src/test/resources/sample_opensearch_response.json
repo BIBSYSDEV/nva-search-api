@@ -53,7 +53,8 @@
             "name": "Organization"
           },
           "abstract": "abstract of the publication"
-        }
+        },
+        "sort": ["2017", "f367b260-c15e-4d0f-b197-e1dc0e9eb0e8"]
       },
       {
         "_index": "resources",
@@ -94,7 +95,8 @@
             "name": "Organization"
           },
           "abstract": "abstract of the publication"
-        }
+        },
+        "sort": ["2017", "aea76470-39af-4943-b876-061f7576baa5"]
       }
     ]
   },
