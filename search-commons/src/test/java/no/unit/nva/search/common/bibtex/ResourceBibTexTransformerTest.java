@@ -250,7 +250,37 @@ class ResourceBibTexTransformerTest {
     setEditors(doc, "Edith Edwards");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, containsString("  author = {Alice Aaberg and Bob Bakke}"));
-    assertThat(result, not(containsString("Edith Edwards")));
+  }
+
+  @Test
+  void shouldNotIncludeEditorFieldWhenNoContributors() {
+    var doc = docWithInstanceType("AcademicArticle");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, not(containsString("editor")));
+  }
+
+  @Test
+  void shouldNotIncludeEditorsFieldWhenNoEditors() {
+    var doc = docWithInstanceType("AcademicArticle");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, not(containsString("editor")));
+  }
+
+  @Test
+  void shouldJoinMultipleEditorsWithAnd() {
+    var doc = docWithInstanceType("AcademicArticle");
+    setEditors(doc, "Alice Aaberg", "Bob Bakke");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  editor = {Alice Aaberg and Bob Bakke}"));
+  }
+
+  @Test
+  void shouldOnlyIncludeEditorContributorsAsEditor() {
+    var doc = docWithInstanceType("AcademicArticle");
+    setCreators(doc, "Alice Aaberg", "Bob Bakke");
+    setEditors(doc, "Edith Edwards");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  editor = {Edith Edwards}"));
   }
 
   @Test
