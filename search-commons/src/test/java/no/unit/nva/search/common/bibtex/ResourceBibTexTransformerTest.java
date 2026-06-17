@@ -704,20 +704,19 @@ class ResourceBibTexTransformerTest {
   }
 
   private static void setCreators(ObjectNode doc, String... names) {
-    var contributors = getOrCreateContributorsNode(doc);
-    for (var name : names) {
-      var c = contributors.addObject();
-      c.putObject("identity").put("name", name);
-      c.putObject("role").put("type", "Creator");
-    }
+    setContributors(doc, "Creator", names);
   }
 
   private static void setEditors(ObjectNode doc, String... names) {
+    setContributors(doc, "Editor", names);
+  }
+
+  private static void setContributors(ObjectNode doc, String role, String... names) {
     var contributors = getOrCreateContributorsNode(doc);
     for (var name : names) {
       var c = contributors.addObject();
       c.putObject("identity").put("name", name);
-      c.putObject("role").put("type", "Editor");
+      c.putObject("role").put("type", role);
     }
   }
 
