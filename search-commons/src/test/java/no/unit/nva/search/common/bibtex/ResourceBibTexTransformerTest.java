@@ -8,6 +8,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.startsWith;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.List;
 import java.util.stream.Stream;
@@ -222,7 +223,7 @@ class ResourceBibTexTransformerTest {
   @Test
   void shouldJoinMultipleAuthorsWithAnd() {
     var doc = docWithInstanceType("AcademicArticle");
-    setContributors(doc, "Alice Aaberg", "Bob Bakke");
+    setCreators(doc, "Alice Aaberg", "Bob Bakke");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, containsString("  author = {Alice Aaberg and Bob Bakke}"));
   }
@@ -232,6 +233,24 @@ class ResourceBibTexTransformerTest {
     var doc = docWithInstanceType("AcademicArticle");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, not(containsString("author")));
+  }
+
+  @Test
+  void shouldNotIncludeAuthorFieldWhenNoContributorsAreCreators() {
+    var doc = docWithInstanceType("AcademicArticle");
+    setEditors(doc, "Edith Edwards", "Edny Evans");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, not(containsString("author")));
+  }
+
+  @Test
+  void shouldOnlyIncludeCreatorContributorsAsAuthors() {
+    var doc = docWithInstanceType("AcademicArticle");
+    setCreators(doc, "Alice Aaberg", "Bob Bakke");
+    setEditors(doc, "Edith Edwards");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  author = {Alice Aaberg and Bob Bakke}"));
+    assertThat(result, not(containsString("Edith Edwards")));
   }
 
   @Test
@@ -667,7 +686,7 @@ class ResourceBibTexTransformerTest {
     var entity = (ObjectNode) doc.get("entityDescription");
     entity.put("mainTitle", "The Main Title");
     setPublicationDate(doc, "2023", "6", null);
-    setContributors(doc, "Alice Aaberg");
+    setCreators(doc, "Alice Aaberg");
     setDoi(doc, "https://doi.org/10.1234/test");
     setJournalContext(doc, "Journal", "Nature", null, "1234-5678", null);
     return doc;
@@ -684,12 +703,30 @@ class ResourceBibTexTransformerTest {
     if (day != null) date.put("day", day);
   }
 
-  private static void setContributors(ObjectNode doc, String... names) {
-    var contributors = ((ObjectNode) doc.path("entityDescription")).putArray("contributors");
+  private static void setCreators(ObjectNode doc, String... names) {
+    var contributors = getOrCreateContributorsNode(doc);
     for (var name : names) {
       var c = contributors.addObject();
       c.putObject("identity").put("name", name);
+      c.putObject("role").put("type", "Creator");
     }
+  }
+
+  private static void setEditors(ObjectNode doc, String... names) {
+    var contributors = getOrCreateContributorsNode(doc);
+    for (var name : names) {
+      var c = contributors.addObject();
+      c.putObject("identity").put("name", name);
+      c.putObject("role").put("type", "Editor");
+    }
+  }
+
+  private static ArrayNode getOrCreateContributorsNode(ObjectNode doc) {
+    var entityDescription = ((ObjectNode) doc.path("entityDescription"));
+    if (entityDescription.has("contributors")) {
+      return (ArrayNode) entityDescription.path("contributors");
+    }
+    return entityDescription.putArray("contributors");
   }
 
   private static void setDoi(ObjectNode doc, String doi) {
