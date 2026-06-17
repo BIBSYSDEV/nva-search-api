@@ -19,6 +19,7 @@ public final class BibtexFieldExtractors {
   static final String TAGS_POINTER = "/entityDescription/tags";
   static final String CONTRIBUTORS_POINTER = "/entityDescription/contributors";
   static final String IDENTITY_NAME_POINTER = "/identity/name";
+  static final String ROLE_TYPE_POINTER = "/role/type";
   static final String DOI_POINTER = "/entityDescription/reference/doi";
   static final String NVA_DOI_POINTER = "/doi";
   static final String CONTEXT_TYPE_POINTER = "/entityDescription/reference/publicationContext/type";
@@ -66,6 +67,7 @@ public final class BibtexFieldExtractors {
   private static final int DECEMBER = 12;
   private static final String EMPTY_STRING = "";
   private static final String COMMA_SPACE_DELIMITER = ", ";
+  private static final String CREATOR_ROLE = "Creator";
 
   private BibtexFieldExtractors() {}
 
@@ -80,6 +82,9 @@ public final class BibtexFieldExtractors {
         return Optional.empty();
       }
       return StreamSupport.stream(contributors.spliterator(), false)
+          .filter(
+              contributor ->
+                  CREATOR_ROLE.equals(extractText(contributor, ROLE_TYPE_POINTER).orElse(null)))
           .flatMap(contributor -> extractText(contributor, IDENTITY_NAME_POINTER).stream())
           .filter(not(String::isBlank))
           .collect(
