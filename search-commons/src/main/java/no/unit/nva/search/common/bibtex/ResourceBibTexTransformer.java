@@ -11,7 +11,9 @@ import static no.unit.nva.constants.Words.MAIN_TITLE;
 import static no.unit.nva.constants.Words.NAME;
 import static no.unit.nva.constants.Words.PUBLICATION_DATE;
 import static no.unit.nva.constants.Words.REFERENCE;
+import static no.unit.nva.constants.Words.ROLE;
 import static no.unit.nva.constants.Words.TAGS;
+import static no.unit.nva.constants.Words.TYPE;
 import static no.unit.nva.search.common.bibtex.BibtexConstants.ARTICLE;
 import static no.unit.nva.search.common.bibtex.BibtexConstants.BOOK;
 import static no.unit.nva.search.common.bibtex.BibtexConstants.INBOOK;
@@ -129,6 +131,7 @@ public final class ResourceBibTexTransformer {
         jsonPath(ENTITY_DESCRIPTION, PUBLICATION_DATE),
         jsonPath(ENTITY_DESCRIPTION, TAGS),
         jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, NAME),
+        jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, ROLE, TYPE),
         jsonPath(ENTITY_DESCRIPTION, REFERENCE));
   }
 
