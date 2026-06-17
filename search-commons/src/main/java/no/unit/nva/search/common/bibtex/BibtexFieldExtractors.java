@@ -69,6 +69,8 @@ public final class BibtexFieldExtractors {
   private static final String COMMA_SPACE_DELIMITER = ", ";
   private static final String CREATOR_ROLE = "Creator";
   private static final String EDITOR_ROLE = "Editor";
+  private static final String AUTHOR_FIELD = "author";
+  private static final String EDITOR_FIELD = "editor";
 
   private BibtexFieldExtractors() {}
 
@@ -77,11 +79,11 @@ public final class BibtexFieldExtractors {
   }
 
   public static BibtexFieldExtractor authors() {
-    return mapContributorsToField(CREATOR_ROLE, "author");
+    return mapContributorsToField(CREATOR_ROLE, AUTHOR_FIELD);
   }
 
   public static BibtexFieldExtractor editors() {
-    return mapContributorsToField(EDITOR_ROLE, "editor");
+    return mapContributorsToField(EDITOR_ROLE, EDITOR_FIELD);
   }
 
   private static BibtexFieldExtractor mapContributorsToField(String role, String field) {
