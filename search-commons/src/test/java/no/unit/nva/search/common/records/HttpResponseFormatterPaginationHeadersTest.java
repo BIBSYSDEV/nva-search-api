@@ -36,10 +36,32 @@ class HttpResponseFormatterPaginationHeadersTest {
   }
 
   @Test
-  void shouldReturnEmptyHeadersWhenMediaTypeIsJsonLd() {
+  void shouldEmitPaginationHeadersForJsonLd() {
     var headers = formatterFor(MediaTypes.APPLICATION_JSON_LD, 0, 10, 100).paginationHeaders();
 
-    assertThat(headers, anEmptyMap());
+    assertThat(headers, hasEntry(X_TOTAL_COUNT, "100"));
+    assertThat(headers, hasEntry(ACCESS_CONTROL_EXPOSE_HEADERS, EXPECTED_EXPOSED_HEADERS));
+  }
+
+  @Test
+  void shouldEmitProfileLinkForJsonLd() {
+    var headers = formatterFor(MediaTypes.APPLICATION_JSON_LD, 0, 10, 100).paginationHeaders();
+
+    assertThat(headers.get(LINK), containsString("<https://schema.org>; rel=\"profile\""));
+  }
+
+  @Test
+  void shouldEmitProfileLinkEvenOnSinglePageJsonLdResponse() {
+    var headers = formatterFor(MediaTypes.APPLICATION_JSON_LD, 0, 100, 25).paginationHeaders();
+
+    assertThat(headers.get(LINK), containsString("<https://schema.org>; rel=\"profile\""));
+  }
+
+  @Test
+  void shouldNotEmitProfileLinkForBibtex() {
+    var headers = formatterFor(BIBTEX_UTF_8, 0, 10, 100).paginationHeaders();
+
+    assertThat(headers.get(LINK), not(containsString("rel=\"profile\"")));
   }
 
   @Test

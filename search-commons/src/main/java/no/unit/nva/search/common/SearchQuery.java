@@ -5,6 +5,7 @@ import static no.unit.nva.constants.Defaults.BIBTEX_UTF_8;
 import static no.unit.nva.constants.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.constants.Defaults.ZERO_RESULTS_AGGREGATION_ONLY;
 import static no.unit.nva.constants.Words.ALL;
+import static no.unit.nva.constants.Words.APPLICATION_LD_JSON;
 import static no.unit.nva.constants.Words.ASTERISK;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.EXCLUDE_KEYWORD;
@@ -17,6 +18,7 @@ import static no.unit.nva.search.common.enums.FieldOperator.NOT_ALL_OF;
 import static no.unit.nva.search.common.enums.FieldOperator.NOT_ANY_OF;
 import static nva.commons.apigateway.MediaType.CSV_UTF_8;
 import static nva.commons.apigateway.MediaType.JSON_UTF_8;
+import static nva.commons.apigateway.MediaTypes.APPLICATION_JSON_LD;
 import static nva.commons.core.attempt.Try.attempt;
 
 import java.net.URI;
@@ -204,7 +206,11 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
   }
 
   final void setMediaType(String mediaType) {
-    if (nonNull(mediaType) && mediaType.contains(Words.TEXT_CSV)) {
+    if (nonNull(mediaType)
+        && mediaType.contains(APPLICATION_LD_JSON)
+        && mediaType.contains("profile=")) {
+      this.mediaType = APPLICATION_JSON_LD;
+    } else if (nonNull(mediaType) && mediaType.contains(Words.TEXT_CSV)) {
       this.mediaType = CSV_UTF_8;
     } else if (nonNull(mediaType) && mediaType.contains(TEXT_X_BIBTEX)) {
       this.mediaType = BIBTEX_UTF_8;
