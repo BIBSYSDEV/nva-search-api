@@ -235,19 +235,11 @@ class ResourceBibTexTransformerTest {
   }
 
   @Test
-  void shouldStripDoiResolverPrefix() {
+  void shouldIncludeFullDoiUri() {
     var doc = docWithInstanceType("AcademicArticle");
     setDoi(doc, "https://doi.org/10.1234/test");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
-    assertThat(result, containsString("  doi = {10.1234/test}"));
-  }
-
-  @Test
-  void shouldStripHttpDoiResolverPrefix() {
-    var doc = docWithInstanceType("AcademicArticle");
-    setDoi(doc, "http://doi.org/10.1234/test");
-    var result = ResourceBibTexTransformer.transform(List.of(doc));
-    assertThat(result, containsString("  doi = {10.1234/test}"));
+    assertThat(result, containsString("  doi = {https://doi.org/10.1234/test}"));
   }
 
   @Test
@@ -348,7 +340,7 @@ class ResourceBibTexTransformerTest {
     doc.putObject("entityDescription").putObject("reference");
     setPath(doc, "doi", "https://doi.org/10.1234/fallback");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
-    assertThat(result, containsString("  doi = {10.1234/fallback}"));
+    assertThat(result, containsString("  doi = {https://doi.org/10.1234/fallback}"));
   }
 
   @Test

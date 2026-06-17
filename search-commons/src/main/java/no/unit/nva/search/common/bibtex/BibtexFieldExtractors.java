@@ -59,7 +59,6 @@ public final class BibtexFieldExtractors {
   private static final String AND = " and ";
   private static final String INTERVAL = "--";
   private static final String EN_DASH = "–";
-  private static final String DOI_URI_HOST_REGEX = "(?i)https?://doi\\.org/";
   private static final String CONTEXT_TYPE_UNCONFIRMED_JOURNAL = "UnconfirmedJournal";
   private static final String CONTEXT_TYPE_ANTHOLOGY = "Anthology";
   private static final String LITERARY_ARTS_MONOGRAPH_TYPE = "LiteraryArtsMonograph";
@@ -97,7 +96,7 @@ public final class BibtexFieldExtractors {
     return doc ->
         extractText(doc, DOI_POINTER)
             .or(() -> extractText(doc, NVA_DOI_POINTER))
-            .map(doi -> doi.replaceFirst(DOI_URI_HOST_REGEX, EMPTY_STRING).strip())
+            .map(String::strip)
             .filter(not(String::isBlank))
             .map(doi -> new BibtexField("doi", doi));
   }
