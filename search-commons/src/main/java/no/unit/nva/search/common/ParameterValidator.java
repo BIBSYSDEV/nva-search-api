@@ -274,7 +274,7 @@ public abstract class ParameterValidator<
   /** Adds query and path parameters from requestInfo. */
   public ParameterValidator<K, Q> fromRequestInfo(RequestInfo requestInfo) {
     var contentType = extractContentTypeFromRequestInfo(requestInfo);
-    query.setMediaType(isNull(contentType) ? null : contentType.getMimeType());
+    query.setMediaType(isNull(contentType) ? null : contentType.toString());
     var uri = URI.create(HTTPS + requestInfo.getDomainName() + requestInfo.getPath());
     if (requestInfo.getHeaders().containsKey("Authorization")) {
       query.setAccessRights(requestInfo.getAccessRights());
