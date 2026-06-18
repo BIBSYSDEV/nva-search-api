@@ -71,6 +71,7 @@ public final class BibtexFieldExtractors {
   private static final String EDITOR_ROLE = "Editor";
   private static final String AUTHOR_FIELD = "author";
   private static final String EDITOR_FIELD = "editor";
+  private static final String DOI_ORG_PREFIX = "https://doi.org/";
 
   private BibtexFieldExtractors() {}
 
@@ -113,6 +114,7 @@ public final class BibtexFieldExtractors {
             .or(() -> extractText(doc, NVA_DOI_POINTER))
             .map(String::strip)
             .filter(not(String::isBlank))
+            .filter(doi -> doi.startsWith(DOI_ORG_PREFIX))
             .map(doi -> new BibtexField("doi", doi));
   }
 
