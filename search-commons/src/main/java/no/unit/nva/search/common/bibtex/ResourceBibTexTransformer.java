@@ -36,6 +36,7 @@ import static no.unit.nva.search.common.bibtex.BibtexFieldExtractors.anthologyPu
 import static no.unit.nva.search.common.bibtex.BibtexFieldExtractors.anthologyTitle;
 import static no.unit.nva.search.common.bibtex.BibtexFieldExtractors.authors;
 import static no.unit.nva.search.common.bibtex.BibtexFieldExtractors.doi;
+import static no.unit.nva.search.common.bibtex.BibtexFieldExtractors.editors;
 import static no.unit.nva.search.common.bibtex.BibtexFieldExtractors.extractText;
 import static no.unit.nva.search.common.bibtex.BibtexFieldExtractors.isbn;
 import static no.unit.nva.search.common.bibtex.BibtexFieldExtractors.isbnOrManifestationIsbn;
@@ -69,6 +70,7 @@ public final class ResourceBibTexTransformer {
       List.of(
           text("abstract", ABSTRACT_POINTER),
           authors(),
+          editors(),
           doi(),
           keywords(),
           month(),
