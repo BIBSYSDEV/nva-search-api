@@ -301,6 +301,14 @@ class ResourceBibTexTransformerTest {
   }
 
   @Test
+  void shouldNotIncludeDoiFieldWhenDoiIsNotDoi() {
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
+    setDoi(doc, "https://www.wikipedia.org/");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, not(containsString("doi")));
+  }
+
+  @Test
   void shouldIncludeUrlFromId() {
     var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     setPath(doc, "id", "https://api.nva.unit.no/publication/abc-123");
