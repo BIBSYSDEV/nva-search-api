@@ -12,9 +12,9 @@ import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.not;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import no.unit.nva.search.common.records.SwsResponse.HitsInfo;
 import no.unit.nva.search.common.records.SwsResponse.HitsInfo.Hit;
 import no.unit.nva.search.common.records.SwsResponse.HitsInfo.TotalInfo;
@@ -183,14 +183,25 @@ class HttpResponseFormatterPaginationHeadersTest {
 
   private static HttpResponseFormatter<?> formatter(
       MediaType mediaType, int size, int totalHits, int hitsOnPage, List<String> lastHitSort) {
-    var hits = new ArrayList<Hit>();
-    for (int index = 0; index < hitsOnPage; index++) {
-      var isLastHit = index == hitsOnPage - 1;
-      hits.add(searchHitCarryingSortValues(isLastHit ? lastHitSort : null));
-    }
+    var hits = hitsWithCursorOnLastHit(hitsOnPage, lastHitSort);
     var hitsInfo = new HitsInfo(new TotalInfo(totalHits, "eq"), 0.0, hits);
     var swsResponse = new SwsResponse(0, false, null, hitsInfo, null, null);
     return new HttpResponseFormatter<>(swsResponse, mediaType, SOURCE, 0, size, Map.of(), null);
+  }
+
+  private static List<Hit> hitsWithCursorOnLastHit(int hitsOnPage, List<String> lastHitSort) {
+    if (hitsOnPage == 0) {
+      return List.of();
+    }
+    return Stream.concat(
+            Stream.generate(HttpResponseFormatterPaginationHeadersTest::searchHitWithoutSortValues)
+                .limit(hitsOnPage - 1L),
+            Stream.of(searchHitCarryingSortValues(lastHitSort)))
+        .toList();
+  }
+
+  private static Hit searchHitWithoutSortValues() {
+    return searchHitCarryingSortValues(null);
   }
 
   private static Hit searchHitCarryingSortValues(List<String> sortValues) {
