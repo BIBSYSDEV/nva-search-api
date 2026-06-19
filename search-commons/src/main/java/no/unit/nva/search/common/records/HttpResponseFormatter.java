@@ -165,22 +165,25 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
   }
 
   private Optional<URI> nextPageUri() {
-    if (!hasFullPage()) {
-      return Optional.empty();
-    }
-    var sortValues = sortValuesOfLastHit();
-    if (!hasContent(sortValues)) {
-      return Optional.empty();
-    }
+    return doesNotHaveFullPage() || doesNotHaveSortValues()
+        ? Optional.empty()
+        : Optional.of(generateNextPageUri());
+  }
+
+  private URI generateNextPageUri() {
     var params = getRequestParameter();
     params.remove(Words.FROM);
     params.put(Words.SIZE, String.valueOf(size));
-    params.put(searchAfterParameterName(), sortValues);
-    return Optional.of(fromUri(source).addQueryParameters(params).getUri());
+    params.put(searchAfterParameterName(), sortValuesOfLastHit());
+    return fromUri(source).addQueryParameters(params).getUri();
   }
 
-  private boolean hasFullPage() {
-    return response.getSearchHits().size() >= size;
+  private boolean doesNotHaveFullPage() {
+    return response.getSearchHits().size() < size;
+  }
+
+  private boolean doesNotHaveSortValues() {
+    return !hasContent(sortValuesOfLastHit());
   }
 
   private String sortValuesOfLastHit() {

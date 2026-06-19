@@ -185,11 +185,15 @@ class HttpResponseFormatterPaginationHeadersTest {
       MediaType mediaType, int size, int totalHits, int hitsOnPage, List<String> lastHitSort) {
     var hits = new ArrayList<Hit>();
     for (int index = 0; index < hitsOnPage; index++) {
-      var sort = index == hitsOnPage - 1 ? lastHitSort : null;
-      hits.add(new Hit(null, null, null, 0.0, null, null, sort));
+      var isLastHit = index == hitsOnPage - 1;
+      hits.add(searchHitCarryingSortValues(isLastHit ? lastHitSort : null));
     }
     var hitsInfo = new HitsInfo(new TotalInfo(totalHits, "eq"), 0.0, hits);
     var swsResponse = new SwsResponse(0, false, null, hitsInfo, null, null);
     return new HttpResponseFormatter<>(swsResponse, mediaType, SOURCE, 0, size, Map.of(), null);
+  }
+
+  private static Hit searchHitCarryingSortValues(List<String> sortValues) {
+    return new Hit(null, null, null, 0.0, null, null, sortValues);
   }
 }
