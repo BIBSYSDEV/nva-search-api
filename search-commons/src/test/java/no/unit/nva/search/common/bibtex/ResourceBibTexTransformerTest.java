@@ -21,11 +21,13 @@ class ResourceBibTexTransformerTest {
 
   private static final ObjectMapper MAPPER = dtoObjectMapper;
 
+  private static final String ACADEMIC_ARTICLE = "AcademicArticle";
+
   // -- type mapping ----------------------------------------------------------
 
   static Stream<Arguments> articleTypes() {
     return Stream.of(
-            "AcademicArticle",
+            ACADEMIC_ARTICLE,
             "AcademicCommentary",
             "AcademicLiteratureReview",
             "JournalCorrigendum",
@@ -147,7 +149,7 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldSeparateMultipleEntriesWithBlankLine() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     var result = ResourceBibTexTransformer.transform(List.of(doc, doc));
     assertThat(result, containsString("}\n\n@"));
   }
@@ -162,7 +164,7 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldDeriveKeyFromLastPathSegmentOfId() {
-    var doc = doc("AcademicArticle");
+    var doc = doc(ACADEMIC_ARTICLE);
     setPath(doc, "id", "https://api.nva.unit.no/publication/abc-123");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, startsWith("@article{abc-123,"));
@@ -170,7 +172,7 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldUseUnknownKeyWhenIdIsMissing() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, startsWith("@article{unknown,"));
   }
@@ -193,7 +195,7 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldConvertNumericMonthToAbbreviation() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     setPublicationDate(doc, "2023", "3", null);
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, containsString("  month = {mar}"));
@@ -205,7 +207,7 @@ class ResourceBibTexTransformerTest {
       "jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"
     };
     for (int i = 1; i <= 12; i++) {
-      var doc = docWithInstanceType("AcademicArticle");
+      var doc = docWithInstanceType(ACADEMIC_ARTICLE);
       setPublicationDate(doc, "2023", String.valueOf(i), null);
       var result = ResourceBibTexTransformer.transform(List.of(doc));
       assertThat(result, containsString("  month = {" + expected[i - 1] + "}"));
@@ -214,7 +216,7 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldNotIncludeMonthFieldWhenAbsent() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     setPublicationDate(doc, "2023", null, null);
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, not(containsString("month")));
@@ -222,7 +224,7 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldJoinMultipleAuthorsWithAnd() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     setCreators(doc, "Alice Aaberg", "Bob Bakke");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, containsString("  author = {Alice Aaberg and Bob Bakke}"));
@@ -230,14 +232,14 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldNotIncludeAuthorFieldWhenNoContributors() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, not(containsString("author")));
   }
 
   @Test
   void shouldNotIncludeAuthorFieldWhenNoContributorsAreCreators() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     setEditors(doc, "Edith Edwards", "Edny Evans");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, not(containsString("author")));
@@ -245,17 +247,47 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldOnlyIncludeCreatorContributorsAsAuthors() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     setCreators(doc, "Alice Aaberg", "Bob Bakke");
     setEditors(doc, "Edith Edwards");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, containsString("  author = {Alice Aaberg and Bob Bakke}"));
-    assertThat(result, not(containsString("Edith Edwards")));
+  }
+
+  @Test
+  void shouldNotIncludeEditorFieldWhenNoContributors() {
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, not(containsString("editor")));
+  }
+
+  @Test
+  void shouldNotIncludeEditorsFieldWhenNoEditors() {
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, not(containsString("editor")));
+  }
+
+  @Test
+  void shouldJoinMultipleEditorsWithAnd() {
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
+    setEditors(doc, "Alice Aaberg", "Bob Bakke");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  editor = {Alice Aaberg and Bob Bakke}"));
+  }
+
+  @Test
+  void shouldOnlyIncludeEditorContributorsAsEditor() {
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
+    setCreators(doc, "Alice Aaberg", "Bob Bakke");
+    setEditors(doc, "Edith Edwards");
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, containsString("  editor = {Edith Edwards}"));
   }
 
   @Test
   void shouldIncludeFullDoiUri() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     setDoi(doc, "https://doi.org/10.1234/test");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, containsString("  doi = {https://doi.org/10.1234/test}"));
@@ -263,14 +295,22 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldNotIncludeDoiFieldWhenAbsent() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
+    var result = ResourceBibTexTransformer.transform(List.of(doc));
+    assertThat(result, not(containsString("doi")));
+  }
+
+  @Test
+  void shouldNotIncludeDoiFieldWhenDoiIsNotDoi() {
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
+    setDoi(doc, "https://www.wikipedia.org/");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, not(containsString("doi")));
   }
 
   @Test
   void shouldIncludeUrlFromId() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     setPath(doc, "id", "https://api.nva.unit.no/publication/abc-123");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, containsString("  url = {https://api.nva.unit.no/publication/abc-123}"));
@@ -278,7 +318,7 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldUseTopLevelHandleFieldWhenPresent() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     setPath(doc, "id", "https://api.nva.unit.no/publication/abc-123");
     setPath(doc, "handle", "https://hdl.handle.net/11250/9999999");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
@@ -288,7 +328,7 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldUseHandleSuffixAsKeyWhenPresent() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     setPath(doc, "id", "https://api.nva.unit.no/publication/abc-123");
     setPath(doc, "handle", "https://hdl.handle.net/11250/4144299");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
@@ -297,7 +337,7 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldFallBackToIdForUrlAndKeyWhenHandleAbsent() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     setPath(doc, "id", "https://api.nva.unit.no/publication/abc-123");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, startsWith("@article{abc-123,"));
@@ -306,7 +346,7 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldIncludeNvaApiFieldFromId() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     setPath(doc, "id", "https://api.nva.unit.no/publication/abc-123");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, containsString("  nva_api = {https://api.nva.unit.no/publication/abc-123}"));
@@ -314,7 +354,7 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldIncludeBothUrlAndNvaApiWhenHandlePresent() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     setPath(doc, "id", "https://api.nva.unit.no/publication/abc-123");
     setPath(doc, "handle", "https://hdl.handle.net/11250/9999999");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
@@ -324,7 +364,7 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldExtractAbstract() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     ((com.fasterxml.jackson.databind.node.ObjectNode) doc.path("entityDescription"))
         .put("abstract", "This is the abstract.");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
@@ -333,7 +373,7 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldExtractKeywordsFromTags() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     setTags(doc, "climate change", "Arctic");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, containsString("  keywords = {climate change, Arctic}"));
@@ -341,7 +381,7 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldAddNvaTypeAsNote() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, containsString("  note = {nva type: AcademicArticle}"));
   }
@@ -355,7 +395,7 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldUseFallbackDoiFromTopLevelField() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     doc.putObject("entityDescription").putObject("reference");
     setPath(doc, "doi", "https://doi.org/10.1234/fallback");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
@@ -387,7 +427,7 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldExtractJournalNameFromConfirmedJournal() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     setJournalContext(doc, "Journal", "Nature", null, "1234-5678", null);
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, containsString("  journal = {Nature}"));
@@ -395,7 +435,7 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldExtractJournalTitleFromUnconfirmedJournal() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     setJournalContext(doc, "UnconfirmedJournal", null, "Science Advances", null, "2375-2548");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, containsString("  journal = {Science Advances}"));
@@ -403,7 +443,7 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldPreferOnlineIssnOverPrintIssn() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     setJournalContext(doc, "Journal", "Nature", null, "1234-0000", "9999-0000");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, containsString("  issn = {9999-0000}"));
@@ -411,7 +451,7 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldFallBackToPrintIssnWhenOnlineIssnAbsent() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     setJournalContext(doc, "Journal", "Nature", null, "1234-5678", null);
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, containsString("  issn = {1234-5678}"));
@@ -419,8 +459,8 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldExtractVolumeIssueAndPages() {
-    var doc = docWithInstanceType("AcademicArticle");
-    setInstance(doc, "AcademicArticle", "10", "3", "100", "110");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
+    setInstance(doc, ACADEMIC_ARTICLE, "10", "3", "100", "110");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, containsString("  volume = {10}"));
     assertThat(result, containsString("  number = {3}"));
@@ -429,15 +469,15 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldProduceSinglePageWhenOnlyBeginPresent() {
-    var doc = docWithInstanceType("AcademicArticle");
-    setInstance(doc, "AcademicArticle", null, null, "42", null);
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
+    setInstance(doc, ACADEMIC_ARTICLE, null, null, "42", null);
     var result = ResourceBibTexTransformer.transform(List.of(doc));
     assertThat(result, containsString("  pages = {42}"));
   }
 
   @Test
   void shouldNotProducePagesFieldWhenBeginIsBlankString() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     var instance =
         (ObjectNode) doc.path("entityDescription").path("reference").path("publicationInstance");
     instance.putObject("pages").put("begin", "");
@@ -447,7 +487,7 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldNotProduceTrailingIntervalWhenEndIsBlankString() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     var instance =
         (ObjectNode) doc.path("entityDescription").path("reference").path("publicationInstance");
     instance.putObject("pages").put("begin", "100").put("end", "");
@@ -458,12 +498,12 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldNormalizeEnDashToDoubleHyphenInPageRange() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     var instance =
         (ObjectNode) doc.path("entityDescription").path("reference").path("publicationInstance");
     instance.putObject("pages").put("begin", "100").put("end", "110");
     // Simulate data where end was stored with a leading en-dash (typographic error)
-    var doc2 = docWithInstanceType("AcademicArticle");
+    var doc2 = docWithInstanceType(ACADEMIC_ARTICLE);
     setMonographPages(doc2, "100–110");
     var result2 = ResourceBibTexTransformer.transform(List.of(doc2));
     assertThat(result2, containsString("  pages = {100--110}"));
@@ -471,7 +511,7 @@ class ResourceBibTexTransformerTest {
 
   @Test
   void shouldEscapeSpecialBibTexCharactersInFieldValues() {
-    var doc = docWithInstanceType("AcademicArticle");
+    var doc = docWithInstanceType(ACADEMIC_ARTICLE);
     ((ObjectNode) doc.path("entityDescription"))
         .put("mainTitle", "100% {braces} #hashtag \\backslash");
     var result = ResourceBibTexTransformer.transform(List.of(doc));
@@ -673,7 +713,7 @@ class ResourceBibTexTransformerTest {
   }
 
   private static ObjectNode fullArticleDoc() {
-    var doc = doc("AcademicArticle");
+    var doc = doc(ACADEMIC_ARTICLE);
     setPath(doc, "id", "https://api.nva.unit.no/publication/abc-123");
     var entity = (ObjectNode) doc.get("entityDescription");
     entity.put("mainTitle", "The Main Title");

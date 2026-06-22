@@ -68,6 +68,10 @@ public final class BibtexFieldExtractors {
   private static final String EMPTY_STRING = "";
   private static final String COMMA_SPACE_DELIMITER = ", ";
   private static final String CREATOR_ROLE = "Creator";
+  private static final String EDITOR_ROLE = "Editor";
+  private static final String AUTHOR_FIELD = "author";
+  private static final String EDITOR_FIELD = "editor";
+  private static final String DOI_ORG_PREFIX = "https://doi.org/";
 
   private BibtexFieldExtractors() {}
 
@@ -76,6 +80,14 @@ public final class BibtexFieldExtractors {
   }
 
   public static BibtexFieldExtractor authors() {
+    return mapContributorsToField(CREATOR_ROLE, AUTHOR_FIELD);
+  }
+
+  public static BibtexFieldExtractor editors() {
+    return mapContributorsToField(EDITOR_ROLE, EDITOR_FIELD);
+  }
+
+  private static BibtexFieldExtractor mapContributorsToField(String role, String field) {
     return doc -> {
       var contributors = doc.at(CONTRIBUTORS_POINTER);
       if (contributors.isMissingNode() || !contributors.isArray()) {
@@ -83,8 +95,7 @@ public final class BibtexFieldExtractors {
       }
       return StreamSupport.stream(contributors.spliterator(), false)
           .filter(
-              contributor ->
-                  CREATOR_ROLE.equals(extractText(contributor, ROLE_TYPE_POINTER).orElse(null)))
+              contributor -> role.equals(extractText(contributor, ROLE_TYPE_POINTER).orElse(null)))
           .flatMap(contributor -> extractText(contributor, IDENTITY_NAME_POINTER).stream())
           .filter(not(String::isBlank))
           .collect(
@@ -93,7 +104,7 @@ public final class BibtexFieldExtractors {
                   names ->
                       names.isEmpty()
                           ? Optional.empty()
-                          : Optional.of(new BibtexField("author", names))));
+                          : Optional.of(new BibtexField(field, names))));
     };
   }
 
@@ -103,6 +114,7 @@ public final class BibtexFieldExtractors {
             .or(() -> extractText(doc, NVA_DOI_POINTER))
             .map(String::strip)
             .filter(not(String::isBlank))
+            .filter(doi -> doi.startsWith(DOI_ORG_PREFIX))
             .map(doi -> new BibtexField("doi", doi));
   }
 
