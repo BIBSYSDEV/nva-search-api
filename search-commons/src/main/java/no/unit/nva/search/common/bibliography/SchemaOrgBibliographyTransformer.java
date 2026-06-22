@@ -10,8 +10,7 @@ import no.unit.nva.commons.json.JsonUtils;
 
 public final class SchemaOrgBibliographyTransformer {
 
-  private static final ObjectMapper MAPPER =
-      JsonUtils.dtoObjectMapper.copy().disable(SerializationFeature.INDENT_OUTPUT);
+  private static final ObjectMapper MAPPER = JsonUtils.dtoObjectMapper;
 
   private SchemaOrgBibliographyTransformer() {}
 

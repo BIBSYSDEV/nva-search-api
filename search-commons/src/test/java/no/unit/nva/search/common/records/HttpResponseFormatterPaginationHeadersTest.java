@@ -1,6 +1,7 @@
 package no.unit.nva.search.common.records;
 
 import static no.unit.nva.constants.Defaults.BIBTEX_UTF_8;
+import static no.unit.nva.constants.Defaults.RESOURCE_RESPONSE_MEDIA_TYPES;
 import static nva.commons.apigateway.MediaType.CSV_UTF_8;
 import static nva.commons.apigateway.MediaType.JSON_UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -9,6 +10,7 @@ import static org.hamcrest.Matchers.anEmptyMap;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 import java.net.URI;
@@ -33,6 +35,14 @@ class HttpResponseFormatterPaginationHeadersTest {
     var headers = formatterFor(JSON_UTF_8, 0, 10, 100).paginationHeaders();
 
     assertThat(headers, anEmptyMap());
+  }
+
+  @Test
+  void defaultMediaTypeShouldBeJsonUtf8AndShouldReturnEmptyHeaders() {
+    var defaultMediaType = RESOURCE_RESPONSE_MEDIA_TYPES.getFirst();
+
+    assertThat(defaultMediaType, is(JSON_UTF_8));
+    assertThat(formatterFor(defaultMediaType, 0, 10, 100).paginationHeaders(), anEmptyMap());
   }
 
   @Test
