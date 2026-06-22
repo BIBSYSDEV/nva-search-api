@@ -39,9 +39,8 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
   private static final String EXPOSED_PAGINATION_HEADERS =
       String.join(", ", HEADER_LINK, HEADER_X_TOTAL_COUNT);
   private static final String REL_FIRST = "first";
-  private static final String REL_PREV = "prev";
   private static final String REL_NEXT = "next";
-  private static final String REL_LAST = "last";
+  private static final String NULL_SORT_VALUE = "null";
   private static final String LINK_VALUE_FORMAT = "<%s>; rel=\"%s\"";
   private static final String LINK_HEADER_SEPARATOR = ", ";
 
@@ -147,16 +146,9 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
     if (!isPaginatable(total)) {
       return Optional.empty();
     }
-    var current = nonNull(offset) ? offset : 0;
     var links = new ArrayList<String>();
-    links.add(formatLink(uriWithFrom(0), REL_FIRST));
-    if (current > 0) {
-      links.add(formatLink(uriWithFrom(Math.max(0, current - size)), REL_PREV));
-    }
-    if (current + size < total) {
-      links.add(formatLink(uriWithFrom(current + size), REL_NEXT));
-    }
-    links.add(formatLink(uriWithFrom(lastPageOffset(total)), REL_LAST));
+    links.add(formatLink(firstPageUri(), REL_FIRST));
+    nextPageUri().ifPresent(uri -> links.add(formatLink(uri, REL_NEXT)));
     return Optional.of(String.join(LINK_HEADER_SEPARATOR, links));
   }
 
@@ -164,15 +156,44 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
     return total > 0 && nonNull(size) && size > 0 && total > size;
   }
 
-  private int lastPageOffset(int total) {
-    return (total - 1) / size * size;
-  }
-
-  private URI uriWithFrom(int newFrom) {
+  private URI firstPageUri() {
     var params = getRequestParameter();
-    params.put(Words.FROM, String.valueOf(newFrom));
+    params.remove(Words.FROM);
+    params.remove(searchAfterParameterName());
     params.put(Words.SIZE, String.valueOf(size));
     return fromUri(source).addQueryParameters(params).getUri();
+  }
+
+  private Optional<URI> nextPageUri() {
+    return doesNotHaveFullPage() || doesNotHaveSortValues()
+        ? Optional.empty()
+        : Optional.of(generateNextPageUri());
+  }
+
+  private URI generateNextPageUri() {
+    var params = getRequestParameter();
+    params.remove(Words.FROM);
+    params.put(Words.SIZE, String.valueOf(size));
+    params.put(searchAfterParameterName(), sortValuesOfLastHit());
+    return fromUri(source).addQueryParameters(params).getUri();
+  }
+
+  private boolean doesNotHaveFullPage() {
+    return response.getSearchHits().size() < size;
+  }
+
+  private boolean doesNotHaveSortValues() {
+    return !hasContent(sortValuesOfLastHit());
+  }
+
+  private String sortValuesOfLastHit() {
+    return response.getSort().stream()
+        .map(value -> nonNull(value) ? value : NULL_SORT_VALUE)
+        .collect(Collectors.joining(COMMA));
+  }
+
+  private static String searchAfterParameterName() {
+    return Words.SEARCH_AFTER.toLowerCase(Locale.getDefault());
   }
 
   private static String formatLink(URI uri, String rel) {

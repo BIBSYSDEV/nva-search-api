@@ -14,7 +14,9 @@ import static org.hamcrest.Matchers.not;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import no.unit.nva.search.common.records.SwsResponse.HitsInfo;
+import no.unit.nva.search.common.records.SwsResponse.HitsInfo.Hit;
 import no.unit.nva.search.common.records.SwsResponse.HitsInfo.TotalInfo;
 import nva.commons.apigateway.MediaType;
 import nva.commons.apigateway.MediaTypes;
@@ -27,59 +29,60 @@ class HttpResponseFormatterPaginationHeadersTest {
   private static final String X_TOTAL_COUNT = "X-Total-Count";
   private static final String ACCESS_CONTROL_EXPOSE_HEADERS = "Access-Control-Expose-Headers";
   private static final String EXPECTED_EXPOSED_HEADERS = "Link, X-Total-Count";
+  private static final List<String> LAST_HIT_SORT = List.of("2017", "abc-123");
 
   @Test
   void shouldReturnEmptyHeadersWhenMediaTypeIsJson() {
-    var headers = formatterFor(JSON_UTF_8, 0, 10, 100).paginationHeaders();
+    var headers = formatterFor(JSON_UTF_8, 10, 100, 10).paginationHeaders();
 
     assertThat(headers, anEmptyMap());
   }
 
   @Test
   void shouldReturnEmptyHeadersWhenMediaTypeIsJsonLd() {
-    var headers = formatterFor(MediaTypes.APPLICATION_JSON_LD, 0, 10, 100).paginationHeaders();
+    var headers = formatterFor(MediaTypes.APPLICATION_JSON_LD, 10, 100, 10).paginationHeaders();
 
     assertThat(headers, anEmptyMap());
   }
 
   @Test
   void shouldEmitExposeHeadersForCsv() {
-    var headers = formatterFor(CSV_UTF_8, 0, 10, 100).paginationHeaders();
+    var headers = formatterFor(CSV_UTF_8, 10, 100, 10).paginationHeaders();
 
     assertThat(headers, hasEntry(ACCESS_CONTROL_EXPOSE_HEADERS, EXPECTED_EXPOSED_HEADERS));
   }
 
   @Test
   void shouldEmitExposeHeadersForBibtex() {
-    var headers = formatterFor(BIBTEX_UTF_8, 0, 10, 100).paginationHeaders();
+    var headers = formatterFor(BIBTEX_UTF_8, 10, 100, 10).paginationHeaders();
 
     assertThat(headers, hasEntry(ACCESS_CONTROL_EXPOSE_HEADERS, EXPECTED_EXPOSED_HEADERS));
   }
 
   @Test
   void shouldEmitExposeHeadersEvenWhenSinglePage() {
-    var headers = formatterFor(BIBTEX_UTF_8, 0, 100, 25).paginationHeaders();
+    var headers = formatterFor(BIBTEX_UTF_8, 100, 25, 25).paginationHeaders();
 
     assertThat(headers, hasEntry(ACCESS_CONTROL_EXPOSE_HEADERS, EXPECTED_EXPOSED_HEADERS));
   }
 
   @Test
   void shouldEmitTotalCountHeaderForCsv() {
-    var headers = formatterFor(CSV_UTF_8, 0, 10, 100).paginationHeaders();
+    var headers = formatterFor(CSV_UTF_8, 10, 100, 10).paginationHeaders();
 
     assertThat(headers, hasEntry(X_TOTAL_COUNT, "100"));
   }
 
   @Test
   void shouldEmitTotalCountHeaderForBibtex() {
-    var headers = formatterFor(BIBTEX_UTF_8, 0, 10, 100).paginationHeaders();
+    var headers = formatterFor(BIBTEX_UTF_8, 10, 100, 10).paginationHeaders();
 
     assertThat(headers, hasEntry(X_TOTAL_COUNT, "100"));
   }
 
   @Test
-  void shouldEmitFirstNextAndLastButNotPrevOnFirstPage() {
-    var headers = formatterFor(BIBTEX_UTF_8, 0, 10, 100).paginationHeaders();
+  void shouldEmitFirstAndNextButNotPrevOrLastWhenMoreResultsExist() {
+    var headers = formatterFor(BIBTEX_UTF_8, 10, 100, 10).paginationHeaders();
 
     var link = headers.get(LINK);
     assertThat(
@@ -87,69 +90,43 @@ class HttpResponseFormatterPaginationHeadersTest {
         allOf(
             containsString("rel=\"first\""),
             containsString("rel=\"next\""),
-            containsString("rel=\"last\""),
-            not(containsString("rel=\"prev\""))));
+            not(containsString("rel=\"prev\"")),
+            not(containsString("rel=\"last\""))));
   }
 
   @Test
-  void shouldEmitAllRelsOnMiddlePage() {
-    var headers = formatterFor(BIBTEX_UTF_8, 20, 10, 100).paginationHeaders();
+  void shouldEmitFirstButNotNextOnLastPage() {
+    var headers = formatterFor(BIBTEX_UTF_8, 10, 100, 4).paginationHeaders();
 
     var link = headers.get(LINK);
-    assertThat(
-        link,
-        allOf(
-            containsString("rel=\"first\""),
-            containsString("rel=\"prev\""),
-            containsString("rel=\"next\""),
-            containsString("rel=\"last\"")));
+    assertThat(link, allOf(containsString("rel=\"first\""), not(containsString("rel=\"next\""))));
   }
 
   @Test
-  void shouldEmitFirstPrevAndLastButNotNextOnLastPage() {
-    var headers = formatterFor(BIBTEX_UTF_8, 90, 10, 100).paginationHeaders();
+  void shouldPointNextAtSearchAfterCursor() {
+    var headers = formatterFor(BIBTEX_UTF_8, 10, 100, 10).paginationHeaders();
+
+    assertThat(headers.get(LINK), containsString("search_after="));
+  }
+
+  @Test
+  void shouldNotUseOffsetForLinks() {
+    var headers = formatterFor(BIBTEX_UTF_8, 10, 100, 10).paginationHeaders();
+
+    assertThat(headers.get(LINK), not(containsString("from=")));
+  }
+
+  @Test
+  void shouldOmitNextWhenLastHitHasNoSortValues() {
+    var headers = formatterWithoutSort(BIBTEX_UTF_8, 10, 100, 10).paginationHeaders();
 
     var link = headers.get(LINK);
-    assertThat(
-        link,
-        allOf(
-            containsString("rel=\"first\""),
-            containsString("rel=\"prev\""),
-            containsString("rel=\"last\""),
-            not(containsString("rel=\"next\""))));
-  }
-
-  @Test
-  void shouldPointLastAtFinalPageOffset() {
-    var headers = formatterFor(BIBTEX_UTF_8, 0, 10, 95).paginationHeaders();
-
-    assertThat(headers.get(LINK), containsString("from=90&size=10>; rel=\"last\""));
-  }
-
-  @Test
-  void shouldPointPrevAtPreviousPageOffset() {
-    var headers = formatterFor(BIBTEX_UTF_8, 30, 10, 100).paginationHeaders();
-
-    assertThat(headers.get(LINK), containsString("from=20&size=10>; rel=\"prev\""));
-  }
-
-  @Test
-  void shouldPointNextAtNextPageOffset() {
-    var headers = formatterFor(BIBTEX_UTF_8, 30, 10, 100).paginationHeaders();
-
-    assertThat(headers.get(LINK), containsString("from=40&size=10>; rel=\"next\""));
-  }
-
-  @Test
-  void shouldClampPrevAtZeroWhenOffsetSmallerThanSize() {
-    var headers = formatterFor(BIBTEX_UTF_8, 5, 10, 100).paginationHeaders();
-
-    assertThat(headers.get(LINK), containsString("from=0&size=10>; rel=\"prev\""));
+    assertThat(link, allOf(containsString("rel=\"first\""), not(containsString("rel=\"next\""))));
   }
 
   @Test
   void shouldOmitLinkHeaderWhenSinglePage() {
-    var headers = formatterFor(BIBTEX_UTF_8, 0, 100, 25).paginationHeaders();
+    var headers = formatterFor(BIBTEX_UTF_8, 100, 25, 25).paginationHeaders();
 
     assertThat(headers, hasEntry(X_TOTAL_COUNT, "25"));
     assertThat(headers, not(hasKey(LINK)));
@@ -157,7 +134,7 @@ class HttpResponseFormatterPaginationHeadersTest {
 
   @Test
   void shouldOmitLinkHeaderWhenTotalIsZero() {
-    var headers = formatterFor(BIBTEX_UTF_8, 0, 10, 0).paginationHeaders();
+    var headers = formatterFor(BIBTEX_UTF_8, 10, 0, 0).paginationHeaders();
 
     assertThat(headers, hasEntry(X_TOTAL_COUNT, "0"));
     assertThat(headers, not(hasKey(LINK)));
@@ -165,7 +142,7 @@ class HttpResponseFormatterPaginationHeadersTest {
 
   @Test
   void shouldOmitLinkHeaderWhenSizeIsZero() {
-    var headers = formatterFor(BIBTEX_UTF_8, 0, 0, 100).paginationHeaders();
+    var headers = formatterFor(BIBTEX_UTF_8, 0, 100, 0).paginationHeaders();
 
     assertThat(headers, hasEntry(X_TOTAL_COUNT, "100"));
     assertThat(headers, not(hasKey(LINK)));
@@ -173,21 +150,21 @@ class HttpResponseFormatterPaginationHeadersTest {
 
   @Test
   void shouldUseSourceUriAsBaseForLinks() {
-    var headers = formatterFor(BIBTEX_UTF_8, 0, 10, 100).paginationHeaders();
+    var headers = formatterFor(BIBTEX_UTF_8, 10, 100, 10).paginationHeaders();
 
     assertThat(headers.get(LINK), containsString(SOURCE.toString()));
   }
 
   @Test
   void shouldIncludeSizeInLinkUrls() {
-    var headers = formatterFor(BIBTEX_UTF_8, 0, 10, 100).paginationHeaders();
+    var headers = formatterFor(BIBTEX_UTF_8, 10, 100, 10).paginationHeaders();
 
     assertThat(headers.get(LINK), containsString("size=10"));
   }
 
   @Test
   void shouldFormatLinkValueWithRfc8288Syntax() {
-    var headers = formatterFor(BIBTEX_UTF_8, 0, 10, 100).paginationHeaders();
+    var headers = formatterFor(BIBTEX_UTF_8, 10, 100, 10).paginationHeaders();
     var link = headers.get(LINK);
 
     assertThat(link, containsString("<"));
@@ -195,10 +172,39 @@ class HttpResponseFormatterPaginationHeadersTest {
   }
 
   private static HttpResponseFormatter<?> formatterFor(
-      MediaType mediaType, int offset, int size, int totalHits) {
-    var hitsInfo = new HitsInfo(new TotalInfo(totalHits, "eq"), 0.0, List.of());
+      MediaType mediaType, int size, int totalHits, int hitsOnPage) {
+    return formatter(mediaType, size, totalHits, hitsOnPage, LAST_HIT_SORT);
+  }
+
+  private static HttpResponseFormatter<?> formatterWithoutSort(
+      MediaType mediaType, int size, int totalHits, int hitsOnPage) {
+    return formatter(mediaType, size, totalHits, hitsOnPage, List.of());
+  }
+
+  private static HttpResponseFormatter<?> formatter(
+      MediaType mediaType, int size, int totalHits, int hitsOnPage, List<String> lastHitSort) {
+    var hits = hitsWithCursorOnLastHit(hitsOnPage, lastHitSort);
+    var hitsInfo = new HitsInfo(new TotalInfo(totalHits, "eq"), 0.0, hits);
     var swsResponse = new SwsResponse(0, false, null, hitsInfo, null, null);
-    return new HttpResponseFormatter<>(
-        swsResponse, mediaType, SOURCE, offset, size, Map.of(), null);
+    return new HttpResponseFormatter<>(swsResponse, mediaType, SOURCE, 0, size, Map.of(), null);
+  }
+
+  private static List<Hit> hitsWithCursorOnLastHit(int hitsOnPage, List<String> lastHitSort) {
+    if (hitsOnPage == 0) {
+      return List.of();
+    }
+    return Stream.concat(
+            Stream.generate(HttpResponseFormatterPaginationHeadersTest::searchHitWithoutSortValues)
+                .limit(hitsOnPage - 1L),
+            Stream.of(searchHitCarryingSortValues(lastHitSort)))
+        .toList();
+  }
+
+  private static Hit searchHitWithoutSortValues() {
+    return searchHitCarryingSortValues(null);
+  }
+
+  private static Hit searchHitCarryingSortValues(List<String> sortValues) {
+    return new Hit(null, null, null, 0.0, null, null, sortValues);
   }
 }
