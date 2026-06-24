@@ -13,6 +13,7 @@ import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -33,12 +35,17 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.constants.Words;
 import no.unit.nva.indexing.testutils.FakeSearchResponse;
+import no.unit.nva.search.common.bibtex.ResourceBibTexTransformer;
 import no.unit.nva.search.common.csv.ExportCsv;
+import no.unit.nva.search.common.csv.ResourceCsvTransformer;
+import no.unit.nva.search.common.records.QueryContentWrapper;
 import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.resource.ResourceClient;
+import no.unit.nva.search.resource.ResourceSearchQuery;
 import no.unit.nva.search.testing.common.FakeGatewayResponse;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
@@ -47,6 +54,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentCaptor;
 
 class SearchResourceLegacyHandlerTest {
 
@@ -123,6 +131,38 @@ class SearchResourceLegacyHandlerTest {
         gatewayResponse.getHeaders().get("Content-Type"),
         is(equalTo("text/x-bibtex; charset=utf-8")));
     assertThat(gatewayResponse.getBody().contains("@"), is(true));
+  }
+
+  @Test
+  void shouldRestrictSourceToBibtexFieldsWhenAcceptHeaderIsBibtex() throws IOException {
+    prepareRestHighLevelClientOkResponse(List.of(csvWithFullDate()));
+    handler.handleRequest(
+        getRequestInputStreamAccepting(Words.TEXT_X_BIBTEX), outputStream, mock(Context.class));
+
+    var openSearchRequestBody = capturedOpenSearchRequestBody(mockedSearchClient);
+    ResourceBibTexTransformer.getJsonFields()
+        .forEach(field -> assertThat(openSearchRequestBody, containsString("\"" + field + "\"")));
+  }
+
+  @Test
+  void shouldRestrictSourceToCsvFieldsWhenAcceptHeaderIsCsv() throws IOException {
+    prepareRestHighLevelClientOkResponse(List.of(csvWithFullDate()));
+    handler.handleRequest(
+        getRequestInputStreamAccepting(Words.TEXT_CSV), outputStream, mock(Context.class));
+
+    var openSearchRequestBody = capturedOpenSearchRequestBody(mockedSearchClient);
+    ResourceCsvTransformer.getJsonFields()
+        .forEach(field -> assertThat(openSearchRequestBody, containsString("\"" + field + "\"")));
+  }
+
+  static String capturedOpenSearchRequestBody(ResourceClient mockedSearchClient) {
+    var queryCaptor = ArgumentCaptor.forClass(ResourceSearchQuery.class);
+    verify(mockedSearchClient).doSearch(queryCaptor.capture(), eq(RESOURCES));
+    return queryCaptor
+        .getValue()
+        .assemble(RESOURCES)
+        .map(QueryContentWrapper::body)
+        .collect(Collectors.joining());
   }
 
   private ExportCsv csvWithYearOnly() {

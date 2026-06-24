@@ -60,4 +60,22 @@ class ContentTypeUtilsTest {
     assertThat(mimeType, equalTo(null));
     assertThat(version, equalTo(null));
   }
+
+  @Test
+  void assertThatMimeTypeStringIsExtractedWhenProvided() {
+    requestInfo.setHeaders(Map.of(ACCEPT, ACCEPT_HEADER_VALUE));
+
+    var mimeType = ContentTypeUtils.extractMimeTypeFromRequestInfo(requestInfo);
+
+    assertThat(mimeType, equalTo(MIME_TYPE));
+  }
+
+  @Test
+  void assertThatMimeTypeStringIsNullWhenNotProvided() {
+    requestInfo.setHeaders(Map.of());
+
+    var mimeType = ContentTypeUtils.extractMimeTypeFromRequestInfo(requestInfo);
+
+    assertThat(mimeType, equalTo(null));
+  }
 }
