@@ -2,17 +2,26 @@ package no.unit.nva.search.resource;
 
 import static no.unit.nva.constants.Words.ADDITIONAL_IDENTIFIERS;
 import static no.unit.nva.constants.Words.ASTERISK;
+import static no.unit.nva.constants.Words.BOKMAAL_CODE;
 import static no.unit.nva.constants.Words.COLON;
 import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.constants.Words.CONTRIBUTORS;
 import static no.unit.nva.constants.Words.CREATOR;
+import static no.unit.nva.constants.Words.DOI;
+import static no.unit.nva.constants.Words.ENGLISH_CODE;
 import static no.unit.nva.constants.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.constants.Words.FUNDINGS;
+import static no.unit.nva.constants.Words.ID;
 import static no.unit.nva.constants.Words.IDENTIFIER;
 import static no.unit.nva.constants.Words.IDENTITY;
 import static no.unit.nva.constants.Words.KEYWORD;
+import static no.unit.nva.constants.Words.NAME;
 import static no.unit.nva.constants.Words.NO;
 import static no.unit.nva.constants.Words.NOT_VERIFIED;
+import static no.unit.nva.constants.Words.NYNORSK_CODE;
+import static no.unit.nva.constants.Words.PI;
+import static no.unit.nva.constants.Words.PUBLISHER;
+import static no.unit.nva.constants.Words.REFERENCE;
 import static no.unit.nva.constants.Words.ROLE;
 import static no.unit.nva.constants.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.constants.Words.SOURCE;
@@ -23,11 +32,15 @@ import static no.unit.nva.constants.Words.VERIFICATION_STATUS;
 import static no.unit.nva.constants.Words.VERIFIED;
 import static no.unit.nva.search.common.constant.Functions.jsonPath;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_AFFILIATION_ID_KEYWORD;
+import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_AFFILIATION_LABELS;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_INSTITUTION_ID_KEYWORD;
 import static no.unit.nva.search.resource.Constants.COUNTRY_CODE_PATH;
 import static no.unit.nva.search.resource.Constants.ENTITY_ABSTRACT;
 import static no.unit.nva.search.resource.Constants.ENTITY_CONTRIBUTORS;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
+import static no.unit.nva.search.resource.Constants.ENTITY_PUBLICATION_CONTEXT;
+import static no.unit.nva.search.resource.Constants.ENTITY_TAGS;
+import static no.unit.nva.search.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search.resource.Constants.PARENT_PUBLICATION_TYPE;
 import static no.unit.nva.search.resource.Constants.PARENT_SCIENTIFIC_PUBLISHER;
 import static no.unit.nva.search.resource.Constants.PARENT_SCIENTIFIC_SERIES;
@@ -82,6 +95,25 @@ public class ResourceStreamBuilders {
   public static final String FUNDING_SOURCE_IDENTIFIER =
       jsonPath(FUNDINGS, SOURCE, IDENTIFIER, KEYWORD);
   public static final String FUNDINGS_IDENTIFIER = jsonPath(FUNDINGS, IDENTIFIER, KEYWORD);
+
+  private static final Map<String, Float> DEFAULT_SEARCH_ALL_FIELDS =
+      Map.ofEntries(
+          Map.entry(ENTITY_DESCRIPTION_MAIN_TITLE, PI),
+          Map.entry(ENTITY_ABSTRACT, 1F),
+          Map.entry(ENTITY_TAGS, 1F),
+          Map.entry(IDENTIFIER_KEYWORD, 1F),
+          Map.entry(jsonPath(PUBLISHER, ID), 1F),
+          Map.entry(jsonPath(ENTITY_DESCRIPTION, REFERENCE, DOI, KEYWORD), 1F),
+          Map.entry(jsonPath(DOI, KEYWORD), 1F),
+          Map.entry(jsonPath(ENTITY_CONTRIBUTORS, IDENTITY, NAME, KEYWORD), 1F),
+          Map.entry(jsonPath(ENTITY_PUBLICATION_CONTEXT, NAME, KEYWORD), 1F),
+          Map.entry(jsonPath(ENTITY_PUBLICATION_CONTEXT, PUBLISHER, NAME, KEYWORD), 1F),
+          Map.entry(jsonPath(CONTRIBUTORS_AFFILIATION_LABELS, BOKMAAL_CODE), 1F),
+          Map.entry(jsonPath(CONTRIBUTORS_AFFILIATION_LABELS, ENGLISH_CODE), 1F),
+          Map.entry(jsonPath(CONTRIBUTORS_AFFILIATION_LABELS, NYNORSK_CODE), 1F),
+          Map.entry(FUNDING_SOURCE_IDENTIFIER, 1F),
+          Map.entry(FUNDINGS_IDENTIFIER, 1F));
+
   private final QueryKeys<ResourceParameter> parameters;
 
   public ResourceStreamBuilders(QueryKeys<ResourceParameter> parameters) {
@@ -90,6 +122,7 @@ public class ResourceStreamBuilders {
 
   public Stream<Map.Entry<ResourceParameter, QueryBuilder>> searchAllWithBoostsQuery(
       Map<String, Float> fields) {
+    var searchFields = fields.containsKey(ASTERISK) ? DEFAULT_SEARCH_ALL_FIELDS : fields;
     var sevenValues =
         parameters.get(SEARCH_ALL).asSplitStream(SPACE).limit(7).collect(Collectors.joining(SPACE));
     var fifteenValues =
@@ -104,16 +137,16 @@ public class ResourceStreamBuilders {
             .queryName(SEARCH_ALL.asCamelCase())
             .must(
                 multiMatchQuery(sevenValues)
-                    .fields(fields)
+                    .fields(searchFields)
                     .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
                     .operator(Operator.AND));
 
-    if (fields.containsKey(ENTITY_DESCRIPTION_MAIN_TITLE) || fields.containsKey(ASTERISK)) {
+    if (searchFields.containsKey(ENTITY_DESCRIPTION_MAIN_TITLE)) {
       query.should(
           matchPhrasePrefixQuery(ENTITY_DESCRIPTION_MAIN_TITLE, fifteenValues)
               .boost(TITLE.fieldBoost()));
     }
-    if (fields.containsKey(ENTITY_ABSTRACT) || fields.containsKey(ASTERISK)) {
+    if (searchFields.containsKey(ENTITY_ABSTRACT)) {
       query.should(matchPhraseQuery(ENTITY_ABSTRACT, fifteenValues).boost(ABSTRACT.fieldBoost()));
     }
     return Functions.queryToEntry(SEARCH_ALL, query);
