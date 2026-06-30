@@ -563,6 +563,7 @@ paths:
         - $ref: "#/components/parameters/hasFileParam"
         - $ref: "#/components/parameters/hasIsbnParam"
         - $ref: "#/components/parameters/hasIssnParam"
+        - $ref: "#/components/parameters/hasNpiSubjectHeadingParam"
         - $ref: "#/components/parameters/idNotParam"
         - $ref: "#/components/parameters/idParam"
         - $ref: "#/components/parameters/idShouldParam"
@@ -583,6 +584,8 @@ paths:
         - $ref: "#/components/parameters/licenseShouldParam"
         - $ref: "#/components/parameters/modifiedBeforeParam"
         - $ref: "#/components/parameters/modifiedSinceParam"
+        - $ref: "#/components/parameters/npiSubjectHeadingParam"
+        - $ref: "#/components/parameters/npiSubjectHeadingNotParam"
         - $ref: "#/components/parameters/orcidNotParam"
         - $ref: "#/components/parameters/orcidParam"
         - $ref: "#/components/parameters/orcidShouldParam"
@@ -1390,6 +1393,17 @@ components:
       schema:
         type: boolean
         enum: [true, false]
+    hasNpiSubjectHeadingParam:
+      name: has_npi_subject_heading
+      in: query
+      description: "Returns documents with NPI Subject Heading."
+      example: true
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: boolean
+        enum: [true, false]
     idParam:
       name: id
       in: query
@@ -1630,6 +1644,26 @@ components:
       schema:
         type: string
         format: date
+    npiSubjectHeadingParam:
+      name: npi_subject_heading
+      in: query
+      description: "Returns documents with this NPI Subject Heading"
+      example: "1234"
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    npiSubjectHeadingNotParam:
+      name: npi_subject_heading_not
+      in: query
+      description: "Returns documents without this NPI Subject Heading"
+      example: "1234"
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
     orcidParam:
       name: orcid
       in: query

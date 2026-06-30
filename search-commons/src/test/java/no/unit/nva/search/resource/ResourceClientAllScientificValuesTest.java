@@ -863,6 +863,58 @@ public class ResourceClientAllScientificValuesTest {
     assertEquals(1, response.toPagedResponse().hits().size());
   }
 
+  @Test
+  void shouldReturnDocumentsWithSpecifiedNpiSubjectHeading()
+      throws IOException, BadRequestException {
+    createIndexAndIndexDocument(jsonWithNpiSubjectHeading("1234"));
+    var response = doSearchWithUri(uriWithQueryParameter("npiSubjectHeading", "1234"));
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
+  @Test
+  void shouldReturnNoDocumentsWhenSpecifiedNpiSubjectHeadingHasNoMatch()
+      throws IOException, BadRequestException {
+    createIndexAndIndexDocument(jsonWithNpiSubjectHeading("1234"));
+    var response = doSearchWithUri(uriWithQueryParameter("npiSubjectHeading", "9999"));
+
+    assertEquals(0, response.toPagedResponse().hits().size());
+  }
+
+  @Test
+  void shouldReturnDocumentsWithoutSpecifiedNpiSubjectHeadingWhenExcluded()
+      throws IOException, BadRequestException {
+    createIndexAndIndexDocument(jsonWithNpiSubjectHeading("1234"));
+    var response = doSearchWithUri(uriWithQueryParameter("npiSubjectHeadingNot", "7777"));
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
+  @Test
+  void shouldReturnNoDocumentsWhenAllDocumentsHasTheSpecifiedExcludedNpiSubjectHeading()
+      throws IOException, BadRequestException {
+    createIndexAndIndexDocument(jsonWithNpiSubjectHeading("1234"));
+    var response = doSearchWithUri(uriWithQueryParameter("npiSubjectHeadingNot", "1234"));
+
+    assertEquals(0, response.toPagedResponse().hits().size());
+  }
+
+  @Test
+  void shouldReturnDocumentsWithNpiSubjectHeading() throws IOException, BadRequestException {
+    createIndexAndIndexDocument(jsonWithNpiSubjectHeading("1234"));
+    var response = doSearchWithUri(uriWithQueryParameter("hasNpiSubjectHeading", TRUE.toString()));
+
+    assertEquals(1, response.toPagedResponse().hits().size());
+  }
+
+  @Test
+  void shouldReturnDocumentsWithoutNpiSubjectHeading() throws IOException, BadRequestException {
+    createIndexAndIndexDocument(jsonWithNpiSubjectHeading("1234"));
+    var response = doSearchWithUri(uriWithQueryParameter("hasNpiSubjectHeading", FALSE.toString()));
+
+    assertEquals(0, response.toPagedResponse().hits().size());
+  }
+
   private static String contributorWithCountryCode(String countryCode) {
     return """
     {
@@ -1007,6 +1059,20 @@ public class ResourceClientAllScientificValuesTest {
     }
     """
         .formatted(publisherScientificValue);
+  }
+
+  private static String jsonWithNpiSubjectHeading(String npiSubjectHeadingValue) {
+    return """
+      {
+       "type": "Publication",
+       "identifier": "018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619e3bbaf39",
+       "entityDescription": {
+         "type": "EntityDescription",
+         "npiSubjectHeading": "%s"
+       }
+      }
+    """
+        .formatted(npiSubjectHeadingValue);
   }
 
   private static HttpResponseFormatter<ResourceParameter> doSearchWithUri(URI searchUri)
