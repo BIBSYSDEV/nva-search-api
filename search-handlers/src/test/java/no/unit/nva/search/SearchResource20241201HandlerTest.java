@@ -113,7 +113,9 @@ class SearchResource20241201HandlerTest {
     assertThat(headers, hasKey("Link"));
     assertThat(headers.get("Link"), containsString("rel=\"first\""));
     assertThat(headers.get("Link"), containsString("rel=\"next\""));
-    assertThat(headers.get("Link"), containsString("rel=\"last\""));
+    assertThat(headers.get("Link"), containsString("search_after="));
+    assertThat(headers.get("Link"), not(containsString("rel=\"last\"")));
+    assertThat(headers.get("Link"), not(containsString("rel=\"prev\"")));
   }
 
   @Test

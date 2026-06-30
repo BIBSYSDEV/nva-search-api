@@ -24,6 +24,7 @@ import no.unit.nva.search.common.jwt.CognitoAuthenticator;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.Try;
 import nva.commons.secrets.SecretsReader;
+import org.opensearch.OpenSearchStatusException;
 import org.opensearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.opensearch.action.admin.indices.refresh.RefreshRequest;
 import org.opensearch.action.bulk.BulkRequest;
@@ -35,6 +36,7 @@ import org.opensearch.client.indices.GetMappingsRequest;
 import org.opensearch.cluster.metadata.MappingMetadata;
 import org.opensearch.common.compress.CompressedXContent;
 import org.opensearch.core.common.bytes.BytesReference;
+import org.opensearch.core.rest.RestStatus;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.reindex.BulkByScrollResponse;
 import org.opensearch.index.reindex.DeleteByQueryRequest;
@@ -49,6 +51,8 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
   private static final String INITIAL_LOG_MESSAGE = "Adding document [{}] to -> {}";
   private static final String DOCUMENT_WITH_ID_WAS_NOT_FOUND_IN_SEARCH_INFRASTRUCTURE =
       "Document with id={} was not found in search infrastructure";
+  private static final String INDEX_NOT_FOUND_NOTHING_TO_DELETE_MESSAGE =
+      "Index '{}' does not exist, nothing to delete";
   private static final boolean SEQUENTIAL = false;
 
   /**
@@ -149,7 +153,15 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
   }
 
   public Void deleteIndex(String indexName) throws IOException {
-    openSearchClient.indices().delete(new DeleteIndexRequest(indexName), getRequestOptions());
+    try {
+      openSearchClient.indices().delete(new DeleteIndexRequest(indexName), getRequestOptions());
+    } catch (OpenSearchStatusException exception) {
+      if (RestStatus.NOT_FOUND == exception.status()) {
+        logger.info(INDEX_NOT_FOUND_NOTHING_TO_DELETE_MESSAGE, indexName);
+      } else {
+        throw exception;
+      }
+    }
     return null;
   }
 

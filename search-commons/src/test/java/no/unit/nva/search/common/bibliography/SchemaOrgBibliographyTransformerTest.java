@@ -3,11 +3,9 @@ package no.unit.nva.search.common.bibliography;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.startsWith;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.List;
@@ -25,35 +23,31 @@ class SchemaOrgBibliographyTransformerTest {
 
   @Test
   void shouldProduceSchemaOrgContext() {
-    var result = transform("AcademicArticle");
-    assertThat(result, containsString("\"@context\":\"https://schema.org\""));
+    assertThat(transform("AcademicArticle").path("@context").asText(), is("https://schema.org"));
   }
 
   @Test
   void shouldProduceItemListType() {
-    var result = transform("AcademicArticle");
-    assertThat(result, containsString("\"@type\":\"ItemList\""));
+    assertThat(transform("AcademicArticle").path("@type").asText(), is("ItemList"));
   }
 
   @Test
   void shouldIncludeTotalSizeAsNumberOfItems() {
-    var doc = doc("AcademicArticle");
-    var result = SchemaOrgBibliographyTransformer.transform(List.of(doc), 42);
-    assertThat(result, containsString("\"numberOfItems\":42"));
+    var tree = parse(SchemaOrgBibliographyTransformer.transform(List.of(doc("AcademicArticle")), 42));
+    assertThat(tree.path("numberOfItems").asInt(), is(42));
   }
 
   @Test
   void shouldProduceOneItemPerHit() {
     var doc = doc("AcademicArticle");
-    var result = SchemaOrgBibliographyTransformer.transform(List.of(doc, doc), 2);
-    var tree = parseTree(result);
+    var tree = parse(SchemaOrgBibliographyTransformer.transform(List.of(doc, doc), 2));
     assertThat(tree.path("itemListElement").size(), is(2));
   }
 
   @Test
   void shouldProduceEmptyItemListElementForNoHits() {
-    var result = SchemaOrgBibliographyTransformer.transform(List.of(), 0);
-    assertThat(result, containsString("\"itemListElement\":[]"));
+    var tree = parse(SchemaOrgBibliographyTransformer.transform(List.of(), 0));
+    assertThat(tree.path("itemListElement").isEmpty(), is(true));
   }
 
   // -- schema.org type mapping ------------------------------------------
@@ -124,8 +118,7 @@ class SchemaOrgBibliographyTransformerTest {
   @ParameterizedTest(name = "{0} → {1}")
   @MethodSource("typeMapping")
   void shouldMapNvaTypeToSchemaOrgType(String nvaType, String expectedSchemaType) {
-    var result = transform(nvaType);
-    assertThat(result, containsString("\"@type\":\"" + expectedSchemaType + "\""));
+    assertThat(item(transform(nvaType)).path("@type").asText(), is(expectedSchemaType));
   }
 
   // -- @id and url -------------------------------------------------------
@@ -135,24 +128,25 @@ class SchemaOrgBibliographyTransformerTest {
     var doc = doc("AcademicArticle");
     doc.put("id", "https://api.nva.unit.no/publication/abc-123");
     doc.put("handle", "https://hdl.handle.net/11250/9999999");
-    var result = transform(doc);
-    assertThat(result, containsString("\"@id\":\"https://hdl.handle.net/11250/9999999\""));
-    assertThat(result, containsString("\"url\":\"https://hdl.handle.net/11250/9999999\""));
+    var item = item(transform(doc));
+    assertThat(item.path("@id").asText(), is("https://hdl.handle.net/11250/9999999"));
+    assertThat(item.path("url").asText(), is("https://hdl.handle.net/11250/9999999"));
   }
 
   @Test
   void shouldFallBackToIdWhenHandleAbsent() {
     var doc = doc("AcademicArticle");
     doc.put("id", "https://api.nva.unit.no/publication/abc-123");
-    var result = transform(doc);
-    assertThat(result, containsString("\"@id\":\"https://api.nva.unit.no/publication/abc-123\""));
+    assertThat(
+        item(transform(doc)).path("@id").asText(),
+        is("https://api.nva.unit.no/publication/abc-123"));
   }
 
   @Test
   void shouldOmitIdAndUrlWhenBothAbsent() {
-    var result = transform("AcademicArticle");
-    assertThat(result, not(containsString("\"@id\"")));
-    assertThat(result, not(containsString("\"url\"")));
+    var item = item(transform("AcademicArticle"));
+    assertThat(item.has("@id"), is(false));
+    assertThat(item.has("url"), is(false));
   }
 
   // -- common fields -----------------------------------------------------
@@ -161,48 +155,44 @@ class SchemaOrgBibliographyTransformerTest {
   void shouldExtractTitle() {
     var doc = doc("AcademicArticle");
     entity(doc).put("mainTitle", "The Main Title");
-    var result = transform(doc);
-    assertThat(result, containsString("\"name\":\"The Main Title\""));
+    assertThat(item(transform(doc)).path("name").asText(), is("The Main Title"));
   }
 
   @Test
   void shouldExtractYear() {
     var doc = doc("AcademicArticle");
     entity(doc).putObject("publicationDate").put("year", "2023");
-    var result = transform(doc);
-    assertThat(result, containsString("\"datePublished\":\"2023\""));
+    assertThat(item(transform(doc)).path("datePublished").asText(), is("2023"));
   }
 
   @Test
   void shouldExtractAbstract() {
     var doc = doc("AcademicArticle");
     entity(doc).put("abstract", "This is the abstract.");
-    var result = transform(doc);
-    assertThat(result, containsString("\"abstract\":\"This is the abstract.\""));
+    assertThat(item(transform(doc)).path("abstract").asText(), is("This is the abstract."));
   }
 
   @Test
   void shouldExtractKeywordsFromTags() {
     var doc = doc("AcademicArticle");
     entity(doc).putArray("tags").add("climate").add("arctic");
-    var result = transform(doc);
-    assertThat(result, containsString("\"keywords\":\"climate, arctic\""));
+    assertThat(item(transform(doc)).path("keywords").asText(), is("climate, arctic"));
   }
 
   @Test
   void shouldExtractDoiAsIdentifier() {
     var doc = doc("AcademicArticle");
     ref(doc).put("doi", "https://doi.org/10.1234/test");
-    var result = transform(doc);
-    assertThat(result, containsString("\"identifier\":\"https://doi.org/10.1234/test\""));
+    assertThat(item(transform(doc)).path("identifier").asText(), is("https://doi.org/10.1234/test"));
   }
 
   @Test
   void shouldFallBackToTopLevelDoiWhenRefDoiAbsent() {
     var doc = doc("AcademicArticle");
     doc.put("doi", "https://doi.org/10.1234/fallback");
-    var result = transform(doc);
-    assertThat(result, containsString("\"identifier\":\"https://doi.org/10.1234/fallback\""));
+    assertThat(
+        item(transform(doc)).path("identifier").asText(),
+        is("https://doi.org/10.1234/fallback"));
   }
 
   // -- authors -----------------------------------------------------------
@@ -211,9 +201,9 @@ class SchemaOrgBibliographyTransformerTest {
   void shouldExtractSingleAuthor() {
     var doc = doc("AcademicArticle");
     addContributor(doc, "Alice Aaberg", null, null);
-    var result = transform(doc);
-    assertThat(result, containsString("\"@type\":\"Person\""));
-    assertThat(result, containsString("\"name\":\"Alice Aaberg\""));
+    var person = item(transform(doc)).path("author").get(0);
+    assertThat(person.path("@type").asText(), is("Person"));
+    assertThat(person.path("name").asText(), is("Alice Aaberg"));
   }
 
   @Test
@@ -221,25 +211,27 @@ class SchemaOrgBibliographyTransformerTest {
     var doc = doc("AcademicArticle");
     addContributor(doc, "Alice Aaberg", null, null);
     addContributor(doc, "Bob Bakke", null, null);
-    var result = transform(doc);
-    assertThat(result, containsString("\"name\":\"Alice Aaberg\""));
-    assertThat(result, containsString("\"name\":\"Bob Bakke\""));
+    var authors = item(transform(doc)).path("author");
+    assertThat(authors.get(0).path("name").asText(), is("Alice Aaberg"));
+    assertThat(authors.get(1).path("name").asText(), is("Bob Bakke"));
   }
 
   @Test
   void shouldUseNvaPersonIdAsAtId() {
     var doc = doc("AcademicArticle");
     addContributor(doc, "Alice Aaberg", "https://api.nva.unit.no/cristin/person/12345", null);
-    var result = transform(doc);
-    assertThat(result, containsString("\"@id\":\"https://api.nva.unit.no/cristin/person/12345\""));
+    assertThat(
+        item(transform(doc)).path("author").get(0).path("@id").asText(),
+        is("https://api.nva.unit.no/cristin/person/12345"));
   }
 
   @Test
   void shouldIncludeOrcidAsSameAs() {
     var doc = doc("AcademicArticle");
     addContributor(doc, "Alice Aaberg", null, "https://orcid.org/0000-0002-1234-5678");
-    var result = transform(doc);
-    assertThat(result, containsString("\"sameAs\":\"https://orcid.org/0000-0002-1234-5678\""));
+    assertThat(
+        item(transform(doc)).path("author").get(0).path("sameAs").asText(),
+        is("https://orcid.org/0000-0002-1234-5678"));
   }
 
   @Test
@@ -250,17 +242,16 @@ class SchemaOrgBibliographyTransformerTest {
         "Alice Aaberg",
         "https://api.nva.unit.no/cristin/person/12345",
         "https://orcid.org/0000-0002-1234-5678");
-    var result = transform(doc);
-    assertThat(result, containsString("\"@id\":\"https://api.nva.unit.no/cristin/person/12345\""));
-    assertThat(result, containsString("\"sameAs\":\"https://orcid.org/0000-0002-1234-5678\""));
+    var person = item(transform(doc)).path("author").get(0);
+    assertThat(person.path("@id").asText(), is("https://api.nva.unit.no/cristin/person/12345"));
+    assertThat(person.path("sameAs").asText(), is("https://orcid.org/0000-0002-1234-5678"));
   }
 
   @Test
   void shouldOmitPersonIdWhenNvaIdAbsent() {
     var doc = doc("AcademicArticle");
     addContributor(doc, "Alice Aaberg", null, null);
-    var result = transform(doc);
-    assertThat(result, not(containsString("\"@id\":")));
+    assertThat(item(transform(doc)).path("author").get(0).has("@id"), is(false));
   }
 
   @Test
@@ -272,12 +263,12 @@ class SchemaOrgBibliographyTransformerTest {
         "https://api.nva.unit.no/cristin/organization/184.16.0.0",
         "Faculty of Law",
         null);
-    var result = transform(doc);
-    assertThat(result, containsString("\"affiliation\""));
+    var affiliation = item(transform(doc)).path("author").get(0).path("affiliation").get(0);
+    assertThat(affiliation.has("affiliation"), is(false));
     assertThat(
-        result,
-        containsString("\"@id\":\"https://api.nva.unit.no/cristin/organization/184.16.0.0\""));
-    assertThat(result, containsString("\"name\":\"Faculty of Law\""));
+        affiliation.path("@id").asText(),
+        is("https://api.nva.unit.no/cristin/organization/184.16.0.0"));
+    assertThat(affiliation.path("name").asText(), is("Faculty of Law"));
   }
 
   @Test
@@ -289,8 +280,8 @@ class SchemaOrgBibliographyTransformerTest {
         "https://api.nva.unit.no/cristin/organization/184.16.0.0",
         null,
         "Det juridiske fakultet");
-    var result = transform(doc);
-    assertThat(result, containsString("\"name\":\"Det juridiske fakultet\""));
+    var affiliation = item(transform(doc)).path("author").get(0).path("affiliation").get(0);
+    assertThat(affiliation.path("name").asText(), is("Det juridiske fakultet"));
   }
 
   @Test
@@ -304,23 +295,22 @@ class SchemaOrgBibliographyTransformerTest {
         null);
     addAffiliation(
         contributor, "https://api.nva.unit.no/cristin/organization/185.0.0.0", "NTNU", null);
-    var result = transform(doc);
-    assertThat(result, containsString("\"Faculty of Law\""));
-    assertThat(result, containsString("\"NTNU\""));
+    var affiliations = item(transform(doc)).path("author").get(0).path("affiliation");
+    assertThat(affiliations.size(), is(2));
+    assertThat(affiliations.get(0).path("name").asText(), is("Faculty of Law"));
+    assertThat(affiliations.get(1).path("name").asText(), is("NTNU"));
   }
 
   @Test
   void shouldOmitAffiliationWhenNone() {
     var doc = doc("AcademicArticle");
     addContributor(doc, "Alice Aaberg", null, null);
-    var result = transform(doc);
-    assertThat(result, not(containsString("\"affiliation\"")));
+    assertThat(item(transform(doc)).path("author").get(0).has("affiliation"), is(false));
   }
 
   @Test
   void shouldOmitAuthorFieldWhenNoContributors() {
-    var result = transform("AcademicArticle");
-    assertThat(result, not(containsString("\"author\"")));
+    assertThat(item(transform("AcademicArticle")).has("author"), is(false));
   }
 
   // -- @article / ScholarlyArticle fields --------------------------------
@@ -330,16 +320,19 @@ class SchemaOrgBibliographyTransformerTest {
     var doc = doc("AcademicArticle");
     setJournalContext(doc, "Journal", "Nature", null, "1234-5678", null);
     setInstance(doc, "AcademicArticle", "10", "3", "100", "110");
-    var result = transform(doc);
-    assertThat(result, containsString("\"@type\":\"PublicationIssue\""));
-    assertThat(result, containsString("\"issueNumber\":\"3\""));
-    assertThat(result, containsString("\"@type\":\"PublicationVolume\""));
-    assertThat(result, containsString("\"volumeNumber\":\"10\""));
-    assertThat(result, containsString("\"@type\":\"Periodical\""));
-    assertThat(result, containsString("\"name\":\"Nature\""));
-    assertThat(result, containsString("\"issn\":\"1234-5678\""));
-    assertThat(result, containsString("\"pageStart\":\"100\""));
-    assertThat(result, containsString("\"pageEnd\":\"110\""));
+    var item = item(transform(doc));
+    var issue = item.path("isPartOf");
+    var volume = issue.path("isPartOf");
+    var periodical = volume.path("isPartOf");
+    assertThat(issue.path("@type").asText(), is("PublicationIssue"));
+    assertThat(issue.path("issueNumber").asText(), is("3"));
+    assertThat(volume.path("@type").asText(), is("PublicationVolume"));
+    assertThat(volume.path("volumeNumber").asText(), is("10"));
+    assertThat(periodical.path("@type").asText(), is("Periodical"));
+    assertThat(periodical.path("name").asText(), is("Nature"));
+    assertThat(periodical.path("issn").asText(), is("1234-5678"));
+    assertThat(item.path("pageStart").asText(), is("100"));
+    assertThat(item.path("pageEnd").asText(), is("110"));
   }
 
   @Test
@@ -347,36 +340,36 @@ class SchemaOrgBibliographyTransformerTest {
     var doc = doc("AcademicArticle");
     setJournalContext(doc, "Journal", "Nature", null, "1234-5678", null);
     setInstance(doc, "AcademicArticle", "10", null, null, null);
-    var result = transform(doc);
-    assertThat(result, not(containsString("PublicationIssue")));
-    assertThat(result, containsString("\"@type\":\"PublicationVolume\""));
+    var isPartOf = item(transform(doc)).path("isPartOf");
+    assertThat(isPartOf.path("@type").asText(), is("PublicationVolume"));
+    assertThat(findInChain(isPartOf, "PublicationIssue").isMissingNode(), is(true));
   }
 
   @Test
   void shouldProducePeriodicalDirectlyWhenVolumeAndIssueAbsent() {
     var doc = doc("AcademicArticle");
     setJournalContext(doc, "Journal", "Nature", null, "1234-5678", null);
-    var result = transform(doc);
-    assertThat(result, not(containsString("PublicationIssue")));
-    assertThat(result, not(containsString("PublicationVolume")));
-    assertThat(result, containsString("\"@type\":\"Periodical\""));
+    var isPartOf = item(transform(doc)).path("isPartOf");
+    assertThat(isPartOf.path("@type").asText(), is("Periodical"));
+    assertThat(isPartOf.path("isPartOf").isMissingNode(), is(true));
   }
 
   @Test
   void shouldPreferOnlineIssnOverPrintIssn() {
     var doc = doc("AcademicArticle");
     setJournalContext(doc, "Journal", "Nature", null, "print-1234", "online-5678");
-    var result = transform(doc);
-    assertThat(result, containsString("\"issn\":\"online-5678\""));
-    assertThat(result, not(containsString("print-1234")));
+    assertThat(
+        findInChain(item(transform(doc)).path("isPartOf"), "Periodical").path("issn").asText(),
+        is("online-5678"));
   }
 
   @Test
   void shouldUseContextTitleForUnconfirmedJournal() {
     var doc = doc("AcademicArticle");
     setJournalContext(doc, "UnconfirmedJournal", null, "Science Advances", null, null);
-    var result = transform(doc);
-    assertThat(result, containsString("\"name\":\"Science Advances\""));
+    assertThat(
+        findInChain(item(transform(doc)).path("isPartOf"), "Periodical").path("name").asText(),
+        is("Science Advances"));
   }
 
   // -- @book fields ------------------------------------------------------
@@ -385,34 +378,32 @@ class SchemaOrgBibliographyTransformerTest {
   void shouldExtractPublisherForBook() {
     var doc = doc("AcademicMonograph");
     setBookContext(doc, "Springer", null);
-    var result = transform(doc);
-    assertThat(result, containsString("\"@type\":\"Organization\""));
-    assertThat(result, containsString("\"name\":\"Springer\""));
+    var publisher = item(transform(doc)).path("publisher");
+    assertThat(publisher.path("@type").asText(), is("Organization"));
+    assertThat(publisher.path("name").asText(), is("Springer"));
   }
 
   @Test
   void shouldExtractSeriesAsBookSeriesForBook() {
     var doc = doc("AcademicMonograph");
     setBookContext(doc, null, "Lecture Notes in CS");
-    var result = transform(doc);
-    assertThat(result, containsString("\"@type\":\"BookSeries\""));
-    assertThat(result, containsString("\"name\":\"Lecture Notes in CS\""));
+    var isPartOf = item(transform(doc)).path("isPartOf");
+    assertThat(isPartOf.path("@type").asText(), is("BookSeries"));
+    assertThat(isPartOf.path("name").asText(), is("Lecture Notes in CS"));
   }
 
   @Test
   void shouldExtractIsbnForBook() {
     var doc = doc("AcademicMonograph");
     setContextIsbn(doc, "9781234567890");
-    var result = transform(doc);
-    assertThat(result, containsString("\"isbn\":\"9781234567890\""));
+    assertThat(item(transform(doc)).path("isbn").asText(), is("9781234567890"));
   }
 
   @Test
   void shouldExtractNumberOfPagesForBook() {
     var doc = doc("AcademicMonograph");
     setMonographPages(doc, "248");
-    var result = transform(doc);
-    assertThat(result, containsString("\"numberOfPages\":\"248\""));
+    assertThat(item(transform(doc)).path("numberOfPages").asText(), is("248"));
   }
 
   // -- @chapter / Chapter fields ----------------------------------------
@@ -421,10 +412,10 @@ class SchemaOrgBibliographyTransformerTest {
   void shouldExtractBookIsPartOfForChapterWithFlatContext() {
     var doc = doc("AcademicChapter");
     setReportContext(doc, "Handbook of CS", "MIT Press");
-    var result = transform(doc);
-    assertThat(result, containsString("\"@type\":\"Book\""));
-    assertThat(result, containsString("\"name\":\"Handbook of CS\""));
-    assertThat(result, containsString("\"name\":\"MIT Press\""));
+    var isPartOf = item(transform(doc)).path("isPartOf");
+    assertThat(isPartOf.path("@type").asText(), is("Book"));
+    assertThat(isPartOf.path("name").asText(), is("Handbook of CS"));
+    assertThat(isPartOf.path("publisher").path("name").asText(), is("MIT Press"));
   }
 
   @Test
@@ -432,8 +423,7 @@ class SchemaOrgBibliographyTransformerTest {
     var doc = doc("AcademicChapter");
     setReportContext(doc, "Handbook of CS", null);
     setContextIsbn(doc, "9781234500001");
-    var result = transform(doc);
-    assertThat(result, containsString("\"isbn\":\"9781234500001\""));
+    assertThat(item(transform(doc)).path("isPartOf").path("isbn").asText(), is("9781234500001"));
   }
 
   @Test
@@ -441,26 +431,25 @@ class SchemaOrgBibliographyTransformerTest {
     var doc = doc("AcademicChapter");
     setReportContext(doc, "Handbook of CS", null);
     setInstance(doc, "AcademicChapter", null, null, "42", "55");
-    var result = transform(doc);
-    assertThat(result, containsString("\"pageStart\":\"42\""));
-    assertThat(result, containsString("\"pageEnd\":\"55\""));
+    var item = item(transform(doc));
+    assertThat(item.path("pageStart").asText(), is("42"));
+    assertThat(item.path("pageEnd").asText(), is("55"));
   }
 
   @Test
   void shouldExtractNestedBookTitleForAnthologyChapter() {
     var doc = doc("AcademicChapter");
     setAnthologyContext(doc, "Anthology", "Collected Essays", "Oxford UP");
-    var result = transform(doc);
-    assertThat(result, containsString("\"name\":\"Collected Essays\""));
-    assertThat(result, containsString("\"name\":\"Oxford UP\""));
+    var isPartOf = item(transform(doc)).path("isPartOf");
+    assertThat(isPartOf.path("name").asText(), is("Collected Essays"));
+    assertThat(isPartOf.path("publisher").path("name").asText(), is("Oxford UP"));
   }
 
   @Test
   void shouldExtractIsbnForAnthologyChapter() {
     var doc = doc("AcademicChapter");
     setAnthologyContextWithIsbn(doc, "Anthology", "Collected Essays", null, "9781111111111");
-    var result = transform(doc);
-    assertThat(result, containsString("\"isbn\":\"9781111111111\""));
+    assertThat(item(transform(doc)).path("isPartOf").path("isbn").asText(), is("9781111111111"));
   }
 
   // -- @inproceedings / Conference ---------------------------------------
@@ -469,10 +458,10 @@ class SchemaOrgBibliographyTransformerTest {
   void shouldExtractConferenceNameAsBookIsPartOf() {
     var doc = doc("ConferenceLecture");
     setReportContext(doc, "ISWC 2024", null);
-    var result = transform(doc);
-    assertThat(result, containsString("\"@type\":\"PresentationDigitalDocument\""));
-    assertThat(result, containsString("\"@type\":\"Book\""));
-    assertThat(result, containsString("\"name\":\"ISWC 2024\""));
+    var item = item(transform(doc));
+    assertThat(item.path("@type").asText(), is("PresentationDigitalDocument"));
+    assertThat(item.path("isPartOf").path("@type").asText(), is("Book"));
+    assertThat(item.path("isPartOf").path("name").asText(), is("ISWC 2024"));
   }
 
   @Test
@@ -480,9 +469,9 @@ class SchemaOrgBibliographyTransformerTest {
     var doc = doc("ConferenceLecture");
     setReportContext(doc, "ISWC 2024", null);
     setInstance(doc, "ConferenceLecture", null, null, "10", "20");
-    var result = transform(doc);
-    assertThat(result, containsString("\"pageStart\":\"10\""));
-    assertThat(result, containsString("\"pageEnd\":\"20\""));
+    var item = item(transform(doc));
+    assertThat(item.path("pageStart").asText(), is("10"));
+    assertThat(item.path("pageEnd").asText(), is("20"));
   }
 
   // -- @report / Report fields ------------------------------------------
@@ -491,34 +480,32 @@ class SchemaOrgBibliographyTransformerTest {
   void shouldExtractPublisherAsInstitutionForReport() {
     var doc = doc("ReportResearch");
     setReportContext(doc, null, "SINTEF");
-    var result = transform(doc);
-    assertThat(result, containsString("\"@type\":\"Report\""));
-    assertThat(result, containsString("\"name\":\"SINTEF\""));
+    var item = item(transform(doc));
+    assertThat(item.path("@type").asText(), is("Report"));
+    assertThat(item.path("publisher").path("name").asText(), is("SINTEF"));
   }
 
   @Test
   void shouldExtractSeriesAsPeriodicalForReport() {
     var doc = doc("ReportResearch");
     setReportContextWithSeries(doc, null, "SINTEF", "SINTEF Report");
-    var result = transform(doc);
-    assertThat(result, containsString("\"@type\":\"Periodical\""));
-    assertThat(result, containsString("\"name\":\"SINTEF Report\""));
+    var isPartOf = item(transform(doc)).path("isPartOf");
+    assertThat(isPartOf.path("@type").asText(), is("Periodical"));
+    assertThat(isPartOf.path("name").asText(), is("SINTEF Report"));
   }
 
   @Test
   void shouldExtractIsbnForReport() {
     var doc = doc("ReportResearch");
     setContextIsbn(doc, "9780000000001");
-    var result = transform(doc);
-    assertThat(result, containsString("\"isbn\":\"9780000000001\""));
+    assertThat(item(transform(doc)).path("isbn").asText(), is("9780000000001"));
   }
 
   @Test
   void shouldExtractNumberOfPagesForReport() {
     var doc = doc("ReportResearch");
     setMonographPages(doc, "120");
-    var result = transform(doc);
-    assertThat(result, containsString("\"numberOfPages\":\"120\""));
+    assertThat(item(transform(doc)).path("numberOfPages").asText(), is("120"));
   }
 
   // -- thesis fields ---------------------------------------------------
@@ -527,35 +514,32 @@ class SchemaOrgBibliographyTransformerTest {
   void shouldExtractPublisherAsSchoolForMastersThesis() {
     var doc = doc("DegreeMaster");
     setReportContext(doc, null, "NTNU");
-    var result = transform(doc);
-    assertThat(result, startsWith("{\"@context\":\"https://schema.org\""));
-    assertThat(result, containsString("\"@type\":\"Thesis\""));
-    assertThat(result, containsString("\"name\":\"NTNU\""));
+    var item = item(transform(doc));
+    assertThat(item.path("@type").asText(), is("Thesis"));
+    assertThat(item.path("publisher").path("name").asText(), is("NTNU"));
   }
 
   @Test
   void shouldExtractPublisherAsSchoolForPhdThesis() {
     var doc = doc("DegreePhd");
     setReportContext(doc, null, "University of Oslo");
-    var result = transform(doc);
-    assertThat(result, containsString("\"@type\":\"Thesis\""));
-    assertThat(result, containsString("\"name\":\"University of Oslo\""));
+    var item = item(transform(doc));
+    assertThat(item.path("@type").asText(), is("Thesis"));
+    assertThat(item.path("publisher").path("name").asText(), is("University of Oslo"));
   }
 
   @Test
   void shouldExtractIsbnForPhdThesis() {
     var doc = doc("DegreePhd");
     setContextIsbn(doc, "9789876543211");
-    var result = transform(doc);
-    assertThat(result, containsString("\"isbn\":\"9789876543211\""));
+    assertThat(item(transform(doc)).path("isbn").asText(), is("9789876543211"));
   }
 
   @Test
   void shouldExtractNumberOfPagesForThesis() {
     var doc = doc("DegreePhd");
     setMonographPages(doc, "320");
-    var result = transform(doc);
-    assertThat(result, containsString("\"numberOfPages\":\"320\""));
+    assertThat(item(transform(doc)).path("numberOfPages").asText(), is("320"));
   }
 
   // -- LiteraryArts / manifestation fallback ----------------------------
@@ -564,24 +548,21 @@ class SchemaOrgBibliographyTransformerTest {
   void shouldExtractIsbnFromLiteraryArtsMonographManifestation() {
     var doc = doc("LiteraryArts");
     addLiteraryArtsMonographManifestation(doc, "9780123456789", null, null);
-    var result = transform(doc);
-    assertThat(result, containsString("\"isbn\":\"9780123456789\""));
+    assertThat(item(transform(doc)).path("isbn").asText(), is("9780123456789"));
   }
 
   @Test
   void shouldExtractPublisherFromLiteraryArtsMonographManifestation() {
     var doc = doc("LiteraryArts");
     addLiteraryArtsMonographManifestation(doc, null, "Cappelen Damm", null);
-    var result = transform(doc);
-    assertThat(result, containsString("\"name\":\"Cappelen Damm\""));
+    assertThat(item(transform(doc)).path("publisher").path("name").asText(), is("Cappelen Damm"));
   }
 
   @Test
   void shouldExtractNumberOfPagesFromLiteraryArtsMonographManifestation() {
     var doc = doc("LiteraryArts");
     addLiteraryArtsMonographManifestation(doc, null, null, "212");
-    var result = transform(doc);
-    assertThat(result, containsString("\"numberOfPages\":\"212\""));
+    assertThat(item(transform(doc)).path("numberOfPages").asText(), is("212"));
   }
 
   // -- contributor role mapping -----------------------------------------
@@ -590,108 +571,99 @@ class SchemaOrgBibliographyTransformerTest {
   void shouldMapCreatorToAuthorProperty() {
     var doc = doc("AcademicArticle");
     addContributorNodeWithRole(doc, "Alice Aaberg", null, null, "Creator");
-    var result = transform(doc);
-    assertThat(result, containsString("\"author\""));
-    assertThat(result, not(containsString("\"contributor\"")));
+    var item = item(transform(doc));
+    assertThat(item.has("author"), is(true));
+    assertThat(item.has("contributor"), is(false));
   }
 
   @Test
   void shouldMapEditorToEditorProperty() {
     var doc = doc("AcademicArticle");
     addContributorNodeWithRole(doc, "Bob Bakke", null, null, "Editor");
-    var result = transform(doc);
-    assertThat(result, containsString("\"editor\""));
-    assertThat(result, not(containsString("\"author\"")));
+    var item = item(transform(doc));
+    assertThat(item.has("editor"), is(true));
+    assertThat(item.has("author"), is(false));
   }
 
   @Test
   void shouldMapTranslatorAdapterToTranslatorProperty() {
     var doc = doc("AcademicArticle");
     addContributorNodeWithRole(doc, "Carol Christoffersen", null, null, "TranslatorAdapter");
-    var result = transform(doc);
-    assertThat(result, containsString("\"translator\""));
-    assertThat(result, not(containsString("\"author\"")));
+    var item = item(transform(doc));
+    assertThat(item.has("translator"), is(true));
+    assertThat(item.has("author"), is(false));
   }
 
   @Test
   void shouldMapWriterToAuthorProperty() {
     var doc = doc("AcademicArticle");
     addContributorNodeWithRole(doc, "David Dahl", null, null, "Writer");
-    var result = transform(doc);
-    assertThat(result, containsString("\"author\""));
+    assertThat(item(transform(doc)).has("author"), is(true));
   }
 
   @Test
   void shouldMapIllustratorToIllustratorProperty() {
     var doc = doc("AcademicMonograph");
     addContributorNodeWithRole(doc, "Eve Eriksen", null, null, "Illustrator");
-    var result = transform(doc);
-    assertThat(result, containsString("\"illustrator\""));
+    assertThat(item(transform(doc)).has("illustrator"), is(true));
   }
 
   @Test
   void shouldMapProducerToProducerProperty() {
     var doc = doc("MovingPicture");
     addContributorNodeWithRole(doc, "Finn Frydenlund", null, null, "Producer");
-    var result = transform(doc);
-    assertThat(result, containsString("\"producer\""));
+    assertThat(item(transform(doc)).has("producer"), is(true));
   }
 
   @Test
   void shouldMapDirectorToDirectorProperty() {
     var doc = doc("MovingPicture");
     addContributorNodeWithRole(doc, "Gerd Grøndahl", null, null, "Director");
-    var result = transform(doc);
-    assertThat(result, containsString("\"director\""));
+    assertThat(item(transform(doc)).has("director"), is(true));
   }
 
   @Test
   void shouldMapArtisticDirectorToDirectorProperty() {
     var doc = doc("MovingPicture");
     addContributorNodeWithRole(doc, "Hans Hansen", null, null, "ArtisticDirector");
-    var result = transform(doc);
-    assertThat(result, containsString("\"director\""));
+    assertThat(item(transform(doc)).has("director"), is(true));
   }
 
   @Test
   void shouldMapActorToActorProperty() {
     var doc = doc("MovingPicture");
     addContributorNodeWithRole(doc, "Ida Iversen", null, null, "Actor");
-    var result = transform(doc);
-    assertThat(result, containsString("\"actor\""));
+    assertThat(item(transform(doc)).has("actor"), is(true));
   }
 
   @Test
   void shouldMapComposerToComposerProperty() {
     var doc = doc("MusicPerformance");
     addContributorNodeWithRole(doc, "Jan Jensen", null, null, "Composer");
-    var result = transform(doc);
-    assertThat(result, containsString("\"composer\""));
+    assertThat(item(transform(doc)).has("composer"), is(true));
   }
 
   @Test
   void shouldMapSupervisorToContributorProperty() {
     var doc = doc("AcademicArticle");
     addContributorNodeWithRole(doc, "Kari Knutsen", null, null, "Supervisor");
-    var result = transform(doc);
-    assertThat(result, containsString("\"contributor\""));
-    assertThat(result, not(containsString("\"author\"")));
+    var item = item(transform(doc));
+    assertThat(item.has("contributor"), is(true));
+    assertThat(item.has("author"), is(false));
   }
 
   @Test
   void shouldMapRoleOtherToContributorProperty() {
     var doc = doc("AcademicArticle");
     addContributorNodeWithRole(doc, "Lars Larsen", null, null, "RoleOther");
-    var result = transform(doc);
-    assertThat(result, containsString("\"contributor\""));
+    assertThat(item(transform(doc)).has("contributor"), is(true));
   }
 
   @Test
   void shouldMapUnknownRoleToContributorProperty() {
     var doc = doc("AcademicArticle");
     addContributorNodeWithRole(doc, "Mona Moe", null, null, "SomeFutureRole");
-    var result = transform(doc);
-    assertThat(result, containsString("\"contributor\""));
+    assertThat(item(transform(doc)).has("contributor"), is(true));
   }
 
   @Test
@@ -699,27 +671,37 @@ class SchemaOrgBibliographyTransformerTest {
     var doc = doc("AcademicArticle");
     addContributorNodeWithRole(doc, "Alice Aaberg", null, null, "Creator");
     addContributorNodeWithRole(doc, "Bob Bakke", null, null, "Editor");
-    var result = transform(doc);
-    assertThat(result, containsString("\"author\""));
-    assertThat(result, containsString("\"editor\""));
+    var item = item(transform(doc));
+    assertThat(item.has("author"), is(true));
+    assertThat(item.has("editor"), is(true));
   }
 
   // -- helpers ----------------------------------------------------------
 
-  private static String transform(String nvaType) {
+  private static JsonNode transform(String nvaType) {
     return transform(doc(nvaType));
   }
 
-  private static String transform(ObjectNode doc) {
-    return SchemaOrgBibliographyTransformer.transform(List.of(doc), 1);
+  private static JsonNode transform(ObjectNode doc) {
+    return parse(SchemaOrgBibliographyTransformer.transform(List.of(doc), 1));
   }
 
-  private static com.fasterxml.jackson.databind.JsonNode parseTree(String json) {
+  private static JsonNode parse(String json) {
     try {
       return MAPPER.readTree(json);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
+  }
+
+  private static JsonNode item(JsonNode tree) {
+    return tree.path("itemListElement").get(0);
+  }
+
+  private static JsonNode findInChain(JsonNode node, String type) {
+    if (node.isMissingNode()) return node;
+    if (type.equals(node.path("@type").asText())) return node;
+    return findInChain(node.path("isPartOf"), type);
   }
 
   private static ObjectNode doc(String instanceType) {

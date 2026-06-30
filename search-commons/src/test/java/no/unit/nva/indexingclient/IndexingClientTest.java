@@ -44,6 +44,7 @@ import nva.commons.secrets.SecretsReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import org.opensearch.OpenSearchStatusException;
 import org.opensearch.action.DocWriteResponse;
 import org.opensearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.opensearch.action.admin.indices.refresh.RefreshRequest;
@@ -55,6 +56,7 @@ import org.opensearch.action.index.IndexResponse;
 import org.opensearch.client.IndicesClient;
 import org.opensearch.client.RequestOptions;
 import org.opensearch.client.indices.CreateIndexRequest;
+import org.opensearch.core.rest.RestStatus;
 
 class IndexingClientTest {
 
@@ -187,6 +189,18 @@ class IndexingClientTest {
     var expectedNumberOfCreateInvocationsToEs = 1;
     verify(indicesClient, times(expectedNumberOfCreateInvocationsToEs))
         .delete(any(DeleteIndexRequest.class), any(RequestOptions.class));
+  }
+
+  @Test
+  void shouldNotThrowWhenDeletingIndexThatDoesNotExist() throws IOException {
+    var indicesClient = mock(IndicesClient.class);
+    var indicesClientWrapper = new IndicesClientWrapper(indicesClient);
+    when(esClient.indices()).thenReturn(indicesClientWrapper);
+    when(indicesClient.delete(any(DeleteIndexRequest.class), any(RequestOptions.class)))
+        .thenThrow(
+            new OpenSearchStatusException("no such index [some-index]", RestStatus.NOT_FOUND));
+
+    assertDoesNotThrow(() -> indexingClient.deleteIndex(randomString()));
   }
 
   @Test
