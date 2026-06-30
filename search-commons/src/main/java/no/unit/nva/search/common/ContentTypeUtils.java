@@ -36,4 +36,10 @@ public class ContentTypeUtils {
         .map(ContentTypeUtils::extractContentType)
         .orElse(null);
   }
+
+  public static String extractMimeTypeFromRequestInfo(RequestInfo requestInfo) {
+    return Optional.ofNullable(extractContentTypeFromRequestInfo(requestInfo))
+        .map(ContentType::getMimeType)
+        .orElse(null);
+  }
 }

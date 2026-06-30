@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.ContentTypeUtils;
+import no.unit.nva.search.common.bibtex.ResourceBibTexTransformer;
+import no.unit.nva.search.common.csv.ResourceCsvTransformer;
 import no.unit.nva.search.common.records.JsonNodeMutator;
 import no.unit.nva.search.resource.LegacyMutator;
 import no.unit.nva.search.resource.ResourceClient;
@@ -76,7 +78,7 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
         ResourceSearchQuery.builder()
             .fromRequestInfo(requestInfo)
             .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
-            .withAlwaysIncludedFields(getIncludedFields(version))
+            .withAlwaysIncludedFields(getIncludedFields(requestInfo, version))
             .validate()
             .build()
             .withFilter()
@@ -97,10 +99,19 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
     return headers;
   }
 
-  private List<String> getIncludedFields(String version) {
-    return V_2024_12_01_SIMPLER_MODEL.equals(version)
-        ? SimplifiedMutator.getIncludedFields()
-        : LegacyMutator.getIncludedFields();
+  private List<String> getIncludedFields(RequestInfo requestInfo, String version) {
+    var mimeType = ContentTypeUtils.extractMimeTypeFromRequestInfo(requestInfo);
+    List<String> includedFields;
+    if (Words.TEXT_X_BIBTEX.equals(mimeType)) {
+      includedFields = ResourceBibTexTransformer.getJsonFields();
+    } else if (Words.TEXT_CSV.equals(mimeType)) {
+      includedFields = ResourceCsvTransformer.getJsonFields();
+    } else if (V_2024_12_01_SIMPLER_MODEL.equals(version)) {
+      includedFields = SimplifiedMutator.getIncludedFields();
+    } else {
+      includedFields = LegacyMutator.getIncludedFields();
+    }
+    return includedFields;
   }
 
   private JsonNodeMutator getMutator(String version) {

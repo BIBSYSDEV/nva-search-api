@@ -117,6 +117,43 @@ public final class ResourceBibTexTransformer {
 
   private ResourceBibTexTransformer() {}
 
+  /**
+   * Source fields needed to render a bibtex entry, as dot-paths suitable for OpenSearch {@code
+   * _source} includes. Must cover every JSON pointer read by {@link BibtexFieldExtractors} and this
+   * transformer.
+   */
+  public static List<String> getJsonFields() {
+    return List.of(
+        "id",
+        "handle",
+        "doi",
+        "entityDescription.abstract",
+        "entityDescription.mainTitle",
+        "entityDescription.tags",
+        "entityDescription.publicationDate.year",
+        "entityDescription.publicationDate.month",
+        "entityDescription.contributors.identity.name",
+        "entityDescription.reference.doi",
+        "entityDescription.reference.publicationInstance.type",
+        "entityDescription.reference.publicationInstance.volume",
+        "entityDescription.reference.publicationInstance.issue",
+        "entityDescription.reference.publicationInstance.pages",
+        "entityDescription.reference.publicationInstance.manifestations",
+        "entityDescription.reference.publicationContext.type",
+        "entityDescription.reference.publicationContext.name",
+        "entityDescription.reference.publicationContext.title",
+        "entityDescription.reference.publicationContext.onlineIssn",
+        "entityDescription.reference.publicationContext.printIssn",
+        "entityDescription.reference.publicationContext.publisher.name",
+        "entityDescription.reference.publicationContext.series.name",
+        "entityDescription.reference.publicationContext.isbnList",
+        "entityDescription.reference.publicationContext.entityDescription.mainTitle",
+        "entityDescription.reference.publicationContext.entityDescription.reference"
+            + ".publicationContext.publisher.name",
+        "entityDescription.reference.publicationContext.entityDescription.reference"
+            + ".publicationContext.isbnList");
+  }
+
   public static String transform(Collection<JsonNode> hits) {
     return hits.stream()
         .map(ResourceBibTexTransformer::toEntry)
