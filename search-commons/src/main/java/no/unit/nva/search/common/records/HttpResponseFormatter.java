@@ -144,7 +144,8 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
     headers.put(ACCESS_CONTROL_EXPOSE_HEADERS, EXPOSED_PAGINATION_HEADERS);
 
     var profileLink =
-        MediaTypes.APPLICATION_JSON_LD.matches(mediaType)
+        (MediaTypes.APPLICATION_JSON_LD.matches(mediaType)
+                || MediaTypes.SCHEMA_ORG.matches(mediaType))
             ? Optional.of(SCHEMA_ORG_PROFILE_LINK)
             : Optional.<String>empty();
 
@@ -160,7 +161,8 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
     return nonNull(mediaType)
         && (CSV_UTF_8.matches(mediaType)
             || BIBTEX_UTF_8.matches(mediaType)
-            || MediaTypes.APPLICATION_JSON_LD.matches(mediaType));
+            || MediaTypes.APPLICATION_JSON_LD.matches(mediaType)
+            || MediaTypes.SCHEMA_ORG.matches(mediaType));
   }
 
   private Optional<String> buildLinkHeaderValue(int total) {
@@ -247,7 +249,8 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
     if (BIBTEX_UTF_8.matches(this.mediaType)) {
       return toBibTexText();
     }
-    if (MediaTypes.APPLICATION_JSON_LD.matches(this.mediaType)) {
+    if (MediaTypes.APPLICATION_JSON_LD.matches(this.mediaType)
+        || MediaTypes.SCHEMA_ORG.matches(this.mediaType)) {
       return toSchemaOrgText();
     }
     return toPagedResponse().toJsonString();

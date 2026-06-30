@@ -7,13 +7,13 @@ public final class SchemaOrgType {
    * same data structure (e.g. NewsArticle and ScholarlyArticle both live in a journal/periodical).
    */
   public enum FieldCategory {
-    ARTICLE, // journal isPartOf chain, pages
-    BOOK, // isbn, numberOfPages, publisher, series
-    CHAPTER, // book isPartOf with title/isbn/publisher, pages
-    PRESENTATION, // venue name as isPartOf Book, pages
-    REPORT, // publisher (institution), isbn, series, pages
-    THESIS, // publisher (school), isbn, pages
-    OTHER // common fields only
+    ARTICLE,
+    BOOK,
+    CHAPTER,
+    PRESENTATION,
+    REPORT,
+    THESIS,
+    OTHER
   }
 
   private SchemaOrgType() {}
@@ -93,8 +93,6 @@ public final class SchemaOrgType {
       case "Map" -> "Map";
       case "JournalIssue" -> "PublicationIssue";
 
-      // Architecture, ArtisticDesign, DataManagementPlan, LiteraryArts,
-      // OtherArtisticOutput, OtherStudentWork, and any unknown types
       default -> "CreativeWork";
     };
   }
