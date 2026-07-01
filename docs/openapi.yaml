@@ -253,8 +253,9 @@ paths:
         - $ref: "#/components/parameters/licenseShouldParam"
         - $ref: "#/components/parameters/modifiedBeforeParam"
         - $ref: "#/components/parameters/modifiedSinceParam"
-        - $ref: "#/components/parameters/npiSubjectHeadingParam"
         - $ref: "#/components/parameters/npiSubjectHeadingNotParam"
+        - $ref: "#/components/parameters/npiSubjectHeadingParam"
+        - $ref: "#/components/parameters/npiSubjectHeadingShouldParam"
         - $ref: "#/components/parameters/orcidNotParam"
         - $ref: "#/components/parameters/orcidParam"
         - $ref: "#/components/parameters/orcidShouldParam"
@@ -424,8 +425,9 @@ paths:
         - $ref: "#/components/parameters/licenseShouldParam"
         - $ref: "#/components/parameters/modifiedBeforeParam"
         - $ref: "#/components/parameters/modifiedSinceParam"
-        - $ref: "#/components/parameters/npiSubjectHeadingParam"
         - $ref: "#/components/parameters/npiSubjectHeadingNotParam"
+        - $ref: "#/components/parameters/npiSubjectHeadingParam"
+        - $ref: "#/components/parameters/npiSubjectHeadingShouldParam"
         - $ref: "#/components/parameters/orcidNotParam"
         - $ref: "#/components/parameters/orcidParam"
         - $ref: "#/components/parameters/orcidShouldParam"
@@ -594,8 +596,9 @@ paths:
         - $ref: "#/components/parameters/licenseShouldParam"
         - $ref: "#/components/parameters/modifiedBeforeParam"
         - $ref: "#/components/parameters/modifiedSinceParam"
-        - $ref: "#/components/parameters/npiSubjectHeadingParam"
         - $ref: "#/components/parameters/npiSubjectHeadingNotParam"
+        - $ref: "#/components/parameters/npiSubjectHeadingParam"
+        - $ref: "#/components/parameters/npiSubjectHeadingShouldParam"
         - $ref: "#/components/parameters/orcidNotParam"
         - $ref: "#/components/parameters/orcidParam"
         - $ref: "#/components/parameters/orcidShouldParam"
@@ -771,8 +774,9 @@ paths:
         - $ref: "#/components/parameters/licenseShouldParam"
         - $ref: "#/components/parameters/modifiedBeforeParam"
         - $ref: "#/components/parameters/modifiedSinceParam"
-        - $ref: "#/components/parameters/npiSubjectHeadingParam"
         - $ref: "#/components/parameters/npiSubjectHeadingNotParam"
+        - $ref: "#/components/parameters/npiSubjectHeadingParam"
+        - $ref: "#/components/parameters/npiSubjectHeadingShouldParam"
         - $ref: "#/components/parameters/orcidNotParam"
         - $ref: "#/components/parameters/orcidParam"
         - $ref: "#/components/parameters/orcidShouldParam"
@@ -1673,6 +1677,16 @@ components:
       name: npi_subject_heading_not
       in: query
       description: "Returns documents without this NPI Subject Heading"
+      example: "1234"
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    npiSubjectHeadingShouldParam:
+      name: npi_subject_heading_should
+      in: query
+      description: "Returns documents with this NPI Subject Heading"
       example: "1234"
       required: false
       style: form
