@@ -17,6 +17,8 @@ import static no.unit.nva.search.common.enums.FieldOperator.NOT_ALL_OF;
 import static no.unit.nva.search.common.enums.FieldOperator.NOT_ANY_OF;
 import static nva.commons.apigateway.MediaType.CSV_UTF_8;
 import static nva.commons.apigateway.MediaType.JSON_UTF_8;
+import static nva.commons.apigateway.MediaTypes.APPLICATION_JSON_LD;
+import static nva.commons.apigateway.MediaTypes.SCHEMA_ORG;
 import static nva.commons.core.attempt.Try.attempt;
 
 import java.net.URI;
@@ -45,6 +47,7 @@ import no.unit.nva.search.common.records.QueryContentWrapper;
 import no.unit.nva.search.common.records.SwsResponse;
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.MediaType;
+import nva.commons.apigateway.mediatype.MediaTypeParser;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
@@ -204,9 +207,26 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
   }
 
   final void setMediaType(String mediaType) {
-    if (nonNull(mediaType) && mediaType.contains(Words.TEXT_CSV)) {
+    if (mediaType == null) {
+      this.mediaType = JSON_UTF_8;
+      return;
+    }
+    var parsed = MediaTypeParser.defaultParser().parse(mediaType).first();
+    if (parsed.isEmpty()) {
+      this.mediaType = JSON_UTF_8;
+      return;
+    }
+    var mt = parsed.get();
+    var essence = mt.essence();
+    if (essence.contains("vnd.schemaorg.ld+json")
+        || (essence.contains("ld+json")
+            && mt.profiles().contains(URI.create("https://schema.org")))) {
+      this.mediaType = SCHEMA_ORG;
+    } else if (essence.contains("ld+json")) {
+      this.mediaType = APPLICATION_JSON_LD;
+    } else if (essence.contains(Words.TEXT_CSV)) {
       this.mediaType = CSV_UTF_8;
-    } else if (nonNull(mediaType) && mediaType.contains(TEXT_X_BIBTEX)) {
+    } else if (essence.contains(TEXT_X_BIBTEX)) {
       this.mediaType = BIBTEX_UTF_8;
     } else {
       this.mediaType = JSON_UTF_8;
