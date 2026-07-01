@@ -35,6 +35,7 @@ import static no.unit.nva.constants.Words.LANGUAGE;
 import static no.unit.nva.constants.Words.LICENSE;
 import static no.unit.nva.constants.Words.MAIN_TITLE;
 import static no.unit.nva.constants.Words.NAME;
+import static no.unit.nva.constants.Words.NPI_SUBJECT_HEADING;
 import static no.unit.nva.constants.Words.NYNORSK_CODE;
 import static no.unit.nva.constants.Words.ONLINE_ISSN;
 import static no.unit.nva.constants.Words.ORC_ID;
@@ -236,6 +237,10 @@ public final class Constants {
       jsonPath(ENTITY_DESCRIPTION, MAIN_TITLE);
   public static final String ENTITY_DESCRIPTION_MAIN_TITLE_KEYWORD =
       jsonPath(ENTITY_DESCRIPTION_MAIN_TITLE, KEYWORD);
+  public static final String ENTITY_DESCRIPTION_NPI_SUBJECT_HEADING =
+      jsonPath(ENTITY_DESCRIPTION, NPI_SUBJECT_HEADING);
+  public static final String ENTITY_DESCRIPTION_NPI_SUBJECT_HEADING_KEYWORD =
+      jsonPath(ENTITY_DESCRIPTION_NPI_SUBJECT_HEADING, KEYWORD);
   public static final String FUNDINGS_SOURCE_LABELS = jsonPath(FUNDINGS, SOURCE, LABELS);
   public static final String HANDLE_KEYWORD =
       multipleFields(jsonPath(HANDLE, KEYWORD), jsonPath("additionalIdentifiers", VALUE, KEYWORD));
