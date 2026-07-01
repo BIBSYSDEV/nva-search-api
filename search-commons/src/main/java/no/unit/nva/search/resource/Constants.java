@@ -239,6 +239,8 @@ public final class Constants {
       jsonPath(ENTITY_DESCRIPTION_MAIN_TITLE, KEYWORD);
   public static final String ENTITY_DESCRIPTION_NPI_SUBJECT_HEADING =
       jsonPath(ENTITY_DESCRIPTION, NPI_SUBJECT_HEADING);
+  public static final String ENTITY_DESCRIPTION_NPI_SUBJECT_HEADING_KEYWORD =
+      jsonPath(ENTITY_DESCRIPTION_NPI_SUBJECT_HEADING, KEYWORD);
   public static final String FUNDINGS_SOURCE_LABELS = jsonPath(FUNDINGS, SOURCE, LABELS);
   public static final String HANDLE_KEYWORD =
       multipleFields(jsonPath(HANDLE, KEYWORD), jsonPath("additionalIdentifiers", VALUE, KEYWORD));
