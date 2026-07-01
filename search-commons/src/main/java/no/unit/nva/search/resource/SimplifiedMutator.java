@@ -37,6 +37,7 @@ import static no.unit.nva.constants.Words.TYPE;
 import static no.unit.nva.constants.Words.VALUE;
 import static no.unit.nva.constants.Words.YEAR;
 import static no.unit.nva.search.resource.Constants.ADDITIONAL_IDENTIFIERS;
+import static no.unit.nva.search.resource.Constants.ALTERNATIVE_ABSTRACTS;
 import static no.unit.nva.search.resource.Constants.ALTERNATIVE_TITLES;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_COUNT;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_PREVIEW;
@@ -123,6 +124,7 @@ public class SimplifiedMutator implements JsonNodeMutator {
         path(ENTITY_DESCRIPTION, MAIN_TITLE),
         path(ENTITY_DESCRIPTION, ABSTRACT),
         path(ENTITY_DESCRIPTION, ALTERNATIVE_TITLES),
+        path(ENTITY_DESCRIPTION, ALTERNATIVE_ABSTRACTS),
         path(ENTITY_DESCRIPTION, CONTRIBUTORS_COUNT),
         path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, AFFILIATIONS, ID),
         path(ENTITY_DESCRIPTION, CONTRIBUTORS_PREVIEW, AFFILIATIONS, TYPE),
@@ -161,6 +163,7 @@ public class SimplifiedMutator implements JsonNodeMutator {
         .withTags(fromNodeToTags(source.path(ENTITY_DESCRIPTION).path(TAGS)))
         .withType(source)
         .withAlternativeTitles(fromNodeAlternativeTitles(source))
+        .withAlternativeAbstracts(fromNodeAlternativeAbstracts(source))
         .withPublicationDate(fromNodePublicationDate(source))
         .withContributorsPreview(fromNodeContributorPreviews(source))
         .withPublishingDetails(fromNodePublishingDetails(source))
@@ -195,6 +198,11 @@ public class SimplifiedMutator implements JsonNodeMutator {
 
   private Map<String, String> fromNodeAlternativeTitles(JsonNode source) {
     var path = source.path(ENTITY_DESCRIPTION).path(ALTERNATIVE_TITLES);
+    return path.isMissingNode() ? Collections.emptyMap() : jsonNodeMapToMap(path);
+  }
+
+  private Map<String, String> fromNodeAlternativeAbstracts(JsonNode source) {
+    var path = source.path(ENTITY_DESCRIPTION).path(ALTERNATIVE_ABSTRACTS);
     return path.isMissingNode() ? Collections.emptyMap() : jsonNodeMapToMap(path);
   }
 
