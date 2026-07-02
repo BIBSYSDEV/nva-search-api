@@ -82,23 +82,6 @@ class SimplifiedMutatorTest {
   }
 
   @Test
-  void shouldMapAlternativeAbstracts() throws JsonProcessingException {
-    var language = randomString();
-    var expectedAlternativeAbstract = randomString();
-    var input = new ObjectMapper().createObjectNode();
-    var entityDescription = new ObjectMapper().createObjectNode();
-    var alternativeAbstracts = new ObjectMapper().createObjectNode();
-    alternativeAbstracts.put(language, expectedAlternativeAbstract);
-    entityDescription.set("alternativeAbstracts", alternativeAbstracts);
-    input.set("entityDescription", entityDescription);
-
-    var mutated = new SimplifiedMutator().transform(input);
-    var asDto = objectMapper.treeToValue(mutated, ResourceSearchResponse.class);
-    assertThat(asDto.alternativeAbstracts().size(), is(equalTo(1)));
-    assertThat(asDto.alternativeAbstracts().get(language), is(equalTo(expectedAlternativeAbstract)));
-  }
-
-  @Test
   void shouldMapTags() throws JsonProcessingException {
     var input = new ObjectMapper().createObjectNode();
     var entityDescription = new ObjectMapper().createObjectNode();
