@@ -1,5 +1,6 @@
 package no.unit.nva.search.common;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.constants.Defaults.BIBTEX_UTF_8;
 import static no.unit.nva.constants.Defaults.DEFAULT_SORT_ORDER;
@@ -23,11 +24,13 @@ import static nva.commons.core.attempt.Try.attempt;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -78,6 +81,10 @@ import org.slf4j.LoggerFactory;
 public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Query<K> {
 
   protected static final Logger logger = LoggerFactory.getLogger(SearchQuery.class);
+  private static final String LD_JSON_ESSENCE = "application/ld+json";
+  private static final String SCHEMA_ORG_ESSENCE = "application/vnd.schemaorg.ld+json";
+  private static final String JSON_ESSENCE = "application/json";
+  private static final URI SCHEMA_ORG_PROFILE = URI.create("https://schema.org");
   private final transient Set<AccessRight> accessRights;
   private transient MediaType mediaType;
   private transient Set<String> excludedFields = Set.of();
@@ -207,30 +214,29 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
   }
 
   final void setMediaType(String mediaType) {
-    if (mediaType == null) {
+    if (isNull(mediaType)) {
       this.mediaType = JSON_UTF_8;
       return;
     }
-    var parsed = MediaTypeParser.defaultParser().parse(mediaType).first();
-    if (parsed.isEmpty()) {
-      this.mediaType = JSON_UTF_8;
-      return;
-    }
-    var mt = parsed.get();
-    var essence = mt.essence();
-    if (essence.contains("vnd.schemaorg.ld+json")
-        || (essence.contains("ld+json")
-            && mt.profiles().contains(URI.create("https://schema.org")))) {
-      this.mediaType = SCHEMA_ORG;
-    } else if (essence.contains("ld+json")) {
-      this.mediaType = APPLICATION_JSON_LD;
-    } else if (essence.contains(Words.TEXT_CSV)) {
-      this.mediaType = CSV_UTF_8;
-    } else if (essence.contains(TEXT_X_BIBTEX)) {
-      this.mediaType = BIBTEX_UTF_8;
-    } else {
-      this.mediaType = JSON_UTF_8;
-    }
+    this.mediaType =
+        MediaTypeParser.defaultParser().parseList(mediaType).preferenceOrder().stream()
+            .flatMap(
+                requested ->
+                    toResponseMediaType(requested.essence(), requested.profiles()).stream())
+            .findFirst()
+            .orElse(JSON_UTF_8);
+  }
+
+  private static Optional<MediaType> toResponseMediaType(String essence, Collection<URI> profiles) {
+    return switch (essence) {
+      case SCHEMA_ORG_ESSENCE -> Optional.of(SCHEMA_ORG);
+      case LD_JSON_ESSENCE ->
+          Optional.of(profiles.contains(SCHEMA_ORG_PROFILE) ? SCHEMA_ORG : APPLICATION_JSON_LD);
+      case Words.TEXT_CSV -> Optional.of(CSV_UTF_8);
+      case TEXT_X_BIBTEX -> Optional.of(BIBTEX_UTF_8);
+      case JSON_ESSENCE -> Optional.of(JSON_UTF_8);
+      default -> Optional.empty();
+    };
   }
 
   public URI getNvaSearchApiUri() {

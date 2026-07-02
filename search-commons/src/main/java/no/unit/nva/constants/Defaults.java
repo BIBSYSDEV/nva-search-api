@@ -30,13 +30,6 @@ public final class Defaults {
 
   public static final MediaType BIBTEX_UTF_8 = MediaType.parse("text/x-bibtex; charset=utf-8");
 
-  public static final List<MediaType> DEFAULT_RESPONSE_MEDIA_TYPES =
-      List.of(
-          MediaType.JSON_UTF_8,
-          MediaTypes.APPLICATION_JSON_LD,
-          MediaTypes.SCHEMA_ORG,
-          MediaType.CSV_UTF_8);
-
   public static final List<MediaType> RESOURCE_RESPONSE_MEDIA_TYPES =
       List.of(
           MediaType.JSON_UTF_8,

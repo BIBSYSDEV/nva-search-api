@@ -1,6 +1,5 @@
 package no.unit.nva.search;
 
-import static no.unit.nva.constants.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
 import static no.unit.nva.search.importcandidate.ImportCandidateClient.defaultClient;
 import static no.unit.nva.search.importcandidate.ImportCandidateParameter.AGGREGATION;
 import static no.unit.nva.search.importcandidate.ImportCandidateParameter.FROM;
@@ -64,7 +63,7 @@ public class SearchImportCandidateAuthHandler extends ApiGatewayHandler<Void, St
 
   @Override
   protected List<MediaType> listSupportedMediaTypes() {
-    return DEFAULT_RESPONSE_MEDIA_TYPES;
+    return List.of(MediaType.JSON_UTF_8);
   }
 
   @Override
