@@ -24,7 +24,6 @@ public record ResourceSearchResponse(
     @JsonProperty("abstract") String mainLanguageAbstract,
     String description,
     Map<String, String> alternativeTitles,
-    Map<String, String> alternativeAbstracts,
     PublicationDate publicationDate,
     List<Contributor> contributorsPreview,
     int contributorsCount,
@@ -49,7 +48,6 @@ public record ResourceSearchResponse(
     private String mainLanguageAbstract;
     private String description;
     private Map<String, String> alternativeTitles;
-    private Map<String, String> alternativeAbstracts;
     private PublicationDate publicationDate;
     private List<Contributor> contributorsPreview;
     private int contributorsCount;
@@ -115,11 +113,6 @@ public record ResourceSearchResponse(
       return this;
     }
 
-    public Builder withAlternativeAbstracts(Map<String, String> alternativeAbstracts) {
-      this.alternativeAbstracts = alternativeAbstracts;
-      return this;
-    }
-
     public Builder withPublicationDate(PublicationDate publicationDate) {
       this.publicationDate = publicationDate;
       return this;
@@ -162,7 +155,6 @@ public record ResourceSearchResponse(
           mainLanguageAbstract,
           description,
           alternativeTitles,
-          alternativeAbstracts,
           publicationDate,
           contributorsPreview,
           contributorsCount,

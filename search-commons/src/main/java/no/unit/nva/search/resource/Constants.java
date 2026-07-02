@@ -95,7 +95,6 @@ public final class Constants {
   public static final String DESCRIPTION = "description";
   public static final String ADDITIONAL_IDENTIFIERS = "additionalIdentifiers";
   public static final String ALTERNATIVE_TITLES = "alternativeTitles";
-  public static final String ALTERNATIVE_ABSTRACTS = "alternativeAbstracts";
   public static final String CONTRIBUTORS_PREVIEW = "contributorsPreview";
   public static final String CONTRIBUTORS_COUNT = "contributorsCount";
   public static final String MANIFESTATIONS = "manifestations";
