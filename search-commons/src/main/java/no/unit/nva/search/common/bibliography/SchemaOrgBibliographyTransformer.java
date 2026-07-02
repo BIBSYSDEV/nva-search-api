@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.IntStream;
 import no.unit.nva.commons.json.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,8 @@ public final class SchemaOrgBibliographyTransformer {
   private static final ObjectMapper MAPPER = JsonUtils.dtoObjectMapper;
   private static final String SCHEMA_ORG_CONTEXT = "https://schema.org";
   private static final String ITEM_LIST_TYPE = "ItemList";
+  private static final String LIST_ITEM_TYPE = "ListItem";
+  private static final int FIRST_POSITION = 1;
 
   private SchemaOrgBibliographyTransformer() {} // NO-OP
 
@@ -46,7 +49,7 @@ public final class SchemaOrgBibliographyTransformer {
   }
 
   public static String transform(Collection<JsonNode> hits, int totalSize) {
-    var items = hits.stream().map(SchemaOrgItemTransformer::transform).toList();
+    var items = toListItems(hits);
     var itemList = new SchemaOrgItemList(SCHEMA_ORG_CONTEXT, ITEM_LIST_TYPE, totalSize, items);
     return attempt(() -> MAPPER.writeValueAsString(itemList))
         .orElseThrow(
@@ -54,5 +57,17 @@ public final class SchemaOrgBibliographyTransformer {
               LOGGER.error("Failed to serialize schema.org ItemList", failure.getException());
               return new RuntimeException(failure.getException());
             });
+  }
+
+  private static List<SchemaOrgListItem> toListItems(Collection<JsonNode> hits) {
+    var orderedHits = List.copyOf(hits);
+    return IntStream.range(0, orderedHits.size())
+        .mapToObj(index -> toListItem(index, orderedHits.get(index)))
+        .toList();
+  }
+
+  private static SchemaOrgListItem toListItem(int index, JsonNode hit) {
+    return new SchemaOrgListItem(
+        LIST_ITEM_TYPE, index + FIRST_POSITION, SchemaOrgItemTransformer.transform(hit));
   }
 }

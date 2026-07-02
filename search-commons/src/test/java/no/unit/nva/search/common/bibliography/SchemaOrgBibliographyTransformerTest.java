@@ -49,6 +49,26 @@ class SchemaOrgBibliographyTransformerTest {
     assertThat(tree.path("itemListElement").isEmpty()).isTrue();
   }
 
+  @Test
+  void shouldWrapEachItemInListItem() {
+    var doc = doc("AcademicArticle");
+    var listItem = parse(SchemaOrgBibliographyTransformer.transform(List.of(doc), 1))
+        .path("itemListElement")
+        .get(0);
+    assertThat(listItem.path("@type").asText()).isEqualTo("ListItem");
+    assertThat(listItem.path("item").path("@type").asText()).isEqualTo("ScholarlyArticle");
+  }
+
+  @Test
+  void shouldAssignOneBasedPositionToEachListItem() {
+    var doc = doc("AcademicArticle");
+    var elements =
+        parse(SchemaOrgBibliographyTransformer.transform(List.of(doc, doc), 2))
+            .path("itemListElement");
+    assertThat(elements.get(0).path("position").asInt()).isEqualTo(1);
+    assertThat(elements.get(1).path("position").asInt()).isEqualTo(2);
+  }
+
   static Stream<Arguments> typeMapping() {
     return Stream.of(
         Arguments.of("AcademicArticle", "ScholarlyArticle"),
@@ -662,7 +682,7 @@ class SchemaOrgBibliographyTransformerTest {
   }
 
   private static JsonNode item(JsonNode tree) {
-    return tree.path("itemListElement").get(0);
+    return tree.path("itemListElement").get(0).path("item");
   }
 
   private static JsonNode findInChain(JsonNode node, String type) {

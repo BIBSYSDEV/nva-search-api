@@ -7,4 +7,4 @@ record SchemaOrgItemList(
     @JsonProperty("@context") String context,
     @JsonProperty("@type") String type,
     int numberOfItems,
-    List<SchemaOrgItem> itemListElement) {}
+    List<SchemaOrgListItem> itemListElement) {}
