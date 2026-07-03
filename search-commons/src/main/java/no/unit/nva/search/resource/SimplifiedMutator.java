@@ -198,7 +198,6 @@ public class SimplifiedMutator implements JsonNodeMutator {
     return path.isMissingNode() ? Collections.emptyMap() : jsonNodeMapToMap(path);
   }
 
-
   private Map<String, String> jsonNodeMapToMap(JsonNode source) {
     return objectMapper.convertValue(source, new TypeReference<>() {});
   }
