@@ -16,12 +16,12 @@ import static no.unit.nva.constants.Words.HTTPS;
 import static no.unit.nva.constants.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.constants.Words.NONE;
 import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
-import static no.unit.nva.search.common.ContentTypeUtils.extractContentTypeFromRequestInfo;
 import static no.unit.nva.search.common.constant.Functions.decodeUTF;
 import static no.unit.nva.search.common.constant.Functions.mergeWithColonOrComma;
 import static no.unit.nva.search.common.constant.Functions.trimSpace;
 import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
+import static org.apache.http.HttpHeaders.ACCEPT;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -273,8 +273,7 @@ public abstract class ParameterValidator<
 
   /** Adds query and path parameters from requestInfo. */
   public ParameterValidator<K, Q> fromRequestInfo(RequestInfo requestInfo) {
-    var contentType = extractContentTypeFromRequestInfo(requestInfo);
-    query.setMediaType(isNull(contentType) ? null : contentType.getMimeType());
+    query.setMediaType(requestInfo.getHeaders().get(ACCEPT));
     var uri = URI.create(HTTPS + requestInfo.getDomainName() + requestInfo.getPath());
     if (requestInfo.getHeaders().containsKey("Authorization")) {
       query.setAccessRights(requestInfo.getAccessRights());
