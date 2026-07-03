@@ -81,6 +81,7 @@ public final class Words {
   public static final String LAST_NAME = "lastName";
   public static final String LICENSE = "license";
   public static final String MAIN_TITLE = "mainTitle";
+  public static final String NPI_SUBJECT_HEADING = "npiSubjectHeading";
   public static final String MESSAGES = "messages";
   public static final String META_INFO = "metaInfo";
   public static final String MODIFIED_DATE = "modifiedDate";
