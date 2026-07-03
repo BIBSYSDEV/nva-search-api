@@ -43,6 +43,7 @@ import java.util.stream.Stream;
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.csv.ResourceCsvTransformer;
 import no.unit.nva.search.common.records.PagedSearch;
+import nva.commons.apigateway.MediaTypes;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.paths.UriWrapper;
 import org.joda.time.DateTime;
@@ -299,6 +300,35 @@ class ResourceSearchQueryTest {
     var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
 
     assertFalse(body.contains("entityDescription.contributors.identity.name"));
+  }
+
+  @ParameterizedTest(name = "should resolve media type SCHEMA_ORG for accept header {0}")
+  @ValueSource(
+      strings = {
+        "application/vnd.schemaorg.ld+json",
+        "application/ld+json; profile=\"https://schema.org\""
+      })
+  void shouldResolveSchemaOrgMediaType(String acceptHeader) throws BadRequestException {
+    var query =
+        ResourceSearchQuery.builder()
+            .fromTestQueryParameters(queryToMapEntries(URI.create("https://example.com/?size=3")))
+            .withRequiredParameters(FROM, SIZE)
+            .withMediaType(acceptHeader)
+            .build();
+
+    assertEquals(MediaTypes.SCHEMA_ORG, query.getMediaType());
+  }
+
+  @Test
+  void shouldResolveApplicationJsonLdForPlainLdJsonAcceptHeader() throws BadRequestException {
+    var query =
+        ResourceSearchQuery.builder()
+            .fromTestQueryParameters(queryToMapEntries(URI.create("https://example.com/?size=3")))
+            .withRequiredParameters(FROM, SIZE)
+            .withMediaType("application/ld+json")
+            .build();
+
+    assertEquals(MediaTypes.APPLICATION_JSON_LD, query.getMediaType());
   }
 
   @Test

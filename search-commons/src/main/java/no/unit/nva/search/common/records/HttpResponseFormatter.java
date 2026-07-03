@@ -21,10 +21,12 @@ import java.util.stream.Stream;
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.AggregationFormat;
 import no.unit.nva.search.common.QueryKeys;
+import no.unit.nva.search.common.bibliography.SchemaOrgBibliographyTransformer;
 import no.unit.nva.search.common.bibtex.ResourceBibTexTransformer;
 import no.unit.nva.search.common.csv.ResourceCsvTransformer;
 import no.unit.nva.search.common.enums.ParameterKey;
 import nva.commons.apigateway.MediaType;
+import nva.commons.apigateway.MediaTypes;
 
 /**
  * HttpResponseFormatter is a class that formats a search response.
@@ -43,6 +45,7 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
   private static final String NULL_SORT_VALUE = "null";
   private static final String LINK_VALUE_FORMAT = "<%s>; rel=\"%s\"";
   private static final String LINK_HEADER_SEPARATOR = ", ";
+  private static final String SCHEMA_ORG_PROFILE_LINK = "<https://schema.org>; rel=\"profile\"";
 
   private final SwsResponse response;
   private final MediaType mediaType;
@@ -126,20 +129,40 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
     return ResourceBibTexTransformer.transform(response.getSearchHits());
   }
 
+  public String toSchemaOrgText() {
+    return SchemaOrgBibliographyTransformer.transform(
+        response.getSearchHits(), response.getTotalSize());
+  }
+
   public Map<String, String> paginationHeaders() {
-    if (!isPlainTextMediaType()) {
+    if (!hasPaginationHeaders()) {
       return Map.of();
     }
     var total = response.getTotalSize();
     var headers = new LinkedHashMap<String, String>();
     headers.put(HEADER_X_TOTAL_COUNT, String.valueOf(total));
     headers.put(ACCESS_CONTROL_EXPOSE_HEADERS, EXPOSED_PAGINATION_HEADERS);
-    buildLinkHeaderValue(total).ifPresent(value -> headers.put(HEADER_LINK, value));
+
+    var profileLink =
+        (MediaTypes.APPLICATION_JSON_LD.matches(mediaType)
+                || MediaTypes.SCHEMA_ORG.matches(mediaType))
+            ? Optional.of(SCHEMA_ORG_PROFILE_LINK)
+            : Optional.<String>empty();
+
+    Stream.of(profileLink, buildLinkHeaderValue(total))
+        .flatMap(Optional::stream)
+        .reduce((left, right) -> left + LINK_HEADER_SEPARATOR + right)
+        .ifPresent(value -> headers.put(HEADER_LINK, value));
+
     return headers;
   }
 
-  private boolean isPlainTextMediaType() {
-    return nonNull(mediaType) && (CSV_UTF_8.matches(mediaType) || BIBTEX_UTF_8.matches(mediaType));
+  private boolean hasPaginationHeaders() {
+    return nonNull(mediaType)
+        && (CSV_UTF_8.matches(mediaType)
+            || BIBTEX_UTF_8.matches(mediaType)
+            || MediaTypes.APPLICATION_JSON_LD.matches(mediaType)
+            || MediaTypes.SCHEMA_ORG.matches(mediaType));
   }
 
   private Optional<String> buildLinkHeaderValue(int total) {
@@ -225,6 +248,10 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
     }
     if (BIBTEX_UTF_8.matches(this.mediaType)) {
       return toBibTexText();
+    }
+    if (MediaTypes.APPLICATION_JSON_LD.matches(this.mediaType)
+        || MediaTypes.SCHEMA_ORG.matches(this.mediaType)) {
+      return toSchemaOrgText();
     }
     return toPagedResponse().toJsonString();
   }

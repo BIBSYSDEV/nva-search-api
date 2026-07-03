@@ -3,8 +3,11 @@ package no.unit.nva.search.resource;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.constants.Defaults.BIBTEX_UTF_8;
 import static nva.commons.apigateway.MediaType.CSV_UTF_8;
+import static nva.commons.apigateway.MediaTypes.APPLICATION_JSON_LD;
+import static nva.commons.apigateway.MediaTypes.SCHEMA_ORG;
 
 import java.util.Collection;
+import no.unit.nva.search.common.bibliography.SchemaOrgBibliographyTransformer;
 import no.unit.nva.search.common.bibtex.ResourceBibTexTransformer;
 import no.unit.nva.search.common.csv.ResourceCsvTransformer;
 import nva.commons.apigateway.MediaType;
@@ -12,14 +15,14 @@ import nva.commons.apigateway.MediaType;
 /**
  * Resolves the OpenSearch {@code _source} include fields for a resource search.
  *
- * <p>BibTeX and CSV exports return many hits, and the full document (contributor affiliations,
- * files, funding) can exceed the search infrastructure response-size limit. For those media types
- * the source is slimmed to the fields the transformer actually reads. JSON requests are unaffected
- * and keep their configured include set.
+ * <p>BibTeX, CSV, and JSON-LD exports return many hits, and the full document (contributor
+ * affiliations, files, funding) can exceed the search infrastructure response-size limit. For those
+ * media types the source is slimmed to the fields the transformer actually reads. JSON requests are
+ * unaffected and keep their configured include set.
  */
 final class ResourceSourceFields {
 
-  private ResourceSourceFields() {}
+  private ResourceSourceFields() {} // NO-OP
 
   static String[] forMediaType(MediaType mediaType, Collection<String> defaultIncludedFields) {
     final Collection<String> includedFields;
@@ -27,6 +30,8 @@ final class ResourceSourceFields {
       includedFields = ResourceBibTexTransformer.getBibTexFields();
     } else if (matches(mediaType, CSV_UTF_8)) {
       includedFields = ResourceCsvTransformer.getJsonFields();
+    } else if (matches(mediaType, APPLICATION_JSON_LD) || matches(mediaType, SCHEMA_ORG)) {
+      includedFields = SchemaOrgBibliographyTransformer.getSchemaOrgFields();
     } else {
       includedFields = defaultIncludedFields;
     }
