@@ -334,6 +334,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PagedPublicationFullSearchResponse"
+            application/ld+json:
+              schema:
+                type: string
+            application/vnd.schemaorg.ld+json:
+              schema:
+                type: string
             text/csv:
               schema:
                 type: string
@@ -533,6 +539,15 @@ paths:
             version2024-12-01:
               value: application/json; version=2023-05-26
               description: Version 2024-12-01 of the Api
+            jsonLd:
+              value: application/ld+json
+              description: Schema.org JSON-LD
+            schemaOrgVendor:
+              value: application/vnd.schemaorg.ld+json
+              description: Schema.org JSON-LD (vendor media type)
+            schemaOrgProfile:
+              value: application/ld+json; profile="https://schema.org"
+              description: Schema.org JSON-LD (profile parameter)
         - $ref: "#/components/parameters/aggregationParam"
         - $ref: "#/components/parameters/abstractNotParam"
         - $ref: "#/components/parameters/abstractParam"
@@ -679,6 +694,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PagedPublicationSearchResponse"
+            application/ld+json:
+              schema:
+                type: string
+            application/vnd.schemaorg.ld+json:
+              schema:
+                type: string
             text/csv:
               schema:
                 type: string
@@ -866,13 +887,13 @@ components:
     LinkHeader:
       description: |
         RFC 8288 pagination links with rel=first/prev/next/last.
-        Present on text/csv and text/x-bibtex responses when the result spans multiple pages.
+        Present on text/csv, text/x-bibtex, application/ld+json, and application/vnd.schemaorg.ld+json responses when the result spans multiple pages.
       schema:
         type: string
     XTotalCountHeader:
       description: |
         Total number of matching results.
-        Present on text/csv and text/x-bibtex responses.
+        Present on text/csv, text/x-bibtex, application/ld+json, and application/vnd.schemaorg.ld+json responses.
       schema:
         type: integer
   parameters:

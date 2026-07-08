@@ -1,6 +1,5 @@
 package no.unit.nva.search;
 
-import static no.unit.nva.constants.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
 import static no.unit.nva.search.ticket.TicketClient.defaultClient;
 import static no.unit.nva.search.ticket.TicketParameter.AGGREGATION;
 import static no.unit.nva.search.ticket.TicketParameter.FROM;
@@ -42,7 +41,7 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
 
   @Override
   protected List<MediaType> listSupportedMediaTypes() {
-    return DEFAULT_RESPONSE_MEDIA_TYPES;
+    return List.of(MediaType.JSON_UTF_8);
   }
 
   @Override
