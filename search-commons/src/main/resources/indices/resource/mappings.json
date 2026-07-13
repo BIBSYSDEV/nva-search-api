@@ -63,7 +63,13 @@
               "include_in_parent": true,
               "properties": {
                 "isbnList": {
-                  "type": "keyword"
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword",
+                      "ignore_above": 256
+                    }
+                  }
                 },
                 "publisher": {
                   "type": "nested",
@@ -82,7 +88,13 @@
                           "include_in_parent": true,
                           "properties": {
                             "isbnList": {
-                              "type": "keyword"
+                              "type": "text",
+                              "fields": {
+                                "keyword": {
+                                  "type": "keyword",
+                                  "ignore_above": 256
+                                }
+                              }
                             }
                           }
                         },
