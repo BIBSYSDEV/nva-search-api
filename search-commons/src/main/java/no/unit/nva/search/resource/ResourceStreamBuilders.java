@@ -36,6 +36,7 @@ import static no.unit.nva.search.resource.Constants.REFERENCE_PUBLICATION_CONTEX
 import static no.unit.nva.search.resource.Constants.SCIENTIFIC_OTHER;
 import static no.unit.nva.search.resource.Constants.SCIENTIFIC_PUBLISHER;
 import static no.unit.nva.search.resource.Constants.SCIENTIFIC_SERIES;
+import static no.unit.nva.search.resource.Constants.SEARCH_ALL_DEFAULT_FIELDS;
 import static no.unit.nva.search.resource.ResourceParameter.ABSTRACT;
 import static no.unit.nva.search.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search.resource.ResourceParameter.SEARCH_ALL;
@@ -51,6 +52,7 @@ import static org.opensearch.index.query.QueryBuilders.termsQuery;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search.common.QueryKeys;
@@ -68,6 +70,13 @@ import org.opensearch.index.query.QueryBuilder;
  * @author Stig Norland
  */
 public class ResourceStreamBuilders {
+
+  // The analyzer produces roughly one token per alphanumeric segment. Capping tokens keeps
+  // tokens x fields below OpenSearch's maxClauseCount of 4096 (60 x 63 default fields = 3780).
+  private static final int SEARCH_ALL_WORD_LIMIT = 20;
+  private static final int SEARCH_ALL_TOKEN_LIMIT = 60;
+  private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
+  private static final Pattern TOKEN_PATTERN = Pattern.compile("[\\p{L}\\p{N}]+");
 
   public static final String CONTRIBUTOR_ROLE_PATH =
       jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, ROLE, TYPE, KEYWORD);
@@ -90,33 +99,46 @@ public class ResourceStreamBuilders {
 
   public Stream<Map.Entry<ResourceParameter, QueryBuilder>> searchAllWithBoostsQuery(
       Map<String, Float> fields) {
-    var sevenValues =
-        parameters.get(SEARCH_ALL).asSplitStream(SPACE).limit(7).collect(Collectors.joining(SPACE));
-    var fifteenValues =
-        parameters
-            .get(SEARCH_ALL)
-            .asSplitStream(SPACE)
-            .limit(15)
-            .collect(Collectors.joining(SPACE));
+    var searchFields = fields.containsKey(ASTERISK) ? SEARCH_ALL_DEFAULT_FIELDS : fields;
+    var searchTerm = limitedSearchTerm(parameters.get(SEARCH_ALL).toString());
 
     var query =
         boolQuery()
             .queryName(SEARCH_ALL.asCamelCase())
             .must(
-                multiMatchQuery(sevenValues)
-                    .fields(fields)
+                multiMatchQuery(searchTerm)
+                    .fields(searchFields)
                     .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
                     .operator(Operator.AND));
 
-    if (fields.containsKey(ENTITY_DESCRIPTION_MAIN_TITLE) || fields.containsKey(ASTERISK)) {
+    if (searchFields.containsKey(ENTITY_DESCRIPTION_MAIN_TITLE)) {
       query.should(
-          matchPhrasePrefixQuery(ENTITY_DESCRIPTION_MAIN_TITLE, fifteenValues)
+          matchPhrasePrefixQuery(ENTITY_DESCRIPTION_MAIN_TITLE, searchTerm)
               .boost(TITLE.fieldBoost()));
     }
-    if (fields.containsKey(ENTITY_ABSTRACT) || fields.containsKey(ASTERISK)) {
-      query.should(matchPhraseQuery(ENTITY_ABSTRACT, fifteenValues).boost(ABSTRACT.fieldBoost()));
+    if (searchFields.containsKey(ENTITY_ABSTRACT)) {
+      query.should(matchPhraseQuery(ENTITY_ABSTRACT, searchTerm).boost(ABSTRACT.fieldBoost()));
     }
     return Functions.queryToEntry(SEARCH_ALL, query);
+  }
+
+  private static String limitedSearchTerm(String searchTerm) {
+    var words =
+        WHITESPACE_PATTERN
+            .splitAsStream(searchTerm)
+            .limit(SEARCH_ALL_WORD_LIMIT)
+            .collect(Collectors.joining(SPACE));
+    return truncatedAtTokenLimit(words);
+  }
+
+  private static String truncatedAtTokenLimit(String words) {
+    var matcher = TOKEN_PATTERN.matcher(words);
+    for (var tokenCount = 1; matcher.find(); tokenCount++) {
+      if (tokenCount == SEARCH_ALL_TOKEN_LIMIT) {
+        return words.substring(0, matcher.end());
+      }
+    }
+    return words;
   }
 
   public Stream<Map.Entry<ResourceParameter, QueryBuilder>> additionalIdentifierQuery(

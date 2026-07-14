@@ -1,5 +1,6 @@
 package no.unit.nva.search;
 
+import static no.unit.nva.search.common.OpenSearchClientException.asBadRequestIfTooManyClauses;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
@@ -7,6 +8,7 @@ import static no.unit.nva.search.resource.ResourceParameter.SORT;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import java.net.HttpURLConnection;
+import java.util.concurrent.CompletionException;
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.ResourceSearchQuery;
@@ -44,18 +46,22 @@ public class UserBasedResourceSearchHandler extends ApiGatewayHandler<Void, Stri
   @Override
   protected String processInput(Void input, RequestInfo requestInfo, Context context)
       throws ApiGatewayException {
-    return ResourceSearchQuery.builder()
-        .fromRequestInfo(requestInfo)
-        .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
-        .withAlwaysIncludedFields(SimplifiedMutator.getIncludedFields())
-        .validate()
-        .build()
-        .withFilter()
-        .ownResourcesOnly(requestInfo.getUserName())
-        .apply()
-        .doSearch(resourceClient, Words.RESOURCES)
-        .withMutators(new SimplifiedMutator())
-        .toString();
+    try {
+      return ResourceSearchQuery.builder()
+          .fromRequestInfo(requestInfo)
+          .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
+          .withAlwaysIncludedFields(SimplifiedMutator.getIncludedFields())
+          .validate()
+          .build()
+          .withFilter()
+          .ownResourcesOnly(requestInfo.getUserName())
+          .apply()
+          .doSearch(resourceClient, Words.RESOURCES)
+          .withMutators(new SimplifiedMutator())
+          .toString();
+    } catch (CompletionException exception) {
+      throw asBadRequestIfTooManyClauses(exception);
+    }
   }
 
   @Override

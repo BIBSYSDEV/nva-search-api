@@ -5,9 +5,11 @@ import static no.unit.nva.common.Containers.container;
 import static no.unit.nva.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.common.MockedHttpResponse.mockedFutureHttpResponse;
 import static no.unit.nva.constants.Words.COMMA;
+import static no.unit.nva.constants.Words.DOT;
 import static no.unit.nva.constants.Words.IDENTIFIER;
 import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
+import static no.unit.nva.search.resource.Constants.SEARCH_ALL_DEFAULT_FIELDS;
 import static no.unit.nva.search.resource.ResourceParameter.ABSTRACT;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.DOI;
@@ -18,6 +20,7 @@ import static no.unit.nva.search.resource.ResourceParameter.PAGE;
 import static no.unit.nva.search.resource.ResourceParameter.PUBLISHED_BEFORE;
 import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_BEFORE;
 import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_SINCE;
+import static no.unit.nva.search.resource.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -39,6 +42,7 @@ import java.net.http.HttpClient;
 import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.csv.ResourceCsvTransformer;
@@ -300,6 +304,84 @@ class ResourceSearchQueryTest {
     var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
 
     assertFalse(body.contains("entityDescription.contributors.identity.name"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(
+      strings = {
+        "https://example.com/?query=hello+world",
+        "https://example.com/?query=hello+world&fields=all"
+      })
+  void shouldUseCuratedFieldListForFreeTextSearch(String uri) throws BadRequestException {
+    var query =
+        ResourceSearchQuery.builder()
+            .fromTestQueryParameters(queryToMapEntries(URI.create(uri)))
+            .withRequiredParameters(FROM, SIZE)
+            .build();
+
+    var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
+
+    assertFalse(body.contains("\"*^"));
+    SEARCH_ALL_DEFAULT_FIELDS.keySet().forEach(field -> assertTrue(body.contains(field)));
+  }
+
+  @Test
+  void curatedFieldListShouldContainOnlyTextPaths() {
+    assertEquals(63, SEARCH_ALL_DEFAULT_FIELDS.size());
+    SEARCH_ALL_DEFAULT_FIELDS
+        .keySet()
+        .forEach(field -> assertFalse(field.endsWith(DOT + Words.KEYWORD)));
+  }
+
+  @Test
+  void shouldLimitFreeTextSearchToTwentyWords() throws BadRequestException {
+    var words =
+        IntStream.rangeClosed(1, 25)
+            .mapToObj(number -> "word" + number)
+            .collect(Collectors.joining("+"));
+    var query =
+        ResourceSearchQuery.builder()
+            .fromTestQueryParameters(
+                queryToMapEntries(URI.create("https://example.com/?query=" + words)))
+            .withRequiredParameters(FROM, SIZE)
+            .build();
+
+    var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
+
+    assertTrue(body.contains("word20"));
+    assertFalse(body.contains("word21"));
+  }
+
+  @Test
+  void shouldTruncateFreeTextSearchAtTokenLimit() throws BadRequestException {
+    var hyphenatedSingleWord =
+        IntStream.rangeClosed(1, 70)
+            .mapToObj(number -> "tok" + number)
+            .collect(Collectors.joining("-"));
+    var query =
+        ResourceSearchQuery.builder()
+            .fromTestQueryParameters(
+                queryToMapEntries(URI.create("https://example.com/?query=" + hyphenatedSingleWord)))
+            .withRequiredParameters(FROM, SIZE)
+            .build();
+
+    var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
+
+    assertTrue(body.contains("tok60"));
+    assertFalse(body.contains("tok61"));
+  }
+
+  @Test
+  void shouldNormalizeRepeatedWhitespaceInFreeTextSearch() throws BadRequestException {
+    var query =
+        ResourceSearchQuery.builder()
+            .fromTestParameterMap(Map.of(SEARCH_ALL.name(), "first  second   third"))
+            .withRequiredParameters(FROM, SIZE)
+            .build();
+
+    var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
+
+    assertTrue(body.contains("first second third"));
   }
 
   @ParameterizedTest(name = "should resolve media type SCHEMA_ORG for accept header {0}")

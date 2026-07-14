@@ -1,5 +1,6 @@
 package no.unit.nva.search;
 
+import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.constants.Words.RESOURCES;
@@ -13,6 +14,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -31,6 +33,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletionException;
+import no.unit.nva.search.common.OpenSearchClientException;
 import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.response.ResourceSearchResponse;
@@ -136,6 +140,22 @@ class SearchResource20241201HandlerTest {
     var headers = rawHeaders(outputStream);
     assertThat(headers, not(hasKey("X-Total-Count")));
     assertThat(headers, not(hasKey("Link")));
+  }
+
+  @Test
+  void shouldReturnBadRequestWhenSearchHasTooManyClauses() throws IOException {
+    when(mockedSearchClient.doSearch(any(), eq(RESOURCES)))
+        .thenThrow(tooManyNestedClausesException());
+
+    handler.handleRequest(getInputStream(), outputStream, contextMock);
+    var gatewayResponse = FakeGatewayResponse.of(outputStream);
+
+    assertEquals(HTTP_BAD_REQUEST, gatewayResponse.statusCode());
+  }
+
+  private static CompletionException tooManyNestedClausesException() {
+    var message = "too_many_nested_clauses: Query contains too many nested clauses";
+    return new CompletionException(new OpenSearchClientException(HTTP_BAD_REQUEST, message));
   }
 
   private InputStream getInputStream() throws JsonProcessingException {

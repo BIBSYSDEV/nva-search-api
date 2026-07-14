@@ -1,6 +1,7 @@
 package no.unit.nva.search;
 
 import static no.unit.nva.constants.Defaults.RESOURCE_RESPONSE_MEDIA_TYPES;
+import static no.unit.nva.search.common.OpenSearchClientException.asBadRequestIfTooManyClauses;
 import static no.unit.nva.search.resource.Constants.V_2024_12_01_SIMPLER_MODEL;
 import static no.unit.nva.search.resource.ResourceClient.defaultClient;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
@@ -11,6 +12,7 @@ import static no.unit.nva.search.resource.ResourceParameter.SORT;
 import com.amazonaws.services.lambda.runtime.Context;
 import java.net.HttpURLConnection;
 import java.util.List;
+import java.util.concurrent.CompletionException;
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.ContentTypeUtils;
 import no.unit.nva.search.common.records.JsonNodeMutator;
@@ -63,22 +65,26 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
       throws BadRequestException, UnauthorizedException {
     var version = ContentTypeUtils.extractVersionFromRequestInfo(requestInfo);
 
-    var formatter =
-        ResourceSearchQuery.builder()
-            .fromRequestInfo(requestInfo)
-            .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
-            .withAlwaysExcludedFields(getExcludedFields(version))
-            .validate()
-            .build()
-            .withFilter()
-            .customerCurationInstitutions(requestInfo)
-            .apply()
-            .doSearch(opensearchClient, Words.RESOURCES)
-            .withMutators(getMutator(version));
+    try {
+      var formatter =
+          ResourceSearchQuery.builder()
+              .fromRequestInfo(requestInfo)
+              .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
+              .withAlwaysExcludedFields(getExcludedFields(version))
+              .validate()
+              .build()
+              .withFilter()
+              .customerCurationInstitutions(requestInfo)
+              .apply()
+              .doSearch(opensearchClient, Words.RESOURCES)
+              .withMutators(getMutator(version));
 
-    addAdditionalHeaders(formatter::paginationHeaders);
+      addAdditionalHeaders(formatter::paginationHeaders);
 
-    return formatter.toString();
+      return formatter.toString();
+    } catch (CompletionException exception) {
+      throw asBadRequestIfTooManyClauses(exception);
+    }
   }
 
   @Override

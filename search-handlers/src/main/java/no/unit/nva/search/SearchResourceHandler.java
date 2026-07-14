@@ -1,6 +1,7 @@
 package no.unit.nva.search;
 
 import static no.unit.nva.constants.Defaults.RESOURCE_RESPONSE_MEDIA_TYPES;
+import static no.unit.nva.search.common.OpenSearchClientException.asBadRequestIfTooManyClauses;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
 import static no.unit.nva.search.resource.Constants.V_2024_12_01_SIMPLER_MODEL;
@@ -15,6 +16,7 @@ import java.net.HttpURLConnection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletionException;
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.ContentTypeUtils;
 import no.unit.nva.search.common.records.JsonNodeMutator;
@@ -72,22 +74,26 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
         requestInfo.getQueryParameters());
     var version = ContentTypeUtils.extractVersionFromRequestInfo(requestInfo);
 
-    var formatter =
-        ResourceSearchQuery.builder()
-            .fromRequestInfo(requestInfo)
-            .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
-            .withAlwaysIncludedFields(getIncludedFields(version))
-            .validate()
-            .build()
-            .withFilter()
-            .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
-            .apply()
-            .doSearch(opensearchClient, Words.RESOURCES)
-            .withMutators(getMutator(version));
+    try {
+      var formatter =
+          ResourceSearchQuery.builder()
+              .fromRequestInfo(requestInfo)
+              .withRequiredParameters(FROM, SIZE, AGGREGATION, SORT)
+              .withAlwaysIncludedFields(getIncludedFields(version))
+              .validate()
+              .build()
+              .withFilter()
+              .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+              .apply()
+              .doSearch(opensearchClient, Words.RESOURCES)
+              .withMutators(getMutator(version));
 
-    addAdditionalHeaders(() -> responseHeaders(formatter.paginationHeaders()));
+      addAdditionalHeaders(() -> responseHeaders(formatter.paginationHeaders()));
 
-    return formatter.toString();
+      return formatter.toString();
+    } catch (CompletionException exception) {
+      throw asBadRequestIfTooManyClauses(exception);
+    }
   }
 
   private Map<String, String> responseHeaders(Map<String, String> paginationHeaders) {

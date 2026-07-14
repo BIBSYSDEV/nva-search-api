@@ -1260,7 +1260,13 @@ components:
     fieldsParam:
       name: fields
       in: query
-      description: "'fields=all' will search all fields in documents, or you can specify a comma separated list of fields to search in."
+      description: >-
+        'fields=all' (the default) searches across the relevant fields in documents.
+        For publication resource search this is a curated list of fields (titles,
+        abstracts, contributor names and identifiers, keywords, ISBN/ISSN, DOI,
+        handle, funding and other identifiers); for other document types it means
+        every field. Alternatively, specify a comma separated list of fields to
+        search in.
       examples:
         all:
           summary: All fields
