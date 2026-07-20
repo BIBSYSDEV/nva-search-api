@@ -294,8 +294,11 @@ public final class Constants {
           jsonPath(ENTITY_PUBLICATION_INSTANCE, ID, KEYWORD));
 
   /**
-   * List of language codes relevant for free-text search (Scandinavian languages, English, and
-   * undetermined).
+   * List of language codes included in free-text search (Scandinavian languages, English, and
+   * undetermined). This is an optimization that lets us cover almost all documents without
+   * excessive search clauses. See NP-51095 for details.
+   *
+   * <p>TODO: Revisit this if we flatten the data model and no longer need the optimization
    */
   private static final List<String> FREE_TEXT_LANGUAGE_CODES =
       List.of("en", "eng", "nb", "nn", "no", "da", "sv", "und");
