@@ -72,9 +72,11 @@ import static no.unit.nva.search.common.constant.Functions.labels;
 import static no.unit.nva.search.common.constant.Functions.multipleFields;
 import static no.unit.nva.search.common.constant.Functions.nestedBranchBuilder;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.search.aggregations.AggregationBuilder;
@@ -205,8 +207,8 @@ public final class Constants {
   public static final String STATUS_KEYWORD = jsonPath(STATUS, KEYWORD);
   public static final String PUBLICATION_CONTEXT_ISBN_LIST =
       multipleFields(
-          jsonPath(ENTITY_PUBLICATION_CONTEXT, ISBN_LIST),
-          jsonPath(ENTITY_PUBLICATION_CONTEXT, ENTITY_PUBLICATION_CONTEXT, ISBN_LIST));
+          jsonPath(ENTITY_PUBLICATION_CONTEXT, ISBN_LIST, KEYWORD),
+          jsonPath(ENTITY_PUBLICATION_CONTEXT, ENTITY_PUBLICATION_CONTEXT, ISBN_LIST, KEYWORD));
   public static final String PUBLICATION_CONTEXT_TYPE_KEYWORD =
       jsonPath(ENTITY_PUBLICATION_CONTEXT, TYPE, KEYWORD);
   public static final String PUBLICATION_INSTANCE_TYPE =
@@ -290,6 +292,16 @@ public final class Constants {
           jsonPath(ENTITY_PUBLICATION_INSTANCE, "corrigendumFor", KEYWORD),
           jsonPath(ENTITY_PUBLICATION_INSTANCE, "manifestations", ID, KEYWORD),
           jsonPath(ENTITY_PUBLICATION_INSTANCE, ID, KEYWORD));
+
+  /**
+   * List of language codes relevant for free-text search (Scandinavian languages, English, and
+   * undetermined).
+   */
+  private static final List<String> FREE_TEXT_LANGUAGE_CODES =
+      List.of("en", "eng", "nb", "nn", "no", "da", "sv", "und");
+
+  public static final Map<String, Float> SEARCH_ALL_DEFAULT_FIELDS = searchAllDefaultFields();
+
   public static final String PAINLESS = "painless";
   public static final List<AggregationBuilder> RESOURCES_AGGREGATIONS =
       List.of(
@@ -325,6 +337,101 @@ public final class Constants {
 
   @JacocoGenerated
   public Constants() {}
+
+  private static Map<String, Float> searchAllDefaultFields() {
+    var titleAndPublisherName =
+        Stream.of(
+            ENTITY_DESCRIPTION_MAIN_TITLE,
+            jsonPath(ENTITY_PUBLICATION_CONTEXT, NAME),
+            jsonPath(ENTITY_PUBLICATION_CONTEXT, TITLE),
+            jsonPath(ENTITY_PUBLICATION_CONTEXT, PUBLISHER, NAME),
+            jsonPath(ENTITY_PUBLICATION_CONTEXT, ENTITY_DESCRIPTION, MAIN_TITLE),
+            jsonPath(ENTITY_PUBLICATION_CONTEXT, ENTITY_PUBLICATION_CONTEXT, PUBLISHER, NAME));
+    var alternativeTitles = languageVariants(jsonPath(ENTITY_DESCRIPTION, ALTERNATIVE_TITLES));
+    var abstractAndDescription =
+        Stream.concat(
+            Stream.of(ENTITY_ABSTRACT, jsonPath(ENTITY_DESCRIPTION, DESCRIPTION)),
+            languageVariants(jsonPath(ENTITY_DESCRIPTION, ALTERNATIVE_ABSTRACTS)));
+    var contributors =
+        Stream.of(
+            jsonPath(ENTITY_CONTRIBUTORS, IDENTITY, NAME),
+            jsonPath(ENTITY_CONTRIBUTORS, IDENTITY, ID),
+            jsonPath(ENTITY_CONTRIBUTORS, IDENTITY, ORC_ID),
+            jsonPath(ENTITY_CONTRIBUTORS, IDENTITY, ADDITIONAL_IDENTIFIERS, VALUE),
+            jsonPath(ENTITY_PUBLICATION_CONTEXT, ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, NAME),
+            jsonPath(ENTITY_PUBLICATION_CONTEXT, ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, ID));
+    var keywords = Stream.of(jsonPath(ENTITY_DESCRIPTION, TAGS));
+    var isbn =
+        Stream.of(
+            jsonPath(ENTITY_PUBLICATION_CONTEXT, ISBN_LIST),
+            jsonPath(ENTITY_PUBLICATION_CONTEXT, ENTITY_PUBLICATION_CONTEXT, ISBN_LIST),
+            jsonPath(ENTITY_PUBLICATION_INSTANCE, MANIFESTATIONS, ISBN_LIST));
+    var issnAndSeries =
+        Stream.of(
+            Stream.of(
+                jsonPath(ENTITY_PUBLICATION_CONTEXT, ONLINE_ISSN),
+                jsonPath(ENTITY_PUBLICATION_CONTEXT, PRINT_ISSN)),
+            seriesVariants(ENTITY_PUBLICATION_CONTEXT),
+            seriesVariants(jsonPath(ENTITY_PUBLICATION_CONTEXT, ENTITY_PUBLICATION_CONTEXT)));
+    var doi = Stream.of(DOI, jsonPath(ENTITY_DESCRIPTION, REFERENCE, DOI));
+    var handle = Stream.of(HANDLE);
+    var funding =
+        Stream.of(
+            jsonPath(FUNDINGS, IDENTIFIER),
+            jsonPath(FUNDINGS, ID),
+            jsonPath(FUNDINGS, SOURCE, IDENTIFIER));
+    var subjectCodes =
+        Stream.of(
+            SUBJECTS,
+            ENTITY_DESCRIPTION_NPI_SUBJECT_HEADING,
+            jsonPath(ENTITY_PUBLICATION_CONTEXT, COURSE, CODE));
+    var identifiers =
+        Stream.of(
+            ID,
+            IDENTIFIER,
+            jsonPath(ADDITIONAL_IDENTIFIERS, VALUE),
+            jsonPath(ENTITY_PUBLICATION_CONTEXT, ADDITIONAL_IDENTIFIERS, VALUE),
+            jsonPath(
+                ENTITY_PUBLICATION_CONTEXT,
+                ENTITY_PUBLICATION_CONTEXT,
+                ADDITIONAL_IDENTIFIERS,
+                VALUE));
+    var parentRelations =
+        Stream.of(
+            CHILD_PUBLICATIONS,
+            jsonPath(ENTITY_PUBLICATION_CONTEXT, ID),
+            jsonPath(ENTITY_PUBLICATION_CONTEXT, IDENTIFIER));
+
+    return Stream.of(
+            titleAndPublisherName,
+            alternativeTitles,
+            abstractAndDescription,
+            contributors,
+            keywords,
+            isbn,
+            issnAndSeries.flatMap(fields -> fields),
+            doi,
+            handle,
+            funding,
+            subjectCodes,
+            identifiers,
+            parentRelations)
+        .flatMap(fields -> fields)
+        .collect(
+            Collectors.collectingAndThen(
+                Collectors.toMap(
+                    path -> path, path -> 1F, (first, second) -> first, LinkedHashMap::new),
+                Collections::unmodifiableMap));
+  }
+
+  private static Stream<String> languageVariants(String basePath) {
+    return FREE_TEXT_LANGUAGE_CODES.stream().map(languageCode -> jsonPath(basePath, languageCode));
+  }
+
+  private static Stream<String> seriesVariants(String publicationContextPath) {
+    return Stream.of(ISSN_FIELD, ONLINE_ISSN, PRINT_ISSN, NAME, TITLE)
+        .map(seriesField -> jsonPath(publicationContextPath, SERIES, seriesField));
+  }
 
   public static NestedAggregationBuilder topLevelOrganisationsHierarchy() {
     return nestedBranchBuilder(TOP_LEVEL_ORGANIZATION, TOP_LEVEL_ORGANIZATIONS)

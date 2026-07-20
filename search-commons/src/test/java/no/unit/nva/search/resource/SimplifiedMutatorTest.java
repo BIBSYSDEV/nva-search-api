@@ -95,7 +95,8 @@ class SimplifiedMutatorTest {
     var mutated = new SimplifiedMutator().transform(input);
     var asDto = objectMapper.treeToValue(mutated, ResourceSearchResponse.class);
     assertThat(asDto.alternativeAbstracts().size(), is(equalTo(1)));
-    assertThat(asDto.alternativeAbstracts().get(language), is(equalTo(expectedAlternativeAbstract)));
+    assertThat(
+        asDto.alternativeAbstracts().get(language), is(equalTo(expectedAlternativeAbstract)));
   }
 
   @Test
