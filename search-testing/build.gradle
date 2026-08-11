@@ -24,7 +24,6 @@ dependencies {
     runtimeOnly(nvaCatalog.junit.platform.launcher)
     runtimeOnly(nvaCatalog.log4j.api)
     runtimeOnly(nvaCatalog.testcontainers)
-    testRuntimeOnly(nvaCatalog.aws.sdk.s3)
     testRuntimeOnly(nvaCatalog.datafaker)
     testRuntimeOnly(nvaCatalog.junit.jupiter.engine)
     testRuntimeOnly(nvaCatalog.junit.platform.launcher)

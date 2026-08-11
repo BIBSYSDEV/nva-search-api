@@ -12,7 +12,8 @@ nva {
     }
     spectral {
         documents = [
-            'docs/openapi.yaml'] // TODO: Include all specs
+            'docs/openapi.yaml'
+        ] // TODO: Include all specs
         rulesetFile = file('.spectral.yaml')
     }
 }

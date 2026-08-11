@@ -32,7 +32,7 @@ dependencies {
     implementation(nvaCatalog.aws.sdk2.regions)
     implementation(nvaCatalog.aws.sdk2.sdk.core)
     implementation(nvaCatalog.commons.lang)
-    implementation(nvaCatalog.guava)
+    implementation(libs.guava)
     implementation(nvaCatalog.httpcore5)
     implementation(nvaCatalog.jackson.jr.objects)
     implementation(nvaCatalog.log4j.core)
