@@ -45,8 +45,6 @@ dependencies {
     testImplementation(nvaLibs.logutils)
     testImplementation(nvaLibs.testutils)
     testImplementation(project(':search-testing'))
-    testRuntimeOnly(nvaCatalog.junit.jupiter.engine)
-    testRuntimeOnly(nvaCatalog.junit.platform.launcher)
 }
 
 test {
