@@ -61,6 +61,11 @@ import org.slf4j.LoggerFactory;
 class ResourceSearchQueryTest {
 
   private static final Logger logger = LoggerFactory.getLogger(ResourceSearchQueryTest.class);
+  private static final String PROJECT_IDENTIFIER = "2733259";
+  private static final String EXPECTED_CRISTIN_PROJECT_URI =
+      "https://api.dev.nva.aws.unit.no/cristin/project/" + PROJECT_IDENTIFIER;
+  private static final String CRISTIN_PROJECT_URI =
+      "https://api.nva.unit.no/cristin/project/" + PROJECT_IDENTIFIER;
 
   static Stream<URI> uriProvider() {
     return Stream.of(
@@ -411,6 +416,38 @@ class ResourceSearchQueryTest {
             .build();
 
     assertEquals(MediaTypes.APPLICATION_JSON_LD, query.getMediaType());
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"project", "projectNot", "projectShould"})
+  void shouldExpandProjectIdentifierToCristinProjectUri(String parameterName)
+      throws BadRequestException {
+    var uri = URI.create("https://example.com/?%s=%s".formatted(parameterName, PROJECT_IDENTIFIER));
+    var query =
+        ResourceSearchQuery.builder()
+            .fromTestQueryParameters(queryToMapEntries(uri))
+            .withRequiredParameters(FROM, SIZE)
+            .build();
+
+    var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
+
+    assertTrue(body.contains(EXPECTED_CRISTIN_PROJECT_URI));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"project", "projectNot", "projectShould"})
+  void shouldKeepFullProjectUriUnchanged(String parameterName) throws BadRequestException {
+    var uri =
+        URI.create("https://example.com/?%s=%s".formatted(parameterName, CRISTIN_PROJECT_URI));
+    var query =
+        ResourceSearchQuery.builder()
+            .fromTestQueryParameters(queryToMapEntries(uri))
+            .withRequiredParameters(FROM, SIZE)
+            .build();
+
+    var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
+
+    assertTrue(body.contains(CRISTIN_PROJECT_URI));
   }
 
   @Test

@@ -379,3 +379,19 @@ Accept: application/json
 > ```
 > category, instanceType, createdDate, modifiedDate, publishedDate, publicationDate, title, unitId, user
 > ```
+
+> [!NOTE]
+>
+> <p>Cristin identifiers can be given either as a bare identifier or as a full URI. A bare
+> identifier is expanded to a URI on the current API host before the query is built.</p>
+>
+> ```
+> unit, unitNot, topLevelOrganization -> /cristin/organization/{identifier}
+> contributor, contributorNot         -> /cristin/person/{identifier}
+> project, projectNot, projectShould  -> /cristin/project/{identifier}
+> ```
+>
+> ```
+> ?project=2733259
+> ?project=https://api.nva.unit.no/cristin/project/2733259
+> ```

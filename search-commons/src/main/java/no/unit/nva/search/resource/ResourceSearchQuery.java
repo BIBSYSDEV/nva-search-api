@@ -10,6 +10,7 @@ import static no.unit.nva.constants.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.constants.Words.STATUS;
 import static no.unit.nva.search.resource.Constants.CRISTIN_ORGANIZATION_PATH;
 import static no.unit.nva.search.resource.Constants.CRISTIN_PERSON_PATH;
+import static no.unit.nva.search.resource.Constants.CRISTIN_PROJECT_PATH;
 import static no.unit.nva.search.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
 import static no.unit.nva.search.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search.resource.Constants.RESOURCES_AGGREGATIONS;
@@ -294,6 +295,8 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
             mergeToKey(qpKey, identifierToCristinId(decodedValue));
         case CONTRIBUTOR, CONTRIBUTOR_NOT ->
             mergeToKey(qpKey, identifierToCristinPersonId(decodedValue));
+        case PROJECT, PROJECT_NOT, PROJECT_SHOULD ->
+            mergeToKey(qpKey, identifierToCristinProjectId(decodedValue));
         default -> mergeToKey(qpKey, decodedValue);
       }
     }
@@ -307,6 +310,12 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     private String identifierToCristinPersonId(String decodedValue) {
       return Arrays.stream(decodedValue.split(COMMA))
           .map(value -> identifierToUri(value, CRISTIN_PERSON_PATH))
+          .collect(Collectors.joining(COMMA));
+    }
+
+    private String identifierToCristinProjectId(String decodedValue) {
+      return Arrays.stream(decodedValue.split(COMMA))
+          .map(value -> identifierToUri(value, CRISTIN_PROJECT_PATH))
           .collect(Collectors.joining(COMMA));
     }
 

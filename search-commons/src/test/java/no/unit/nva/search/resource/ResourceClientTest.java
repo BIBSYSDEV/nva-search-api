@@ -50,6 +50,7 @@ import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.ISSN;
 import static no.unit.nva.search.resource.ResourceParameter.NODES_EXCLUDED;
 import static no.unit.nva.search.resource.ResourceParameter.NODES_INCLUDED;
+import static no.unit.nva.search.resource.ResourceParameter.PROJECT;
 import static no.unit.nva.search.resource.ResourceParameter.PUBLICATION_PAGES;
 import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_BEFORE;
 import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_SINCE;
@@ -126,6 +127,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.opensearch.client.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,6 +146,8 @@ class ResourceClientTest {
   public static final String NOT_FOUND = "Not found";
   public static final String NUMBER_FIVE = "5";
   public static final String ONE_MINUTE = "1m";
+  public static final String PROJECT_IDENTIFIER = "14334631";
+  public static final int EXPECTED_PROJECT_HITS = 2;
 
   static final String Y2019 = "2019";
   static final String Y2022 = "2022";
@@ -1022,6 +1026,28 @@ class ResourceClientTest {
 
     var pagedSearchResourceDto = response.toPagedResponse();
     assertThat(pagedSearchResourceDto.hits(), hasSize(2));
+  }
+
+  @ParameterizedTest
+  @ValueSource(
+      strings = {
+        PROJECT_IDENTIFIER,
+        "https%3A%2F%2Fapi.dev.nva.aws.unit.no%2Fcristin%2Fproject%2F" + PROJECT_IDENTIFIER
+      })
+  void shouldFindResourcesByProjectGivenAsIdentifierOrUri(String projectValue)
+      throws BadRequestException {
+    var response =
+        ResourceSearchQuery.builder()
+            .fromTestParameterMap(Map.of(PROJECT.asCamelCase(), projectValue))
+            .withRequiredParameters(FROM, SIZE)
+            .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+            .build()
+            .withFilter()
+            .requiredStatus(PUBLISHED, UNPUBLISHED)
+            .apply()
+            .doSearch(searchClient, RESOURCES);
+
+    assertThat(response.toPagedResponse().totalHits(), is(equalTo(EXPECTED_PROJECT_HITS)));
   }
 
   @Test
