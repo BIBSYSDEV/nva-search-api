@@ -388,10 +388,13 @@ Accept: application/json
 > ```
 > unit, unitNot, topLevelOrganization -> /cristin/organization/{identifier}
 > contributor, contributorNot         -> /cristin/person/{identifier}
-> project, projectNot, projectShould  -> /cristin/project/{identifier}
+> project, projectNot                 -> /cristin/project/{identifier}
 > ```
 >
 > ```
 > ?project=2733259
 > ?project=https://api.nva.unit.no/cristin/project/2733259
 > ```
+>
+> <p>The should variants are not expanded. They search analysed fields, where an indexed URI is
+> tokenised so a bare identifier already matches without being bound to a specific host.</p>

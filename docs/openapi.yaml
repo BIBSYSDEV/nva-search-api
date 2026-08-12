@@ -1789,25 +1789,23 @@ components:
     projectParam:
       name: project
       in: query
-      description: "Returns document with this project IDs."
-      example: "https://api.dev.nva.aws.unit.no/cristin/project/123456"
+      description: "Returns document with this project IDs. Accepts either a Cristin project identifier or a full URI."
+      example: "123456"
       required: false
       style: form
       explode: true
       schema:
         type: string
-        format: uri
     projectNotParam:
       name: project_not
       in: query
-      description: "Returns document without these project IDs."
-      example: "https://api.dev.nva.aws.unit.no/cristin/project/123456"
+      description: "Returns document without these project IDs. Accepts either a Cristin project identifier or a full URI."
+      example: "123456"
       required: false
       style: form
       explode: true
       schema:
         type: string
-        format: uri
     projectShouldParam:
       name: project_should
       in: query

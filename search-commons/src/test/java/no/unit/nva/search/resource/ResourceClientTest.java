@@ -146,8 +146,8 @@ class ResourceClientTest {
   public static final String NOT_FOUND = "Not found";
   public static final String NUMBER_FIVE = "5";
   public static final String ONE_MINUTE = "1m";
-  public static final String PROJECT_IDENTIFIER = "14334631";
-  public static final int EXPECTED_PROJECT_HITS = 2;
+  private static final String PROJECT_IDENTIFIER = "14334631";
+  private static final int EXPECTED_PROJECT_HITS = 2;
 
   static final String Y2019 = "2019";
   static final String Y2022 = "2022";

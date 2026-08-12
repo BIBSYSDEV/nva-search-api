@@ -422,7 +422,7 @@ class ResourceSearchQueryTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"project", "projectNot", "projectShould"})
+  @ValueSource(strings = {"project", "projectNot"})
   void shouldExpandProjectIdentifierToCristinProjectUri(String parameterName)
       throws BadRequestException {
     var uri = URI.create("https://example.com/?%s=%s".formatted(parameterName, PROJECT_IDENTIFIER));
@@ -438,7 +438,7 @@ class ResourceSearchQueryTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"project", "projectNot", "projectShould"})
+  @ValueSource(strings = {"project", "projectNot"})
   void shouldKeepFullProjectUriUnchanged(String parameterName) throws BadRequestException {
     var uri =
         URI.create("https://example.com/?%s=%s".formatted(parameterName, CRISTIN_PROJECT_URI));
@@ -450,7 +450,27 @@ class ResourceSearchQueryTest {
 
     var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
 
-    assertTrue(body.contains(CRISTIN_PROJECT_URI));
+    assertTrue(body.contains("\"%s\"".formatted(CRISTIN_PROJECT_URI)));
+  }
+
+  /**
+   * projectShould searches the analysed projects.id field, where an indexed URI is tokenised so a
+   * bare identifier already matches regardless of host. Expanding it would bind the match to the
+   * request host.
+   */
+  @Test
+  void shouldNotExpandProjectShouldIdentifier() throws BadRequestException {
+    var uri = URI.create("https://example.com/?projectShould=" + PROJECT_IDENTIFIER);
+    var query =
+        ResourceSearchQuery.builder()
+            .fromTestQueryParameters(queryToMapEntries(uri))
+            .withRequiredParameters(FROM, SIZE)
+            .build();
+
+    var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
+
+    assertFalse(body.contains(EXPECTED_CRISTIN_PROJECT_URI));
+    assertTrue(body.contains(PROJECT_IDENTIFIER));
   }
 
   @ParameterizedTest

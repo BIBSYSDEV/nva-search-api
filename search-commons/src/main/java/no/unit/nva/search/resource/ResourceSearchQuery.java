@@ -292,30 +292,18 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     protected void setCustomValue(ResourceParameter qpKey, String decodedValue) {
       switch (qpKey) {
         case UNIT, UNIT_NOT, TOP_LEVEL_ORGANIZATION ->
-            mergeToKey(qpKey, identifierToCristinId(decodedValue));
+            mergeToKey(qpKey, identifiersToCristinUris(decodedValue, CRISTIN_ORGANIZATION_PATH));
         case CONTRIBUTOR, CONTRIBUTOR_NOT ->
-            mergeToKey(qpKey, identifierToCristinPersonId(decodedValue));
-        case PROJECT, PROJECT_NOT, PROJECT_SHOULD ->
-            mergeToKey(qpKey, identifierToCristinProjectId(decodedValue));
+            mergeToKey(qpKey, identifiersToCristinUris(decodedValue, CRISTIN_PERSON_PATH));
+        case PROJECT, PROJECT_NOT ->
+            mergeToKey(qpKey, identifiersToCristinUris(decodedValue, CRISTIN_PROJECT_PATH));
         default -> mergeToKey(qpKey, decodedValue);
       }
     }
 
-    private String identifierToCristinId(String decodedValue) {
+    private String identifiersToCristinUris(String decodedValue, String uriPath) {
       return Arrays.stream(decodedValue.split(COMMA))
-          .map(value -> identifierToUri(value, CRISTIN_ORGANIZATION_PATH))
-          .collect(Collectors.joining(COMMA));
-    }
-
-    private String identifierToCristinPersonId(String decodedValue) {
-      return Arrays.stream(decodedValue.split(COMMA))
-          .map(value -> identifierToUri(value, CRISTIN_PERSON_PATH))
-          .collect(Collectors.joining(COMMA));
-    }
-
-    private String identifierToCristinProjectId(String decodedValue) {
-      return Arrays.stream(decodedValue.split(COMMA))
-          .map(value -> identifierToUri(value, CRISTIN_PROJECT_PATH))
+          .map(value -> identifierToUri(value, uwriPath))
           .collect(Collectors.joining(COMMA));
     }
 
