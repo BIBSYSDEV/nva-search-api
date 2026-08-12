@@ -2,18 +2,20 @@
 commonsCollections4 = { strictly = '4.5.0' }
 commonsText = { strictly = '1.15.0' }
 glassfishJaxbRuntime = { strictly = '4.0.9' }
+guava = { strictly = "33.6.0-jre" }
 jakartaAnnotationApi = { strictly = '3.0.0' }
 jakartaXmlBindApi = { strictly = '4.0.5' }
-jodaTime = { strictly = '2.14.2' }
+jodaTime = { strictly = '2.14.3' }
 lucene = { strictly = '10.4.0' }
 opensearch-server = { strictly = '3.6.0' }
 xjc = { strictly = '1.9.1' }
-xmlUnit = { strictly = '2.12.0' }
+xmlUnit = { strictly = '2.13.0' }
 
 [libraries]
 commons-collections4 = { group = 'org.apache.commons', name = 'commons-collections4', version.ref = 'commonsCollections4' }
 commons-text = { group = 'org.apache.commons', name = 'commons-text', version.ref = 'commonsText' }
 glassfish-jaxb-runtime = { group = 'org.glassfish.jaxb', name = 'jaxb-runtime', version.ref = 'glassfishJaxbRuntime' }
+guava = {group = "com.google.guava", name = "guava", version.ref = "guava" }
 jakarta-annotation-api = { group = 'jakarta.annotation', name = 'jakarta.annotation-api', version.ref = 'jakartaAnnotationApi' }
 jakarta-xml-bind-api = { group = 'jakarta.xml.bind', name = 'jakarta.xml.bind-api', version.ref = 'jakartaXmlBindApi' }
 joda-time = { group = 'joda-time', name = 'joda-time', version.ref = 'jodaTime' }

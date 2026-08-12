@@ -10,6 +10,14 @@ xjc {
     addCompilationDependencies = false
 }
 
+// The xjc plugin registers its output directory as a plain path, so tasks reading the
+// source set (here: the dependency-analysis plugin) do not inherit a dependency on it.
+tasks.configureEach {
+    if (name == 'explodeCodeSourceMain') {
+        dependsOn(tasks.named('xjc'))
+    }
+}
+
 dependencies {
     api(libs.jakarta.xml.bind.api)
     compileOnly(libs.jakarta.annotation.api)
