@@ -1790,20 +1790,32 @@ components:
       name: project
       in: query
       description: "Returns document with this project IDs. Accepts either a Cristin project identifier or a full URI."
-      example: "123456"
       required: false
       style: form
       explode: true
+      examples:
+        project identifier:
+          value: "123456"
+          description: Cristin project identifier, the preferred form
+        project id in uri format:
+          value: "https://api.dev.nva.aws.unit.no/cristin/project/123456"
+          description: Full URI, also accepted
       schema:
         type: string
     projectNotParam:
       name: project_not
       in: query
       description: "Returns document without these project IDs. Accepts either a Cristin project identifier or a full URI."
-      example: "123456"
       required: false
       style: form
       explode: true
+      examples:
+        project identifier:
+          value: "123456"
+          description: Cristin project identifier, the preferred form
+        project id in uri format:
+          value: "https://api.dev.nva.aws.unit.no/cristin/project/123456"
+          description: Full URI, also accepted
       schema:
         type: string
     projectShouldParam:
