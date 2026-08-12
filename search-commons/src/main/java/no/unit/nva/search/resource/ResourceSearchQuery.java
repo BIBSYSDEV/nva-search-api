@@ -324,9 +324,10 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     }
 
     private String identifierToUri(String decodedValue, String uriPath) {
-      return isUriId(decodedValue)
-          ? decodedValue
-          : format("%s%s%s", currentHost(), uriPath, decodedValue);
+      var trimmedValue = decodedValue.trim();
+      return isUriId(trimmedValue)
+          ? trimmedValue
+          : format("%s%s%s", currentHost(), uriPath, trimmedValue);
     }
 
     private boolean isUriId(String decodedValue) {

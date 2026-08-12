@@ -66,6 +66,9 @@ class ResourceSearchQueryTest {
       "https://api.dev.nva.aws.unit.no/cristin/project/" + PROJECT_IDENTIFIER;
   private static final String CRISTIN_PROJECT_URI =
       "https://api.nva.unit.no/cristin/project/" + PROJECT_IDENTIFIER;
+  private static final String SECOND_PROJECT_IDENTIFIER = "14334813";
+  private static final String EXPECTED_SECOND_CRISTIN_PROJECT_URI =
+      "https://api.dev.nva.aws.unit.no/cristin/project/" + SECOND_PROJECT_IDENTIFIER;
 
   static Stream<URI> uriProvider() {
     return Stream.of(
@@ -448,6 +451,44 @@ class ResourceSearchQueryTest {
     var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
 
     assertTrue(body.contains(CRISTIN_PROJECT_URI));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"%20", "+"})
+  void shouldIgnoreWhitespaceAroundIdentifiersInProjectList(String encodedSpace)
+      throws BadRequestException {
+    var uri =
+        URI.create(
+            "https://example.com/?project=%s,%s%s"
+                .formatted(PROJECT_IDENTIFIER, encodedSpace, SECOND_PROJECT_IDENTIFIER));
+    var query =
+        ResourceSearchQuery.builder()
+            .fromTestQueryParameters(queryToMapEntries(uri))
+            .withRequiredParameters(FROM, SIZE)
+            .build();
+
+    var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
+
+    assertTrue(body.contains(EXPECTED_CRISTIN_PROJECT_URI));
+    assertTrue(body.contains(EXPECTED_SECOND_CRISTIN_PROJECT_URI));
+  }
+
+  @Test
+  void shouldRecognizeFullUriAfterWhitespaceInProjectList() throws BadRequestException {
+    var uri =
+        URI.create(
+            "https://example.com/?project=%s,%%20%s"
+                .formatted(PROJECT_IDENTIFIER, CRISTIN_PROJECT_URI));
+    var query =
+        ResourceSearchQuery.builder()
+            .fromTestQueryParameters(queryToMapEntries(uri))
+            .withRequiredParameters(FROM, SIZE)
+            .build();
+
+    var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
+
+    assertTrue(body.contains(EXPECTED_CRISTIN_PROJECT_URI));
+    assertTrue(body.contains("\"%s\"".formatted(CRISTIN_PROJECT_URI)));
   }
 
   @Test
