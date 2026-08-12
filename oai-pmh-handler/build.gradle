@@ -14,16 +14,6 @@ dependencies {
     implementation(nvaCatalog.log4j.core)
     implementation(nvaCatalog.slf4j.api)
     implementation(nvaLibs.json)
-    runtimeOnly(nvaCatalog.jackson.core)
-    runtimeOnly(nvaCatalog.jackson.dataformat.xml)
-    runtimeOnly(nvaCatalog.jackson.datatype.jdk8)
-    runtimeOnly(nvaCatalog.jackson.datatype.jsr310)
-    runtimeOnly(nvaCatalog.jackson.datatype.problem)
-    runtimeOnly(nvaCatalog.jackson.module.parameter.names)
-    runtimeOnly(nvaCatalog.jena.arq)
-    runtimeOnly(nvaCatalog.jena.core)
-    runtimeOnly(nvaCatalog.log4j.api)
-    runtimeOnly(nvaCatalog.log4j.slf4j.impl)
     testImplementation(libs.xml.unit.core)
     testImplementation(nvaCatalog.hamcrest)
     testImplementation(nvaCatalog.jackson.core)
@@ -34,9 +24,6 @@ dependencies {
     testImplementation(nvaLibs.logutils)
     testImplementation(nvaLibs.testutils)
     testImplementation(project(':search-testing'))
-    testRuntimeOnly(nvaCatalog.junit.jupiter.engine)
-    testRuntimeOnly(nvaCatalog.junit.platform.launcher)
-    testRuntimeOnly(nvaCatalog.testcontainers)
 }
 
 test {

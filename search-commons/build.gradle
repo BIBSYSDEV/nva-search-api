@@ -32,17 +32,10 @@ dependencies {
     implementation(nvaCatalog.aws.sdk2.regions)
     implementation(nvaCatalog.aws.sdk2.sdk.core)
     implementation(nvaCatalog.commons.lang)
-    implementation(nvaCatalog.guava)
+    implementation(libs.guava)
     implementation(nvaCatalog.httpcore5)
     implementation(nvaCatalog.jackson.jr.objects)
     implementation(nvaCatalog.log4j.core)
-    runtimeOnly(nvaCatalog.jackson.dataformat.xml)
-    runtimeOnly(nvaCatalog.jackson.datatype.jdk8)
-    runtimeOnly(nvaCatalog.jackson.datatype.jsr310)
-    runtimeOnly(nvaCatalog.jackson.datatype.problem)
-    runtimeOnly(nvaCatalog.jackson.module.parameter.names)
-    runtimeOnly(nvaCatalog.log4j.api)
-    runtimeOnly(nvaCatalog.log4j.slf4j.impl)
     testImplementation(libs.lucene.core)
     testImplementation(nvaCatalog.assertj.core)
     testImplementation(nvaCatalog.hamcrest)
@@ -59,7 +52,6 @@ dependencies {
     testImplementation(nvaLibs.logutils)
     testImplementation(nvaLibs.testutils)
     testImplementation(project(':search-testing'))
-    testRuntimeOnly(nvaCatalog.junit.jupiter.engine)
 }
 
 test {
