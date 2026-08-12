@@ -66,6 +66,8 @@ class ResourceSearchQueryTest {
       "https://api.dev.nva.aws.unit.no/cristin/project/" + PROJECT_IDENTIFIER;
   private static final String CRISTIN_PROJECT_URI =
       "https://api.nva.unit.no/cristin/project/" + PROJECT_IDENTIFIER;
+  private static final String BARE_PATH_PROJECT_URI =
+      "https://api.dev.nva.aws.unit.no/cristin/project/";
   private static final String SECOND_PROJECT_IDENTIFIER = "14334813";
   private static final String EXPECTED_SECOND_CRISTIN_PROJECT_URI =
       "https://api.dev.nva.aws.unit.no/cristin/project/" + SECOND_PROJECT_IDENTIFIER;
@@ -425,14 +427,7 @@ class ResourceSearchQueryTest {
   @ValueSource(strings = {"project", "projectNot"})
   void shouldExpandProjectIdentifierToCristinProjectUri(String parameterName)
       throws BadRequestException {
-    var uri = URI.create("https://example.com/?%s=%s".formatted(parameterName, PROJECT_IDENTIFIER));
-    var query =
-        ResourceSearchQuery.builder()
-            .fromTestQueryParameters(queryToMapEntries(uri))
-            .withRequiredParameters(FROM, SIZE)
-            .build();
-
-    var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
+    var body = queryBodyFor("%s=%s".formatted(parameterName, PROJECT_IDENTIFIER));
 
     assertTrue(body.contains(EXPECTED_CRISTIN_PROJECT_URI));
   }
@@ -440,17 +435,9 @@ class ResourceSearchQueryTest {
   @ParameterizedTest
   @ValueSource(strings = {"project", "projectNot"})
   void shouldKeepFullProjectUriUnchanged(String parameterName) throws BadRequestException {
-    var uri =
-        URI.create("https://example.com/?%s=%s".formatted(parameterName, CRISTIN_PROJECT_URI));
-    var query =
-        ResourceSearchQuery.builder()
-            .fromTestQueryParameters(queryToMapEntries(uri))
-            .withRequiredParameters(FROM, SIZE)
-            .build();
+    var body = queryBodyFor("%s=%s".formatted(parameterName, CRISTIN_PROJECT_URI));
 
-    var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
-
-    assertTrue(body.contains("\"%s\"".formatted(CRISTIN_PROJECT_URI)));
+    assertTrue(body.contains(quoted(CRISTIN_PROJECT_URI)));
   }
 
   /**
@@ -460,14 +447,7 @@ class ResourceSearchQueryTest {
    */
   @Test
   void shouldNotExpandProjectShouldIdentifier() throws BadRequestException {
-    var uri = URI.create("https://example.com/?projectShould=" + PROJECT_IDENTIFIER);
-    var query =
-        ResourceSearchQuery.builder()
-            .fromTestQueryParameters(queryToMapEntries(uri))
-            .withRequiredParameters(FROM, SIZE)
-            .build();
-
-    var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
+    var body = queryBodyFor("projectShould=" + PROJECT_IDENTIFIER);
 
     assertFalse(body.contains(EXPECTED_CRISTIN_PROJECT_URI));
     assertTrue(body.contains(PROJECT_IDENTIFIER));
@@ -477,17 +457,10 @@ class ResourceSearchQueryTest {
   @ValueSource(strings = {"%20", "+"})
   void shouldIgnoreWhitespaceAroundIdentifiersInProjectList(String encodedSpace)
       throws BadRequestException {
-    var uri =
-        URI.create(
-            "https://example.com/?project=%s,%s%s"
+    var body =
+        queryBodyFor(
+            "project=%s,%s%s"
                 .formatted(PROJECT_IDENTIFIER, encodedSpace, SECOND_PROJECT_IDENTIFIER));
-    var query =
-        ResourceSearchQuery.builder()
-            .fromTestQueryParameters(queryToMapEntries(uri))
-            .withRequiredParameters(FROM, SIZE)
-            .build();
-
-    var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
 
     assertTrue(body.contains(EXPECTED_CRISTIN_PROJECT_URI));
     assertTrue(body.contains(EXPECTED_SECOND_CRISTIN_PROJECT_URI));
@@ -495,20 +468,36 @@ class ResourceSearchQueryTest {
 
   @Test
   void shouldRecognizeFullUriAfterWhitespaceInProjectList() throws BadRequestException {
-    var uri =
-        URI.create(
-            "https://example.com/?project=%s,%%20%s"
-                .formatted(PROJECT_IDENTIFIER, CRISTIN_PROJECT_URI));
-    var query =
-        ResourceSearchQuery.builder()
-            .fromTestQueryParameters(queryToMapEntries(uri))
-            .withRequiredParameters(FROM, SIZE)
-            .build();
-
-    var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
+    var body = queryBodyFor("project=%s,%%20%s".formatted(PROJECT_IDENTIFIER, CRISTIN_PROJECT_URI));
 
     assertTrue(body.contains(EXPECTED_CRISTIN_PROJECT_URI));
-    assertTrue(body.contains("\"%s\"".formatted(CRISTIN_PROJECT_URI)));
+    assertTrue(body.contains(quoted(CRISTIN_PROJECT_URI)));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"http", "https", "HTTP", "HTTPS", "HttPs"})
+  void shouldRecognizeUriRegardlessOfSchemeCase(String scheme) throws BadRequestException {
+    var uriValue = "%s://api.nva.unit.no/cristin/project/%s".formatted(scheme, PROJECT_IDENTIFIER);
+
+    var body = queryBodyFor("project=" + uriValue);
+
+    assertTrue(body.contains(quoted(uriValue)));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"", "%20", "%20,%20"})
+  void shouldRejectBlankProjectValueAsBadRequest(String blankValue) {
+    assertThrows(BadRequestException.class, () -> queryBodyFor("project=" + blankValue));
+  }
+
+  @Test
+  void shouldSkipBlankElementsInProjectList() throws BadRequestException {
+    var body =
+        queryBodyFor("project=%s,%%20,%s".formatted(PROJECT_IDENTIFIER, SECOND_PROJECT_IDENTIFIER));
+
+    assertTrue(body.contains(EXPECTED_CRISTIN_PROJECT_URI));
+    assertTrue(body.contains(EXPECTED_SECOND_CRISTIN_PROJECT_URI));
+    assertFalse(body.contains(quoted(BARE_PATH_PROJECT_URI)));
   }
 
   @Test
@@ -566,5 +555,21 @@ class ResourceSearchQueryTest {
     var sortParts = query.sort().toString().split(COMMA);
     assertEquals(1, sortParts.length);
     assertEquals(IDENTIFIER, sortParts[0]);
+  }
+
+  private String queryBodyFor(String queryParameters) throws BadRequestException {
+    var uri = URI.create("https://example.com/?" + queryParameters);
+    return ResourceSearchQuery.builder()
+        .fromTestQueryParameters(queryToMapEntries(uri))
+        .withRequiredParameters(FROM, SIZE)
+        .build()
+        .assemble(Words.RESOURCES)
+        .findFirst()
+        .orElseThrow()
+        .body();
+  }
+
+  private String quoted(String value) {
+    return "\"%s\"".formatted(value);
   }
 }

@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.constants.Words;
@@ -49,6 +50,7 @@ import no.unit.nva.search.common.SearchQuery;
 import no.unit.nva.search.common.enums.SortKey;
 import no.unit.nva.search.common.records.HttpResponseFormatter;
 import nva.commons.core.JacocoGenerated;
+import nva.commons.core.StringUtils;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
@@ -271,6 +273,9 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
   public static class ResourceParameterValidator
       extends ParameterValidator<ResourceParameter, ResourceSearchQuery> {
 
+    private static final Pattern HTTP_SCHEME_PATTERN =
+        Pattern.compile("^https?://", Pattern.CASE_INSENSITIVE);
+
     ResourceParameterValidator() {
       super(new ResourceSearchQuery());
     }
@@ -303,6 +308,8 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     private String identifiersToCristinUris(String decodedValue, String uriPath) {
       return Arrays.stream(decodedValue.split(COMMA))
+          .map(String::trim)
+          .filter(StringUtils::isNotBlank)
           .map(value -> identifierToUri(value, uriPath))
           .collect(Collectors.joining(COMMA));
     }
@@ -311,15 +318,14 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
       return HTTPS + query.getNvaSearchApiUri().getHost();
     }
 
-    private String identifierToUri(String decodedValue, String uriPath) {
-      var trimmedValue = decodedValue.trim();
-      return isUriId(trimmedValue)
-          ? trimmedValue
-          : format("%s%s%s", currentHost(), uriPath, trimmedValue);
+    private String identifierToUri(String identifier, String uriPath) {
+      return isUriId(identifier)
+          ? identifier
+          : format("%s%s%s", currentHost(), uriPath, identifier);
     }
 
-    private boolean isUriId(String decodedValue) {
-      return decodedValue.startsWith(HTTPS);
+    private boolean isUriId(String identifier) {
+      return HTTP_SCHEME_PATTERN.matcher(identifier).find();
     }
   }
 }
