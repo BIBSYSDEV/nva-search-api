@@ -61,6 +61,16 @@ import org.slf4j.LoggerFactory;
 class ResourceSearchQueryTest {
 
   private static final Logger logger = LoggerFactory.getLogger(ResourceSearchQueryTest.class);
+  private static final String PROJECT_IDENTIFIER = "2733259";
+  private static final String EXPECTED_CRISTIN_PROJECT_URI =
+      "https://api.dev.nva.aws.unit.no/cristin/project/" + PROJECT_IDENTIFIER;
+  private static final String CRISTIN_PROJECT_URI =
+      "https://api.nva.unit.no/cristin/project/" + PROJECT_IDENTIFIER;
+  private static final String BARE_PATH_PROJECT_URI =
+      "https://api.dev.nva.aws.unit.no/cristin/project/";
+  private static final String SECOND_PROJECT_IDENTIFIER = "14334813";
+  private static final String EXPECTED_SECOND_CRISTIN_PROJECT_URI =
+      "https://api.dev.nva.aws.unit.no/cristin/project/" + SECOND_PROJECT_IDENTIFIER;
 
   static Stream<URI> uriProvider() {
     return Stream.of(
@@ -413,6 +423,83 @@ class ResourceSearchQueryTest {
     assertEquals(MediaTypes.APPLICATION_JSON_LD, query.getMediaType());
   }
 
+  @ParameterizedTest
+  @ValueSource(strings = {"project", "projectNot"})
+  void shouldExpandProjectIdentifierToCristinProjectUri(String parameterName)
+      throws BadRequestException {
+    var body = queryBodyFor("%s=%s".formatted(parameterName, PROJECT_IDENTIFIER));
+
+    assertTrue(body.contains(EXPECTED_CRISTIN_PROJECT_URI));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"project", "projectNot"})
+  void shouldKeepFullProjectUriUnchanged(String parameterName) throws BadRequestException {
+    var body = queryBodyFor("%s=%s".formatted(parameterName, CRISTIN_PROJECT_URI));
+
+    assertTrue(body.contains(quoted(CRISTIN_PROJECT_URI)));
+  }
+
+  /**
+   * projectShould searches the analysed projects.id field, where an indexed URI is tokenised so a
+   * bare identifier already matches regardless of host. Expanding it would bind the match to the
+   * request host.
+   */
+  @Test
+  void shouldNotExpandProjectShouldIdentifier() throws BadRequestException {
+    var body = queryBodyFor("projectShould=" + PROJECT_IDENTIFIER);
+
+    assertFalse(body.contains(EXPECTED_CRISTIN_PROJECT_URI));
+    assertTrue(body.contains(PROJECT_IDENTIFIER));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"%20", "+"})
+  void shouldIgnoreWhitespaceAroundIdentifiersInProjectList(String encodedSpace)
+      throws BadRequestException {
+    var body =
+        queryBodyFor(
+            "project=%s,%s%s"
+                .formatted(PROJECT_IDENTIFIER, encodedSpace, SECOND_PROJECT_IDENTIFIER));
+
+    assertTrue(body.contains(EXPECTED_CRISTIN_PROJECT_URI));
+    assertTrue(body.contains(EXPECTED_SECOND_CRISTIN_PROJECT_URI));
+  }
+
+  @Test
+  void shouldRecognizeFullUriAfterWhitespaceInProjectList() throws BadRequestException {
+    var body = queryBodyFor("project=%s,%%20%s".formatted(PROJECT_IDENTIFIER, CRISTIN_PROJECT_URI));
+
+    assertTrue(body.contains(EXPECTED_CRISTIN_PROJECT_URI));
+    assertTrue(body.contains(quoted(CRISTIN_PROJECT_URI)));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"http", "https", "HTTP", "HTTPS", "HttPs"})
+  void shouldRecognizeUriRegardlessOfSchemeCase(String scheme) throws BadRequestException {
+    var uriValue = "%s://api.nva.unit.no/cristin/project/%s".formatted(scheme, PROJECT_IDENTIFIER);
+
+    var body = queryBodyFor("project=" + uriValue);
+
+    assertTrue(body.contains(quoted(uriValue)));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"", "%20", "%20,%20"})
+  void shouldRejectBlankProjectValueAsBadRequest(String blankValue) {
+    assertThrows(BadRequestException.class, () -> queryBodyFor("project=" + blankValue));
+  }
+
+  @Test
+  void shouldSkipBlankElementsInProjectList() throws BadRequestException {
+    var body =
+        queryBodyFor("project=%s,%%20,%s".formatted(PROJECT_IDENTIFIER, SECOND_PROJECT_IDENTIFIER));
+
+    assertTrue(body.contains(EXPECTED_CRISTIN_PROJECT_URI));
+    assertTrue(body.contains(EXPECTED_SECOND_CRISTIN_PROJECT_URI));
+    assertFalse(body.contains(quoted(BARE_PATH_PROJECT_URI)));
+  }
+
   @Test
   void defaultSortAlwaysContainsIdentifierAsTiebreaker() throws BadRequestException {
     var query = ResourceSearchQuery.builder().withRequiredParameters(FROM, SIZE, SORT).build();
@@ -468,5 +555,21 @@ class ResourceSearchQueryTest {
     var sortParts = query.sort().toString().split(COMMA);
     assertEquals(1, sortParts.length);
     assertEquals(IDENTIFIER, sortParts[0]);
+  }
+
+  private String queryBodyFor(String queryParameters) throws BadRequestException {
+    var uri = URI.create("https://example.com/?" + queryParameters);
+    return ResourceSearchQuery.builder()
+        .fromTestQueryParameters(queryToMapEntries(uri))
+        .withRequiredParameters(FROM, SIZE)
+        .build()
+        .assemble(Words.RESOURCES)
+        .findFirst()
+        .orElseThrow()
+        .body();
+  }
+
+  private String quoted(String value) {
+    return "\"%s\"".formatted(value);
   }
 }

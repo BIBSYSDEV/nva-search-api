@@ -379,3 +379,24 @@ Accept: application/json
 > ```
 > category, instanceType, createdDate, modifiedDate, publishedDate, publicationDate, title, unitId, user
 > ```
+
+> [!NOTE]
+>
+> <p>Cristin identifiers can be given either as a bare identifier or as a full URI. A bare
+> identifier is expanded to a URI on the current API host before the query is built.</p>
+>
+> ```
+> unit, unitNot, topLevelOrganization -> /cristin/organization/{identifier}
+> contributor, contributorNot         -> /cristin/person/{identifier}
+> project, projectNot                 -> /cristin/project/{identifier}
+> ```
+>
+> ```
+> ?project=2733259
+> ?project=https://api.nva.unit.no/cristin/project/2733259
+> ```
+>
+> <p>The should variants are not expanded. projectShould and unitShould search analysed fields,
+> where an indexed URI is tokenised so a bare identifier already matches without being bound to a
+> specific host. contributorShould is the exception: it is validated against a URI pattern without
+> being expanded, so it requires a full URI and rejects a bare identifier with 400.</p>

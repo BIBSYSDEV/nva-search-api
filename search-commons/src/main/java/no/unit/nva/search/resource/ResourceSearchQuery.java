@@ -10,6 +10,7 @@ import static no.unit.nva.constants.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.constants.Words.STATUS;
 import static no.unit.nva.search.resource.Constants.CRISTIN_ORGANIZATION_PATH;
 import static no.unit.nva.search.resource.Constants.CRISTIN_PERSON_PATH;
+import static no.unit.nva.search.resource.Constants.CRISTIN_PROJECT_PATH;
 import static no.unit.nva.search.resource.Constants.GLOBAL_EXCLUDED_FIELDS;
 import static no.unit.nva.search.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search.resource.Constants.RESOURCES_AGGREGATIONS;
@@ -37,6 +38,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.constants.Words;
@@ -48,6 +50,7 @@ import no.unit.nva.search.common.SearchQuery;
 import no.unit.nva.search.common.enums.SortKey;
 import no.unit.nva.search.common.records.HttpResponseFormatter;
 import nva.commons.core.JacocoGenerated;
+import nva.commons.core.StringUtils;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
@@ -270,6 +273,9 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
   public static class ResourceParameterValidator
       extends ParameterValidator<ResourceParameter, ResourceSearchQuery> {
 
+    private static final Pattern HTTP_SCHEME_PATTERN =
+        Pattern.compile("^https?://", Pattern.CASE_INSENSITIVE);
+
     ResourceParameterValidator() {
       super(new ResourceSearchQuery());
     }
@@ -291,22 +297,20 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     protected void setCustomValue(ResourceParameter qpKey, String decodedValue) {
       switch (qpKey) {
         case UNIT, UNIT_NOT, TOP_LEVEL_ORGANIZATION ->
-            mergeToKey(qpKey, identifierToCristinId(decodedValue));
+            mergeToKey(qpKey, identifiersToCristinUris(decodedValue, CRISTIN_ORGANIZATION_PATH));
         case CONTRIBUTOR, CONTRIBUTOR_NOT ->
-            mergeToKey(qpKey, identifierToCristinPersonId(decodedValue));
+            mergeToKey(qpKey, identifiersToCristinUris(decodedValue, CRISTIN_PERSON_PATH));
+        case PROJECT, PROJECT_NOT ->
+            mergeToKey(qpKey, identifiersToCristinUris(decodedValue, CRISTIN_PROJECT_PATH));
         default -> mergeToKey(qpKey, decodedValue);
       }
     }
 
-    private String identifierToCristinId(String decodedValue) {
+    private String identifiersToCristinUris(String decodedValue, String uriPath) {
       return Arrays.stream(decodedValue.split(COMMA))
-          .map(value -> identifierToUri(value, CRISTIN_ORGANIZATION_PATH))
-          .collect(Collectors.joining(COMMA));
-    }
-
-    private String identifierToCristinPersonId(String decodedValue) {
-      return Arrays.stream(decodedValue.split(COMMA))
-          .map(value -> identifierToUri(value, CRISTIN_PERSON_PATH))
+          .map(String::trim)
+          .filter(StringUtils::isNotBlank)
+          .map(value -> identifierToUri(value, uriPath))
           .collect(Collectors.joining(COMMA));
     }
 
@@ -314,14 +318,14 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
       return HTTPS + query.getNvaSearchApiUri().getHost();
     }
 
-    private String identifierToUri(String decodedValue, String uriPath) {
-      return isUriId(decodedValue)
-          ? decodedValue
-          : format("%s%s%s", currentHost(), uriPath, decodedValue);
+    private String identifierToUri(String identifier, String uriPath) {
+      return isUriId(identifier)
+          ? identifier
+          : format("%s%s%s", currentHost(), uriPath, identifier);
     }
 
-    private boolean isUriId(String decodedValue) {
-      return decodedValue.startsWith(HTTPS);
+    private boolean isUriId(String identifier) {
+      return HTTP_SCHEME_PATTERN.matcher(identifier).find();
     }
   }
 }
