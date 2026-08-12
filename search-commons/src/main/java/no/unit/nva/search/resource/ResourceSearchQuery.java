@@ -303,7 +303,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     private String identifiersToCristinUris(String decodedValue, String uriPath) {
       return Arrays.stream(decodedValue.split(COMMA))
-          .map(value -> identifierToUri(value, uwriPath))
+          .map(value -> identifierToUri(value, uriPath))
           .collect(Collectors.joining(COMMA));
     }
 
