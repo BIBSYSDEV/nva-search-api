@@ -10,7 +10,9 @@ import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.attempt.Try.attempt;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.stringContainsInOrder;
@@ -40,6 +42,7 @@ import no.unit.nva.stubs.FakeS3Client;
 import no.unit.nva.testutils.RandomDataGenerator;
 import nva.commons.core.paths.UnixPath;
 import nva.commons.core.paths.UriWrapper;
+import nva.commons.logutils.LogRecorder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -120,6 +123,20 @@ public class IndexResourceHandlerTest {
     assertThat(deliveredMessage.messageAttributes().get("id").stringValue(), is(notNullValue()));
     assertThat(
         deliveredMessage.messageAttributes().get("type").stringValue(), is(equalTo("Resource")));
+  }
+
+  @Test
+  void shouldLogExceptionWhenSendingMessageToRecoveryQueue() throws Exception {
+    var expectedErrorMessage = randomString();
+    indexingClient = indexingClientThrowingException(expectedErrorMessage);
+    indexResourceHandler = new IndexResourceHandler(resourcesS3Driver, indexingClient, sqsClient);
+    var resourceLocation = prepareEventStorageResourceFile();
+    var input = createEventBridgeEvent(resourceLocation);
+    var logRecorder = LogRecorder.forClass(IndexResourceHandler.class);
+
+    indexResourceHandler.handleRequest(input, output, context);
+
+    assertThat(logRecorder.messages(), hasItem(containsString(expectedErrorMessage)));
   }
 
   @Test

@@ -72,11 +72,16 @@ public class IndexResourceHandler
 
   private Void persistRecoveryMessage(Failure<Void> failure, IndexDocument indexDocument) {
     var documentIdentifier = indexDocument.getDocumentIdentifier();
+    var exception = failure.getException();
     RecoveryEntry.fromIndexDocument(indexDocument)
         .withIdentifier(documentIdentifier)
-        .withException(failure.getException())
+        .withException(exception)
         .persist(queueClient);
-    LOGGER.error(SENT_TO_RECOVERY_QUEUE_MESSAGE, indexDocument.getIndexName(), documentIdentifier);
+    LOGGER.error(
+        SENT_TO_RECOVERY_QUEUE_MESSAGE,
+        indexDocument.getIndexName(),
+        documentIdentifier,
+        exception);
     return null;
   }
 
