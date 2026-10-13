@@ -45,7 +45,6 @@ public final class Words {
   public static final String CREATED_DATE = "createdDate";
   public static final String CREATOR = "Creator";
   public static final String CRISTIN_AS_TYPE = "CristinIdentifier";
-  public static final String CURATING_INSTITUTIONS = "curatingInstitutions";
   public static final String CUSTOMER_ID = "customerId";
   public static final String DAY = "day";
   public static final String DOI = "doi";

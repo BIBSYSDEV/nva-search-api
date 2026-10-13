@@ -1,9 +1,6 @@
 package no.unit.nva.search.resource;
 
 import static no.unit.nva.constants.Words.AUTHORIZATION;
-import static no.unit.nva.constants.Words.CURATING_INSTITUTIONS;
-import static no.unit.nva.constants.Words.DOT;
-import static no.unit.nva.constants.Words.KEYWORD;
 import static no.unit.nva.constants.Words.OWNER;
 import static no.unit.nva.constants.Words.STATUS;
 import static no.unit.nva.search.common.enums.PublicationStatus.DELETED;
@@ -24,7 +21,6 @@ import no.unit.nva.search.common.enums.PublicationStatus;
 import no.unit.nva.search.common.records.FilterBuilder;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
-import org.opensearch.index.query.DisMaxQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
 import org.slf4j.Logger;
@@ -43,10 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> {
 
-  private static final String CURATING_INST_KEYWORD = CURATING_INSTITUTIONS + DOT + KEYWORD;
-  private static final String EDITOR_CURATOR_FILTER = "EditorCuratorFilter";
-  private static final String EDITOR_FILTER = "EditorFilter";
-  private static final String CURATOR_FILTER = "CuratorFilter";
+  private static final String CONTRIBUTOR_ORGANIZATION_FILTER = "ContributorOrganizationFilter";
 
   protected static final Logger logger = LoggerFactory.getLogger(ResourceAccessFilter.class);
   private final ResourceSearchQuery searchQuery;
@@ -104,7 +97,7 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
   }
 
   /**
-   * Filter on organization and curationInstitutions.
+   * Filter on contributor organizations.
    *
    * <p>Only documents belonging to organization specified are searchable (for the user)
    *
@@ -125,9 +118,7 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
     requiredStatus(statuses);
 
     var curationInstitutionId = getCurationInstitutionId(requestInfo).toString();
-    if (isCurator()) {
-      this.searchQuery.filters().add(buildMatchBoth(curationInstitutionId));
-    } else if (isEditor()) {
+    if (isCurator() || isEditor()) {
       this.searchQuery.filters().add(filterByContributingOrg(curationInstitutionId));
     }
     if (statusOrOrgfilterIsMissing() && !isAppAdmin()) {
@@ -141,18 +132,8 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
   }
 
   private QueryBuilder filterByContributingOrg(String institutionId) {
-    return new TermsQueryBuilder(CONTRIBUTOR_ORG_KEYWORD, institutionId).queryName(EDITOR_FILTER);
-  }
-
-  private QueryBuilder filterByCuratingOrg(String institutionId) {
-    return new TermsQueryBuilder(CURATING_INST_KEYWORD, institutionId).queryName(CURATOR_FILTER);
-  }
-
-  private DisMaxQueryBuilder buildMatchBoth(String institutionId) {
-    return new DisMaxQueryBuilder()
-        .add(filterByContributingOrg(institutionId))
-        .add(filterByCuratingOrg(institutionId))
-        .queryName(EDITOR_CURATOR_FILTER);
+    return new TermsQueryBuilder(CONTRIBUTOR_ORG_KEYWORD, institutionId)
+        .queryName(CONTRIBUTOR_ORGANIZATION_FILTER);
   }
 
   private boolean isAuthorized(RequestInfo requestInfo) {
