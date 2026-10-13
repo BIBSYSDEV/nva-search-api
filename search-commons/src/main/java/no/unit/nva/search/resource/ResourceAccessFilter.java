@@ -56,8 +56,7 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
     return this;
   }
 
-  private static URI getCurationInstitutionId(RequestInfo requestInfo)
-      throws UnauthorizedException {
+  private static URI getInstitutionId(RequestInfo requestInfo) throws UnauthorizedException {
     return requestInfo.getTopLevelOrgCristinId().isPresent()
         ? requestInfo.getTopLevelOrgCristinId().get()
         : requestInfo.getPersonAffiliation();
@@ -71,7 +70,7 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
   @Override
   public ResourceSearchQuery fromRequestInfo(RequestInfo requestInfo) throws UnauthorizedException {
     if (isAuthorized(requestInfo)) {
-      return customerCurationInstitutions(requestInfo).apply();
+      return customerContributorOrganizations(requestInfo).apply();
     } else {
       return requiredStatus(PUBLISHED).apply();
     }
@@ -104,7 +103,7 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
    * @param requestInfo fetches TopLevelOrgCristinId PersonAffiliation
    * @return {@link ResourceAccessFilter} (builder pattern)
    */
-  public ResourceAccessFilter customerCurationInstitutions(RequestInfo requestInfo)
+  public ResourceAccessFilter customerContributorOrganizations(RequestInfo requestInfo)
       throws UnauthorizedException {
     if (isAppAdmin() && isStatisticsQuery()) {
       return this;
@@ -117,9 +116,9 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
 
     requiredStatus(statuses);
 
-    var curationInstitutionId = getCurationInstitutionId(requestInfo).toString();
+    var institutionId = getInstitutionId(requestInfo).toString();
     if (isCurator() || isEditor()) {
-      this.searchQuery.filters().add(filterByContributingOrg(curationInstitutionId));
+      this.searchQuery.filters().add(filterByContributingOrg(institutionId));
     }
     if (statusOrOrgfilterIsMissing() && !isAppAdmin()) {
       throw new UnauthorizedException();

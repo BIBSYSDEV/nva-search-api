@@ -74,7 +74,7 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
               .validate()
               .build()
               .withFilter()
-              .customerCurationInstitutions(requestInfo)
+              .customerContributorOrganizations(requestInfo)
               .apply()
               .doSearch(opensearchClient, Words.RESOURCES)
               .withMutators(getMutator(version));

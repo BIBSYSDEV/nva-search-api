@@ -390,6 +390,29 @@ class ResourceClientTest {
   }
 
   @Test
+  void shouldNotReturnPublicationsOwnedByCuratorsInstitutionWithoutContributorFromIt()
+      throws UnauthorizedException, BadRequestException {
+    var ownersInstitution =
+        URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0");
+    var requestInfo = mock(RequestInfo.class);
+    when(requestInfo.getAccessRights()).thenReturn(List.of(MANAGE_RESOURCES_STANDARD));
+    when(requestInfo.getTopLevelOrgCristinId()).thenReturn(Optional.of(ownersInstitution));
+    when(requestInfo.getHeaders()).thenReturn(Map.of(AUTHORIZATION, "Bearer token"));
+
+    var response =
+        ResourceSearchQuery.builder()
+            .fromRequestInfo(requestInfo)
+            .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+            .withRequiredParameters(FROM, SIZE)
+            .build()
+            .withFilter()
+            .fromRequestInfo(requestInfo)
+            .doSearch(searchClient, RESOURCES);
+
+    assertThat(response.toPagedResponse().totalHits(), is(0));
+  }
+
+  @Test
   void shouldCheckFacets() throws BadRequestException {
     var hostAddress = URI.create(container.getHttpHostAddress());
     var uri1 = URI.create(BASE_URL + AGGREGATION.asCamelCase() + EQUAL + ALL);
