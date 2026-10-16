@@ -372,7 +372,7 @@ class ResourceClientTest {
     var accessRights = List.of(MANAGE_RESOURCES_STANDARD);
     var mockedRequestInfoLocal = mock(RequestInfo.class);
     when(mockedRequestInfoLocal.getPersonAffiliation())
-        .thenReturn(URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0"));
+        .thenReturn(URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"));
     when(mockedRequestInfoLocal.getAccessRights()).thenReturn(accessRights);
     when(mockedRequestInfoLocal.getHeaders()).thenReturn(Map.of(AUTHORIZATION, "Bearer token"));
 
@@ -386,7 +386,30 @@ class ResourceClientTest {
             .withFilter()
             .fromRequestInfo(mockedRequestInfoLocal)
             .doSearch(searchClient, RESOURCES);
-    assertThat(result.toPagedResponse().hits().size(), is(2));
+    assertThat(result.toPagedResponse().hits().size(), is(5));
+  }
+
+  @Test
+  void shouldNotReturnPublicationsOwnedByCuratorsInstitutionWithoutContributorFromIt()
+      throws UnauthorizedException, BadRequestException {
+    var ownersInstitution =
+        URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0");
+    var requestInfo = mock(RequestInfo.class);
+    when(requestInfo.getAccessRights()).thenReturn(List.of(MANAGE_RESOURCES_STANDARD));
+    when(requestInfo.getTopLevelOrgCristinId()).thenReturn(Optional.of(ownersInstitution));
+    when(requestInfo.getHeaders()).thenReturn(Map.of(AUTHORIZATION, "Bearer token"));
+
+    var response =
+        ResourceSearchQuery.builder()
+            .fromRequestInfo(requestInfo)
+            .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+            .withRequiredParameters(FROM, SIZE)
+            .build()
+            .withFilter()
+            .fromRequestInfo(requestInfo)
+            .doSearch(searchClient, RESOURCES);
+
+    assertThat(response.toPagedResponse().totalHits(), is(0));
   }
 
   @Test

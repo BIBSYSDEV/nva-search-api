@@ -1,9 +1,6 @@
 package no.unit.nva.search.resource;
 
 import static no.unit.nva.constants.Words.AUTHORIZATION;
-import static no.unit.nva.constants.Words.CURATING_INSTITUTIONS;
-import static no.unit.nva.constants.Words.DOT;
-import static no.unit.nva.constants.Words.KEYWORD;
 import static no.unit.nva.constants.Words.OWNER;
 import static no.unit.nva.constants.Words.STATUS;
 import static no.unit.nva.search.common.enums.PublicationStatus.DELETED;
@@ -24,7 +21,6 @@ import no.unit.nva.search.common.enums.PublicationStatus;
 import no.unit.nva.search.common.records.FilterBuilder;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
-import org.opensearch.index.query.DisMaxQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
 import org.slf4j.Logger;
@@ -43,10 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> {
 
-  private static final String CURATING_INST_KEYWORD = CURATING_INSTITUTIONS + DOT + KEYWORD;
-  private static final String EDITOR_CURATOR_FILTER = "EditorCuratorFilter";
-  private static final String EDITOR_FILTER = "EditorFilter";
-  private static final String CURATOR_FILTER = "CuratorFilter";
+  private static final String CONTRIBUTOR_ORGANIZATION_FILTER = "ContributorOrganizationFilter";
 
   protected static final Logger logger = LoggerFactory.getLogger(ResourceAccessFilter.class);
   private final ResourceSearchQuery searchQuery;
@@ -63,8 +56,7 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
     return this;
   }
 
-  private static URI getCurationInstitutionId(RequestInfo requestInfo)
-      throws UnauthorizedException {
+  private static URI getInstitutionId(RequestInfo requestInfo) throws UnauthorizedException {
     return requestInfo.getTopLevelOrgCristinId().isPresent()
         ? requestInfo.getTopLevelOrgCristinId().get()
         : requestInfo.getPersonAffiliation();
@@ -78,7 +70,7 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
   @Override
   public ResourceSearchQuery fromRequestInfo(RequestInfo requestInfo) throws UnauthorizedException {
     if (isAuthorized(requestInfo)) {
-      return customerCurationInstitutions(requestInfo).apply();
+      return customerContributorOrganizations(requestInfo).apply();
     } else {
       return requiredStatus(PUBLISHED).apply();
     }
@@ -104,14 +96,14 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
   }
 
   /**
-   * Filter on organization and curationInstitutions.
+   * Filter on contributor organizations.
    *
    * <p>Only documents belonging to organization specified are searchable (for the user)
    *
    * @param requestInfo fetches TopLevelOrgCristinId PersonAffiliation
    * @return {@link ResourceAccessFilter} (builder pattern)
    */
-  public ResourceAccessFilter customerCurationInstitutions(RequestInfo requestInfo)
+  public ResourceAccessFilter customerContributorOrganizations(RequestInfo requestInfo)
       throws UnauthorizedException {
     if (isAppAdmin() && isStatisticsQuery()) {
       return this;
@@ -124,11 +116,9 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
 
     requiredStatus(statuses);
 
-    var curationInstitutionId = getCurationInstitutionId(requestInfo).toString();
-    if (isCurator()) {
-      this.searchQuery.filters().add(buildMatchBoth(curationInstitutionId));
-    } else if (isEditor()) {
-      this.searchQuery.filters().add(filterByContributingOrg(curationInstitutionId));
+    var institutionId = getInstitutionId(requestInfo).toString();
+    if (isCurator() || isEditor()) {
+      this.searchQuery.filters().add(filterByContributingOrg(institutionId));
     }
     if (statusOrOrgfilterIsMissing() && !isAppAdmin()) {
       throw new UnauthorizedException();
@@ -141,18 +131,8 @@ public class ResourceAccessFilter implements FilterBuilder<ResourceSearchQuery> 
   }
 
   private QueryBuilder filterByContributingOrg(String institutionId) {
-    return new TermsQueryBuilder(CONTRIBUTOR_ORG_KEYWORD, institutionId).queryName(EDITOR_FILTER);
-  }
-
-  private QueryBuilder filterByCuratingOrg(String institutionId) {
-    return new TermsQueryBuilder(CURATING_INST_KEYWORD, institutionId).queryName(CURATOR_FILTER);
-  }
-
-  private DisMaxQueryBuilder buildMatchBoth(String institutionId) {
-    return new DisMaxQueryBuilder()
-        .add(filterByContributingOrg(institutionId))
-        .add(filterByCuratingOrg(institutionId))
-        .queryName(EDITOR_CURATOR_FILTER);
+    return new TermsQueryBuilder(CONTRIBUTOR_ORG_KEYWORD, institutionId)
+        .queryName(CONTRIBUTOR_ORGANIZATION_FILTER);
   }
 
   private boolean isAuthorized(RequestInfo requestInfo) {
