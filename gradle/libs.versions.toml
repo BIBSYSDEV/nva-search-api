@@ -2,7 +2,7 @@
 commonsCollections4 = { strictly = '4.5.0' }
 commonsText = { strictly = '1.15.0' }
 glassfishJaxbRuntime = { strictly = '4.0.9' }
-guava = { strictly = "33.6.0-jre" }
+guava = { strictly = "33.7.2-jre" }
 jakartaAnnotationApi = { strictly = '3.0.0' }
 jakartaXmlBindApi = { strictly = '4.0.5' }
 jodaTime = { strictly = '2.14.3' }
