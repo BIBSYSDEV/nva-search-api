@@ -26,7 +26,7 @@ import no.unit.nva.commons.json.JsonSerializable;
 public record PagedSearch(
     URI id,
     Integer totalHits,
-    @JsonInclude() List<JsonNode> hits,
+    @JsonInclude List<JsonNode> hits,
     URI nextResults,
     URI nextSearchAfterResults,
     URI previousResults,

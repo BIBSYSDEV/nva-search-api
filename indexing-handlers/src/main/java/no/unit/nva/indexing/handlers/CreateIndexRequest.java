@@ -19,8 +19,7 @@ public record CreateIndexRequest(Collection<IndexName> indices) implements JsonS
   public static CreateIndexRequest fromInputStream(InputStream inputStream) {
     return attempt(() -> IoUtils.streamToString(inputStream))
         .map(value -> dtoObjectMapper.readValue(value, CreateIndexRequest.class))
-        .orElseThrow(
-            failure ->
-                new IllegalArgumentException("Could not parse request!", failure.getException()));
+        .orElseThrow(failure ->
+            new IllegalArgumentException("Could not parse request!", failure.getException()));
   }
 }

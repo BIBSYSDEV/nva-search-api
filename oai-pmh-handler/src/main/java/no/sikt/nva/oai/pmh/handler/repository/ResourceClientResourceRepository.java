@@ -134,9 +134,8 @@ public class ResourceClientResourceRepository implements ResourceRepository {
       var mutatedHits = response.toMutatedHits();
       var hits =
           mutatedHits.stream()
-              .map(
-                  node ->
-                      JsonUtils.dtoObjectMapper.convertValue(node, ResourceSearchResponse.class))
+              .map(node ->
+                  JsonUtils.dtoObjectMapper.convertValue(node, ResourceSearchResponse.class))
               .toList();
       return new PagedResponse(response.swsResponse().getTotalSize(), hits);
     } catch (RuntimeException e) { // FIXME: Do we need this catch?
@@ -170,15 +169,13 @@ public class ResourceClientResourceRepository implements ResourceRepository {
             fromValue -> queryBuilder.withParameter(ResourceParameter.MODIFIED_SINCE, fromValue));
     until.ifPresent(
         untilValue -> queryBuilder.withParameter(ResourceParameter.MODIFIED_BEFORE, untilValue));
-    setSpec.ifPresent(
-        ignored -> {
-          if (isResourceTypeGeneralSpecWithChild(setSpec)) {
-            queryBuilder.withParameter(ResourceParameter.INSTANCE_TYPE, setSpec.children()[0]);
-          } else if (isInstitutionSpecWithChild(setSpec)) {
-            queryBuilder.withParameter(
-                ResourceParameter.TOP_LEVEL_ORGANIZATION, setSpec.children()[0]);
-          }
-        });
+    setSpec.ifPresent(ignored -> {
+      if (isResourceTypeGeneralSpecWithChild(setSpec)) {
+        queryBuilder.withParameter(ResourceParameter.INSTANCE_TYPE, setSpec.children()[0]);
+      } else if (isInstitutionSpecWithChild(setSpec)) {
+        queryBuilder.withParameter(ResourceParameter.TOP_LEVEL_ORGANIZATION, setSpec.children()[0]);
+      }
+    });
   }
 
   private static ParameterValidator<ResourceParameter, ResourceSearchQuery>

@@ -73,10 +73,8 @@ public final class ScrollQuery extends Query<ScrollParameter> {
   }
 
   private String scrollRequestToString(SearchScrollRequest request) {
-    return attempt(
-            () ->
-                toXContent(request, XContentType.JSON, ToXContent.EMPTY_PARAMS, true)
-                    .utf8ToString())
+    return attempt(() ->
+            toXContent(request, XContentType.JSON, ToXContent.EMPTY_PARAMS, true).utf8ToString())
         .orElseThrow();
   }
 

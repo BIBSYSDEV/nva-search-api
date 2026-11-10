@@ -89,9 +89,8 @@ class EventBasedBatchIndexerTest extends BatchIndexTest {
 
     assertEquals(actualIdentifiersOfNonIndexedEntries, expectedIdentifiesOfNonIndexedEntries);
 
-    expectedIdentifiesOfNonIndexedEntries.forEach(
-        expectedIdentifier ->
-            assertThat(logRecorder.messages(), hasItem(containsString(expectedIdentifier))));
+    expectedIdentifiesOfNonIndexedEntries.forEach(expectedIdentifier ->
+        assertThat(logRecorder.messages(), hasItem(containsString(expectedIdentifier))));
   }
 
   @Test
