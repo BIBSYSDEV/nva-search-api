@@ -63,8 +63,6 @@ import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortBuilder;
 import org.opensearch.search.sort.SortBuilders;
 import org.opensearch.search.sort.SortOrder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * SearchQuery is a class that represents a query to the search service.
@@ -80,7 +78,6 @@ import org.slf4j.LoggerFactory;
 })
 public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Query<K> {
 
-  protected static final Logger logger = LoggerFactory.getLogger(SearchQuery.class);
   private static final String LD_JSON_ESSENCE = "application/ld+json";
   private static final String SCHEMA_ORG_ESSENCE = "application/vnd.schemaorg.ld+json";
   private static final String JSON_ESSENCE = "application/json";
@@ -190,8 +187,8 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
         (SwsResponse) queryClient.doSearch((Q) this, indexName),
         getMediaType(),
         getNvaSearchApiUri(),
-        from().as(),
-        size().as(),
+        from().asInteger(),
+        size().asInteger(),
         facetPaths(),
         parameters());
   }
@@ -298,8 +295,8 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
 
     return new SearchSourceBuilder()
         .query(queryBuilder)
-        .size(size().as())
-        .from(from().as())
+        .size(size().asInteger())
+        .from(from().asInteger())
         .postFilter(filters().get())
         .trackTotalHits(true);
   }
@@ -389,6 +386,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
 
   private boolean hasAggregation() {
     return getMediaType().matches(JSON_UTF_8)
-        && ALL.equalsIgnoreCase(parameters().get(keyAggregation()).as());
+        && ALL.equalsIgnoreCase(parameters().get(keyAggregation()).asString());
   }
 }
