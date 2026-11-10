@@ -339,6 +339,20 @@ class ResourceSearchQueryTest {
   }
 
   @Test
+  void shouldKeepColonsInFundingIdentifier() throws BadRequestException {
+    var uri = URI.create("https://example.com/?funding=NFR:12:34");
+    var query =
+        ResourceSearchQuery.builder()
+            .fromTestQueryParameters(queryToMapEntries(uri))
+            .withRequiredParameters(FROM, SIZE)
+            .build();
+
+    var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
+
+    assertTrue(body.contains("\"12:34\""));
+  }
+
+  @Test
   void curatedFieldListShouldContainOnlyTextPaths() {
     assertEquals(63, SEARCH_ALL_DEFAULT_FIELDS.size());
     SEARCH_ALL_DEFAULT_FIELDS

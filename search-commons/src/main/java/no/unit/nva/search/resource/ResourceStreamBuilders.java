@@ -190,13 +190,15 @@ public class ResourceStreamBuilders {
   }
 
   public Stream<Map.Entry<ResourceParameter, QueryBuilder>> fundingQuery(ResourceParameter key) {
-    var values = parameters.get(key).split(COLON);
+    var fundingSourceAndIdentifier = parameters.get(key).asString().split(COLON, 2);
+    var fundingSource = fundingSourceAndIdentifier[0];
+    var fundingIdentifier = fundingSourceAndIdentifier[1];
     var query =
         nestedQuery(
             FUNDINGS,
             boolQuery()
-                .must(termQuery(FUNDINGS_IDENTIFIER, values[1]))
-                .must(termQuery(FUNDING_SOURCE_IDENTIFIER, values[0])),
+                .must(termQuery(FUNDINGS_IDENTIFIER, fundingIdentifier))
+                .must(termQuery(FUNDING_SOURCE_IDENTIFIER, fundingSource)),
             ScoreMode.None);
     return Functions.queryToEntry(key, query);
   }
