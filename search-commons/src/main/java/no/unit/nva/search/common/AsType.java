@@ -2,11 +2,11 @@ package no.unit.nva.search.common;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static no.unit.nva.constants.Words.COMMA;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Stream;
 import no.unit.nva.search.common.enums.ParameterKey;
@@ -84,8 +84,12 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
     return !isEmpty();
   }
 
-  public boolean contains(Object o) {
-    return nonNull(value) && value.contains(o.toString());
+  /**
+   * Whether one of the comma-separated values equals the expected value, ignoring case and
+   * surrounding whitespace.
+   */
+  public boolean containsValue(String expectedValue) {
+    return asSplitStream(COMMA).map(String::strip).anyMatch(expectedValue::equalsIgnoreCase);
   }
 
   /**
@@ -125,10 +129,6 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
    */
   public Boolean asBoolean() {
     return Boolean.parseBoolean(value);
-  }
-
-  public String asLowerCase() {
-    return value.toLowerCase(Locale.getDefault());
   }
 
   @Override
