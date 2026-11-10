@@ -352,7 +352,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
 
   private void handleSearchAfter(SearchSourceBuilder builder) {
     var sortKeys = parameters().remove(keySearchAfter()).split(COMMA);
-    if (nonNull(sortKeys)) {
+    if (sortKeys.length > 0) {
       builder.searchAfter(sortKeys);
     }
   }
@@ -387,7 +387,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
   }
 
   private boolean isFetchSource() {
-    return nonNull(exclude()) || nonNull(include());
+    return exclude().length > 0 || include().length > 0;
   }
 
   private boolean hasAggregation() {

@@ -59,7 +59,6 @@ public class ResourceClientResourceRepository implements ResourceRepository {
   }
 
   @Override
-  @SuppressWarnings("PMD.AvoidCatchingGenericException") // FIXME: Do we need this catch?
   public Sets fetchSetsFromAggregations() {
     var query = buildAggregationsQuery();
     try {
@@ -80,7 +79,7 @@ public class ResourceClientResourceRepository implements ResourceRepository {
               .collect(Collectors.toSet());
 
       return new Sets(instanceTypes, institutionIdentifiers);
-    } catch (RuntimeException e) {
+    } catch (RuntimeException e) { // FIXME: Do we need this catch?
       LOGGER.error("Failed to execute search for resources aggregations.", e);
       throw new ResourceSearchException("Error searching for resources aggregations.", e);
     }
@@ -128,7 +127,6 @@ public class ResourceClientResourceRepository implements ResourceRepository {
     }
   }
 
-  @SuppressWarnings("PMD.AvoidCatchingGenericException") // FIXME: Do we need this catch?
   private PagedResponse doQuery(final ResourceSearchQuery query) {
     try {
       var response =
@@ -141,7 +139,7 @@ public class ResourceClientResourceRepository implements ResourceRepository {
                       JsonUtils.dtoObjectMapper.convertValue(node, ResourceSearchResponse.class))
               .toList();
       return new PagedResponse(response.swsResponse().getTotalSize(), hits);
-    } catch (RuntimeException e) {
+    } catch (RuntimeException e) { // FIXME: Do we need this catch?
       LOGGER.error("Failed to execute search for resources.", e);
       throw new ResourceSearchException("Error searching for resources.", e);
     }

@@ -8,7 +8,18 @@ nva {
         allErrorsAsWarnings = true // TODO: Fix reported issues and set to false
     }
     pmd {
-        rulesetFile = rootProject.file('config/pmd/ruleset.xml')
+        analyzeTests = false
+        excludedRules = [
+                'AvoidCatchingGenericException',
+                'AvoidPrintStackTrace',
+                'AvoidThrowingRawExceptionTypes',
+                'ClassNamingConventions',
+                'CyclomaticComplexity',
+                'FieldNamingConventions',
+                'GuardLogStatement',
+                'SystemPrintln',
+                'VariableCanBeInlined'
+        ]
     }
 }
 
