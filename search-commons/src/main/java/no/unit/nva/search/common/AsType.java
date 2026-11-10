@@ -34,9 +34,7 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
   }
 
   private static Stream<String> splitParts(String delimiter, String value) {
-    return Arrays.stream(value.split(delimiter))
-        .filter(predicate -> !predicate.isBlank())
-        .sequential();
+    return Arrays.stream(value.split(delimiter)).filter(part -> !part.isBlank());
   }
 
   public <T> T as() {
@@ -96,10 +94,10 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
    * Split.
    *
    * @param delimiter regex to split on
-   * @return The value split, or an empty array.
+   * @return The non-blank parts of the value, or an empty array if there is no value.
    */
   public String[] split(String delimiter) {
-    return nonNull(value) ? value.split(delimiter) : new String[0];
+    return asSplitStream(delimiter).toArray(String[]::new);
   }
 
   /**
@@ -109,7 +107,6 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
    * @return The value as an optional Stream, split by delimiter.
    */
   public Stream<String> asSplitStream(String delimiter) {
-    // Optional null stream, skipping null check
     return asStream().flatMap(value -> splitParts(delimiter, value));
   }
 

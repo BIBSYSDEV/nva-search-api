@@ -1,5 +1,6 @@
 package no.unit.nva.search.common;
 
+import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.search.ticket.TicketParameter.STATUS;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -32,5 +33,19 @@ class AsTypeTest {
     var parameter = new AsType<>(null, STATUS);
 
     assertThat(parameter.containsValue(EXPECTED_STATUS)).isFalse();
+  }
+
+  @Test
+  void shouldDropBlankPartsWhenSplitting() {
+    var parameter = new AsType<>("Pending,, ,New", STATUS);
+
+    assertThat(parameter.split(COMMA)).containsExactly("Pending", "New");
+  }
+
+  @Test
+  void shouldSplitToEmptyArrayWhenThereIsNoValue() {
+    var parameter = new AsType<>(null, STATUS);
+
+    assertThat(parameter.split(COMMA)).isEmpty();
   }
 }
