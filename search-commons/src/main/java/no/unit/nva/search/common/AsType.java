@@ -4,25 +4,21 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.constants.Words.COMMA;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
-import static nva.commons.core.attempt.Try.attempt;
 
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
 import no.unit.nva.search.common.enums.ParameterKey;
-import no.unit.nva.search.common.enums.ParameterKind;
-import org.joda.time.DateTime;
 
 /**
- * AutoConvert value to Date, Number (or String).
+ * A query parameter value, read as the type the caller needs.
  *
- * <p>Also holds key and can return value as <samp>optional stream</samp>
+ * <p>A missing value reads as an empty string, stream or array, never as null.
  *
  * @author Stig Norland
  * @param <K> the type of the parameter keys used in the query. The parameter keys are used to
  *     define the parameters that can be used in the query.
  */
-@SuppressWarnings({"PMD.ShortMethodName"})
 public class AsType<K extends Enum<K> & ParameterKey<K>> {
 
   private final String value;
@@ -37,40 +33,20 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
     return Arrays.stream(value.split(delimiter)).filter(part -> !part.isBlank());
   }
 
-  public <T> T as() {
-    if (isNull(value)) {
-      return null;
-    }
-    if (getKey().fieldType() == ParameterKind.CUSTOM) {
-      SearchQuery.logger.debug(
-          "CUSTOM lacks TypeInfo, use explicit casting if 'String' doesn't cut it.");
-    }
-
-    return (T)
-        switch (getKey().fieldType()) {
-          case DATE -> castDateTime();
-          case NUMBER -> castNumber();
-          default -> value;
-        };
-  }
-
   public K getKey() {
     return key;
   }
 
-  private <T> T castDateTime() {
-    return ((Class<T>) DateTime.class).cast(asDateTime());
+  public String asString() {
+    return nonNull(value) ? value : EMPTY_STRING;
   }
 
-  public DateTime asDateTime() {
-    return DateTime.parse(value);
-  }
-
-  private <T extends Number> T castNumber() {
-    return (T) attempt(this::asNumber).orElseThrow();
-  }
-
-  public Number asNumber() {
+  /**
+   * The value as an integer.
+   *
+   * @throws NumberFormatException if there is no value or it is not an integer
+   */
+  public int asInteger() {
     return Integer.parseInt(value);
   }
 
@@ -124,12 +100,12 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
    *
    * @return False if value is null or FALSE, otherwise True
    */
-  public Boolean asBoolean() {
+  public boolean asBoolean() {
     return Boolean.parseBoolean(value);
   }
 
   @Override
   public String toString() {
-    return nonNull(value) ? value : EMPTY_STRING;
+    return asString();
   }
 }

@@ -1,6 +1,5 @@
 package no.unit.nva.search.resource;
 
-import static java.util.Objects.nonNull;
 import static no.unit.nva.common.Containers.container;
 import static no.unit.nva.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.common.MockedHttpResponse.mockedFutureHttpResponse;
@@ -17,9 +16,7 @@ import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.DOI;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.FUNDING;
-import static no.unit.nva.search.resource.ResourceParameter.MODIFIED_BEFORE;
 import static no.unit.nva.search.resource.ResourceParameter.PAGE;
-import static no.unit.nva.search.resource.ResourceParameter.PUBLISHED_BEFORE;
 import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_BEFORE;
 import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_SINCE;
 import static no.unit.nva.search.resource.ResourceParameter.SEARCH_ALL;
@@ -30,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -52,7 +48,6 @@ import no.unit.nva.search.common.records.PagedSearch;
 import nva.commons.apigateway.MediaTypes;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.paths.UriWrapper;
-import org.joda.time.DateTime;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -130,7 +125,7 @@ class ResourceSearchQueryTest {
   }
 
   private static void debugLogging(ResourceParameter key, ResourceSearchQuery query) {
-    logger.debug("{} : {}", key.asCamelCase(), query.parameters().get(key).as());
+    logger.debug("{} : {}", key.asCamelCase(), query.parameters().get(key).asString());
   }
 
   @Test
@@ -196,8 +191,8 @@ class ResourceSearchQueryTest {
             .fromTestQueryParameters(queryToMapEntries(uri))
             .withRequiredParameters(FROM, SIZE)
             .build();
-    assertNotNull(resource.parameters().get(FROM).as());
-    assertNotNull(resource.parameters().get(SIZE).as());
+    assertTrue(resource.parameters().get(FROM).isPresent());
+    assertTrue(resource.parameters().get(SIZE).isPresent());
     var uri2 =
         UriWrapper.fromUri(resource.getNvaSearchApiUri())
             .addQueryParameters(resource.parameters().asMap())
@@ -224,16 +219,6 @@ class ResourceSearchQueryTest {
 
     query.parameters().getSearchKeys().forEach(key -> debugLogging(key, query));
 
-    // two ways to access keys
-
-    var modified = query.parameters().get(MODIFIED_BEFORE);
-    if (!modified.isEmpty()) {
-      logger.debug("Modified-1: {}", modified.asDateTime());
-    }
-    var published = query.parameters().ifPresent(PUBLISHED_BEFORE);
-    if (nonNull(published)) {
-      logger.debug("Published-1: {}", published.<DateTime>as());
-    }
     assertNotNull(query.parameters());
   }
 
@@ -245,9 +230,9 @@ class ResourceSearchQueryTest {
             .fromTestQueryParameters(queryToMapEntries(uri))
             .withRequiredParameters(FROM, SIZE)
             .build();
-    assertNotNull(resource.parameters().get(FROM).<Long>as());
-    assertNull(resource.parameters().get(PAGE).<Long>as());
-    assertNotNull(resource.parameters().get(SORT).as());
+    assertTrue(resource.parameters().get(FROM).isPresent());
+    assertTrue(resource.parameters().get(PAGE).isEmpty());
+    assertTrue(resource.parameters().get(SORT).isPresent());
   }
 
   @ParameterizedTest

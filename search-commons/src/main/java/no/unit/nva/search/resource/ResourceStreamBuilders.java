@@ -143,7 +143,7 @@ public class ResourceStreamBuilders {
 
   public Stream<Map.Entry<ResourceParameter, QueryBuilder>> additionalIdentifierQuery(
       ResourceParameter key, String type) {
-    String value = parameters.get(key).as();
+    var value = parameters.get(key).asString();
     var query =
         nestedQuery(
             ADDITIONAL_IDENTIFIERS,

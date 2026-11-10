@@ -31,10 +31,8 @@ import java.net.URI;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import no.unit.nva.search.common.AsType;
 import no.unit.nva.search.common.records.FilterBuilder;
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
@@ -271,20 +269,10 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
   }
 
   private void validateAssigneeAndOwnerParameters() throws UnauthorizedException {
-    var assigneeOpt =
-        Optional.ofNullable(query.parameters().get(ASSIGNEE))
-            .map(AsType::as)
-            .map(Object::toString)
-            .map(String::trim);
+    var assignee = query.parameters().get(ASSIGNEE).asString().trim();
+    var owner = query.parameters().get(OWNER).asString().trim();
 
-    var ownerOpt =
-        Optional.ofNullable(query.parameters().get(OWNER))
-            .map(AsType::as)
-            .map(Object::toString)
-            .map(String::trim)
-            .filter(string -> !string.isEmpty()); // Owner can be empty and ignored
-
-    if (assigneeOpt.isPresent() && assigneeOpt.equals(ownerOpt)) {
+    if (!owner.isEmpty() && owner.equals(assignee)) {
       throw new UnauthorizedException(CANNOT_SEARCH_AS_BOTH_ASSIGNEE_AND_OWNER_AT_THE_SAME_TIME);
     }
   }
@@ -312,7 +300,7 @@ public class TicketAccessFilter implements FilterBuilder<TicketSearchQuery> {
   }
 
   private boolean isCurrentUserNotOwner(String userName) {
-    return !userName.equalsIgnoreCase(query.parameters().get(OWNER).as());
+    return !userName.equalsIgnoreCase(query.parameters().get(OWNER).asString());
   }
 
   private boolean searchAsTicketOwner() {

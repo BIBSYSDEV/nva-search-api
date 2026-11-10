@@ -164,9 +164,9 @@ public abstract class ParameterValidator<
     if (query.parameters().isPresent(pageKey)) {
       var fromKey = query.toKey(FROM_KEY_NAME);
       if (query.parameters().isPresent(fromKey)) {
-        var page = query.parameters().get(pageKey).<Number>as().longValue();
-        var perPage = query.parameters().get(query.toKey(SIZE_KEY_NAME)).<Number>as().longValue();
-        query.parameters().set(fromKey, String.valueOf(page * perPage));
+        var page = query.parameters().get(pageKey).asInteger();
+        var perPage = query.parameters().get(query.toKey(SIZE_KEY_NAME)).asInteger();
+        query.parameters().set(fromKey, String.valueOf((long) page * perPage));
       }
       query.parameters().remove(pageKey);
     }
@@ -377,7 +377,9 @@ public abstract class ParameterValidator<
   }
 
   protected void mergeToKey(K key, String value) {
-    query.parameters().set(key, mergeWithColonOrComma(query.parameters().get(key).as(), value));
+    query
+        .parameters()
+        .set(key, mergeWithColonOrComma(query.parameters().get(key).asString(), value));
   }
 
   protected String ignoreInvalidFields(String value) {
@@ -420,8 +422,8 @@ public abstract class ParameterValidator<
   }
 
   private void validateResultWindowSize() throws BadRequestException {
-    var from = query.from().isEmpty() ? 0 : query.from().asNumber().intValue();
-    var size = query.size().isEmpty() ? 0 : query.size().asNumber().intValue();
+    var from = query.from().isEmpty() ? 0 : query.from().asInteger();
+    var size = query.size().isEmpty() ? 0 : query.size().asInteger();
     var resultWindow = from + size;
     if (resultWindow > MAX_RESULT_WINDOW_SIZE) {
       throw new BadRequestException(

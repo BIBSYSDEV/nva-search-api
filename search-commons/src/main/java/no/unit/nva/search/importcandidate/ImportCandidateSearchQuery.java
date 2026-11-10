@@ -143,7 +143,7 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
 
   private Stream<Entry<ImportCandidateParameter, QueryBuilder>> builderStreamAdditionalIdentifier(
       ImportCandidateParameter key, String type) {
-    var value = parameters().get(key).as();
+    var value = parameters().get(key).asString();
     var query =
         QueryBuilders.nestedQuery(
             ADDITIONAL_IDENTIFIERS,
@@ -157,7 +157,7 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
 
   public Stream<Map.Entry<ImportCandidateParameter, QueryBuilder>> licenseQuery(
       ImportCandidateParameter key) {
-    var query = QueryBuilders.scriptQuery(selectByLicense(parameters().get(key).as()));
+    var query = QueryBuilders.scriptQuery(selectByLicense(parameters().get(key).asString()));
     return Functions.queryToEntry(key, query);
   }
 
