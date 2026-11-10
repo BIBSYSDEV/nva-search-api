@@ -8,7 +8,6 @@ import static nva.commons.core.StringUtils.EMPTY_STRING;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
-import no.unit.nva.search.common.enums.ParameterKey;
 
 /**
  * A query parameter value, read as the type the caller needs.
@@ -16,25 +15,17 @@ import no.unit.nva.search.common.enums.ParameterKey;
  * <p>A missing value reads as an empty string, stream or array, never as null.
  *
  * @author Stig Norland
- * @param <K> the type of the parameter keys used in the query. The parameter keys are used to
- *     define the parameters that can be used in the query.
  */
-public class AsType<K extends Enum<K> & ParameterKey<K>> {
+public class AsType {
 
   private final String value;
-  private final K key;
 
-  public AsType(String value, K key) {
+  public AsType(String value) {
     this.value = value;
-    this.key = key;
   }
 
   private static Stream<String> splitParts(String delimiter, String value) {
     return Arrays.stream(value.split(delimiter)).filter(part -> !part.isBlank());
-  }
-
-  public K getKey() {
-    return key;
   }
 
   public String asString() {
