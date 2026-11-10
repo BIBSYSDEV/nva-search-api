@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
 import no.unit.nva.search.common.enums.ParameterKey;
-import org.joda.time.DateTime;
 
 /**
  * A query parameter value, read as the type the caller needs.
@@ -36,10 +35,6 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
 
   public K getKey() {
     return key;
-  }
-
-  public DateTime asDateTime() {
-    return DateTime.parse(value);
   }
 
   public String asString() {

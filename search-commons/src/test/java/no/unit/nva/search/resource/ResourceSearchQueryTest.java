@@ -16,9 +16,7 @@ import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.DOI;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.FUNDING;
-import static no.unit.nva.search.resource.ResourceParameter.MODIFIED_BEFORE;
 import static no.unit.nva.search.resource.ResourceParameter.PAGE;
-import static no.unit.nva.search.resource.ResourceParameter.PUBLISHED_BEFORE;
 import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_BEFORE;
 import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_SINCE;
 import static no.unit.nva.search.resource.ResourceParameter.SEARCH_ALL;
@@ -221,16 +219,6 @@ class ResourceSearchQueryTest {
 
     query.parameters().getSearchKeys().forEach(key -> debugLogging(key, query));
 
-    // two ways to access keys
-
-    var modified = query.parameters().get(MODIFIED_BEFORE);
-    if (!modified.isEmpty()) {
-      logger.debug("Modified-1: {}", modified.asDateTime());
-    }
-    var published = query.parameters().get(PUBLISHED_BEFORE);
-    if (published.isPresent()) {
-      logger.debug("Published-1: {}", published.asDateTime());
-    }
     assertNotNull(query.parameters());
   }
 
