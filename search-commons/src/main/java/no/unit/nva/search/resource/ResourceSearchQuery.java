@@ -114,7 +114,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
   }
 
   @Override
-  public AsType<ResourceParameter> sort() {
+  public AsType sort() {
     var sortString = parameters().get(SORT).toString();
     if (missingIdentifier(sortString)) {
       if (sortString.isBlank()) {
@@ -196,17 +196,17 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
   }
 
   @Override
-  protected AsType<ResourceParameter> from() {
+  protected AsType from() {
     return parameters().get(FROM);
   }
 
   @Override
-  protected AsType<ResourceParameter> size() {
+  protected AsType size() {
     return parameters().get(SIZE);
   }
 
   @Override
-  protected AsType<ResourceParameter> page() {
+  protected AsType page() {
     return parameters().get(PAGE);
   }
 

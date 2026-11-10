@@ -1,8 +1,6 @@
 package no.unit.nva.search.common;
 
 import static no.unit.nva.constants.Words.COMMA;
-import static no.unit.nva.search.ticket.TicketParameter.SIZE;
-import static no.unit.nva.search.ticket.TicketParameter.STATUS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -17,7 +15,7 @@ class AsTypeTest {
   @ParameterizedTest
   @ValueSource(strings = {"New", "new", "Pending,New", "Pending, New "})
   void shouldContainValueWhenOneOfTheValuesMatches(String value) {
-    var parameter = new AsType<>(value, STATUS);
+    var parameter = new AsType(value);
 
     assertThat(parameter.containsValue(EXPECTED_STATUS)).isTrue();
   }
@@ -25,49 +23,49 @@ class AsTypeTest {
   @ParameterizedTest
   @ValueSource(strings = {"Newer", "NotNew", "Pending", "Pending,Closed", ""})
   void shouldNotContainValueWhenNoValueMatchesExactly(String value) {
-    var parameter = new AsType<>(value, STATUS);
+    var parameter = new AsType(value);
 
     assertThat(parameter.containsValue(EXPECTED_STATUS)).isFalse();
   }
 
   @Test
   void shouldNotContainValueWhenThereIsNoValue() {
-    var parameter = new AsType<>(null, STATUS);
+    var parameter = new AsType(null);
 
     assertThat(parameter.containsValue(EXPECTED_STATUS)).isFalse();
   }
 
   @Test
   void shouldDropBlankPartsWhenSplitting() {
-    var parameter = new AsType<>("Pending,, ,New", STATUS);
+    var parameter = new AsType("Pending,, ,New");
 
     assertThat(parameter.split(COMMA)).containsExactly("Pending", "New");
   }
 
   @Test
   void shouldSplitToEmptyArrayWhenThereIsNoValue() {
-    var parameter = new AsType<>(null, STATUS);
+    var parameter = new AsType(null);
 
     assertThat(parameter.split(COMMA)).isEmpty();
   }
 
   @Test
   void shouldReadMissingValueAsEmptyString() {
-    var parameter = new AsType<>(null, STATUS);
+    var parameter = new AsType(null);
 
     assertThat(parameter.asString()).isEmpty();
   }
 
   @Test
   void shouldReadValueAsInteger() {
-    var parameter = new AsType<>("42", SIZE);
+    var parameter = new AsType("42");
 
     assertThat(parameter.asInteger()).isEqualTo(42);
   }
 
   @Test
   void shouldFailToReadMissingValueAsInteger() {
-    var parameter = new AsType<>(null, SIZE);
+    var parameter = new AsType(null);
 
     assertThatThrownBy(parameter::asInteger).isInstanceOf(NumberFormatException.class);
   }
