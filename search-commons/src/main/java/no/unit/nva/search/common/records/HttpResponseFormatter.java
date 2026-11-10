@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.AggregationFormat;
-import no.unit.nva.search.common.QueryKeys;
+import no.unit.nva.search.common.QueryParameters;
 import no.unit.nva.search.common.bibliography.SchemaOrgBibliographyTransformer;
 import no.unit.nva.search.common.bibtex.ResourceBibTexTransformer;
 import no.unit.nva.search.common.csv.ResourceCsvTransformer;
@@ -53,7 +53,7 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
   private final Integer offset;
   private final Integer size;
   private final Map<String, String> facetPaths;
-  private final QueryKeys<K> queryKeys;
+  private final QueryParameters<K> queryParameters;
   private List<JsonNodeMutator> mutators;
 
   public HttpResponseFormatter(
@@ -63,14 +63,14 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
       Integer offset,
       Integer size,
       Map<String, String> facetPaths,
-      QueryKeys<K> requestParameter) {
+      QueryParameters<K> requestParameter) {
     this.response = response;
     this.mediaType = mediaType;
     this.source = source;
     this.offset = offset;
     this.size = size;
     this.facetPaths = facetPaths;
-    this.queryKeys = requestParameter;
+    this.queryParameters = requestParameter;
   }
 
   public HttpResponseFormatter(SwsResponse response, MediaType mediaType) {
@@ -82,8 +82,8 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
     return this;
   }
 
-  public QueryKeys<K> parameters() {
-    return queryKeys;
+  public QueryParameters<K> parameters() {
+    return queryParameters;
   }
 
   public SwsResponse swsResponse() {
@@ -224,7 +224,7 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
   }
 
   private Map<String, String> getRequestParameter() {
-    return nonNull(queryKeys) ? queryKeys.asMap() : new LinkedHashMap<>();
+    return nonNull(queryParameters) ? queryParameters.asMap() : new LinkedHashMap<>();
   }
 
   private URI nextResultsBySortKey(Map<String, String> requestParameter, URI gatewayUri) {
