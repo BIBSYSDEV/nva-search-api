@@ -74,8 +74,8 @@ public class QueryKeys<K extends Enum<K> & ParameterKey<K>> {
    * @param key to look up.
    * @return String content raw
    */
-  public AsType get(K key) {
-    return new AsType(search.containsKey(key) ? search.get(key) : page.get(key));
+  public ParameterValue get(K key) {
+    return new ParameterValue(search.containsKey(key) ? search.get(key) : page.get(key));
   }
 
   /**
@@ -98,8 +98,8 @@ public class QueryKeys<K extends Enum<K> & ParameterKey<K>> {
     return key.ordinal() >= fields.ordinal();
   }
 
-  public AsType remove(K key) {
-    return new AsType(search.containsKey(key) ? search.remove(key) : page.remove(key));
+  public ParameterValue remove(K key) {
+    return new ParameterValue(search.containsKey(key) ? search.remove(key) : page.remove(key));
   }
 
   public boolean isPresent(K key) {

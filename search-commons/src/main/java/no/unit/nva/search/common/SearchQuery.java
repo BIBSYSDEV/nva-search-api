@@ -102,7 +102,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
 
   protected abstract K keyFields();
 
-  protected abstract AsType sort();
+  protected abstract ParameterValue sort();
 
   protected abstract String[] exclude();
 
@@ -193,11 +193,11 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
         parameters());
   }
 
-  protected abstract AsType from();
+  protected abstract ParameterValue from();
 
-  protected abstract AsType size();
+  protected abstract ParameterValue size();
 
-  protected abstract AsType page();
+  protected abstract ParameterValue page();
 
   /**
    * Path to each and every facet defined in builderAggregations().
@@ -315,7 +315,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
         .operator(Operator.AND);
   }
 
-  protected Map<String, Float> mapOfPathAndBoost(AsType fieldValue) {
+  protected Map<String, Float> mapOfPathAndBoost(ParameterValue fieldValue) {
     return fieldValue.isEmpty() || fieldValue.containsValue(ALL)
         ? Map.of(ASTERISK, 1F) // NONE or ALL -> <'*',1.0>
         : fieldValue

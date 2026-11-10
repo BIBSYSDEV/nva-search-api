@@ -33,8 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
-import no.unit.nva.search.common.AsType;
 import no.unit.nva.search.common.ParameterValidator;
+import no.unit.nva.search.common.ParameterValue;
 import no.unit.nva.search.common.SearchQuery;
 import no.unit.nva.search.common.constant.Functions;
 import no.unit.nva.search.common.enums.SortKey;
@@ -85,22 +85,22 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
   }
 
   @Override
-  protected AsType from() {
+  protected ParameterValue from() {
     return parameters().get(FROM);
   }
 
   @Override
-  protected AsType size() {
+  protected ParameterValue size() {
     return parameters().get(SIZE);
   }
 
   @Override
-  protected AsType page() {
+  protected ParameterValue page() {
     return parameters().get(PAGE);
   }
 
   @Override
-  public AsType sort() {
+  public ParameterValue sort() {
     return parameters().get(SORT);
   }
 
