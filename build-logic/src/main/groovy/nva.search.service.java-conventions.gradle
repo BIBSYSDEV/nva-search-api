@@ -4,6 +4,9 @@ plugins {
 
 nva {
     generatedCode = ['org/openarchives/oai/pmh/**']
+    java {
+        languageVersion = 25
+    }
     errorprone {
         allErrorsAsWarnings = true // TODO: Fix reported issues and set to false
     }
