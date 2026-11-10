@@ -222,12 +222,11 @@ class IndexingClientTest {
   private RestHighLevelClientWrapper setupMockEsClient() throws IOException {
     var esClient = mock(RestHighLevelClientWrapper.class);
     when(esClient.index(any(IndexRequest.class), any(RequestOptions.class)))
-        .thenAnswer(
-            invocation -> {
-              var indexRequest = (IndexRequest) invocation.getArgument(0);
-              submittedIndexRequest.set(indexRequest);
-              return UNUSED_INDEX_RESPONSE;
-            });
+        .thenAnswer(invocation -> {
+          var indexRequest = (IndexRequest) invocation.getArgument(0);
+          submittedIndexRequest.set(indexRequest);
+          return UNUSED_INDEX_RESPONSE;
+        });
     return esClient;
   }
 

@@ -220,9 +220,8 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     }
     this.mediaType =
         MediaTypeParser.defaultParser().parseList(mediaType).preferenceOrder().stream()
-            .flatMap(
-                requested ->
-                    toResponseMediaType(requested.essence(), requested.profiles()).stream())
+            .flatMap(requested ->
+                toResponseMediaType(requested.essence(), requested.profiles()).stream())
             .findFirst()
             .orElse(JSON_UTF_8);
   }
@@ -258,33 +257,31 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     parameters()
         .getSearchKeys()
         .flatMap(this::builderStreamDefaultQuery)
-        .forEach(
-            entry -> {
-              if (isMustNot(entry.getKey())) {
-                boolQueryBuilder.mustNot(entry.getValue());
-              } else {
-                boolQueryBuilder.must(entry.getValue());
-              }
-            });
+        .forEach(entry -> {
+          if (isMustNot(entry.getKey())) {
+            boolQueryBuilder.mustNot(entry.getValue());
+          } else {
+            boolQueryBuilder.must(entry.getValue());
+          }
+        });
     return boolQueryBuilder;
   }
 
   protected Stream<SortBuilder<?>> builderStreamFieldSort() {
     return sort()
         .asSplitStream(COMMA)
-        .flatMap(
-            item -> {
-              final var parts = item.split(COLON_OR_SPACE);
-              final var order =
-                  SortOrder.fromString(attempt(() -> parts[1]).orElse((f) -> DEFAULT_SORT_ORDER));
-              final var sortKey = toSortKey(parts[0]);
+        .flatMap(item -> {
+          final var parts = item.split(COLON_OR_SPACE);
+          final var order =
+              SortOrder.fromString(attempt(() -> parts[1]).orElse(f -> DEFAULT_SORT_ORDER));
+          final var sortKey = toSortKey(parts[0]);
 
-              return RELEVANCE_KEY_NAME.equalsIgnoreCase(sortKey.name())
-                  ? Stream.of(SortBuilders.scoreSort().order(order))
-                  : sortKey
-                      .jsonPaths()
-                      .map(path -> SortBuilders.fieldSort(path).order(order).missing(SORT_LAST));
-            });
+          return RELEVANCE_KEY_NAME.equalsIgnoreCase(sortKey.name())
+              ? Stream.of(SortBuilders.scoreSort().order(order))
+              : sortKey
+                  .jsonPaths()
+                  .map(path -> SortBuilders.fieldSort(path).order(order).missing(SORT_LAST));
+        });
   }
 
   protected AggregationBuilder builderAggregationsWithFilter() {
@@ -352,7 +349,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
 
   private void handleSearchAfter(SearchSourceBuilder builder) {
     var sortKeys = parameters().remove(keySearchAfter()).split(COMMA);
-    if (nonNull(sortKeys)) {
+    if (sortKeys.length > 0) {
       builder.searchAfter(sortKeys);
     }
   }
@@ -387,7 +384,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
   }
 
   private boolean isFetchSource() {
-    return nonNull(exclude()) || nonNull(include());
+    return exclude().length > 0 || include().length > 0;
   }
 
   private boolean hasAggregation() {

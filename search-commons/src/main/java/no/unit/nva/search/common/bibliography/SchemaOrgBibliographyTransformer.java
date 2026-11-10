@@ -49,10 +49,9 @@ public final class SchemaOrgBibliographyTransformer {
     var items = hits.stream().map(SchemaOrgItemTransformer::transform).toList();
     var itemList = new SchemaOrgItemList(SCHEMA_ORG_CONTEXT, ITEM_LIST_TYPE, totalSize, items);
     return attempt(() -> MAPPER.writeValueAsString(itemList))
-        .orElseThrow(
-            failure -> {
-              LOGGER.error("Failed to serialize schema.org ItemList", failure.getException());
-              return new RuntimeException(failure.getException());
-            });
+        .orElseThrow(failure -> {
+          LOGGER.error("Failed to serialize schema.org ItemList", failure.getException());
+          return new RuntimeException(failure.getException());
+        });
   }
 }

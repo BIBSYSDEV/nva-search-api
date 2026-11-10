@@ -284,10 +284,9 @@ class KeyBasedBatchIndexHandlerTest {
   }
 
   private JsonNode randomValidNode() {
-    return attempt(
-            () ->
-                objectMapperWithEmpty.readTree(
-                    VALID_PUBLICATION.replace(IDENTIFIER, randomUUID().toString())))
+    return attempt(() ->
+            objectMapperWithEmpty.readTree(
+                VALID_PUBLICATION.replace(IDENTIFIER, randomUUID().toString())))
         .orElseThrow();
   }
 
@@ -296,10 +295,9 @@ class KeyBasedBatchIndexHandlerTest {
   }
 
   private IndexDocument insertResourceInPersistedResourcesBucket(IndexDocument document) {
-    attempt(
-            () ->
-                s3ResourcesDriver.insertFile(
-                    UnixPath.of(document.getDocumentIdentifier()), document.toJsonString()))
+    attempt(() ->
+            s3ResourcesDriver.insertFile(
+                UnixPath.of(document.getDocumentIdentifier()), document.toJsonString()))
         .orElseThrow();
     return document;
   }

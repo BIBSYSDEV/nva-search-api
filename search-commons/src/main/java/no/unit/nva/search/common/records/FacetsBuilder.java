@@ -21,7 +21,7 @@ public final class FacetsBuilder {
 
   public static Map<String, List<Facet>> build(String aggregations, URI id) {
     return toMapOfFacets(aggregations).entrySet().stream()
-        .map((entry) -> addIdToFacets(entry, id))
+        .map(entry -> addIdToFacets(entry, id))
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
@@ -35,15 +35,12 @@ public final class FacetsBuilder {
       Map.Entry<String, List<Facet>> entry, URI id) {
     var facets =
         entry.getValue().stream()
-            .map(
-                facet ->
-                    new Facet(
-                        UriWrapper.fromUri(id)
-                            .addQueryParameter(entry.getKey(), facet.key())
-                            .getUri(),
-                        facet.key(),
-                        facet.count(),
-                        facet.labels()))
+            .map(facet ->
+                new Facet(
+                    UriWrapper.fromUri(id).addQueryParameter(entry.getKey(), facet.key()).getUri(),
+                    facet.key(),
+                    facet.count(),
+                    facet.labels()))
             .toList();
     return Map.entry(entry.getKey(), facets);
   }

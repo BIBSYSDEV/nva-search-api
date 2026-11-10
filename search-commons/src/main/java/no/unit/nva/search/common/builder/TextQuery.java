@@ -42,12 +42,10 @@ public class TextQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBuil
 
   private Stream<QueryBuilder> buildAllMustHitQuery(K key, String... values) {
     return Arrays.stream(values)
-        .map(
-            singleValue ->
-                phrasePrefixBuilder(singleValue, key)
-                    .collect(
-                        DisMaxQueryBuilder::new, DisMaxQueryBuilder::add, DisMaxQueryBuilder::add)
-                    .queryName(TEXT_ALL + key.asCamelCase()));
+        .map(singleValue ->
+            phrasePrefixBuilder(singleValue, key)
+                .collect(DisMaxQueryBuilder::new, DisMaxQueryBuilder::add, DisMaxQueryBuilder::add)
+                .queryName(TEXT_ALL + key.asCamelCase()));
   }
 
   private Stream<DisMaxQueryBuilder> buildAnyComboMustHitQuery(K key, String... values) {

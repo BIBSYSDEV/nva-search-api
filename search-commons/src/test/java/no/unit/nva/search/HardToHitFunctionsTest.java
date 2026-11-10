@@ -72,25 +72,23 @@ class HardToHitFunctionsTest {
   }
 
   private void printEnum(Stream<ParameterKey<?>> parameterKeyStream) {
-    parameterKeyStream.forEach(
-        key ->
-            logger.info(
-                "|{}|{}|{}|{}|{}|",
-                key.asLowerCase(),
-                key.asCamelCase(),
-                key.fieldType().asCamelCase(),
-                key.searchOperator().asLowerCase(),
-                key.searchFields().collect(Collectors.joining(COMMA + SPACE))));
+    parameterKeyStream.forEach(key ->
+        logger.info(
+            "|{}|{}|{}|{}|{}|",
+            key.asLowerCase(),
+            key.asCamelCase(),
+            key.fieldType().asCamelCase(),
+            key.searchOperator().asLowerCase(),
+            key.searchFields().collect(Collectors.joining(COMMA + SPACE))));
   }
 
   private void printEnumSort(Stream<SortKey> parameterSortKeyStream) {
-    parameterSortKeyStream.forEach(
-        key ->
-            logger.info(
-                "|{}|{}|{}|{}|",
-                key.asLowerCase(),
-                key.asCamelCase(),
-                key.keyPattern(),
-                key.jsonPaths().collect(Collectors.joining(COMMA + SPACE))));
+    parameterSortKeyStream.forEach(key ->
+        logger.info(
+            "|{}|{}|{}|{}|",
+            key.asLowerCase(),
+            key.asCamelCase(),
+            key.keyPattern(),
+            key.jsonPaths().collect(Collectors.joining(COMMA + SPACE))));
   }
 }

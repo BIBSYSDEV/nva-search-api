@@ -40,7 +40,7 @@ public final class EntrySetTools {
 
       @Override
       public String getValue() {
-        return attempt(() -> strings[1]).orElse((f) -> EMPTY_STRING);
+        return attempt(() -> strings[1]).orElse(f -> EMPTY_STRING);
       }
 
       @Override
