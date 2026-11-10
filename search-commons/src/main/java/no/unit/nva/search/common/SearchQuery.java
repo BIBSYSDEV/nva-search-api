@@ -95,7 +95,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
 
   protected SearchQuery() {
     super();
-    queryKeys = new QueryKeys<>(keyFields());
+    queryParameters = new QueryParameters<>(keyFields());
     accessRights = EnumSet.noneOf(AccessRight.class);
     setMediaType(JSON_UTF_8.toString());
   }

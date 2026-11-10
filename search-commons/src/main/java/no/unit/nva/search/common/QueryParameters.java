@@ -14,20 +14,20 @@ import java.util.stream.Stream;
 import no.unit.nva.search.common.enums.ParameterKey;
 
 /**
- * This class operates on the queryKeys that a request provides.
+ * The query parameters of a request, stored as raw strings by key.
  *
  * @author Stig Norland
  * @param <K> the type of the parameter keys used in the query. The parameter keys are used to
  *     define the parameters that can be used in the query.
  */
-public class QueryKeys<K extends Enum<K> & ParameterKey<K>> {
+public class QueryParameters<K extends Enum<K> & ParameterKey<K>> {
 
   protected final transient Set<K> otherRequired;
   private final transient Map<K, String> page;
   private final transient Map<K, String> search;
   private final K fields;
 
-  public QueryKeys(K fields) {
+  public QueryParameters(K fields) {
     this.fields = fields;
     search = new ConcurrentHashMap<>();
     page = new ConcurrentHashMap<>();
