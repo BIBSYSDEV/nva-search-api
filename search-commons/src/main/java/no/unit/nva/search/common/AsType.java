@@ -2,11 +2,11 @@ package no.unit.nva.search.common;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static no.unit.nva.constants.Words.COMMA;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Stream;
 import no.unit.nva.search.common.enums.ParameterKey;
@@ -34,9 +34,7 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
   }
 
   private static Stream<String> splitParts(String delimiter, String value) {
-    return Arrays.stream(value.split(delimiter))
-        .filter(predicate -> !predicate.isBlank())
-        .sequential();
+    return Arrays.stream(value.split(delimiter)).filter(part -> !part.isBlank());
   }
 
   public <T> T as() {
@@ -84,18 +82,22 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
     return !isEmpty();
   }
 
-  public boolean contains(Object o) {
-    return nonNull(value) && value.contains(o.toString());
+  /**
+   * Whether one of the comma-separated values equals the expected value, ignoring case and
+   * surrounding whitespace.
+   */
+  public boolean containsValue(String expectedValue) {
+    return asSplitStream(COMMA).map(String::strip).anyMatch(expectedValue::equalsIgnoreCase);
   }
 
   /**
    * Split.
    *
    * @param delimiter regex to split on
-   * @return The value split, or an empty array.
+   * @return The non-blank parts of the value, or an empty array if there is no value.
    */
   public String[] split(String delimiter) {
-    return nonNull(value) ? value.split(delimiter) : new String[0];
+    return asSplitStream(delimiter).toArray(String[]::new);
   }
 
   /**
@@ -105,7 +107,6 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
    * @return The value as an optional Stream, split by delimiter.
    */
   public Stream<String> asSplitStream(String delimiter) {
-    // Optional null stream, skipping null check
     return asStream().flatMap(value -> splitParts(delimiter, value));
   }
 
@@ -125,10 +126,6 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
    */
   public Boolean asBoolean() {
     return Boolean.parseBoolean(value);
-  }
-
-  public String asLowerCase() {
-    return value.toLowerCase(Locale.getDefault());
   }
 
   @Override

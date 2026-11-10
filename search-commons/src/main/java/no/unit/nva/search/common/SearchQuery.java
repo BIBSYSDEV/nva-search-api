@@ -319,7 +319,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
   }
 
   protected Map<String, Float> mapOfPathAndBoost(AsType<K> fieldValue) {
-    return fieldValue.isEmpty() || fieldValue.asLowerCase().contains(ALL)
+    return fieldValue.isEmpty() || fieldValue.containsValue(ALL)
         ? Map.of(ASTERISK, 1F) // NONE or ALL -> <'*',1.0>
         : fieldValue
             .asSplitStream(COMMA)
