@@ -82,6 +82,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
   private static final String SCHEMA_ORG_ESSENCE = "application/vnd.schemaorg.ld+json";
   private static final String JSON_ESSENCE = "application/json";
   private static final URI SCHEMA_ORG_PROFILE = URI.create("https://schema.org");
+  private static final int KEEP_EMPTY_PARTS = -1;
   private final transient Set<AccessRight> accessRights;
   private transient MediaType mediaType;
   private transient Set<String> excludedFields = Set.of();
@@ -344,10 +345,14 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     }
   }
 
+  /**
+   * Splits the search_after token keeping empty values, since an empty sort value of the last hit
+   * still holds its position in the token.
+   */
   private void handleSearchAfter(SearchSourceBuilder builder) {
-    var sortKeys = parameters().remove(keySearchAfter()).split(COMMA);
-    if (sortKeys.length > 0) {
-      builder.searchAfter(sortKeys);
+    var searchAfter = parameters().remove(keySearchAfter());
+    if (searchAfter.isPresent()) {
+      builder.searchAfter(searchAfter.asString().split(COMMA, KEEP_EMPTY_PARTS));
     }
   }
 
