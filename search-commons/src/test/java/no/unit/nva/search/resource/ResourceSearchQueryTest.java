@@ -22,6 +22,7 @@ import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PE
 import static no.unit.nva.search.resource.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
+import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -33,6 +34,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -42,6 +44,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.csv.ResourceCsvTransformer;
 import no.unit.nva.search.common.records.PagedSearch;
@@ -68,6 +71,8 @@ class ResourceSearchQueryTest {
   private static final String SECOND_PROJECT_IDENTIFIER = "14334813";
   private static final String EXPECTED_SECOND_CRISTIN_PROJECT_URI =
       "https://api.dev.nva.aws.unit.no/cristin/project/" + SECOND_PROJECT_IDENTIFIER;
+  private static final String LAST_HIT_IDENTIFIER = "0198cc59cde8-56f6b7d0";
+  private static final String SEARCH_AFTER_FIELD = "search_after";
 
   static Stream<URI> uriProvider() {
     return Stream.of(
@@ -350,6 +355,37 @@ class ResourceSearchQueryTest {
     var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
 
     assertTrue(body.contains("\"12:34\""));
+  }
+
+  @Test
+  void shouldKeepEmptySortValueInSearchAfter() throws BadRequestException, JsonProcessingException {
+    var uri = URI.create("https://example.com/?sort=title&searchAfter=," + LAST_HIT_IDENTIFIER);
+    var query =
+        ResourceSearchQuery.builder()
+            .fromTestQueryParameters(queryToMapEntries(uri))
+            .withRequiredParameters(FROM, SIZE)
+            .build();
+
+    var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
+    var searchAfter = JsonUtils.dtoObjectMapper.readTree(body).path(SEARCH_AFTER_FIELD);
+    var expectedSearchAfter =
+        JsonUtils.dtoObjectMapper.createArrayNode().add(EMPTY_STRING).add(LAST_HIT_IDENTIFIER);
+
+    assertEquals(expectedSearchAfter, searchAfter);
+  }
+
+  @Test
+  void shouldNotSendSearchAfterWhenParameterIsMissing() throws BadRequestException {
+    var uri = URI.create("https://example.com/?sort=title");
+    var query =
+        ResourceSearchQuery.builder()
+            .fromTestQueryParameters(queryToMapEntries(uri))
+            .withRequiredParameters(FROM, SIZE)
+            .build();
+
+    var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
+
+    assertFalse(body.contains(SEARCH_AFTER_FIELD));
   }
 
   @Test
