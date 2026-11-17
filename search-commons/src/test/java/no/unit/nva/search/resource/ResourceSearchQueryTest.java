@@ -343,6 +343,21 @@ class ResourceSearchQueryTest {
     assertFalse(body.contains(ENTITY_ABSTRACT));
   }
 
+  @ParameterizedTest
+  @ValueSource(strings = {"EC/H2020", "HSØ", "RFF-AGDER", "E&Y"})
+  void shouldSearchFundingSourcesWithNonWordCharacters(String fundingSource)
+      throws BadRequestException {
+    var query =
+        ResourceSearchQuery.builder()
+            .fromTestParameterMap(Map.of(FUNDING.asCamelCase(), fundingSource + ":643417"))
+            .withRequiredParameters(FROM, SIZE)
+            .build();
+
+    var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
+
+    assertTrue(body.contains("\"" + fundingSource + "\""));
+  }
+
   @Test
   void shouldKeepColonsInFundingIdentifier() throws BadRequestException {
     var uri = URI.create("https://example.com/?funding=NFR:12:34");
