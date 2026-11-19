@@ -231,7 +231,8 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
   private void addPromotedPublications(UserSettingsClient client, BoolQueryBuilder builder) {
 
     var i = new AtomicInteger();
-    var promotedPublications = client.fetchPromotedPublications(parameters().get(CONTRIBUTOR).as());
+    var promotedPublications =
+        client.fetchPromotedPublications(parameters().get(CONTRIBUTOR).asString());
     promotedPublications.forEach(identifier ->
         builder.should(
             matchQuery(IDENTIFIER_KEYWORD, identifier)

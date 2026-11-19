@@ -1,8 +1,10 @@
 package no.unit.nva.search.common;
 
 import static no.unit.nva.constants.Words.COMMA;
+import static no.unit.nva.search.ticket.TicketParameter.SIZE;
 import static no.unit.nva.search.ticket.TicketParameter.STATUS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -47,5 +49,26 @@ class AsTypeTest {
     var parameter = new AsType<>(null, STATUS);
 
     assertThat(parameter.split(COMMA)).isEmpty();
+  }
+
+  @Test
+  void shouldReadMissingValueAsEmptyString() {
+    var parameter = new AsType<>(null, STATUS);
+
+    assertThat(parameter.asString()).isEmpty();
+  }
+
+  @Test
+  void shouldReadValueAsInteger() {
+    var parameter = new AsType<>("42", SIZE);
+
+    assertThat(parameter.asInteger()).isEqualTo(42);
+  }
+
+  @Test
+  void shouldFailToReadMissingValueAsInteger() {
+    var parameter = new AsType<>(null, SIZE);
+
+    assertThatThrownBy(parameter::asInteger).isInstanceOf(NumberFormatException.class);
   }
 }

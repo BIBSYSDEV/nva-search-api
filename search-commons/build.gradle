@@ -3,7 +3,6 @@ plugins {
 }
 
 dependencies {
-    api(libs.joda.time)
     api(libs.opensearch)
     api(nvaCatalog.aws.sdk2.sqs)
     api(nvaCatalog.com.auth0.jwt)

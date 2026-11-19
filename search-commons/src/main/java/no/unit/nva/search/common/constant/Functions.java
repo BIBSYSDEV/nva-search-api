@@ -101,7 +101,7 @@ public final class Functions {
   }
 
   public static String mergeWithColonOrComma(String oldValue, String newValue) {
-    if (nonNull(oldValue)) {
+    if (hasContent(oldValue)) {
       var delimiter = newValue.matches(PATTERN_IS_ASC_DESC_VALUE) ? COLON : COMMA;
       return String.join(delimiter, oldValue, newValue);
     } else {
