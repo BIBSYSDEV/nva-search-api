@@ -98,7 +98,7 @@ public final class Patterns {
   /**
    * Pattern for matching a funding string. funding source and project_id together separated by ':'
    */
-  public static final String PATTERN_IS_FUNDING = "[\\w]+[:\\s]{1}.+";
+  public static final String PATTERN_IS_FUNDING = "\\w+:.+";
 
   /** Pattern for matching invisible control characters and unused code points. */
   public static final String PATTERN_IS_NON_PRINTABLE_CHARACTERS = "\\p{C}";
