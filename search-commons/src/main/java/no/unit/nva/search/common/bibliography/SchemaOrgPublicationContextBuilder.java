@@ -129,28 +129,26 @@ final class SchemaOrgPublicationContextBuilder {
             : text(doc, CONTEXT_NAME_POINTER);
 
     return journalName
-        .map(
-            name -> {
-              var issn =
-                  text(doc, CONTEXT_ONLINE_ISSN_POINTER)
-                      .or(() -> text(doc, CONTEXT_PRINT_ISSN_POINTER))
-                      .orElse(null);
-              SchemaOrgContainer current = new SchemaOrgPeriodical(TYPE_PERIODICAL, name, issn);
+        .map(name -> {
+          var issn =
+              text(doc, CONTEXT_ONLINE_ISSN_POINTER)
+                  .or(() -> text(doc, CONTEXT_PRINT_ISSN_POINTER))
+                  .orElse(null);
+          SchemaOrgContainer current = new SchemaOrgPeriodical(TYPE_PERIODICAL, name, issn);
 
-              var volume = text(doc, VOLUME_POINTER);
-              if (volume.isPresent()) {
-                current =
-                    new SchemaOrgPublicationVolume(TYPE_PUBLICATION_VOLUME, volume.get(), current);
-              }
+          var volume = text(doc, VOLUME_POINTER);
+          if (volume.isPresent()) {
+            current =
+                new SchemaOrgPublicationVolume(TYPE_PUBLICATION_VOLUME, volume.get(), current);
+          }
 
-              var issue = text(doc, ISSUE_POINTER);
-              if (issue.isPresent()) {
-                current =
-                    new SchemaOrgPublicationIssue(TYPE_PUBLICATION_ISSUE, issue.get(), current);
-              }
+          var issue = text(doc, ISSUE_POINTER);
+          if (issue.isPresent()) {
+            current = new SchemaOrgPublicationIssue(TYPE_PUBLICATION_ISSUE, issue.get(), current);
+          }
 
-              return current;
-            })
+          return current;
+        })
         .orElse(null);
   }
 
@@ -173,22 +171,20 @@ final class SchemaOrgPublicationContextBuilder {
         isAnthology ? text(doc, ANTHOLOGY_MAIN_TITLE_POINTER) : text(doc, CONTEXT_NAME_POINTER);
 
     return bookTitle
-        .map(
-            title -> {
-              var isbn =
-                  isAnthology
-                      ? text(doc, ANTHOLOGY_ISBN_POINTER).orElse(null)
-                      : text(doc, CONTEXT_ISBN_POINTER).orElse(null);
-              var publisher =
-                  (isAnthology
-                          ? text(doc, ANTHOLOGY_PUBLISHER_NAME_POINTER)
-                          : text(doc, CONTEXT_PUBLISHER_NAME_POINTER))
-                      .map(
-                          publisherName ->
-                              new SchemaOrgOrganization(TYPE_ORGANIZATION, null, publisherName))
-                      .orElse(null);
-              return (SchemaOrgContainer) new SchemaOrgBook(TYPE_BOOK, title, isbn, publisher);
-            })
+        .map(title -> {
+          var isbn =
+              isAnthology
+                  ? text(doc, ANTHOLOGY_ISBN_POINTER).orElse(null)
+                  : text(doc, CONTEXT_ISBN_POINTER).orElse(null);
+          var publisher =
+              (isAnthology
+                      ? text(doc, ANTHOLOGY_PUBLISHER_NAME_POINTER)
+                      : text(doc, CONTEXT_PUBLISHER_NAME_POINTER))
+                  .map(publisherName ->
+                      new SchemaOrgOrganization(TYPE_ORGANIZATION, null, publisherName))
+                  .orElse(null);
+          return (SchemaOrgContainer) new SchemaOrgBook(TYPE_BOOK, title, isbn, publisher);
+        })
         .orElse(null);
   }
 

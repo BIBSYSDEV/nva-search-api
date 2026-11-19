@@ -232,11 +232,10 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     var i = new AtomicInteger();
     var promotedPublications = client.fetchPromotedPublications(parameters().get(CONTRIBUTOR).as());
-    promotedPublications.forEach(
-        identifier ->
-            builder.should(
-                matchQuery(IDENTIFIER_KEYWORD, identifier)
-                    .boost(calculateBoostValue(i, promotedPublications.size()))));
+    promotedPublications.forEach(identifier ->
+        builder.should(
+            matchQuery(IDENTIFIER_KEYWORD, identifier)
+                .boost(calculateBoostValue(i, promotedPublications.size()))));
   }
 
   @Override

@@ -19,9 +19,8 @@ public record DeleteIndicesRequest(Collection<IndexName> indices) implements Jso
   public static DeleteIndicesRequest fromInputStream(InputStream inputStream) {
     return attempt(() -> IoUtils.streamToString(inputStream))
         .map(value -> dtoObjectMapper.readValue(value, DeleteIndicesRequest.class))
-        .orElseThrow(
-            failure ->
-                new IllegalArgumentException(
-                    "Could not parse request! %s".formatted(failure.getException())));
+        .orElseThrow(failure ->
+            new IllegalArgumentException(
+                "Could not parse request! %s".formatted(failure.getException())));
   }
 }

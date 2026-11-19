@@ -84,9 +84,8 @@ class TicketClientByOwnerTest {
 
       indexingClient.createIndex(INDEX_NAME);
       indexDocuments()
-          .forEach(
-              indexDocument ->
-                  attempt(() -> indexingClient.addDocumentToIndex(indexDocument)).orElseThrow());
+          .forEach(indexDocument ->
+              attempt(() -> indexingClient.addDocumentToIndex(indexDocument)).orElseThrow());
       indexingClient.refreshIndex(INDEX_NAME);
     } catch (URISyntaxException e) {
       throw new IllegalArgumentException(e);

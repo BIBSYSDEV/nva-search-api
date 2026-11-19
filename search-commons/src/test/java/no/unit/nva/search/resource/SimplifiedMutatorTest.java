@@ -40,12 +40,11 @@ class SimplifiedMutatorTest {
     ObjectNode resultAsObject = (ObjectNode) result;
     resultAsObject
         .iterator()
-        .forEachRemaining(
-            jsonNode -> {
-              if (jsonNode.isTextual()) {
-                assertFalse(jsonNode.textValue().isEmpty());
-              }
-            });
+        .forEachRemaining(jsonNode -> {
+          if (jsonNode.isTextual()) {
+            assertFalse(jsonNode.textValue().isEmpty());
+          }
+        });
     assertFalse(input.path("id").isMissingNode());
   }
 

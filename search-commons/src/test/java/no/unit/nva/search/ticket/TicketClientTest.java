@@ -471,7 +471,7 @@ class TicketClientTest {
     assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedCount)));
   }
 
-  @ParameterizedTest()
+  @ParameterizedTest
   @MethodSource("uriProviderWithAggregationsAndAccessRights")
   void uriRequestReturnsSuccessfulResponseWithAggregations(
       URI uri, Integer pending, Integer expectedCount, String userName, AccessRight... accessRights)

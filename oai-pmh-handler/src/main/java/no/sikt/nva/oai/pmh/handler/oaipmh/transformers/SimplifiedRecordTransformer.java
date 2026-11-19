@@ -109,19 +109,17 @@ public class SimplifiedRecordTransformer implements RecordTransformer {
   private static void appendContributors(ResourceSearchResponse response, OaiDcType oaiDcType) {
     response.contributorsPreview().stream()
         .map(SimplifiedRecordTransformer::toContributorElement)
-        .forEach(
-            elementType ->
-                oaiDcType
-                    .getTitleOrCreatorOrSubject()
-                    .addLast(OBJECT_FACTORY.createContributor(elementType)));
+        .forEach(elementType ->
+            oaiDcType
+                .getTitleOrCreatorOrSubject()
+                .addLast(OBJECT_FACTORY.createContributor(elementType)));
 
     response.participatingOrganizations().stream()
         .map(SimplifiedRecordTransformer::toContributorElement)
-        .forEach(
-            elementType ->
-                oaiDcType
-                    .getTitleOrCreatorOrSubject()
-                    .addLast(OBJECT_FACTORY.createContributor(elementType)));
+        .forEach(elementType ->
+            oaiDcType
+                .getTitleOrCreatorOrSubject()
+                .addLast(OBJECT_FACTORY.createContributor(elementType)));
   }
 
   private static ElementType toContributorElement(Contributor contributor) {

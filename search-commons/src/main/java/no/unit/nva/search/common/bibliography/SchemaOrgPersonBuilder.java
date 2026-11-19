@@ -62,18 +62,14 @@ final class SchemaOrgPersonBuilder {
     }
     var byRole = new LinkedHashMap<String, List<SchemaOrgPerson>>();
     StreamSupport.stream(contributors.spliterator(), false)
-        .forEach(
-            contributor ->
-                text(contributor, IDENTITY_NAME_POINTER)
-                    .filter(not(String::isBlank))
-                    .ifPresent(
-                        name -> {
-                          var person = buildPerson(contributor, name);
-                          var property = toSchemaOrgProperty(contributor);
-                          byRole
-                              .computeIfAbsent(property, ignored -> new ArrayList<>())
-                              .add(person);
-                        }));
+        .forEach(contributor ->
+            text(contributor, IDENTITY_NAME_POINTER)
+                .filter(not(String::isBlank))
+                .ifPresent(name -> {
+                  var person = buildPerson(contributor, name);
+                  var property = toSchemaOrgProperty(contributor);
+                  byRole.computeIfAbsent(property, ignored -> new ArrayList<>()).add(person);
+                }));
     return byRole;
   }
 
@@ -93,14 +89,13 @@ final class SchemaOrgPersonBuilder {
     }
     var result =
         StreamSupport.stream(affiliations.spliterator(), false)
-            .map(
-                affiliation ->
-                    new SchemaOrgOrganization(
-                        TYPE_ORGANIZATION,
-                        text(affiliation, AFFILIATION_ID_POINTER).orElse(null),
-                        text(affiliation, AFFILIATION_LABEL_EN_POINTER)
-                            .or(() -> text(affiliation, AFFILIATION_LABEL_NB_POINTER))
-                            .orElse(null)))
+            .map(affiliation ->
+                new SchemaOrgOrganization(
+                    TYPE_ORGANIZATION,
+                    text(affiliation, AFFILIATION_ID_POINTER).orElse(null),
+                    text(affiliation, AFFILIATION_LABEL_EN_POINTER)
+                        .or(() -> text(affiliation, AFFILIATION_LABEL_NB_POINTER))
+                        .orElse(null)))
             .toList();
     return result.isEmpty() ? Optional.empty() : Optional.of(result);
   }

@@ -1535,19 +1535,18 @@ class OaiPmhHandlerTest {
             .withSearchParameter(ResourceParameter.AGGREGATION, Words.NONE)
             .withSearchParameter(ResourceParameter.MODIFIED_BEFORE, "2016-01-02T00:00:00Z")
             .withSearchParameter(ResourceParameter.MODIFIED_SINCE, "2016-01-01T00:00:00Z");
-    setSpec.ifPresent(
-        ignored -> {
-          if (setSpec.children().length == 0) {
-            return;
-          }
-          var child = setSpec.children()[0];
-          switch (setSpec.root()) {
-            case RESOURCE_TYPE_GENERAL ->
-                queryBuilder.withSearchParameter(ResourceParameter.INSTANCE_TYPE, child);
-            case INSTITUTION ->
-                queryBuilder.withSearchParameter(ResourceParameter.TOP_LEVEL_ORGANIZATION, child);
-          }
-        });
+    setSpec.ifPresent(ignored -> {
+      if (setSpec.children().length == 0) {
+        return;
+      }
+      var child = setSpec.children()[0];
+      switch (setSpec.root()) {
+        case RESOURCE_TYPE_GENERAL ->
+            queryBuilder.withSearchParameter(ResourceParameter.INSTANCE_TYPE, child);
+        case INSTITUTION ->
+            queryBuilder.withSearchParameter(ResourceParameter.TOP_LEVEL_ORGANIZATION, child);
+      }
+    });
     var resourceQueryMatcher =
         queryBuilder
             .withNamedFilterQuery(
@@ -1757,12 +1756,11 @@ class OaiPmhHandlerTest {
 
   private java.util.Set<String> extractRecordIdentifiers(Iterable<Node> recordNodes) {
     var identifiers = new HashSet<String>();
-    recordNodes.forEach(
-        recordNode -> {
-          var headerNode = getNamedChildNode(recordNode, "header").orElseThrow();
-          var identifierNode = getNamedChildNode(headerNode, "identifier").orElseThrow();
-          identifiers.add(identifierNode.getFirstChild().getNodeValue());
-        });
+    recordNodes.forEach(recordNode -> {
+      var headerNode = getNamedChildNode(recordNode, "header").orElseThrow();
+      var identifierNode = getNamedChildNode(headerNode, "identifier").orElseThrow();
+      identifiers.add(identifierNode.getFirstChild().getNodeValue());
+    });
     return identifiers;
   }
 
@@ -1899,9 +1897,8 @@ class OaiPmhHandlerTest {
 
     var attributes = requestNodes.iterator().next().getAttributes();
 
-    parameters.forEach(
-        (key, value) ->
-            assertThat(value, is(equalTo(attributes.getNamedItem(key.getName()).getNodeValue()))));
+    parameters.forEach((key, value) ->
+        assertThat(value, is(equalTo(attributes.getNamedItem(key.getName()).getNodeValue()))));
   }
 
   private static JAXPXPathEngine getXpathEngine() {
@@ -2071,12 +2068,11 @@ class OaiPmhHandlerTest {
     var setNodes = xPathEngine.selectNodes("/oai:OAI-PMH/oai:ListSets/oai:set", source);
 
     return StreamSupport.stream(setNodes.spliterator(), false)
-        .map(
-            node -> {
-              var spec = getChildNodeValue(node, "setSpec");
-              var name = getChildNodeValue(node, "setName");
-              return new SetInfo(spec.orElseThrow(), name.orElseThrow());
-            })
+        .map(node -> {
+          var spec = getChildNodeValue(node, "setSpec");
+          var name = getChildNodeValue(node, "setName");
+          return new SetInfo(spec.orElseThrow(), name.orElseThrow());
+        })
         .collect(Collectors.toSet());
   }
 

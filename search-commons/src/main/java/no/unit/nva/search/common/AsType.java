@@ -92,10 +92,10 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
    * Split.
    *
    * @param delimiter regex to split on
-   * @return The value split, or null.
+   * @return The value split, or an empty array.
    */
   public String[] split(String delimiter) {
-    return nonNull(value) ? value.split(delimiter) : null;
+    return nonNull(value) ? value.split(delimiter) : new String[0];
   }
 
   /**

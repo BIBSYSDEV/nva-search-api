@@ -131,16 +131,15 @@ public abstract class ParameterValidator<
    */
   protected void assignDefaultValues() {
     requiredMissing()
-        .forEach(
-            key -> {
-              switch (key.name()) {
-                case FROM_KEY_NAME -> setValue(key.name(), DEFAULT_OFFSET);
-                case SIZE_KEY_NAME -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
-                case SORT_KEY_NAME -> setValue(key.name(), getDefaultSort());
-                case AGGREGATION_KEY_NAME -> setValue(key.name(), NONE);
-                default -> {}
-              }
-            });
+        .forEach(key -> {
+          switch (key.name()) {
+            case FROM_KEY_NAME -> setValue(key.name(), DEFAULT_OFFSET);
+            case SIZE_KEY_NAME -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
+            case SORT_KEY_NAME -> setValue(key.name(), getDefaultSort());
+            case AGGREGATION_KEY_NAME -> setValue(key.name(), NONE);
+            default -> {}
+          }
+        });
   }
 
   /** Default sort applied when SORT is required but missing. Override to customize. */
@@ -288,9 +287,8 @@ public abstract class ParameterValidator<
    * @apiNote This is intended to be used in runtime
    */
   public ParameterValidator<K, Q> fromMultiValueParameters(Map<String, List<String>> parameters) {
-    parameters.forEach(
-        (key, values) ->
-            values.stream().filter(Objects::nonNull).forEach(value -> setValue(key, value)));
+    parameters.forEach((key, values) ->
+        values.stream().filter(Objects::nonNull).forEach(value -> setValue(key, value)));
     return this;
   }
 

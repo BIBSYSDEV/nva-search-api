@@ -167,11 +167,10 @@ public final class BibtexFieldExtractors {
   public static BibtexFieldExtractor pages() {
     return doc ->
         extractText(doc, PAGES_BEGIN_POINTER)
-            .map(
-                begin ->
-                    extractText(doc, PAGES_END_POINTER)
-                        .map(end -> begin + INTERVAL + end)
-                        .orElse(begin))
+            .map(begin ->
+                extractText(doc, PAGES_END_POINTER)
+                    .map(end -> begin + INTERVAL + end)
+                    .orElse(begin))
             .or(() -> extractText(doc, PAGES_MONOGRAPH_POINTER))
             .map(BibtexFieldExtractors::normalizePages)
             .map(pages -> new BibtexField("pages", pages));
@@ -180,11 +179,10 @@ public final class BibtexFieldExtractors {
   public static BibtexFieldExtractor pagesOrManifestationPages() {
     return doc ->
         extractText(doc, PAGES_BEGIN_POINTER)
-            .map(
-                begin ->
-                    extractText(doc, PAGES_END_POINTER)
-                        .map(end -> begin + INTERVAL + end)
-                        .orElse(begin))
+            .map(begin ->
+                extractText(doc, PAGES_END_POINTER)
+                    .map(end -> begin + INTERVAL + end)
+                    .orElse(begin))
             .or(() -> extractText(doc, PAGES_MONOGRAPH_POINTER))
             .or(() -> extractFromMonographManifestation(doc, "/pages/pages"))
             .map(BibtexFieldExtractors::normalizePages)
@@ -251,9 +249,8 @@ public final class BibtexFieldExtractors {
       return Optional.empty();
     }
     return StreamSupport.stream(manifestations.spliterator(), false)
-        .filter(
-            manifestation ->
-                LITERARY_ARTS_MONOGRAPH_TYPE.equals(manifestation.path("type").asText()))
+        .filter(manifestation ->
+            LITERARY_ARTS_MONOGRAPH_TYPE.equals(manifestation.path("type").asText()))
         .flatMap(manifestation -> extractText(manifestation, fieldPointer).stream())
         .findFirst();
   }

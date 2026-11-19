@@ -28,29 +28,26 @@ public record ResumptionToken(ListRecordsRequest originalRequest, String cursor,
 
     originalRequest
         .getFrom()
-        .ifPresent(
-            ignored ->
-                unencodedValueBuilder
-                    .append(AMPERSAND)
-                    .append(FROM)
-                    .append(EQUALS)
-                    .append(originalRequest.getFrom().getOriginalSource().orElseThrow()));
+        .ifPresent(ignored ->
+            unencodedValueBuilder
+                .append(AMPERSAND)
+                .append(FROM)
+                .append(EQUALS)
+                .append(originalRequest.getFrom().getOriginalSource().orElseThrow()));
 
     originalRequest
         .getUntil()
-        .ifPresent(
-            ignored ->
-                unencodedValueBuilder
-                    .append(AMPERSAND)
-                    .append(UNTIL)
-                    .append(EQUALS)
-                    .append(originalRequest.getUntil().getOriginalSource().orElseThrow()));
+        .ifPresent(ignored ->
+            unencodedValueBuilder
+                .append(AMPERSAND)
+                .append(UNTIL)
+                .append(EQUALS)
+                .append(originalRequest.getUntil().getOriginalSource().orElseThrow()));
 
     originalRequest
         .getSetSpec()
-        .ifPresent(
-            value ->
-                unencodedValueBuilder.append(AMPERSAND).append(SET).append(EQUALS).append(value));
+        .ifPresent(value ->
+            unencodedValueBuilder.append(AMPERSAND).append(SET).append(EQUALS).append(value));
 
     unencodedValueBuilder
         .append(AMPERSAND)

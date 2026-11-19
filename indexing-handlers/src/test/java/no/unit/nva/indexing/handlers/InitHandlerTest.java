@@ -130,11 +130,9 @@ class InitHandlerTest {
   }
 
   private void mockCreateIndexRequest(IndexRequest indexRequest) {
-    attempt(
-        () ->
-            doNothing()
-                .when(indexingClient)
-                .createIndex(
-                    indexRequest.name(), indexRequest.mappings(), indexRequest.settings()));
+    attempt(() ->
+        doNothing()
+            .when(indexingClient)
+            .createIndex(indexRequest.name(), indexRequest.mappings(), indexRequest.settings()));
   }
 }

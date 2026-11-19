@@ -108,11 +108,10 @@ public final class AggregationFormat {
     Streams.stream(value.fields())
         .map(AggregationFormat::getNormalizedJsonNodeEntry)
         .filter(entry -> !DOC_COUNT.equals(entry.getKey()))
-        .forEach(
-            node -> {
-              var keyValue = node.getValue().at(Constants.BUCKETS_KEY_PTR);
-              outputAggregationNode.set(node.getKey(), keyValue);
-            });
+        .forEach(node -> {
+          var keyValue = node.getValue().at(Constants.BUCKETS_KEY_PTR);
+          outputAggregationNode.set(node.getKey(), keyValue);
+        });
     return outputAggregationNode;
   }
 

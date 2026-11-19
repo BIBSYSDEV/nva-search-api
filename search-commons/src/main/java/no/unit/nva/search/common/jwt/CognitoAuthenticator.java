@@ -96,11 +96,9 @@ public class CognitoAuthenticator {
   }
 
   private HttpResponse<String> fetchTokenResponse() {
-    return attempt(
-            () ->
-                this.httpClient.send(
-                    createTokenRequest(),
-                    HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8)))
+    return attempt(() ->
+            this.httpClient.send(
+                createTokenRequest(), HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8)))
         .map(this::responseIsSuccessful)
         .orElseThrow();
   }

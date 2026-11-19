@@ -380,9 +380,8 @@ public class ResourceClientAllScientificValuesTest {
     var excludedScientificValues = List.of(randomString(), randomString());
     var publicationsWithPublisherWithScientificValues =
         excludedScientificValues.stream()
-            .map(
-                publisherScientificValue ->
-                    jsonWithScientificValueForPublisherAndSeries(publisherScientificValue, null))
+            .map(publisherScientificValue ->
+                jsonWithScientificValueForPublisherAndSeries(publisherScientificValue, null))
             .toArray(String[]::new);
     createIndexAndIndexDocument(publicationsWithPublisherWithScientificValues);
 

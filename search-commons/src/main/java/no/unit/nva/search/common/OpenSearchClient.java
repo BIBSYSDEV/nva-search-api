@@ -75,18 +75,17 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
 
   protected CompletableFuture<R> handleResponse(
       CompletableFuture<HttpResponse<String>> completableFuture) {
-    return completableFuture.thenApplyAsync(
-        response -> {
-          if (response.statusCode() != HTTP_OK) {
-            logger.error(
-                "OpenSearch query {} failed with status code: {} and body: {}",
-                response.request().uri(),
-                response.statusCode(),
-                response.body());
-            throw new OpenSearchClientException(response.statusCode(), response.body());
-          }
-          return attempt(() -> jsonToResponse(response)).map(logAndReturnResult()).orElseThrow();
-        });
+    return completableFuture.thenApplyAsync(response -> {
+      if (response.statusCode() != HTTP_OK) {
+        logger.error(
+            "OpenSearch query {} failed with status code: {} and body: {}",
+            response.request().uri(),
+            response.statusCode(),
+            response.body());
+        throw new OpenSearchClientException(response.statusCode(), response.body());
+      }
+      return attempt(() -> jsonToResponse(response)).map(logAndReturnResult()).orElseThrow();
+    });
   }
 
   protected abstract R jsonToResponse(HttpResponse<String> response) throws JsonProcessingException;
@@ -108,11 +107,10 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
     var fetchStart = Instant.now();
     return httpClient
         .sendAsync(request, bodyHandler)
-        .thenApplyAsync(
-            response -> {
-              fetchDuration = Duration.between(fetchStart, Instant.now()).toMillis();
-              return response;
-            })
+        .thenApplyAsync(response -> {
+          fetchDuration = Duration.between(fetchStart, Instant.now()).toMillis();
+          return response;
+        })
         .exceptionallyAsync(
             responseFailure -> getStringHttpResponse(request, responseFailure, fetchStart));
   }

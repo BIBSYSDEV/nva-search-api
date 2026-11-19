@@ -236,15 +236,14 @@ public class SimplifiedMutator implements JsonNodeMutator {
     source
         .path(ADDITIONAL_IDENTIFIERS)
         .iterator()
-        .forEachRemaining(
-            node -> {
-              switch (node.path(TYPE).textValue()) {
-                case HANDLE_IDENTIFIER -> handleIdentifiers.add(node.path(VALUE).textValue());
-                case SCOPUS_IDENTIFIER -> scopusIdentifiers.add(node.path(VALUE).textValue());
-                case CRISTIN_IDENTIFIER -> cristinIdentifiers.add(node.path(VALUE).textValue());
-                default -> {}
-              }
-            });
+        .forEachRemaining(node -> {
+          switch (node.path(TYPE).textValue()) {
+            case HANDLE_IDENTIFIER -> handleIdentifiers.add(node.path(VALUE).textValue());
+            case SCOPUS_IDENTIFIER -> scopusIdentifiers.add(node.path(VALUE).textValue());
+            case CRISTIN_IDENTIFIER -> cristinIdentifiers.add(node.path(VALUE).textValue());
+            default -> {}
+          }
+        });
 
     return new OtherIdentifiers(
         new HashSet<>(scopusIdentifiers),
@@ -266,12 +265,11 @@ public class SimplifiedMutator implements JsonNodeMutator {
     if (!manifestations.isMissingNode() && manifestations.isArray()) {
       manifestations
           .iterator()
-          .forEachRemaining(
-              manifest -> {
-                if (!manifest.path(ISBN_LIST).isMissingNode()) {
-                  isbnsInManifestations.addAll(nodeAsListOf(manifest.path(ISBN_LIST)));
-                }
-              });
+          .forEachRemaining(manifest -> {
+            if (!manifest.path(ISBN_LIST).isMissingNode()) {
+              isbnsInManifestations.addAll(nodeAsListOf(manifest.path(ISBN_LIST)));
+            }
+          });
     }
     return isbnsInManifestations;
   }
@@ -334,24 +332,23 @@ public class SimplifiedMutator implements JsonNodeMutator {
         .path(ENTITY_DESCRIPTION)
         .path(CONTRIBUTORS_PREVIEW)
         .iterator()
-        .forEachRemaining(
-            contributorNode -> {
-              var affiliationNode = contributorNode.path(AFFILIATIONS);
-              var affiliations = new HashSet<Affiliation>();
-              if (!affiliationNode.isMissingNode()) {
-                affiliationNode
-                    .iterator()
-                    .forEachRemaining(node -> affiliations.add(Affiliation.from(node)));
-              }
+        .forEachRemaining(contributorNode -> {
+          var affiliationNode = contributorNode.path(AFFILIATIONS);
+          var affiliations = new HashSet<Affiliation>();
+          if (!affiliationNode.isMissingNode()) {
+            affiliationNode
+                .iterator()
+                .forEachRemaining(node -> affiliations.add(Affiliation.from(node)));
+          }
 
-              contributors.add(
-                  new Contributor(
-                      affiliations,
-                      contributorNode.path(CORRESPONDING_AUTHOR).asBoolean(),
-                      new Identity(contributorNode.path(IDENTITY)),
-                      contributorNode.path(ROLE).path(TYPE).textValue(),
-                      contributorNode.path(SEQUENCE).asInt()));
-            });
+          contributors.add(
+              new Contributor(
+                  affiliations,
+                  contributorNode.path(CORRESPONDING_AUTHOR).asBoolean(),
+                  new Identity(contributorNode.path(IDENTITY)),
+                  contributorNode.path(ROLE).path(TYPE).textValue(),
+                  contributorNode.path(SEQUENCE).asInt()));
+        });
     return contributors;
   }
 

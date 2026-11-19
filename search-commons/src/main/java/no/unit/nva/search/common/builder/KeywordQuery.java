@@ -44,10 +44,9 @@ public class KeywordQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractB
 
   private Stream<QueryBuilder> buildMatchAllKeywordStream(K key, String... values) {
     return Arrays.stream(values)
-        .flatMap(
-            value ->
-                key.searchFields(INCLUDE_KEYWORD)
-                    .map(searchField -> getTermQueryBuilder(key, value, searchField)));
+        .flatMap(value ->
+            key.searchFields(INCLUDE_KEYWORD)
+                .map(searchField -> getTermQueryBuilder(key, value, searchField)));
   }
 
   private Stream<DisMaxQueryBuilder> buildMatchAnyKeywordStream(K key, String... values) {

@@ -70,28 +70,24 @@ public class FuzzyKeywordQuery<K extends Enum<K> & ParameterKey<K>> extends Abst
 
   private Stream<DisMaxQueryBuilder> buildMatchAllKeyword(K key, String... values) {
     return Arrays.stream(values)
-        .map(
-            value ->
-                key.searchFields(INCLUDE_KEYWORD)
-                    .map(searchField -> new TermQueryBuilder(searchField, value))
-                    .collect(
-                        DisMaxQueryBuilder::new, DisMaxQueryBuilder::add, DisMaxQueryBuilder::add)
-                    .boost(key.fieldBoost()));
+        .map(value ->
+            key.searchFields(INCLUDE_KEYWORD)
+                .map(searchField -> new TermQueryBuilder(searchField, value))
+                .collect(DisMaxQueryBuilder::new, DisMaxQueryBuilder::add, DisMaxQueryBuilder::add)
+                .boost(key.fieldBoost()));
   }
 
   private Stream<DisMaxQueryBuilder> buildMatchAllFuzzy(K key, String... values) {
     return Arrays.stream(values)
-        .map(
-            singleValue ->
-                getMatchPhrasePrefixBuilderStream(singleValue, key)
-                    .collect(
-                        DisMaxQueryBuilder::new, DisMaxQueryBuilder::add, DisMaxQueryBuilder::add));
+        .map(singleValue ->
+            getMatchPhrasePrefixBuilderStream(singleValue, key)
+                .collect(
+                    DisMaxQueryBuilder::new, DisMaxQueryBuilder::add, DisMaxQueryBuilder::add));
   }
 
   private Stream<QueryBuilder> getMatchPhrasePrefixBuilderStream(String singleValue, K key) {
     return key.searchFields(EXCLUDE_KEYWORD)
-        .map(
-            fieldName ->
-                QueryBuilders.matchPhrasePrefixQuery(fieldName, singleValue).maxExpansions(10));
+        .map(fieldName ->
+            QueryBuilders.matchPhrasePrefixQuery(fieldName, singleValue).maxExpansions(10));
   }
 }
