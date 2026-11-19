@@ -16,11 +16,11 @@ import java.util.stream.Stream;
  *
  * @author Stig Norland
  */
-public class AsType {
+public class ParameterValue {
 
   private final String value;
 
-  public AsType(String value) {
+  public ParameterValue(String value) {
     this.value = value;
   }
 

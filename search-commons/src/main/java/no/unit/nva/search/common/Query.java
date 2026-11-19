@@ -19,7 +19,7 @@ import no.unit.nva.search.common.records.QueryContentWrapper;
 public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
   private final transient Instant startTime;
   protected transient URI infrastructureApiUri = URI.create(readSearchInfrastructureApiUri());
-  protected transient QueryKeys<K> queryKeys;
+  protected transient QueryParameters<K> queryParameters;
   protected transient QueryFilter queryFilter = new QueryFilter();
 
   protected Query() {
@@ -40,8 +40,8 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
 
   protected abstract URI openSearchUri(String indexName);
 
-  public QueryKeys<K> parameters() {
-    return queryKeys;
+  public QueryParameters<K> parameters() {
+    return queryParameters;
   }
 
   public QueryFilter filters() {

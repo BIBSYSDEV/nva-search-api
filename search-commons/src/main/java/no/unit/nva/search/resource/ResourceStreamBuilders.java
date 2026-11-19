@@ -55,7 +55,7 @@ import java.util.Map.Entry;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import no.unit.nva.search.common.QueryKeys;
+import no.unit.nva.search.common.QueryParameters;
 import no.unit.nva.search.common.builder.FuzzyKeywordQuery;
 import no.unit.nva.search.common.constant.Functions;
 import nva.commons.core.JacocoGenerated;
@@ -91,9 +91,9 @@ public class ResourceStreamBuilders {
   public static final String FUNDING_SOURCE_IDENTIFIER =
       jsonPath(FUNDINGS, SOURCE, IDENTIFIER, KEYWORD);
   public static final String FUNDINGS_IDENTIFIER = jsonPath(FUNDINGS, IDENTIFIER, KEYWORD);
-  private final QueryKeys<ResourceParameter> parameters;
+  private final QueryParameters<ResourceParameter> parameters;
 
-  public ResourceStreamBuilders(QueryKeys<ResourceParameter> parameters) {
+  public ResourceStreamBuilders(QueryParameters<ResourceParameter> parameters) {
     this.parameters = parameters;
   }
 

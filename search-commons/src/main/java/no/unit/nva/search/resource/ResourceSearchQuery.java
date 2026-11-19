@@ -42,9 +42,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.constants.Words;
-import no.unit.nva.search.common.AsType;
 import no.unit.nva.search.common.OpenSearchClient;
 import no.unit.nva.search.common.ParameterValidator;
+import no.unit.nva.search.common.ParameterValue;
 import no.unit.nva.search.common.Query;
 import no.unit.nva.search.common.SearchQuery;
 import no.unit.nva.search.common.enums.SortKey;
@@ -114,7 +114,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
   }
 
   @Override
-  public AsType sort() {
+  public ParameterValue sort() {
     var sortString = parameters().get(SORT).toString();
     if (missingIdentifier(sortString)) {
       if (sortString.isBlank()) {
@@ -196,17 +196,17 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
   }
 
   @Override
-  protected AsType from() {
+  protected ParameterValue from() {
     return parameters().get(FROM);
   }
 
   @Override
-  protected AsType size() {
+  protected ParameterValue size() {
     return parameters().get(SIZE);
   }
 
   @Override
-  protected AsType page() {
+  protected ParameterValue page() {
     return parameters().get(PAGE);
   }
 
