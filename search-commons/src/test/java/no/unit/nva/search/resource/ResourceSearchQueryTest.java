@@ -9,6 +9,8 @@ import static no.unit.nva.constants.Words.DOT;
 import static no.unit.nva.constants.Words.IDENTIFIER;
 import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
+import static no.unit.nva.search.resource.Constants.ENTITY_ABSTRACT;
+import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
 import static no.unit.nva.search.resource.Constants.SEARCH_ALL_DEFAULT_FIELDS;
 import static no.unit.nva.search.resource.ResourceParameter.ABSTRACT;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
@@ -333,6 +335,21 @@ class ResourceSearchQueryTest {
 
     assertFalse(body.contains("\"*^"));
     SEARCH_ALL_DEFAULT_FIELDS.keySet().forEach(field -> assertTrue(body.contains(field)));
+  }
+
+  @Test
+  void shouldSearchOnlyRequestedFieldsWhenAFieldNameContainsAll() throws BadRequestException {
+    var uri = URI.create("https://example.com/?query=hello&fields=title,allScientificValues");
+    var query =
+        ResourceSearchQuery.builder()
+            .fromTestQueryParameters(queryToMapEntries(uri))
+            .withRequiredParameters(FROM, SIZE)
+            .build();
+
+    var body = query.assemble(Words.RESOURCES).findFirst().orElseThrow().body();
+
+    assertTrue(body.contains(ENTITY_DESCRIPTION_MAIN_TITLE));
+    assertFalse(body.contains(ENTITY_ABSTRACT));
   }
 
   @Test

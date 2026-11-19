@@ -233,7 +233,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
   }
 
   private boolean hasStatusNew() {
-    return parameters().get(STATUS).contains(NEW);
+    return parameters().get(STATUS).containsValue(NEW.toString());
   }
 
   private boolean hasAssigneeAndStatusNew() {
