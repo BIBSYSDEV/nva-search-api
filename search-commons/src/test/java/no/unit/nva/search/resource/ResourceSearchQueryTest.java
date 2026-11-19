@@ -148,9 +148,10 @@ class ResourceSearchQueryTest {
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .build();
 
-    var key = response.parameters().remove(SCIENTIFIC_REPORT_PERIOD_SINCE);
+    var removedValue = response.parameters().remove(SCIENTIFIC_REPORT_PERIOD_SINCE);
 
-    assertEquals(SCIENTIFIC_REPORT_PERIOD_SINCE, key.getKey());
+    assertEquals("2019", removedValue.asString());
+    assertFalse(response.parameters().isPresent(SCIENTIFIC_REPORT_PERIOD_SINCE));
   }
 
   @Test

@@ -105,22 +105,22 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
   }
 
   @Override
-  protected AsType<TicketParameter> from() {
+  protected AsType from() {
     return parameters().get(FROM);
   }
 
   @Override
-  protected AsType<TicketParameter> size() {
+  protected AsType size() {
     return parameters().get(SIZE);
   }
 
   @Override
-  protected AsType<TicketParameter> page() {
+  protected AsType page() {
     return parameters().get(PAGE);
   }
 
   @Override
-  public AsType<TicketParameter> sort() {
+  public AsType sort() {
     return parameters().get(SORT);
   }
 
