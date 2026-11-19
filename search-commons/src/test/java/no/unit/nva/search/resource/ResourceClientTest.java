@@ -256,6 +256,7 @@ class ResourceClientTest {
         URI.create(BASE_URL + "category=PhdThesis&sort=beunited+asc"),
         URI.create(BASE_URL + "funding=NFR,296896"),
         URI.create(BASE_URL + "funding=NFR%20296896"),
+        URI.create(BASE_URL + "funding=:296896"),
         URI.create(BASE_URL + "useers=hello+world&lang=en"));
   }
 

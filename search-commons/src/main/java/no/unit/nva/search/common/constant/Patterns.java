@@ -96,9 +96,10 @@ public final class Patterns {
   public static final String PATTERN_IS_PIPE = "\\|";
 
   /**
-   * Pattern for matching a funding string. funding source and project_id together separated by ':'
+   * Pattern for matching a funding string: funding source code and project identifier separated by
+   * the first ':'. Source codes may contain characters such as '/', '-', '&' and 'Ø' (EC/H2020).
    */
-  public static final String PATTERN_IS_FUNDING = "\\w+:.+";
+  public static final String PATTERN_IS_FUNDING = "[^:]+:.+";
 
   /** Pattern for matching invisible control characters and unused code points. */
   public static final String PATTERN_IS_NON_PRINTABLE_CHARACTERS = "\\p{C}";
